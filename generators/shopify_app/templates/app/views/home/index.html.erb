@@ -1,0 +1,103 @@
+<div id="sidebar">
+  <h3>Where to start</h3>
+  <h4>Check out the <code style="font-size: 140%">dashboard_controller</code></h4>
+
+  <p class="description">
+    The controller in this demo application fetches the latest 3 orders and products and makes them available as instance variables <code style="color: #218BCE">@orders</code> and <code style="color: #218BCE">@products</code>.
+  </p>
+
+  <h4>Check out the <code>index</code> template</h4>
+
+  <p class="description">
+    This is the Ruby template you are currently looking at. It is located at:<br />  
+  </p>
+
+  <p style="background: #fff; margin-left: 4px"><code>views/dashboard/index.html.erb</code></p>
+
+  <p class="description">
+    Have a look at the markup and Ruby code to see how the Shopify API is being used.
+  </p>
+  
+  <h3>Additional documentation</h3>
+
+  <p class="description">
+    Become an expert:
+  </p>
+
+  <ul>
+    <li>
+      <%= link_to 'API documentation', 'http://www.shopify.com/developers/api/' %>
+      <span class="note">The reference: what you can do with the Shopify API.</span>
+    </li>
+    <li>
+      <%= link_to 'Wiki', 'http://wiki.shopify.com/' %>
+      <span class="note">Get more information and share your knowledge.</span>
+    </li>
+    <li>
+      <%= link_to 'Forum', 'http://forums.shopify.com/community' %>
+      <span class="note">Ask questions and see what others already wanted to know.</span>
+    </li>
+  </ul>
+
+  <h3>Once you're ready</h3>
+
+  <p class="description">
+    We'd love to see what you create using the Shopify API. 
+    Find out how to share your application with the world and read the latest information on the <%= link_to 'API Publishing Page', 'http://www.shopify.com/developers/publishing/' %>.
+  </p>
+</div>
+
+
+<div id="orders">
+  <h2>Your recent orders</h2>
+
+  <% if @orders.blank? %>  
+
+    <em class="note">There are no orders in your store.</em>
+
+  <% else %>
+
+    <ul>
+    <% @orders.each do |order| %>
+      <li>
+        <div class="order box">
+          <div class="wrapper">
+            <strong><%= link_to order.name, "http://#{current_shop.url}/admin/orders/#{order.id}" %></strong>
+            <span class="price"><%= order.total_price %> <%= order.currency %></span>
+            <span class="highlight"><%= order.financial_status %></span>
+            by <span class="note"><%= order.billing_address.name %></span>
+          </div>
+        </div>
+      </li>
+    <% end %>
+    </ul>
+
+  <% end %>
+</div>
+
+
+<h2>Some of your products</h2>
+
+<% if @products.blank? %>
+
+  <em class="note">There are no products in your store.</em>
+
+<% else %>
+
+  <% @products.each do |product| %>
+    <div class="product box">
+      <div class="wrapper">
+        <%= image_tag product.images.first.small rescue '' %>
+
+        <h4><%= link_to product.title, "http://#{current_shop.url}/admin/products/#{product.id}" %></h4>
+
+        <p class="price"><%= product.price_range %> <%= current_shop.shop.currency %></p>
+        <p style="margin-bottom: 0"><%= product.product_type %> <span class="note">type</span></p>
+        <p style="margin: 0"><%= product.vendor %> <span class="note">vendor</span></p>
+      
+        <div style="clear:left"></div>
+      </div>
+    </div>
+  <% end %>
+
+<% end %>

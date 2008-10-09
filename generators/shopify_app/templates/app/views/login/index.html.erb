@@ -1,0 +1,15 @@
+<h1>Login</h1>
+
+<p>
+  First you have to register this app with a shop to allow access to its private admin data.
+</p>
+
+<% form_tag '/login/authenticate' do %>
+  <label for='shop'><strong>The URL of the Shop</strong>
+    <span class="hint">(or just the subdomain if it's at myshopify.com)</span>
+  </label>
+  <p>
+    <%= text_field_tag 'shop' %>
+  </p>
+  <%= submit_tag 'Authenticate' %>
+<% end %>

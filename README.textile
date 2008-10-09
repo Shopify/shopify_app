@@ -1,0 +1,38 @@
+h2. Shopify application generator
+
+h3. Description:
+
+This plugin adds access to Shopify's powerful API to your rails application. 
+    
+The generator creates a basic login controller for authenticating with your
+Shop and a controller called "dashboard" which displays basic information 
+about your products, orders and articles.
+    
+bq. _Note:_ It's recommended to use this on a new Rails project, so that the 
+generator won't overwrite/delete some of your files.
+
+h3. Installation:
+
+bq. @script/plugin install git://github.com/Shopify/shopify_app@
+
+h3. Usage:
+
+Pass your API key and then your Secret, which the login controller 
+will need to authenticate with your shop.
+
+If you don't have an API key yet, register your application at: "YourShopURL/admin/api":#
+
+(e.g. "http://yourshopname.myshopify.com/admin/api":#)
+
+    
+h3. Example:
+
+@script/generate shopify_app edffbb1bb793e2750686e6f4647a384a fed5bb18hde3e2750686e6f4647a781a@
+        
+This will create a login controller and a dashboard controller with their own views.
+
+h3. After running the generator:
+
+# Run your application with @script/server@
+# And visit "http://localhost:3000":http://localhost:3000 and you are ready to log in with your Shopify account. 
+
