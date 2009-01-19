@@ -3,13 +3,17 @@ class LoginController < ApplicationController
   
   def index
     # Ask user for their #{shop}.myshopify.com address
-    # (Set up your view so that "awesome-store.myshopify.com" comes back in params[:shop])
   end
 
   def authenticate
     redirect_to ShopifyAPI::Session.new(params[:shop]).create_permission_url
   end
 
+  # Shopify redirects the logged-in user back to this action along with
+  # the authorization token t.
+  # 
+  # This token is later combined with the developer's shared secret to form
+  # the password used to call API methods.
   def finalize
     shopify_session = ShopifyAPI::Session.new(params[:shop], params[:t])
     if shopify_session.valid?
