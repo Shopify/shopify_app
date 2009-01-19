@@ -1,5 +1,9 @@
 class LoginController < ApplicationController
+  layout 'empty'
+  
   def index
+    # Ask user for their #{shop}.myshopify.com address
+    # (Set up your view so that "awesome-store.myshopify.com" comes back in params[:shop])
   end
 
   def authenticate
@@ -27,4 +31,4 @@ class LoginController < ApplicationController
     
     redirect_to :action => 'index'
   end
-end
+end 

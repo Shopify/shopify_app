@@ -3,6 +3,7 @@ module ShopifyLoginProtection
   def shopify_session
     if session[:shopify]
       begin
+        # session[:shopify] set in LoginController#finalize
         ActiveResource::Base.site = session[:shopify].site
         yield
       ensure 
