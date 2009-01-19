@@ -1,10 +1,9 @@
 class LoginController < ApplicationController
-
   def index
   end
 
   def authenticate
-    redirect_to ShopifyAPI::Session.new(params[:shop]).create_permission_url    
+    redirect_to ShopifyAPI::Session.new(params[:shop]).create_permission_url
   end
 
   def finalize
@@ -13,11 +12,11 @@ class LoginController < ApplicationController
       session[:shopify] = shopify_session
       flash[:notice] = "Logged in to shopify store."
       
-      return_address = session[:return_to] || '/home'      
+      return_address = session[:return_to] || '/home'
       session[:return_to] = nil
       redirect_to return_address
     else
-      flash[:error] = "Could log in to shopify store."
+      flash[:error] = "Could not log in to Shopify store."
       redirect_to :action => 'index'
     end
   end
@@ -26,8 +25,6 @@ class LoginController < ApplicationController
     session[:shopify] = nil
     flash[:notice] = "Successfully logged out."
     
-    redirect_to :action => 'index'    
-  end  
-  
-  
+    redirect_to :action => 'index'
+  end
 end
