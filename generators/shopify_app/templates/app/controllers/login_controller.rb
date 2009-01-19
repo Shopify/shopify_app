@@ -1,6 +1,4 @@
 class LoginController < ApplicationController
-  layout 'empty'
-  
   def index
     # Ask user for their #{shop}.myshopify.com address
   end
