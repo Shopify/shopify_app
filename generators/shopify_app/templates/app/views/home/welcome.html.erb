@@ -30,8 +30,9 @@
           if (name.indexOf('.') == -1) {
             var api_url = name + '.myshopify.com';
           } else {
-            var api_url = name.replace(/^https?:\\/\\//, '');
+            var api_url = name.replace(/^https?:\/\//, ''); // Remove the "http://"
           }
+          api_url = api_url.replace(/\/$/, ''); // Trim trailing slashes
           $('api-form').action = 'http://' + api_url + '/admin/api_clients/new';
         }
       </script>
