@@ -1,3 +1,3 @@
 puts "---------------------------------------------------------------------------"
-puts " Pleae run ./script/generate shopify_app"
+puts " Please run ./script/generate shopify_app"
 puts "---------------------------------------------------------------------------"
