@@ -13,7 +13,7 @@ class LoginController < ApplicationController
   # This token is later combined with the developer's shared secret to form
   # the password used to call API methods.
   def finalize
-    shopify_session = ShopifyAPI::Session.new(params[:shop], params[:t])
+    shopify_session = ShopifyAPI::Session.new(params[:shop], params[:t], params)
     if shopify_session.valid?
       session[:shopify] = shopify_session
       flash[:notice] = "Logged in to shopify store."
