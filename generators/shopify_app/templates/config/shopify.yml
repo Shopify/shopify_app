@@ -1,8 +1,7 @@
 # If you don't have an API key yet, register your application at:
 # 
 # <YourShopURL>/admin/api (e.g. "http://shopname.myshopify.com/admin/api")
-
-
+#
 # Be sure to conceal these credentials if you make your application code public.
 # If you're using Git, put the following line in a file called .gitignore in your
 # repository root:
@@ -12,7 +11,13 @@
 # If you're using SVN, you can run this command from the application root:
 # 
 #   svn propedit svn:ignore ./config/shopify.yml
-
+#
+# You can also load your API credentials from the environment variables 
+# SHOPIFY_API_KEY and SHOPIFY_API_SECRET.
+#
+# If you are deploying to Heroku, you use config vars (http://docs.heroku.com/config-vars) for this purpose:
+#
+#   heroku config:add SHOPIFY_API_KEY=<%= api_key %> SHOPIFY_API_SECRET=<%= secret %>
 development:
   api_key: <%= api_key %>
   secret: <%= secret %>
@@ -20,14 +25,7 @@ development:
 test:
   api_key: <%= api_key %>
   secret: <%= secret %>
-
-
-# For added security in your production deployment, you can register for a second
-# set of credentials and store them in environment variables on your server as
-# shown below. If you are deploying to Heroku, you use config vars for this purpose:
-# 
-#  http://docs.heroku.com/config-vars
-  
+    
 production:
-  api_key: <%%= ENV['SHOPIFY_API_KEY'] %>
-  secret: <%%= ENV['SHOPIFY_API_SECRET'] %>
+  api_key: <%= api_key %>
+  secret: <%= secret %>
