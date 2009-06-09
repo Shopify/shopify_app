@@ -171,6 +171,12 @@ module ShopifyAPI
       collect.destroy if collect
     end
   end                                                                 
+  
+  class SmartCollection < ActiveResource::Base
+    def products
+      Product.find(:all, :params => {:collection_id => self.id})
+    end
+  end                                                                 
 
   # For adding/removing products from custom collections
   class Collect < ActiveResource::Base
@@ -223,6 +229,10 @@ module ShopifyAPI
     
     def collections
       CustomCollection.find(:all, :params => {:product_id => self.id})
+    end
+    
+    def smart_collections
+      SmartCollection.find(:all, :params => {:product_id => self.id})
     end
     
     def add_to_collection(collection)
