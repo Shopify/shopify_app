@@ -141,7 +141,7 @@ module ShopifyAPI
       signature = params[:signature]
       sorted_params = params.except(:signature, :action, :controller).collect{|k,v|"#{k}=#{v}"}.sort.join
 
-      Digest::MD5.hexdigest(secret + sorted_params) == signature
+      Digest::MD5.hexdigest(secret + sorted_params) == signature && params[:timestamp] > 24.hours.ago.utc.to_i
     end
   end
 
