@@ -3,6 +3,7 @@ require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
+require 'ftools'
 
 VERSION = '0.0.1'
 
@@ -34,4 +35,12 @@ end
 
 task :default => "pkg/#{spec.name}-#{spec.version}.gem" do
     puts "Generated latest version of Shopify API Gem: #{VERSION}"
+end
+
+desc "Publish the API documentation"
+task :update_api => "../shopify/app/services/shopify_api.rb" do
+  puts "Updating shopify_api.rb with newest..."
+  # TODO do this as a failover to pulling down straight from git
+  File.copy('../shopify/app/services/shopify_api.rb', 'lib/shopify_api.rb')
+  print "Done\n"
 end

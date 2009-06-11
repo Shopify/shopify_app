@@ -1,19 +1,8 @@
-<% current_host = "#{request.host}#{':' + request.port.to_s if request.port != 80}" %>
-
-<% shop_name_script = \
-"var name = $('shop').value; 
-if (name.indexOf('.') == -1) { var api_url = name + '.myshopify.com'; } else { var api_url = name.replace(/^https?:\\/\\//, ''); } 
-$('api-form').action = 'http://' + api_url + '/admin/api_clients/new';"
-%>
-
 <h1 class="green">Welcome</h1>
 
 <p>
-  This is a sample Shopify application, that shows you some examples on what you can do with the Shopify API.
+  This is an example Shopify application that shows what you can do with the Shopify API.
 </p>
-
-
-
 
 <div class="info" style="clear: both">
   This will send the <strong>API-Key</strong> and <strong>Secret</strong> to a shop, and make sure that you have the rights to 
@@ -26,9 +15,6 @@ $('api-form').action = 'http://' + api_url + '/admin/api_clients/new';"
   <p><strong>Note:</strong> There are no examples for <em>creating or editing</em> objects, but you are also able to do that with the Shopify API!</p>
 </div>
 
-
-
-
 <h3>1. Make sure you've entered a valid <em>API-Key</em> and <em>Secret</em></h3>
 
 <ul style="list-style-type: lower-alpha;">
@@ -36,11 +22,24 @@ $('api-form').action = 'http://' + api_url + '/admin/api_clients/new';"
     <p>
       If you haven't registered your application yet, then enter your shop's <strong>URL</strong> or <strong>subdomain</strong> here:<br/>
     </p>
-        
+    
     <div class="box grey" style="width: 500px;text-align: center">
-      <% form_tag '', :method => 'get', :id => 'api-form', :onsubmit => "#{shop_name_script} return true;", :style => 'margin-left: 16px;' do %>
+      <script type="text/javascript" charset="utf-8">
+        function getApiUrl() {
+          var name = $('shop').value; 
+          if (name.indexOf('.') == -1) {
+            var api_url = name + '.myshopify.com';
+          } else {
+            var api_url = name.replace(/^https?:\/\//, ''); // Remove the "http://"
+          }
+          api_url = api_url.replace(/\/$/, ''); // Trim trailing slashes
+          $('api-form').action = 'http://' + api_url + '/admin/api_clients/new';
+        }
+      </script>
+      
+      <% form_tag '', :method => 'get', :id => 'api-form', :onsubmit => "getApiUrl(); return true;", :style => 'margin-left: 16px;' do %>
         <%= text_field_tag 'shop', '', :size => 40 %>
-        <%= hidden_field_tag 'api_client[return_url]', "http://#{current_host}/login/finalize" %>
+        <%= hidden_field_tag 'api_client[return_url]', @callback_url %>
         <%= submit_tag 'Get API key' %>
       <% end %>
     </div>
@@ -57,7 +56,7 @@ $('api-form').action = 'http://' + api_url + '/admin/api_clients/new';"
 
 <h3 id="callback-step">2. Make sure your <em>callback URL</em> is correct</h3>
 
-The URL should be <code>http://<%= current_host %>/login/finalize</code>, 
+The URL should be <code><%= @callback_url %></code>, 
 with the host portion of the URL pointing to whichever domain is currently hosting this application. <br/> 
 The callback URL of your app can be changed in the API screen of your Shopify admin interface.
 
