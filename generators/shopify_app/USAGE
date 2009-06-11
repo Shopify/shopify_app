@@ -3,7 +3,7 @@ Description:
     you started. You can see some examples on how to use the Shopify API.
     
     The generator creates a basic login controller for authenticating with your
-    Shop and a controller called "dashboard" which displays basic information 
+    Shop and a controller called "home" which displays basic information 
     about your products, orders and articles.
     
     Note: It's recommended to use this on a new Rails project, so that the 
@@ -11,16 +11,13 @@ Description:
 
 Usage:
     Pass your API key and then your Secret, which the login controller 
-    will need to authenticate with your shop.
-    If you don't have an API key yet, register your application at:
-    
-    <YourShopURL>/admin/api 
-      (e.g. "http://shopname.myshopify.com/admin/api")
+    will need to authenticate with your shop. 
+    If you don't have an API key yet, register your application in our
+    partner system at http://www.shopify.com/partners
 
     
 Examples:
     script/generate shopify_app edffbb1bb793e2750686e6f4647a384a abbcee050...
         
-        Will create a login controller and a dashboard controller with their
-        own views.
+    This will create a login controller and a home controller and views.
         
