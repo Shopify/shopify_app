@@ -17,7 +17,7 @@ module ShopifyAPI
   #       application first for read/write permission to their data (needs to
   #       happen only once). User is asked for their shop url.
   # 
-  #    2. Application redirects to Shopify : GET <user's shop url>/admin/api/auth?app=<API key>
+  #    2. Application redirects to Shopify : GET <user's shop url>/admin/api/auth?api_key=<API key>
   #       (See Session#create_permission_url)
   # 
   #    3. User logs-in to Shopify, approves application permission request
