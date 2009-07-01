@@ -98,7 +98,7 @@ module ShopifyAPI
       self.url, self.token = url, token
 
       if params && params[:signature]
-        unless self.class.validate_signature(params) && params[:timestamp] > 24.hours.ago.utc.to_i
+        unless self.class.validate_signature(params) && params[:timestamp].to_i > 24.hours.ago.utc.to_i
           raise "Invalid Signature: Possible malicious login" 
         end
       end
