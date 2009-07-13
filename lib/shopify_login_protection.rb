@@ -10,7 +10,7 @@ module ShopifyLoginProtection
         ActiveResource::Base.site = nil
       end
     else            
-      session[:return_to] = request.path
+      session[:return_to] = request.request_uri
       redirect_to :controller => 'login'      
     end
   end
