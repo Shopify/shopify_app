@@ -4,7 +4,7 @@ class LoginController < ApplicationController
   end
 
   def authenticate
-    redirect_to ShopifyAPI::Session.new(params[:shop]).create_permission_url
+    redirect_to ShopifyAPI::Session.new(params[:shop].chomp('/')).create_permission_url
   end
 
   # Shopify redirects the logged-in user back to this action along with
