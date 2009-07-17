@@ -270,8 +270,8 @@ module ShopifyAPI
     end
     
     def attach_image(data, filename = nil)
-      attributes[:attachment] = Base64.encode64(data)
-      attributes[:filename] = filename unless filename.nil?
+      attributes['attachment'] = Base64.encode64(data)
+      attributes['filename'] = filename unless filename.nil?
     end
   end
 
@@ -311,5 +311,91 @@ module ShopifyAPI
   end
   
   class Redirect < Base
+  end
+  
+  
+  # Assets represent the files that comprise your theme.
+  # There are different buckets which hold different kinds
+  # of assets, each corresponding to one of the folders
+  # within a theme's zip file: layout, templates, and
+  # assets. The full key of an asset always starts with the
+  # bucket name, and the path separator is a forward slash,
+  # like layout/theme.liquid or assets/bg-body.gif.
+  #
+  # Initialize with a key:
+  #   asset = ShopifyAPI::Asset.new(:key => 'assets/special.css')
+  # 
+  # Find by key:
+  #   asset = ShopifyAPI::Asset.find('assets/image.png')
+  # 
+  # Get the text or binary value:
+  #   asset.value # decodes from attachment attribute if necessary
+  # 
+  # You can provide new data for assets in a few different ways:
+  # 
+  #   * assign text data for the value directly:
+  #       asset.value = "div.special {color:red;}"
+  #     
+  #   * provide binary data for the value:
+  #       asset.attach(File.read('image.png'))
+  #     
+  #   * set a URL from which Shopify will fetch the value:
+  #       asset.src = "http://mysite.com/image.png"
+  #     
+  #   * set a source key of another of your assets from which
+  #     the value will be copied:
+  #       asset.source_key = "assets/another_image.png"
+  class Asset < ActiveResource::Base
+    self.primary_key = 'key'
+    
+    # find an asset by key:
+    #   ShopifyAPI::Asset.find('layout/theme.liquid')
+    def self.find(*args)
+      if args[0].is_a?(Symbol)
+        super
+      else
+        find(:one, :from => "/admin/assets.xml", :params => {:asset => {:key => args[0]}})
+      end
+    end
+    
+    # For text assets, Shopify returns the data in the 'value' attribute.
+    # For binary assets, the data is base-64-encoded and returned in the
+    # 'attachment' attribute. This accessor returns the data in both cases.
+    def value
+      attributes['value'] ||
+      (attributes['attachment'] ? Base64.decode64(attributes['attachment']) : nil)
+    end
+    
+    def attach(data)
+      self.attachment = Base64.encode64(data)
+    end
+    
+    def destroy #:nodoc:
+      connection.delete(element_path(:asset => {:key => key}), self.class.headers)
+    end
+    
+    def new? #:nodoc:
+      false
+    end
+    
+    def self.element_path(id, prefix_options = {}, query_options = nil) #:nodoc:
+      prefix_options, query_options = split_options(prefix_options) if query_options.nil?
+      "#{prefix(prefix_options)}#{collection_name}.#{format.extension}#{query_string(query_options)}"
+    end
+    
+    def method_missing(method_symbol, *arguments) #:nodoc:
+      if %w{value= attachment= src= source_key=}.include?(method_symbol)
+        wipe_value_attributes
+      end
+      super
+    end
+    
+    private
+    
+    def wipe_value_attributes
+      %w{value attachment src source_key}.each do |attr|
+        attributes.delete(attr)
+      end
+    end
   end
 end
