@@ -7,8 +7,6 @@ require 'ftools'
 
 VERSION = '0.0.1'
 
-Gem::manage_gems
-
 puts 'Starting to build a new Gem...'
 spec = Gem::Specification.new do |s|
     s.platform = Gem::Platform::RUBY
