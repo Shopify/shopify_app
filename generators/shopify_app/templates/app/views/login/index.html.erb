@@ -6,7 +6,10 @@
 
 <% form_tag '/login/authenticate' do %>
   <label for='shop'><strong>The URL of the Shop</strong>
-    <span class="hint">(or just the subdomain if it&rsquo;s at myshopify.com)</span> <%= text_field_tag 'shop' %>
+    <span class="hint">(or just the subdomain if it&rsquo;s at myshopify.com)</span>
   </label>
-  <%= submit_tag 'Install' %>
+  <p>
+    <%= text_field_tag 'shop', {}, {:size => 45} %>
+    <%= submit_tag 'Install' %>
+  </p>
 <% end %>
