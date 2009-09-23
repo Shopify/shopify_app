@@ -398,4 +398,15 @@ module ShopifyAPI
       end
     end
   end
+  
+  class RecurringApplicationCharge < ActiveResource::Base
+    def self.current
+      find(:all).find{|charge| charge.status == 'active'}
+    end
+    
+    def cancel; load_attributes_from_response(post(:cancel)); end
+  end
+
+  class ApplicationCharge < ActiveResource::Base
+  end
 end
