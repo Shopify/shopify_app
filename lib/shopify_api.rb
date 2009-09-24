@@ -123,7 +123,7 @@ module ShopifyAPI
 
     # Used by ActiveResource::Base to make all non-authentication API calls
     # 
-    # (Shopify::Base.site set in ShopifyLoginProtection#shopify_session)
+    # (ShopifyAPI::Base.site set in ShopifyLoginProtection#shopify_session)
     def site
       "#{protocol}://#{api_key}:#{computed_password}@#{url}/admin"
     end
@@ -404,7 +404,9 @@ module ShopifyAPI
       find(:all).find{|charge| charge.status == 'active'}
     end
     
-    def cancel; load_attributes_from_response(post(:cancel)); end
+    def cancel
+      load_attributes_from_response(self.destroy)
+    end
   end
 
   class ApplicationCharge < ActiveResource::Base
