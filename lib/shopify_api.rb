@@ -164,7 +164,7 @@ module ShopifyAPI
   #
   class Shop < Base
     def self.current
-      ActiveResource::Base.find(:one, :from => "/admin/shop.xml")
+      Base.find(:one, :from => "/admin/shop.xml")
     end
   end               
 
@@ -345,7 +345,7 @@ module ShopifyAPI
   #   * set a source key of another of your assets from which
   #     the value will be copied:
   #       asset.source_key = "assets/another_image.png"
-  class Asset < ActiveResource::Base
+  class Asset < Base
     self.primary_key = 'key'
     
     # find an asset by key:
@@ -399,7 +399,7 @@ module ShopifyAPI
     end
   end
   
-  class RecurringApplicationCharge < ActiveResource::Base
+  class RecurringApplicationCharge < Base
     def self.current
       find(:all).find{|charge| charge.status == 'active'}
     end
@@ -409,6 +409,6 @@ module ShopifyAPI
     end
   end
 
-  class ApplicationCharge < ActiveResource::Base
+  class ApplicationCharge < Base
   end
 end
