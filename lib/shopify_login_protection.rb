@@ -4,10 +4,10 @@ module ShopifyLoginProtection
     if session[:shopify]
       begin
         # session[:shopify] set in LoginController#finalize
-        ActiveResource::Base.site = session[:shopify].site
+        Shopify::Base.site = session[:shopify].site
         yield
       ensure 
-        ActiveResource::Base.site = nil
+        ShopifyAPI::Base.site = nil
       end
     else            
       session[:return_to] = request.request_uri
