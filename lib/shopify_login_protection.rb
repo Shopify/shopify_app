@@ -4,7 +4,7 @@ module ShopifyLoginProtection
     if session[:shopify]
       begin
         # session[:shopify] set in LoginController#finalize
-        Shopify::Base.site = session[:shopify].site
+        ShopifyAPI::Base.site = session[:shopify].site
         yield
       ensure 
         ShopifyAPI::Base.site = nil
