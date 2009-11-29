@@ -5,7 +5,7 @@ h3. Description:
 This plugin adds access to Shopify's powerful API to your rails application. 
     
 The generator creates a basic login controller for authenticating with your
-Shop and a controller called "dashboard" which displays basic information 
+Shop and a controller called "home" which displays basic information 
 about your products, orders and articles.
     
 bq. _Note:_ It's recommended to use this on a new Rails project, so that the 
@@ -29,7 +29,7 @@ h3. Example:
 
 @script/generate shopify_app edffbb1bb793e2750686e6f4647a384a fed5bb18hde3e2750686e6f4647a781a@
         
-This will create a login controller and a dashboard controller with their own views.
+This will create a login controller and a home controller with their own views.
 
 h3. After running the generator:
 
