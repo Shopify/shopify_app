@@ -8,7 +8,7 @@
   This will send the <strong>API-Key</strong> and <strong>Secret</strong> to a shop, and make sure that you have the rights to 
   access its private admin data.<br/>
   After authenticating, you will be redirected to the <code>finalize</code> action of your <code>LoginController</code>, which stores the session, and then redirects you to your example dashboard.<br/>
-  Your <code>DashboardController</code> will get your recent <code>Orders</code> and <code>Articles</code> through the 
+  Your <code>HomeController</code> will get your recent <code>Orders</code> and <code>Articles</code> through the 
   Shopify <%= link_to 'REST', 'http://www.xfront.com/REST-Web-Services.html', :title => "Get more information about REST web services in general" %> API and list them with all of your <code>Products</code>.
   You can click on a link of one of your objects and will then be taken to the corresponding admin area of your shop.<br/>
 
@@ -67,7 +67,7 @@ The callback URL of your app can be changed in the API screen of your Shopify ad
     This will send the <strong>API-Key</strong> and <strong>Secret</strong> to a shop, and make sure that you have the rights to 
     access its private admin data.<br/>
     After authenticating, you will be redirected to the <code>finalize</code> action of your <code>LoginController</code>, which stores the session, and then redirects you to your example dashboard.<br/>
-    Your <code>DashboardController</code> will get your recent <code>Orders</code> and <code>Articles</code> through the 
+    Your <code>HomeController</code> will get your recent <code>Orders</code> and <code>Articles</code> through the 
     Shopify <%= link_to 'REST', 'http://www.xfront.com/REST-Web-Services.html', :title => "Get more information about REST web services in general" %> API and list them with all of your <code>Products</code>.
     You can click on a link of one of your objects and will then be taken to the corresponding admin area of your shop.<br/>
     
@@ -75,7 +75,7 @@ The callback URL of your app can be changed in the API screen of your Shopify ad
   </div>
 </div>
 
-<h3>4. Check out the source code of the <code>dashboard_controller</code> and its <code>index</code> template</h3>
+<h3>4. Check out the source code of the <code>home_controller</code> and its <code>index</code> template</h3>
 
 <p class="description">
   You can analyze those files to see how the ShopifyAPI is used and get a glimpse of what's possible.
