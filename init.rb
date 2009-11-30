@@ -1,5 +1,10 @@
-require 'shopify_api'
 require 'shopify_login_protection'
+begin
+  require 'shopify_api'
+rescue MissingSourceFile
+  STDERR.puts "[Shopify App] ERROR - This plugin requires the shopify_api gem. Run `sudo gem install shopify_api`."
+  exit(1)
+end
 
 if ENV['SHOPIFY_API_KEY'] && ENV['SHOPIFY_API_SECRET']
   Rails.logger.info "[Shopify App] Loading API credentials from environment"

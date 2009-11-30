@@ -13,6 +13,8 @@ generator won't overwrite/delete some of your files.
 
 h3. Installation:
 
+bq. @sudo gem install shopify_api@
+
 bq. @script/plugin install git://github.com/Shopify/shopify_app@
 
 h3. Usage:
