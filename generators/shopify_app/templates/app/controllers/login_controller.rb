@@ -4,9 +4,13 @@ class LoginController < ApplicationController
   end
 
   def authenticate
-    redirect_to ShopifyAPI::Session.new(params[:shop].chomp('/')).create_permission_url
+    if params[:shop].present?
+      redirect_to ShopifyAPI::Session.new(params[:shop].to_s).create_permission_url
+    else
+      redirect_to return_address
+    end
   end
-
+  
   # Shopify redirects the logged-in user back to this action along with
   # the authorization token t.
   # 
@@ -18,9 +22,8 @@ class LoginController < ApplicationController
       session[:shopify] = shopify_session
       flash[:notice] = "Logged in to shopify store."
       
-      return_address = session[:return_to] || '/home'
-      session[:return_to] = nil
       redirect_to return_address
+      session[:return_to] = nil
     else
       flash[:error] = "Could not log in to Shopify store."
       redirect_to :action => 'index'
@@ -33,4 +36,10 @@ class LoginController < ApplicationController
     
     redirect_to :action => 'index'
   end
-end 
+  
+  protected
+  
+  def return_address
+    session[:return_to] || root_url
+  end
+end
