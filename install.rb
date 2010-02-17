@@ -5,7 +5,7 @@ puts
 puts "To get started, first register your app as a Shopify Partner:"
 puts
 puts " * Go to http://www.shopify.com/partners and create or login to your Partner account."
-puts " * Jump over to the Apps tab and hit the “Create a new app button”"
+puts " * Jump over to the Apps tab and hit the Create a new app button"
 puts "   (Make sure to set the Return URL to http://localhost:3000/login/finalize during development)"
 puts " * Install the Shopify API gem. Run sudo gem install shopify_api"
 puts " * Run ./script/generate shopify_app <api_key> <secret>"
