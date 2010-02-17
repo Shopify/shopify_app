@@ -2,7 +2,7 @@ require 'shopify_login_protection'
 begin
   require 'shopify_api'
 rescue MissingSourceFile
-  STDERR.puts "[Shopify App] ERROR - This plugin requires the shopify_api gem. Run `sudo gem install shopify_api`."
+  STDERR.puts "[Shopify App] ERROR - This plugin requires the shopify_api gem. Run `gem install shopify_api`."
   exit(1)
 end
 
