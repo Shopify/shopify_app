@@ -1,40 +1,54 @@
-h2. Shopify application generator
+h2. Shopify application generator for Rails 3
 
 h3. Description:
 
-This plugin adds access to Shopify's powerful API to your rails application. 
-    
+This plugin makes it easy to get a Rails 3 app up and running with the
+Shopify API.
+
 The generator creates a basic login controller for authenticating with your
-Shop and a controller called "home" which displays basic information 
-about your products, orders and articles.
-    
-bq. _Note:_ It's recommended to use this on a new Rails project, so that the 
+shop and a controller called "home" which displays basic information about
+your products, orders and articles.
+
+bq. _Note:_ It's recommended to use this on a new Rails project, so that the
 generator won't overwrite/delete some of your files.
 
 h3. Installation:
 
-bq. @gem install shopify_api@
-
-bq. @script/plugin install git://github.com/Shopify/shopify_app@
+<pre>
+<code>
+  $ gem install shopify_api
+  $ rails plugin install git://github.com/Shopify/shopify_app.git
+</code>
+</pre>
 
 h3. Usage:
 
-Pass your API key and then your Secret, which the login controller 
-will need to authenticate with your shop.
+<pre>
+<code>
+  $ rails generate shopify_app your_app_api_key your_app_secret
+</code>
+</pre>
 
-If you don't have an API key yet, register your application at: "YourShopURL/admin/api":#
+If you don't have an API key yet, create a Shopify Partner account at
+http://shopify.com/partners and create an app. You can also create test shops
+once you're logged in as a partner.
 
-(e.g. "http://yourshopname.myshopify.com/admin/api":#)
+You can also create a private application that only works for your shop by
+visiting "https://YOUR-SHOP.myshopify.com/admin/api":https://YOUR-SHOP.myshopify.com/admin/api
 
-    
-h3. Example:
+h4. Example:
 
-@script/generate shopify_app edffbb1bb793e2750686e6f4647a384a fed5bb18hde3e2750686e6f4647a781a@
+<pre>
+<code>
+  $ rails generate shopify_app edffbb1bb793e2750686e6f4647a384a fed5bb18hde3e2750686e6f4647a781a
+</code>
+</pre>
         
-This will create a login controller and a home controller with their own views.
+This will create a LoginController and a HomeController with their own views.
 
 h3. After running the generator:
 
-# Run your application with @script/server@
-# And visit "http://localhost:3000":http://localhost:3000 and you are ready to log in with your Shopify account. 
+# Start your application with @rails server@
+# Visit "http://localhost:3000":http://localhost:3000 and you are ready to
+log in with your Shopify account.
 
