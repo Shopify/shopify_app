@@ -16,7 +16,11 @@ h3. Installation:
 
 <pre>
 <code>
-  $ gem install shopify_api
+  # Add @gem shopify_api@ to your Gemfile
+  $ echo "gem 'shopify_api'" >> Gemfile
+  
+  $ bundle install
+  
   $ rails plugin install git://github.com/Shopify/shopify_app.git
 </code>
 </pre>
@@ -46,9 +50,26 @@ h4. Example:
         
 This will create a LoginController and a HomeController with their own views.
 
-h3. After running the generator:
+h3. After running the generator
 
-# Start your application with @rails server@
-# Visit "http://localhost:3000":http://localhost:3000 and you are ready to
-log in with your Shopify account.
+First, start your application:
 
+<pre>
+<code>
+  $ rails server
+</code>
+</pre>
+
+Now visit "http://localhost:3000":http://localhost:3000 and install your
+application in a Shopify store.
+
+After your application has been given read or read/write API permission by the
+shop, you're ready to start experimenting with the Shopify API.
+
+h3. Questions or problems?
+
+"API Reference":http://api.shopify.com <= Read up on the possible calls!
+
+"Developer Forums":http://forums.shopify.com/categories/9 <= Talk to new friends!
+
+"Developer Wiki":http://wiki.shopify.com/Shopify_App_Development <= Edit the docs!

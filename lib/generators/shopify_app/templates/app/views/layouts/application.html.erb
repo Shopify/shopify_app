@@ -1,47 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<meta http-equiv="imagetoolbar" content="no" />
-	<meta name="MSSmartTagsPreventParsing" content="true" />
-
   <title>Shopify Application</title>
-
-  <%= stylesheet_link_tag 'application' %>
-  <%= javascript_include_tag 'prototype' %>
+  <%= stylesheet_link_tag :all %>
+  <%= javascript_include_tag :defaults %>
+  <%= csrf_meta_tag %>
 </head>
-	
+
 <body>
-  
   <div id="header">
-    <h1><%= link_to 'Shopify Demo Application', '/' %></h1>      
+    <h1><%= link_to 'Shopify Demo Application', '/' %></h1>
     
-    <p id="login-link">  
+    <p id="login-link">
       <% if current_shop %>
-          <span class="note">current shop</span> <%= link_to current_shop.url, "http://#{current_shop.url}", :class => 'shop_name' %> <span class="note">|</span>           
+          <span class="note">current shop</span> <%= link_to current_shop.url, "http://#{current_shop.url}", :class => 'shop_name' %> <span class="note">|</span>
           <%= link_to 'logout', :controller => "login", :action => 'logout' %>
       <% end %>
     </p>
   </div>
 
   <div id="container" class="clearfix">
-    
     <ul id="tabs">
       <%= tab :index, {:controller => 'home'}, :label => 'Home' %>
       <%= tab :design, {:controller => 'home', :action => 'design'}, :label => 'Design Help' %>
     </ul>
-  
+    
     <!-- Flash error & notice-->
     <% if flash[:error] %> <div id="flasherrors"><%= flash[:error] %></div><% end %>
     <% if flash[:notice] %><div id="flashnotices"><%= flash[:notice] %></div><% end %>
   
     <!-- begin div.main-->
     <div id="main">
-      <%= yield %>   
+      <%= yield %>
     </div>
     <!-- end div.main -->
-        
   </div>
-    
 </body>
 </html>
