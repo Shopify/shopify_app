@@ -1,4 +1,4 @@
-module ShopifyLoginProtection
+module ShopifyApp::LoginProtection
 
   def shopify_session
     if session[:shopify]
@@ -9,14 +9,13 @@ module ShopifyLoginProtection
       ensure 
         ShopifyAPI::Base.site = nil
       end
-    else            
+    else
       session[:return_to] = request.fullpath
-      redirect_to :controller => 'login'      
+      redirect_to :controller => 'login'
     end
   end
   
   def current_shop
     session[:shopify]
   end
-    
 end

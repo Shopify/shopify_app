@@ -1,0 +1,58 @@
+= Shopify application generator for Rails 3
+
+== Description
+
+This plugin makes it easy to get a Rails 3 app up and running with the
+Shopify API.
+
+The generator creates a basic login controller for authenticating with your
+shop and a controller called "home" which displays basic information about
+your products, orders and articles.
+
+<i>Note: It's recommended to use this on a new Rails project, so that the
+generator won't overwrite/delete some of your files.</i>
+
+== Installation
+
+    # Add the gem shopify_app to your Gemfile
+    $ echo "gem 'shopify_app'" >> Gemfile
+    $ bundle install
+
+== Usage
+
+    $ rails generate shopify_app your_app_api_key your_app_secret
+
+If you don't have an API key yet, create a Shopify Partner account at
+http://shopify.com/partners and create an app. You can also create test shops
+once you're logged in as a partner.
+
+When you create your app in the Shopify Partner Account, set the return URL to
+<tt>http://localhost:3000/login/finalize</tt>
+
+You can also create a private application that only works for your shop by
+visiting https://YOUR-SHOP.myshopify.com/admin/api
+
+=== Example
+
+    $ rails generate shopify_app edffbb1bb793e2750686e6f4647a384a fed5bb18hde3e2750686e6f4647a781a
+
+This will create a LoginController and a HomeController with their own views.
+
+== After running the generator
+
+First, start your application:
+
+    $ rails server
+
+Now visit http://localhost:3000 and install your application in a Shopify store.
+
+After your application has been given read or read/write API permission by the
+shop, you're ready to start experimenting with the Shopify API.
+
+== Questions or problems?
+
+http://api.shopify.com <= Read up on the possible API calls!
+
+http://forums.shopify.com/categories/9 <= Talk to new friends!
+
+http://wiki.shopify.com/Shopify_App_Development <= Edit the docs!

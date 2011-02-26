@@ -20,4 +20,3 @@ Examples:
     script/generate shopify_app edffbb1bb793e2750686e6f4647a384a abbcee050...
         
     This will create a login controller and a home controller and views.
-        
