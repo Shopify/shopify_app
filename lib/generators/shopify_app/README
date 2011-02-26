@@ -1,16 +1,22 @@
 
 
-Now start your application with
+What's next?
+------------
+
+Make sure to set the return URL of the application your Shopify partner account 
+to <tt>http://localhost:3000/login/finalize</tt>.
+
+Then, start your application with:
 
   $ rails server
 
-Now visit "http://localhost:3000":http://localhost:3000 and install your
-application in a Shopify store.
+Now visit http://localhost:3000 and install your application in a Shopify store.
 
 After your application has been given read or read/write API permission by the
 shop, you're ready to start experimenting with the Shopify API.
 
 Questions or problems?
+----------------------
 
 API Reference     http://api.shopify.com
 Developer Forums  http://forums.shopify.com/categories/9
