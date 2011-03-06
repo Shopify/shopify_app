@@ -1,5 +1,4 @@
 module ShopifyApp::LoginProtection
-
   def shopify_session
     if session[:shopify]
       begin

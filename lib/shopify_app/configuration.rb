@@ -1,6 +1,3 @@
-class ShopifyApp::Configuration
-  
-  attr_accessor :api_key
-  
-  attr_accessor :secret
+class ShopifyApp::Configuration  
+  attr_accessor :api_key, :secret
 end

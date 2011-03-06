@@ -20,7 +20,6 @@ class ShopifyAppGenerator < Rails::Generators::Base
   end
   
   def add_config_variables
-    
     api_key_str = api_key.nil? ? "ENV['SHOPIFY_API_KEY']" : api_key.inspect
     api_secret_str = secret.nil? ? "ENV['SHOPIFY_API_SECRET']" : secret.inspect
     
@@ -29,6 +28,7 @@ class ShopifyAppGenerator < Rails::Generators::Base
     # Shopify API connection credentials:
     config.shopify.api_key = #{api_key_str}
     config.shopify.secret = #{api_secret_str}
+    
     DATA
   end
   
