@@ -13,7 +13,7 @@
     
     <p id="login-link">
       <% if current_shop %>
-          <span class="note">current shop</span> <%= link_to current_shop.url, "http://#{current_shop.url}", :class => 'shop_name' %> <span class="note">|</span>
+          <span class="note">current shop</span> <%= link_to current_shop.url, "https://#{current_shop.url}", :class => 'shop_name' %> <span class="note">|</span>
           <%= link_to 'logout', :controller => "login", :action => 'logout' %>
       <% end %>
     </p>

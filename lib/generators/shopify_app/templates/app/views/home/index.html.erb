@@ -62,7 +62,7 @@
       <li>
         <div class="order box">
           <div class="wrapper">
-            <strong><%= link_to order.name, "http://#{current_shop.url}/admin/orders/#{order.id}" %></strong>
+            <strong><%= link_to order.name, "https://#{current_shop.url}/admin/orders/#{order.id}" %></strong>
             <span class="price"><%= order.total_price %> <%= order.currency %></span>
             <span class="highlight"><%= order.financial_status %></span>
             by <span class="note"><%= order.billing_address.name %></span>
@@ -89,7 +89,7 @@
       <div class="wrapper">
         <%= image_tag product.images.first.small rescue '' %>
 
-        <h4><%= link_to product.title, "http://#{current_shop.url}/admin/products/#{product.id}" %></h4>
+        <h4><%= link_to product.title, "https://#{current_shop.url}/admin/products/#{product.id}" %></h4>
 
         <p class="price"><%= product.price_range %> <%= current_shop.shop.currency %></p>
         <p style="margin-bottom: 0"><%= product.product_type %> <span class="note">type</span></p>
