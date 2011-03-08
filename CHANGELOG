@@ -1,2 +1,2 @@
-* Require shopify_api gem
+* Require shopify_api gem via proper railtie setup [willem]
 * Don't require shopify.yml when using environment variables [cody]
