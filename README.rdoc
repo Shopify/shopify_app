@@ -2,12 +2,12 @@
 
 == Description
 
-This plugin makes it easy to get a Rails 3 app up and running with the
+This gem makes it easy to get a Rails 3 app up and running with the
 Shopify API.
 
 The generator creates a basic login controller for authenticating with your
-shop and a controller called "home" which displays basic information about
-your products, orders and articles.
+shop and a HomeController which displays basic information about your
+products, orders and articles.
 
 <i>Note: It's recommended to use this on a new Rails project, so that the
 generator won't overwrite/delete some of your files.</i>
