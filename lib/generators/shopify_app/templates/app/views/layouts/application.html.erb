@@ -14,15 +14,15 @@
     <p id="login-link">
       <% if current_shop %>
           <span class="note">current shop</span> <%= link_to current_shop.url, "https://#{current_shop.url}", :class => 'shop_name' %> <span class="note">|</span>
-          <%= link_to 'logout', :controller => "login", :action => 'logout' %>
+          <%= link_to 'logout', logout_path %>
       <% end %>
     </p>
   </div>
 
   <div id="container" class="clearfix">
     <ul id="tabs">
-      <%= tab :index, {:controller => 'home'}, :label => 'Home' %>
-      <%= tab :design, {:controller => 'home', :action => 'design'}, :label => 'Design Help' %>
+      <%= tab :index, {:controller => '/home'}, :label => 'Home' %>
+      <%= tab :design, {:controller => '/home', :action => 'design'}, :label => 'Design Help' %>
     </ul>
     
     <!-- Flash error & notice-->
