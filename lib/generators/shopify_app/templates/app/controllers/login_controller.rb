@@ -10,7 +10,7 @@ class LoginController < ApplicationController
 
   def authenticate
     if params[:shop].present?
-      redirect_to ShopifyAPI::Session.new(params[:shop].to_s).create_permission_url
+      redirect_to ShopifyAPI::Session.new(params[:shop].to_s.strip).create_permission_url
     else
       redirect_to return_address
     end
