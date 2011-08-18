@@ -34,13 +34,13 @@ class ShopifyAppGenerator < Rails::Generators::Base
   
   def add_routes
     unless options[:skip_routes]
-      route "match 'login/logout'       => 'login#logout'"
-      route "match 'login/finalize'     => 'login#finalize'"
-      route "match 'login/authenticate' => 'login#authenticate'"
-      route "match 'login'              => 'login#index'"
+      route "root :to                   => 'home#index'"
+      route "match 'login/logout'       => 'login#logout',       :as => :logout"
+      route "match 'login/finalize'     => 'login#finalize',     :as => :finalize"
+      route "match 'login/authenticate' => 'login#authenticate', :as => :authenticate"
+      route "match 'login'              => 'login#index',        :as => :login"
       route "match 'design'             => 'home#design'"
       route "match 'welcome'            => 'home#welcome'"
-      route "root :to                   => 'home#index'"
     end
   end
   
