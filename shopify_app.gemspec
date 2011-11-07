@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "shopify-api"
 
-  s.add_runtime_dependency('rails', '~> 3')
+  s.add_runtime_dependency('rails', '~> 3.1')
   s.add_runtime_dependency('shopify_api')
   
   s.add_development_dependency('rake')
