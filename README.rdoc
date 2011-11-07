@@ -53,6 +53,6 @@ shop, you're ready to start experimenting with the Shopify API.
 
 http://api.shopify.com <= Read up on the possible API calls!
 
-http://forums.shopify.com/categories/9 <= Talk to new friends!
+https://groups.google.com/forum/#!forum/shopify-api <= Talk to new friends!
 
 http://wiki.shopify.com/Shopify_App_Development <= Edit the docs!
