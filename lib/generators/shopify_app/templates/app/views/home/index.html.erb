@@ -1,103 +1,168 @@
-<div id="sidebar">
-  <h3>Where to start</h3>
-  <h4>Check out the <code style="font-size: 140%">home_controller</code></h4>
+<header class="jumbotron">
+  <div class="inner">
+    <div class="container">
+      <h1 style="letter-spacing:-3px; margin-bottom:20px;">Where do I start?</h1>
+      <p class="lead">An <strong>intro</strong> to using the Shopify App Template<br/>
+      including information on the <strong>Shopify API</strong> and <strong>Bootstrap,</strong><br/>
+      just to get the ball rolling.</p>
+    </div><!-- /container -->
+  </div>
+</header>
 
-  <p class="description">
-    The controller in this demo application fetches the latest 3 orders and products and makes them available as instance variables <code style="color: #218BCE">@orders</code> and <code style="color: #218BCE">@products</code>.
-  </p>
-
-  <h4>Check out the <code>index</code> template</h4>
-
-  <p class="description">
-    This is the Ruby template you are currently looking at. It is located at:<br />  
-  </p>
-
-  <p style="background: #fff; margin-left: 4px"><code>views/home/index.html.erb</code></p>
-
-  <p class="description">
-    Have a look at the markup and Ruby code to see how the Shopify API is being used.
-  </p>
-  
-  <h3>Additional documentation</h3>
-
-  <p class="description">
-    Become an expert:
-  </p>
-
-  <ul>
-    <li>
-      <%= link_to 'API documentation', 'http://www.shopify.com/developers/api/' %>
-      <span class="note">The reference: what you can do with the Shopify API.</span>
-    </li>
-    <li>
-      <%= link_to 'Wiki', 'http://wiki.shopify.com/' %>
-      <span class="note">Get more information and share your knowledge.</span>
-    </li>
-    <li>
-      <%= link_to 'Forum', 'http://forums.shopify.com/community' %>
-      <span class="note">Ask questions and see what others already wanted to know.</span>
-    </li>
-  </ul>
-
-  <h3>Once you're ready</h3>
-
-  <p class="description">
-    We'd love to see what you create using the Shopify API. 
-    Find out how to share your application with the world and read the latest information on the <%= link_to 'API Publishing Page', 'http://www.shopify.com/developers/publishing/' %>.
-  </p>
-</div>
-
-
-<div id="orders">
-  <h2>Your recent orders</h2>
-
-  <% if @orders.blank? %>  
-
-    <em class="note">There are no orders in your store.</em>
-
-  <% else %>
-
+<div class="row">
+  <div class="span3">
+    <div class="well">  
+      <h3>Check out the <code>home_controller</code></h3>
+      <hr style="margin:2px 0 7px"/>
+      <p>The controller in this demo application fetches the newest 5 orders and products and makes them available as instance variables <code>@orders</code> and <code>@products</code></p>
+    
+      <br/>
+    
+      <h3>Take a look at <code>index.html.erb</code></h3>
+      <hr style="margin:2px 0 7px"/>
+      <p>Index is the Ruby template you are currently viewing. Have a look at the markup and Ruby code to see how the Shopify API is being used. It's located at <code>views/home/index.html.erb</code></p>
+    </div>
+    
+    <h3>Additional Docs</h3>
+    <p>You can become an expert pretty quickly by reading up on these docs:</p>
+    
     <ul>
-    <% @orders.each do |order| %>
       <li>
-        <div class="order box">
-          <div class="wrapper">
-            <strong><%= link_to order.name, "https://#{current_shop.url}/admin/orders/#{order.id}" %></strong>
-            <span class="price"><%= order.total_price %> <%= order.currency %></span>
-            <span class="highlight"><%= order.financial_status %></span>
-            by <span class="note"><%= order.billing_address.name %></span>
+        <%= link_to 'API documentation', 'http://www.shopify.com/developers/api/' %>
+        <span class="note">Learn what you can do with the Shopify API</span>
+      </li><br/>
+      <li>
+        <%= link_to 'Bootstrap documentation', 'http://twitter.github.com/bootstrap/' %>
+        <span class="note">Find out what you can do with Twitter Bootstrap</span>
+      </li><br/>
+      <li>
+        <%= link_to 'Wiki', 'http://wiki.shopify.com/' %>
+        <span class="note">Get more information and share your knowledge</span>
+      </li><br/>
+      <li>
+        <%= link_to 'Forum', 'http://forums.shopify.com/community' %>
+        <span class="note">Ask questions and see what others already wanted to know</span>
+      </li>
+    </ul>
+  
+    <hr/>
+  
+    <h3>Once you're ready</h3>
+  
+    <p>We'd love to see what you create using the Shopify API. You can keep up to date on the latest and greatest via the <%= link_to 'Shopify API Twitter Account', 'http://www.twitter.com/shopifyapi' %>. You can also read the latest information on the <%= link_to 'API Publishing Page', 'http://www.shopify.com/developers/publishing/' %>.</p>
+    
+    <br/>
+    
+    <a href="https://twitter.com/shopifyapi" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @shopifyapi</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div> <!-- span3 / left-column -->
+
+
+  <div class="span8 offset1">
+    <h2>Recent orders</h2>
+  
+    <% if @orders.blank? %>
+      <table class="table table-striped">
+        <tr>
+          <td><em>There are no orders in your store.</em></td>
+        </tr>
+      </table>
+    
+    <% else %>
+  
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Placed by</th>
+            <th>Paid</th>
+            <th>Fulfillment</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+      <% @orders.each do |order| %>
+        <tr>
+          <td><%= link_to order.name, "https://#{current_shop.url}/admin/orders/#{order.id}", :target => 'blank' %></td>
+          <td><%= order.billing_address.name %></td>
+          <td>
+            <span class="label  <% if order.financial_status  == 'paid' %>label-success<% end %> <% if order.financial_status  == 'pending' %>label-warning<% end %> <% if order.financial_status  == 'refunded' %>label-important<% end %>"><%= order.financial_status %>
+            </span>
+          </td>
+          <td>
+            <% if !order.fulfillment_status %>
+            <span class="label">Not Fulfilled</span>
+            <% else %>
+            <span class="label label-success">Fulfilled</span>
+            <% end %>
+          </td>
+          <td><%= order.total_price %> <%= order.currency %></td>
+        </tr>
+      <% end %>
+      </table>
+      
+    <% end %>
+    
+    <br/>
+    
+    <h2>New Products</h2>
+    
+    <div class="accordion" id="accordion">      
+      
+      <% if @products.blank? %>
+      
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <em>There are no products in your store.</em>
           </div>
         </div>
-      </li>
-    <% end %>
-    </ul>
-
-  <% end %>
-</div>
-
-
-<h2>Some of your products</h2>
-
-<% if @products.blank? %>
-
-  <em class="note">There are no products in your store.</em>
-
-<% else %>
-
-  <% @products.each do |product| %>
-    <div class="product box">
-      <div class="wrapper">
-        <%= image_tag product.images.first.small rescue '' %>
-
-        <h4><%= link_to product.title, "https://#{current_shop.url}/admin/products/#{product.id}" %></h4>
-
-        <p class="price"><%= product.price_range %> <%= current_shop.shop.currency %></p>
-        <p style="margin-bottom: 0"><%= product.product_type %> <span class="note">type</span></p>
-        <p style="margin: 0"><%= product.vendor %> <span class="note">vendor</span></p>
       
-        <div style="clear:left"></div>
-      </div>
-    </div>
-  <% end %>
-
-<% end %>
+      <% else %>
+      
+        <%  @products.each_with_index do |product, index| %>
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#<%= product.id %>">
+                <%= product.title %> <span class="pull-right muted"><%= product.price_range %> <%= current_shop.shop.currency %></span>
+              </a>
+            </div>
+        
+            <div id="<%= product.id %>" class="accordion-body collapse <% if index == 1 %>in<% end %>">
+              <div class="accordion-inner">
+                
+                <% if !product.images.empty? %>
+                  <div class="polaroid">
+                    <%= link_to image_tag(product.images.first.medium), '#modal-'+product.id.to_s, :'data-toggle' => 'modal' %>
+                  </div>
+                <% end %>
+                
+                <p><strong>Type:</strong> <%= product.product_type %></p>
+                <p><strong>Vendor:</strong> <%= product.vendor %></p>
+                <p><%= raw(product.body_html) %></p><br/>
+                <% if product.published_at != nil %>
+                <p class="muted">Published at <%= Time.parse(product.published_at).strftime("%H:%M on %m/%d/%Y") %></p>
+                <% end %>
+                <p><%= link_to raw('View in your Shopify Admin <i class="icon-chevron-right" style="opacity:.25"></i>'), "https://#{current_shop.url}/admin/products/#{product.id}", :target => 'blank', :class => 'btn btn-primary' %></p>
+              </div>
+              
+            </div>
+          </div>
+          
+          <div class="modal hide fade" id="modal-<%= product.id %>" style="display:none;">
+            <div class="modal-header">
+              <a class="close" data-dismiss="modal">×</a>
+              <h3><%= product.title %></h3>
+            </div>
+            <div class="modal-body" >
+              <% if !product.images.empty? %>
+                <%= image_tag product.images.first.large %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      
+      <% end %>
+      
+    </div> <!-- accordion -->
+  </div> <!-- span8 / right-column -->
+</div>

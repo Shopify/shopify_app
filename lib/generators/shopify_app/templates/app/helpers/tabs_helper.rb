@@ -1,10 +1,11 @@
 module TabsHelper
-  # Create a tab as <li> and give it the id "current" if the current action matches that tab
-  def tab(name, url, options = {})
-    if controller.action_name =~ (options[:highlight] = /#{name}/i)  && controller.controller_name == url[:controller]
-      content_tag :li, link_to(options[:label] || name.to_s.capitalize, url, {:id => "current"})
-    else
-      content_tag :li, link_to(options[:label] || name.to_s.capitalize, url)
-    end    
+  
+  def active_nav_class(name, action = nil)
+    if action.present?
+      return if controller.action_name != action
+    end
+    
+    'active' if controller.controller_name =~ /#{name}/i
   end
+  
 end
