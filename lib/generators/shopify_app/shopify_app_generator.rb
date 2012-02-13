@@ -31,6 +31,10 @@ class ShopifyAppGenerator < Rails::Generators::Base
     
     DATA
   end
+
+  def add_bootstrap_gem
+    insert_into_file "Gemfile", "gem 'less-rails-bootstrap'", :before => 'group :assets do'
+  end
   
   def add_routes
     unless options[:skip_routes]
