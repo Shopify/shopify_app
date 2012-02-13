@@ -98,6 +98,45 @@ a.thumbnail:hover {
 }
 
 
+.btn {
+  padding: 4px 12px;
+  color:#818181;
+  text-shadow: 0 1px 0 rgba(255,255,255,1);
+  background-color: #f7f7f7;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), color-stop(25%, #fff), to(#ddd));
+  background-image: -webkit-linear-gradient(#fff, #fff 25%, #ddd);
+  background-image: -moz-linear-gradient(top, #fff, #fff 25%, #ddd);
+  background-image: -ms-linear-gradient(#fff, #fff 25%, #ddd);
+  background-image: -o-linear-gradient(#fff, #fff 25%, #ddd);
+  background-image: linear-gradient(#fff, #fff 25%, #ddd);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ddd', GradientType=0);
+  border-bottom:1px solid #bbb;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-bottom:1px solid rgba(0,0,0,0.3);
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  position:relative !important;
+  text-transform:uppercase;
+  font-weight: 700;
+}
+.btn:before { 
+  content:""; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; border: 1px solid #FFF; opacity:0.75; 
+  -webkit-border-radius:4px; 
+  -moz-border-radius:4px; 
+  border-radius:4px;
+}
+.btn.btn-info:before, .btn.btn-success:before, .btn.btn-warning:before, .btn.btn-danger:before { 
+  opacity:0.2;
+}
+.btn-info:hover, .btn-success:hover, .btn-warning:hover, .btn-danger:hover {
+  background-color: #fff;
+}
+.btn.disabled, .btn[disabled], .btn.disabled:hover, .btn[disabled]:hover {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  background-image:none;
+  background-image: transparent;
+}
+
 /* APP CSS
 ============================================================= */
 /* General */
