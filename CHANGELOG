@@ -1,2 +1,3 @@
+* re-styled with Twitter Bootstrap css framework and updated docs [warren]
 * Require shopify_api gem via proper railtie setup [willem]
 * Don't require shopify.yml when using environment variables [cody]
