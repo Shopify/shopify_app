@@ -1,8 +1,8 @@
-= Shopify application generator for Rails 3.1
+= Shopify application generator for Rails 3.2
 
 == Description
 
-This gem makes it easy to get a Rails 3.1 app up and running with the
+This gem makes it easy to get a Rails 3.2 app up and running with the
 Shopify API.
 
 The generator creates a basic login controller for authenticating with your
@@ -51,7 +51,7 @@ shop, you're ready to start experimenting with the Shopify API.
 
 == Rails 3.0 Support
 
-Rails 3.0 is supported on a branch of our github repo: https://github.com/Shopify/shopify_app/tree/rails_3.0_support
+Rails 3.0 (as in before the big changes in 3.1) is supported on a branch of our github repo: https://github.com/Shopify/shopify_app/tree/rails_3.0_support
 
 == Questions or problems?
 
