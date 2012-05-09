@@ -13,6 +13,7 @@ class ShopifyAppGenerator < Rails::Generators::Base
   def copy_files
     directory 'app'
     directory 'public'
+    directory 'config'
   end
   
   def remove_static_index
@@ -45,6 +46,7 @@ class ShopifyAppGenerator < Rails::Generators::Base
       route "match 'login'              => 'login#index',        :as => :login"
       route "match 'design'             => 'home#design'"
       route "match 'welcome'            => 'home#welcome'"
+      route "match 'auth/shopify/callback' => 'login#finalize'"
     end
   end
   
