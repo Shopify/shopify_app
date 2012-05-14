@@ -24,7 +24,7 @@ class ShopifyAppGenerator < Rails::Generators::Base
   def add_config_variables
     api_key_str = api_key.nil? ? "ENV['SHOPIFY_API_KEY']" : api_key.inspect
     api_secret_str = secret.nil? ? "ENV['SHOPIFY_API_SECRET']" : secret.inspect
-    api_scope = scope.nil? ? "read_products, read_orders" : scope.inspect
+    api_scope = scope.nil? ? "read_products,read_orders" : scope.inspect
     
     inject_into_file 'config/application.rb', <<-DATA, :after => "class Application < Rails::Application\n"
     
