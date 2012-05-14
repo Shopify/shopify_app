@@ -1,4 +1,5 @@
 require 'shopify_api'
+require 'omniauth-shopify-oauth2'
 
 module ShopifyApp
 
