@@ -10,23 +10,17 @@ class LoginController < ApplicationController
 
   def authenticate
     if params[:shop].present?
-      redirect_to ShopifyAPI::Session.new(params[:shop].to_s.strip).create_permission_url
+      redirect_to "/auth/shopify?shop=#{params[:shop].to_s.strip}"
     else
       redirect_to return_address
     end
   end
   
-  # Shopify redirects the logged-in user back to this action along with
-  # the authorization token t.
-  # 
-  # This token is later combined with the developer's shared secret to form
-  # the password used to call API methods.
   def finalize
-    shopify_session = ShopifyAPI::Session.new(params[:shop], params[:t], params)
-    if shopify_session.valid?
-      session[:shopify] = shopify_session
-      flash[:notice] = "Logged in to shopify store."
-      
+    if response = request.env['omniauth.auth']
+      sess = ShopifyAPI::Session.new(params['shop'], response['credentials']['token'])
+      session[:shopify] = sess        
+      flash[:notice] = "Logged in"
       redirect_to return_address
       session[:return_to] = nil
     else

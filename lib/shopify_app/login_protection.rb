@@ -3,10 +3,10 @@ module ShopifyApp::LoginProtection
     if session[:shopify]
       begin
         # session[:shopify] set in LoginController#finalize
-        ShopifyAPI::Base.site = session[:shopify].site
+        ShopifyAPI::Base.activate_session(session[:shopify])
         yield
       ensure 
-        ShopifyAPI::Base.site = nil
+        ShopifyAPI::Base.clear_session
       end
     else
       session[:return_to] = request.fullpath
