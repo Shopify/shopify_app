@@ -4,15 +4,7 @@ class LoginController < ApplicationController
     
     # If the #{shop}.myshopify.com address is already provided in the URL, just skip to #authenticate
     if params[:shop].present?
-      redirect_to authenticate_path(:shop => params[:shop])
-    end
-  end
-
-  def authenticate
-    if params[:shop].present?
       redirect_to "/auth/shopify?shop=#{params[:shop].to_s.strip}"
-    else
-      redirect_to return_address
     end
   end
   
