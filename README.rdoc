@@ -49,6 +49,22 @@ Now visit http://localhost:3000 and install your application in a Shopify store.
 After your application has been given read or read/write API permission by the
 shop, you're ready to start experimenting with the Shopify API.
 
+To configure which permissions are given to your app. First, review the documentation on scopes http://api.shopify.com/authentication.html. Then, add a scope line to config/initializers/omniauth.rb file.
+
+Example requesting access to a shop with write access to products and read access to orders::
+
+    Rails.application.config.middleware.use OmniAuth::Builder do
+        provider :shopify, 
+           ShopifyApp.configuration.api_key, 
+           ShopifyApp.configuration.secret,
+           :scope => "write_products,read_orders",
+           :setup => lambda {|env| 
+                       params = Rack::Utils.parse_query(env['QUERY_STRING'])
+                       site_url = "https://#{params['shop']}"
+                       env['omniauth.strategy'].options[:client_options][:site] = site_url
+                     }
+    end
+
 == Rails 3.0 Support
 
 Rails 3.0 (as in before the big changes in 3.1) is supported on a branch of our github repo: https://github.com/Shopify/shopify_app/tree/rails_3.0_support
