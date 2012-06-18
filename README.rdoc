@@ -45,7 +45,7 @@ Before making API requests, your application must state which API permissions it
 
 Start by reviewing the documentation on API permission scopes: http://api.shopify.com/authentication.html
 
-When you know which ones your app will need, add a scope line to the `config/initializers/omniauth.rb` file.
+When you know which ones your app will need, add a scope line to the <tt>config/initializers/omniauth.rb</tt> file.
 
 === Example
 
