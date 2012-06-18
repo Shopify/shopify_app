@@ -53,8 +53,8 @@ Make this change to request write access to products and read access to orders:
 
     Rails.application.config.middleware.use OmniAuth::Builder do
         provider :shopify, 
-           ShopifyApp.configuration.api_key, 
-           ShopifyApp.configuration.secret,
+           ShopifyApp::Application.config.shopify.api_key, 
+           ShopifyApp::Application.config.shopify.secret,
            :scope => "write_products,read_orders",
            :setup => lambda {|env| 
                        params = Rack::Utils.parse_query(env['QUERY_STRING'])
@@ -64,6 +64,8 @@ Make this change to request write access to products and read access to orders:
     end
 
 (Note that you can change your API permission scopes on the fly, but the merchant will have to approve each change and your computed API password will change.)
+
+You may need to create this file if it doesn't exist, and add a reference to the omniauth-shopify-oauth2 gem to you Gemfile.
 
 == After running the generator
 
