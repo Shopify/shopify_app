@@ -38,20 +38,18 @@ visiting https://YOUR-SHOP.myshopify.com/admin/api
 
 This will create a LoginController and a HomeController with their own views.
 
-== After running the generator
 
-First, start your application:
+== Set your required API permissions
 
-    $ rails server
+Before making API requests, your application must state which API permissions it requires from the shop it's installed in. These requested permissions will be listed on the screen the merchant sees when approving your app to be installed in their shop.
 
-Now visit http://localhost:3000 and install your application in a Shopify store.
+Start by reviewing the documentation on API permission scopes: http://api.shopify.com/authentication.html
 
-After your application has been given read or read/write API permission by the
-shop, you're ready to start experimenting with the Shopify API.
+When you know which ones your app will need, add a scope line to the `config/initializers/omniauth.rb` file.
 
-To configure which permissions are given to your app. First, review the documentation on scopes http://api.shopify.com/authentication.html. Then, add a scope line to config/initializers/omniauth.rb file.
+=== Example
 
-Example requesting access to a shop with write access to products and read access to orders:
+Make this change to request write access to products and read access to orders:
 
     Rails.application.config.middleware.use OmniAuth::Builder do
         provider :shopify, 
@@ -64,6 +62,19 @@ Example requesting access to a shop with write access to products and read acces
                        env['omniauth.strategy'].options[:client_options][:site] = site_url
                      }
     end
+
+(Note that you can change your API permission scopes on the fly, but the merchant will have to approve each change and your computed API password will change.)
+
+== After running the generator
+
+First, start your application:
+
+    $ rails server
+
+Now visit http://localhost:3000 and install your application in a Shopify store.
+
+After your application has been given whatever API permissions you requested by the
+shop, you're ready to start experimenting with the Shopify API.
 
 == Rails 3.0 Support
 
