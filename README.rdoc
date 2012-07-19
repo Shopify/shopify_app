@@ -76,7 +76,7 @@ Now visit http://localhost:3000 and install your application in a Shopify store.
 After your application has been given whatever API permissions you requested by the
 shop, you're ready to start experimenting with the Shopify API.
 
-== Rails 3.0 Support
+== Rails 3.0 (as in before 3.1) Support
 
 Rails 3.0 (as in before the big changes in 3.1) is supported on a branch of our github repo: https://github.com/Shopify/shopify_app/tree/rails_3.0_support
 
