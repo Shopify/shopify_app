@@ -14,7 +14,7 @@ module ShopifyApp::LoginProtection
     end
   end
   
-  def current_shop
+  def shop_session
     session[:shopify]
   end
 end
