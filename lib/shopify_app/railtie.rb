@@ -8,7 +8,7 @@ class ShopifyApp::Railtie < ::Rails::Railtie
   
   initializer "shopify_app.action_controller_integration" do
     ActionController::Base.send :include, ShopifyApp::LoginProtection
-    ActionController::Base.send :helper_method, :current_shop
+    ActionController::Base.send :helper_method, :shop_session
   end
   
   initializer "shopify_app.setup_session" do

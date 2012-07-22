@@ -35,7 +35,7 @@
         
         <%= link_to 'Shopify Demo App', '/', :class => 'brand' %>
         
-        <% if current_shop %>
+        <% if shop_session %>
           <div class="nav-collapse">
             <ul class="nav">
               <li class='<%= active_nav_class('home', 'index') %>'><%= link_to 'Where to Start', '/' %></li>
@@ -45,10 +45,10 @@
           
           <ul class="nav pull-right">
             <li class="dropdown">
-              <%= link_to raw(current_shop.url+' <b class="caret"></b>'), "https://#{current_shop.url}", :class => 'shop_name dropdown-toggle', :'data-toggle' => 'dropdown'  %>
+              <%= link_to raw(shop_session.url+' <b class="caret"></b>'), "https://#{shop_session.url}", :class => 'shop_name dropdown-toggle', :'data-toggle' => 'dropdown'  %>
               <ul class="dropdown-menu">
-                <li><%= link_to raw('<i class="icon-home"></i> Storefront'), "http://"+current_shop.url, :target => 'blank' %></li>
-                <li><%= link_to raw('<i class="icon-cog"></i> Shopify Admin'), "http://"+current_shop.url+"/admin", :target => 'blank' %></li>
+                <li><%= link_to raw('<i class="icon-home"></i> Storefront'), "http://"+shop_session.url, :target => 'blank' %></li>
+                <li><%= link_to raw('<i class="icon-cog"></i> Shopify Admin'), "http://"+shop_session.url+"/admin", :target => 'blank' %></li>
                 <li class="divider"></li>
                 <li><%= link_to raw('<i class="icon-off"></i> logout'), logout_path %></li>
               </ul>
