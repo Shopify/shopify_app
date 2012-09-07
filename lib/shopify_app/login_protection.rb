@@ -1,4 +1,10 @@
 module ShopifyApp::LoginProtection
+  extend ActiveSupport::Concern
+  
+  included do
+    rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
+  end
+  
   def shopify_session
     if session[:shopify]
       begin
@@ -16,5 +22,12 @@ module ShopifyApp::LoginProtection
   
   def shop_session
     session[:shopify]
+  end
+  
+  protected
+  
+  def close_session
+    session[:shopify] = nil
+    redirect_to login_path
   end
 end
