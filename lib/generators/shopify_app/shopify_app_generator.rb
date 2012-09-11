@@ -43,7 +43,6 @@ class ShopifyAppGenerator < Rails::Generators::Base
       route "root :to                   => 'home#index'"
       route "match 'login/logout'       => 'login#logout',       :as => :logout"
       route "match 'login/finalize'     => 'login#finalize',     :as => :finalize"
-      route "match 'login/authenticate' => 'login#authenticate', :as => :authenticate"
       route "match 'login'              => 'login#index',        :as => :login"
       route "match 'design'             => 'home#design'"
       route "match 'welcome'            => 'home#welcome'"
