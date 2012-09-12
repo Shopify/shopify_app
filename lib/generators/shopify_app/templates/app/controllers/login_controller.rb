@@ -9,8 +9,8 @@ class LoginController < ApplicationController
   end
 
   def authenticate
-    if params[:shop].present?
-      redirect_to "/auth/shopify?shop=#{params[:shop].to_s.strip}"
+    if shop_name = sanitize_shop_param(params)
+      redirect_to "/auth/shopify?shop=#{shop_name}"
     else
       redirect_to return_address
     end
@@ -41,4 +41,12 @@ class LoginController < ApplicationController
   def return_address
     session[:return_to] || root_url
   end
+
+  def sanitize_shop_param(params)
+    return unless params[:shop].present?
+    name = params[:shop].to_s.strip
+    name += '.myshopify.com' if !name.include?("myshopify.com") && !name.include?(".")
+    name.sub('https://', '').sub('http://', '')
+  end
+  
 end
