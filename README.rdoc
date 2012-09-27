@@ -5,7 +5,7 @@
 This gem makes it easy to get a Rails 3.2 app up and running with the
 Shopify API.
 
-The generator creates a basic login controller for authenticating with your
+The generator creates a basic sessions controller for authenticating with your
 shop and a HomeController which displays basic information about your
 products, orders and articles.
 
@@ -26,8 +26,8 @@ If you don't have an API key yet, create a Shopify Partner account at
 http://shopify.com/partners and create an app. You can also create test shops
 once you're logged in as a partner.
 
-When you create your app in the Shopify Partner Account, set the return URL to
-<tt>http://localhost:3000/login/finalize</tt>
+When you create your app in the Shopify Partner Account, set the Application URL to
+<tt>http://localhost:3000/login</tt>
 
 You can also create a private application that only works for your shop by
 visiting https://YOUR-SHOP.myshopify.com/admin/api

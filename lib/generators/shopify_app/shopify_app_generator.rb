@@ -40,14 +40,15 @@ class ShopifyAppGenerator < Rails::Generators::Base
   
   def add_routes
     unless options[:skip_routes]
-      route "root :to                   => 'home#index'"
-      route "match 'login/logout'       => 'login#logout',       :as => :logout"
-      route "match 'login/finalize'     => 'login#finalize',     :as => :finalize"
-      route "match 'login/authenticate' => 'login#authenticate', :as => :authenticate"
-      route "match 'login'              => 'login#index',        :as => :login"
-      route "match 'design'             => 'home#design'"
-      route "match 'welcome'            => 'home#welcome'"
-      route "match 'auth/shopify/callback' => 'login#finalize'"
+      route_without_newline "root :to => 'home#index'"
+      route "end"
+      route_without_newline "  delete 'logout' => :destroy"
+      route_without_newline "  get 'auth/shopify/callback' => :show"
+      route_without_newline "  post 'login' => :create"
+      route_without_newline "  get 'login' => :new"
+      route_without_newline "controller :sessions do"
+      route "match 'design' => 'home#design'"
+      route_without_newline "match 'welcome' => 'home#welcome'"
     end
   end
   
@@ -55,4 +56,11 @@ class ShopifyAppGenerator < Rails::Generators::Base
     `bundle install`
     readme '../README'
   end
+  
+  private
+  
+  def route_without_newline(routing_code)
+    sentinel = /\.routes\.draw do(?:\s*\|map\|)?\s*$/
+    inject_into_file 'config/routes.rb', "\n  #{routing_code}", { after: sentinel, verbose: false }
+  end  
 end

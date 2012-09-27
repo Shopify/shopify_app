@@ -3,8 +3,8 @@
 What's next?
 ------------
 
-Make sure to set the return URL of the application your Shopify partner account 
-to <tt>http://localhost:3000/login/finalize</tt>.
+Make sure to set the Application URL of the application your Shopify partner account 
+to <tt>http://localhost:3000/login</tt>.
 
 Then, start your application with:
 
