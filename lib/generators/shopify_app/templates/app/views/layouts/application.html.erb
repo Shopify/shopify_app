@@ -50,7 +50,7 @@
                 <li><%= link_to raw('<i class="icon-home"></i> Storefront'), "http://"+shop_session.url, :target => 'blank' %></li>
                 <li><%= link_to raw('<i class="icon-cog"></i> Shopify Admin'), "http://"+shop_session.url+"/admin", :target => 'blank' %></li>
                 <li class="divider"></li>
-                <li><%= link_to raw('<i class="icon-off"></i> logout'), logout_path %></li>
+                <li><%= link_to raw('<i class="icon-off"></i> logout'), logout_path, :method => :delete %></li>
               </ul>
             </li>
           </ul>

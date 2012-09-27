@@ -7,7 +7,7 @@ puts
 puts " * Go to http://www.shopify.com/partners and create or login to your Partner account."
 puts
 puts " * Jump over to the Apps tab and hit the 'Create a new app' button"
-puts "   (Make sure to set the Return URL to http://localhost:3000/login/finalize during development)"
+puts "   (Make sure to set the Application URL to http://localhost:3000/login during development)"
 puts
 puts " * Install the Shopify API gem:
 

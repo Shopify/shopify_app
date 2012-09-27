@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["edward@shopify.com", "willem@shopify.com", "david.underwood@shopify.com"]
   s.homepage    = "http://www.shopify.com/developers"
   s.summary     = %q{This gem is used to get quickly started with the Shopify API}
-  s.description = %q{Creates a basic login controller for authenticating with your Shop and also a product controller which lets your edit your products easily.}
+  s.description = %q{Creates a basic sessions controller for authenticating with your Shop and also a product controller which lets your edit your products easily.}
 
   s.rubyforge_project = "shopify-api"
 
