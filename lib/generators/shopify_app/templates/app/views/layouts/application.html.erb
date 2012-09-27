@@ -45,12 +45,12 @@
           
           <ul class="nav pull-right">
             <li class="dropdown">
-              <%= link_to raw(shop_session.url+' <b class="caret"></b>'), "https://#{shop_session.url}", :class => 'shop_name dropdown-toggle', :'data-toggle' => 'dropdown'  %>
+              <%= link_to raw(shop_session.url+' <b class="caret"></b>'), "https://#{shop_session.url}", :class => 'shop_name dropdown-toggle', :'data-toggle' => 'dropdown', :'data-target' => '#' %>
               <ul class="dropdown-menu">
                 <li><%= link_to raw('<i class="icon-home"></i> Storefront'), "http://"+shop_session.url, :target => 'blank' %></li>
                 <li><%= link_to raw('<i class="icon-cog"></i> Shopify Admin'), "http://"+shop_session.url+"/admin", :target => 'blank' %></li>
                 <li class="divider"></li>
-                <li><%= link_to raw('<i class="icon-off"></i> logout'), logout_path %></li>
+                <li><%= link_to raw('<i class="icon-off"></i> Logout'), logout_path, :method => :delete %></li>
               </ul>
             </li>
           </ul>

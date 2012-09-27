@@ -5,7 +5,7 @@
 This gem makes it easy to get a Rails 3.2 app up and running with the
 Shopify API.
 
-The generator creates a basic sessions controller for authenticating with your
+The generator creates a basic SessionsController for authenticating with your
 shop and a HomeController which displays basic information about your
 products, orders and articles.
 
