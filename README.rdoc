@@ -84,6 +84,6 @@ Rails 3.0 (as in before the big changes in 3.1) is supported on a branch of our 
 
 http://api.shopify.com <= Read up on the possible API calls!
 
-http://stackoverflow.com/questions/tagged/shopify <= Ask questions!
+ecommerce.shopify.com/c/shopify-apis-and-technology <= Ask questions!
 
 http://wiki.shopify.com/Shopify_App_Development <= Edit the docs!
