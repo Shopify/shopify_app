@@ -15,7 +15,7 @@ module ShopifyApp::LoginProtection
         ShopifyAPI::Base.clear_session
       end
     else
-      session[:return_to] = request.fullpath
+      session[:return_to] = request.fullpath if request.get?
       redirect_to login_path
     end
   end
