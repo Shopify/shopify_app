@@ -30,7 +30,7 @@ http://shopify.com/partners and create an app. You can also create test shops
 once you're logged in as a partner.
 
 When you create your app in the Shopify Partner Account, set the Application URL to
-<tt>http://localhost:3000/login</tt>
+<tt>http://localhost:3000/auth/shopify</tt>
 
 You can also create a private application that only works for your shop by
 visiting https://YOUR-SHOP.myshopify.com/admin/api
@@ -76,12 +76,22 @@ First, start your application:
 
 Now visit http://localhost:3000 and install your application in a Shopify store.
 
+Even if Rails tells you to visit your app at http://0.0.0.0:3000, go to http://localhost:3000.
+
 After your application has been given whatever API permissions you requested by the
 shop, you're ready to start experimenting with the Shopify API.
 
 == Rails 3.0 (as in before 3.1) Support
 
 Rails 3.0 (as in before the big changes in 3.1) is supported on a branch of our github repo: https://github.com/Shopify/shopify_app/tree/rails_3.0_support
+
+== Common problems
+
+If you are getting the following error:
+
+    Faraday::Error::ConnectionFailed error when accessing app.
+    
+It probably means that the CA certificate on your computer is out of date. A simple solution on the Mac is to install XCode.
 
 == Questions or problems?
 
