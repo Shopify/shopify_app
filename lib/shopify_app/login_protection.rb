@@ -8,7 +8,7 @@ module ShopifyApp::LoginProtection
   def shopify_session
     if session[:shopify]
       begin
-        # session[:shopify] set in LoginController#finalize
+        # session[:shopify] set in LoginController#show
         ShopifyAPI::Base.activate_session(session[:shopify])
         yield
       ensure 
@@ -16,7 +16,7 @@ module ShopifyApp::LoginProtection
       end
     else
       session[:return_to] = request.fullpath if request.get?
-      redirect_to login_path
+      redirect_to login_path(shop: params[:shop])
     end
   end
   
