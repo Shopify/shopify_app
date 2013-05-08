@@ -3,7 +3,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            ShopifyApp.configuration.api_key, 
            ShopifyApp.configuration.secret,
 
-           # Example permission scopes - see http://api.shopify.com/authentication.html for full listing
+           # Example permission scopes - see http://docs.shopify.com/api/tutorials/oauth for full listing
            :scope => 'read_orders, read_products',
 
            :setup => lambda {|env| 
