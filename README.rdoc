@@ -46,7 +46,7 @@ This will create a LoginController and a HomeController with their own views.
 
 Before making API requests, your application must state which API permissions it requires from the shop it's installed in. These requested permissions will be listed on the screen the merchant sees when approving your app to be installed in their shop.
 
-Start by reviewing the documentation on API permission scopes: http://api.shopify.com/authentication.html
+Start by reviewing the documentation on API permission scopes: http://docs.shopify.com/api/tutorials/oauth
 
 When you know which ones your app will need, add a scope line to the <tt>config/initializers/omniauth.rb</tt> file.
 
