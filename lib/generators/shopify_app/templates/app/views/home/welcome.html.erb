@@ -7,7 +7,7 @@
 <div class="info" style="clear: both">
   This will send the <strong>API-Key</strong> and <strong>Secret</strong> to a shop, and make sure that you have the rights to 
   access its private admin data.<br/>
-  After authenticating, you will be redirected to the <code>finalize</code> action of your <code>LoginController</code>, which stores the session, and then redirects you to your example dashboard.<br/>
+  After authenticating, you will be redirected to the <code>show</code> action of your <code>SessionsController</code>, which stores the session, and then redirects you to your example dashboard.<br/>
   Your <code>HomeController</code> will get your recent <code>Orders</code> and <code>Articles</code> through the 
   Shopify <%= link_to 'REST', 'http://www.xfront.com/REST-Web-Services.html', :title => "Get more information about REST web services in general" %> API and list them with all of your <code>Products</code>.
   You can click on a link of one of your objects and will then be taken to the corresponding admin area of your shop.<br/>
@@ -66,7 +66,7 @@ The callback URL of your app can be changed in the API screen of your Shopify ad
   <div class="info">
     This will send the <strong>API-Key</strong> and <strong>Secret</strong> to a shop, and make sure that you have the rights to 
     access its private admin data.<br/>
-    After authenticating, you will be redirected to the <code>finalize</code> action of your <code>LoginController</code>, which stores the session, and then redirects you to your example dashboard.<br/>
+    After authenticating, you will be redirected to the <code>show</code> action of your <code>SessionsController</code>, which stores the session, and then redirects you to your example dashboard.<br/>
     Your <code>HomeController</code> will get your recent <code>Orders</code> and <code>Articles</code> through the 
     Shopify <%= link_to 'REST', 'http://www.xfront.com/REST-Web-Services.html', :title => "Get more information about REST web services in general" %> API and list them with all of your <code>Products</code>.
     You can click on a link of one of your objects and will then be taken to the corresponding admin area of your shop.<br/>
