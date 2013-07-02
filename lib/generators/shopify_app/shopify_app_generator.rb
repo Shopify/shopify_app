@@ -49,8 +49,8 @@ class ShopifyAppGenerator < Rails::Generators::Base
       route_without_newline "  post 'login' => :create"
       route_without_newline "  get 'login' => :new"
       route_without_newline "controller :sessions do"
-      route "match 'design' => 'home#design'"
-      route_without_newline "match 'welcome' => 'home#welcome'"
+      route "get 'design' => 'home#design'"
+      route_without_newline "get 'welcome' => 'home#welcome'"
     end
   end
   
