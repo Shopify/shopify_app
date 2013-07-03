@@ -6,11 +6,11 @@ class ShopifyApp::Configuration
     @config_file = YAML.load_file(File.join(Rails.root, 'config', 'shopify_app.yml')) || {}
   end
   
-  def method_missing(meth, *args)
-    super unless VALID_KEYS.include?(meth)
-    
-    meth = meth.to_s
-    config_from_env(meth) || config_from_rails(meth) || config_from_file(meth) || ''
+  VALID_KEYS.each do |meth|
+    define_method meth do
+      meth = meth.to_s
+      config_from_env(meth) || config_from_rails(meth) || config_from_file(meth) || ''
+    end
   end
   
   private
