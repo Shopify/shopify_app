@@ -3,7 +3,7 @@ class ShopifyApp::Configuration
   attr_writer *VALID_KEYS
   
   def initialize
-    @config_file = YAML.load_file(File.join(Rails.root, 'config', 'shopify_app.yml')) || {}
+    @config_file = load_config 
   end
   
   VALID_KEYS.each do |meth|
@@ -15,6 +15,10 @@ class ShopifyApp::Configuration
   
   private
   
+  def self.load_config
+    YAML.load_file(File.join(Rails.root, 'config', 'shopify_app.yml')) || {}
+  end
+  
   def config_from_env(meth)
     ENV["SHOPIFY_APP_#{meth.upcase}"]
   end
@@ -24,6 +28,6 @@ class ShopifyApp::Configuration
   end
   
   def config_from_file(meth)
-    @config_file[Rails.env.to_s].try(:[], meth) || @config_file['common'].try(:[], meth)
+    @config_file[Rails.env].try(:[], meth) || @config_file['common'].try(:[], meth)
   end
 end

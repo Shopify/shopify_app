@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('less-rails-bootstrap', '>0')
   
   s.add_development_dependency('rake')
+  s.add_development_dependency('minitest')
+  s.add_development_dependency('mocha')
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
