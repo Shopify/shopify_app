@@ -1,8 +1,10 @@
-# Shopify application generator for Rails 3.2 and Rails 4.0
+# Shopify App
+
+Shopify application generator for Rails 3.1 and Rails 4.0
 
 ## Description
 
-This gem makes it easy to get a Rails 3.2 or Rails 4.0 app up and running with the Shopify API.
+This gem makes it easy to get a Rails 3.1 or Rails 4.0 app up and running with the Shopify API.
 
 The generator creates a basic SessionsController for authenticating with your shop and a HomeController which displays basic information about your products, orders and articles.
 
