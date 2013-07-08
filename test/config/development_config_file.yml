@@ -1,0 +1,7 @@
+common:
+  api_key: should never see this api key value
+  secret: should never see this secret value
+
+development:
+  api_key: development key
+  secret: development secret

@@ -4,20 +4,10 @@ class ConfigurationTest < MiniTest::Unit::TestCase
   def setup
     Rails.stubs(:env).returns('development')
     Rails.stubs(:root).returns(File.expand_path('../..', File.dirname(__FILE__)))
+  end
 
-    @common_config_data = {
-      'common' => {
-        'api_key' => 'common key',
-        'secret' => 'common secret'
-      }
-    }
-
-    @development_config_data = @common_config_data.merge({
-      'development' => {
-        'api_key' => 'development key',
-        'secret' => 'development secret'
-      }
-    })
+  def config_file(filename)
+    filepath = File.expand_path("../../config/#{filename}", File.dirname(__FILE__))
   end
 
   def test_define_method_creates_readers
@@ -27,35 +17,27 @@ class ConfigurationTest < MiniTest::Unit::TestCase
   end
 
   def test_defaults_to_empty_string
-    ShopifyApp::Configuration.stubs(:load_config).returns({})
-    config = ShopifyApp::Configuration.new
+    config = ShopifyApp::Configuration.new(config_file: config_file('empty_config_file.yml'))
+
     assert_equal '', config.api_key
     assert_equal '', config.secret
   end
 
   def test_environment_has_precedence_over_common
-    ShopifyApp::Configuration.stubs(:load_config).returns(@common_config_data)
-    config = ShopifyApp::Configuration.new
-
-    assert_equal 'common key', config.api_key
-    assert_equal 'common secret', config.secret
-
-    ShopifyApp::Configuration.stubs(:load_config).returns(@development_config_data)
-    config = ShopifyApp::Configuration.new
+    config = ShopifyApp::Configuration.new(config_file: config_file('development_config_file.yml'))
 
     assert_equal 'development key', config.api_key
     assert_equal 'development secret', config.secret
   end
 
   def test_rails_has_precedence_over_environment
-    ShopifyApp::Configuration.stubs(:load_config).returns(@development_config_data)
-    config = ShopifyApp::Configuration.new
+    config = ShopifyApp::Configuration.new(config_file: config_file('development_config_file.yml'))
 
     assert_equal 'development key', config.api_key
     assert_equal 'development secret', config.secret
 
-    config.instance_variable_set '@api_key', 'rails key'
-    config.instance_variable_set '@secret', 'rails secret'
+    config.api_key = 'rails key'
+    config.secret = 'rails secret'
 
     assert_equal 'rails key', config.api_key
     assert_equal 'rails secret', config.secret
@@ -63,8 +45,8 @@ class ConfigurationTest < MiniTest::Unit::TestCase
 
   def test_env_has_precedence_over_rails
     config = ShopifyApp::Configuration.new
-    config.instance_variable_set '@api_key', 'rails key'
-    config.instance_variable_set '@secret', 'rails secret'
+    config.api_key = 'rails key'
+    config.secret = 'rails secret'
 
     assert_equal 'rails key', config.api_key
     assert_equal 'rails secret', config.secret
@@ -76,9 +58,21 @@ class ConfigurationTest < MiniTest::Unit::TestCase
     assert_equal 'env secret', config.secret
   end
 
-  def test_load_config_reads_config_from_file
+  def test_reads_config_from_default_config_file
     config = ShopifyApp::Configuration.new
-    assert_equal 'api key from file', config.api_key
-    assert_equal 'secret from file', config.secret
+    assert_equal 'api key from default file', config.api_key
+    assert_equal 'secret from default file', config.secret
+  end
+
+  def test_reads_config_from_specified_config_file
+    config = ShopifyApp::Configuration.new(config_file: config_file('other_config_file.yml'))
+    assert_equal 'api key from other file', config.api_key
+    assert_equal 'secret from other file', config.secret
+  end
+
+  def test_handles_missing_config_file
+    config = ShopifyApp::Configuration.new(config_file: config_file('missing_config_file.yml'))
+    assert_equal '', config.api_key
+    assert_equal '', config.secret
   end
 end
