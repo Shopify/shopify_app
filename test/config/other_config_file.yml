@@ -1,0 +1,3 @@
+common:
+  api_key: api key from other file
+  secret: secret from other file
