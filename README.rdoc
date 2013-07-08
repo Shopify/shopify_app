@@ -30,10 +30,13 @@ http://shopify.com/partners and create an app. You can also create test shops
 once you're logged in as a partner.
 
 When you create your app in the Shopify Partner Account, set the Application Callback URL to
-<tt>http://localhost:3000</tt>
+
+    http://localhost:3000
+    
+Do use <tt>http://</tt> in the URL. Otherwise you'll get this error after installing your app: "The redirect_uri and application url must have matching hosts".
 
 You can also create a private application that only works for your shop by
-visiting https://YOUR-SHOP.myshopify.com/admin/api
+visiting https://YOUR-SHOP.myshopify.com/admin/api.
 
 === Example
 
