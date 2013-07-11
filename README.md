@@ -28,7 +28,7 @@ $ bundle install
 $ rails generate shopify_app your_app_api_key your_app_secret
 ```
 
-If you don't have an API key yet, create a Shopify Partner account at http://shopify.com/partners and create an app. You can lso create test shops once you're logged in as a partner.
+If you don't have an API key yet, create a Shopify Partner account at http://shopify.com/partners and create an app. You can also create test shops once you're logged in as a partner.
 
 When you create your app in the Shopify Partner Account, set the Application Callback URL to
 
