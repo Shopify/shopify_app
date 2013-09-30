@@ -14,5 +14,12 @@ class HomeController < ApplicationController
     # get latest 5 orders
     @orders   = ShopifyAPI::Order.find(:all, :params => {:limit => 5, :order => "created_at DESC" })
   end
+
+  def customer_name(order)
+    name = ''
+    name += [order.customer.first_name, order.customer.last_name].join(" ") if order.respond_to?(:customer)
+    name.strip
+  end
+  helper_method :customer_name
   
 end
