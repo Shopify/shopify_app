@@ -83,7 +83,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td><%= link_to order.name, "https://#{shop_session.url}/admin/orders/#{order.id}", :target => 'blank' %></td>
-          <td><%= order.billing_address.name %></td>
+          <td><%= customer_name(order) %></td>
           <td>
             <span class="label  <% if order.financial_status  == 'paid' %>label-success<% end %> <% if order.financial_status  == 'pending' %>label-warning<% end %> <% if order.financial_status  == 'refunded' %>label-important<% end %>"><%= order.financial_status %>
             </span>
