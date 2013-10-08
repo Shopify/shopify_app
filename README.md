@@ -141,4 +141,4 @@ http://api.shopify.com <= Read up on the possible API calls!
 
 http://ecommerce.shopify.com/c/shopify-apis-and-technology <= Ask questions!
 
-http://wiki.shopify.com/Shopify_App_Development <= Edit the docs!
+http://docs.shopify.com/api/the-basics/getting-started <= Read the docs!
