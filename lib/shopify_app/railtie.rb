@@ -2,7 +2,7 @@ require 'rails'
 
 class ShopifyApp::Railtie < ::Rails::Railtie
 
-  config.before_configuration do
+  config.before_initialize do
     config.shopify = ShopifyApp.configuration
   end
   
