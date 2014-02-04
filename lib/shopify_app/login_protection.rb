@@ -23,6 +23,12 @@ module ShopifyApp::LoginProtection
   def shop_session
     session[:shopify]
   end
+
+  def login_again_if_different_shop
+    if shop_session && params[:shop] && params[:shop].is_a?(String) && shop_session.url != params[:shop]
+      redirect_to login_path(shop: params[:shop]) 
+    end  
+  end
   
   protected
   
