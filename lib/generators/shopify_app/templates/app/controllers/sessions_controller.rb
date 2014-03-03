@@ -47,6 +47,6 @@ class SessionsController < ApplicationController
     name.gsub!('https://', '').sub('http://', '')
 
     u = URI("http://#{name}")
-    u.host.ends_with?("myshopify.com") ? u.host : nil
+    u.host.ends_with?(".myshopify.com") ? u.host : nil
   end
 end
