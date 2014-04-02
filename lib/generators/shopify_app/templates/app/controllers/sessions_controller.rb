@@ -44,7 +44,7 @@ class SessionsController < ApplicationController
     return unless params[:shop].present?
     name = params[:shop].to_s.strip
     name += '.myshopify.com' if !name.include?("myshopify.com") && !name.include?(".")
-    name.gsub!('https://', '').sub('http://', '')
+    name.sub!(%r|https?://|, '')
 
     u = URI("http://#{name}")
     u.host.ends_with?(".myshopify.com") ? u.host : nil
