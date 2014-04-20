@@ -53,7 +53,10 @@ class ShopifyAppGenerator < Rails::Generators::Base
   end
   
   def display_readme
-    `bundle install`
+    Bundler.with_clean_env do
+      run 'bundle install'
+    end
+
     readme '../README'
   end
   
