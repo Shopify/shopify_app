@@ -34,7 +34,7 @@ When you create your app in the Shopify Partner Account, set the Application Cal
 
 	http://localhost:3000
 
-You can also create a private application that only works for your shop by visiting https://YOUR-SHOP.myshopify.com/admin/api
+You can also create a private application that only works for your shop by visiting https://YOUR-SHOP.myshopify.com/admin/apps/private.
 
 ### Example
 
