@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
+  def shopify_session
+    ShopifySessionRepository.find(session[:shopify])
+  end
+
   # It will re-login if a user tries to access the application from a different shop
   # before_filter :login_again_if_different_shop
   

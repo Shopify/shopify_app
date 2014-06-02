@@ -1,0 +1,59 @@
+require 'test_helper'
+
+class TestSessionStore
+  attr_reader :storage
+  def initialize
+    @storage = []
+  end
+
+  def find(id)
+    storage[id]
+  end
+
+  def store(session)
+    id = storage.length
+    storage[id] = session
+    id
+  end
+end
+
+class ShopifySessionRepositoryTest < Minitest::Test
+  attr_reader :session_store, :session
+  def setup
+    @session_store = TestSessionStore.new
+    @session = ShopifyAPI::Session.new('shop.myshopify.com', 'abracadabra')
+    ShopifySessionRepository.storage = session_store
+  end
+
+  def teardown
+    ShopifySessionRepository.storage = nil
+  end
+
+  def test_adding_a_session_to_the_repository
+    assert_equal 0, ShopifySessionRepository.store(session)
+    assert_equal session, session_store.find(0)
+  end
+
+  def test_retrieving_a_session_from_the_repository
+    session_store.storage[9] = session
+    assert_equal session, ShopifySessionRepository.find(9)
+  end
+
+  def test_retrieving_a_session_for_an_id_that_does_not_exist
+    ShopifySessionRepository.store(session)
+    assert !ShopifySessionRepository.find(100), "The session with id 100 should not exist in the Repository"
+  end
+
+  def test_retrieving_a_session_for_a_misconfigured_shops_repository
+    ShopifySessionRepository.storage = nil
+    assert_raises ShopifySessionRepository::ConfigurationError do
+      ShopifySessionRepository.find(0)
+    end
+
+    assert_raises ShopifySessionRepository::ConfigurationError do
+      ShopifySessionRepository.store(session)
+    end
+  end
+
+
+end
