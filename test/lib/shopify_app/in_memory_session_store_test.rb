@@ -10,15 +10,26 @@ class InMemorySessionStoreTest < Minitest::Test
     assert_equal 'something', InMemorySessionStore.repo[uuid]
   end
 
-  def test_finding_a_session
+  def test_retrieving_a_session
     InMemorySessionStore.repo['abra'] = 'something'
-    assert_equal 'something', InMemorySessionStore.find('abra')
+    assert_equal 'something', InMemorySessionStore.retrieve('abra')
   end
 
   def test_clearing_the_store
     uuid = InMemorySessionStore.store('data')
-    assert_equal 'data', InMemorySessionStore.find(uuid)
+    assert_equal 'data', InMemorySessionStore.retrieve(uuid)
     InMemorySessionStore.clear
-    assert !InMemorySessionStore.find(uuid), 'The sessions should have been removed'
+    assert !InMemorySessionStore.retrieve(uuid), 'The sessions should have been removed'
+  end
+
+  def test_it_should_raise_when_the_environment_is_not_valid
+    Rails.env.stubs(:production?).returns(true)
+    assert_raises InMemorySessionStore::EnvironmentError do
+      InMemorySessionStore.store('data')
+    end
+
+    assert_raises InMemorySessionStore::EnvironmentError do
+      InMemorySessionStore.retrieve('abracadabra')
+    end
   end
 end

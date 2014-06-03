@@ -1,6 +1,8 @@
-# WARNING - This really only works for development or single-instance deployments
+# WARNING - This really only works for development, see README for more details
 class InMemorySessionStore
-  def self.find(id)
+  class EnvironmentError < StandardError; end
+
+  def self.retrieve(id)
     repo[id]
   end
 
@@ -15,6 +17,9 @@ class InMemorySessionStore
   end
 
   def self.repo
+    if Rails.env.production?
+      raise EnvironmentError.new("Cannot use InMemorySessionStore in a Production environment")
+    end
     @@repo ||= {}
   end
 end

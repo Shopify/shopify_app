@@ -5,9 +5,9 @@ class ShopifySessionRepository
     @@storage = storage
   end
 
-  def self.find(id)
+  def self.retrieve(id)
     validate
-    @@storage.find(id)
+    @@storage.retrieve(id)
   end
 
   def self.store(session)

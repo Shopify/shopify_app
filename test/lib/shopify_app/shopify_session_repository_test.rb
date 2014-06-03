@@ -6,7 +6,7 @@ class TestSessionStore
     @storage = []
   end
 
-  def find(id)
+  def retrieve(id)
     storage[id]
   end
 
@@ -31,23 +31,23 @@ class ShopifySessionRepositoryTest < Minitest::Test
 
   def test_adding_a_session_to_the_repository
     assert_equal 0, ShopifySessionRepository.store(session)
-    assert_equal session, session_store.find(0)
+    assert_equal session, session_store.retrieve(0)
   end
 
   def test_retrieving_a_session_from_the_repository
     session_store.storage[9] = session
-    assert_equal session, ShopifySessionRepository.find(9)
+    assert_equal session, ShopifySessionRepository.retrieve(9)
   end
 
   def test_retrieving_a_session_for_an_id_that_does_not_exist
     ShopifySessionRepository.store(session)
-    assert !ShopifySessionRepository.find(100), "The session with id 100 should not exist in the Repository"
+    assert !ShopifySessionRepository.retrieve(100), "The session with id 100 should not exist in the Repository"
   end
 
   def test_retrieving_a_session_for_a_misconfigured_shops_repository
     ShopifySessionRepository.storage = nil
     assert_raises ShopifySessionRepository::ConfigurationError do
-      ShopifySessionRepository.find(0)
+      ShopifySessionRepository.retrieve(0)
     end
 
     assert_raises ShopifySessionRepository::ConfigurationError do
