@@ -54,6 +54,4 @@ class ShopifySessionRepositoryTest < Minitest::Test
       ShopifySessionRepository.store(session)
     end
   end
-
-
 end
