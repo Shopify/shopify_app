@@ -1,5 +1,7 @@
 # Shopify App
 
+[![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+
 Shopify application generator for Rails 3.1 and Rails 4.0
 
 ## Description
