@@ -6,10 +6,10 @@ module ShopifyApp::LoginProtection
   end
   
   def shopify_session
-    if session[:shopify]
+    if shop_session
       begin
         # session[:shopify] set in LoginController#show
-        ShopifyAPI::Base.activate_session(session[:shopify])
+        ShopifyAPI::Base.activate_session(shop_session)
         yield
       ensure 
         ShopifyAPI::Base.clear_session
@@ -21,7 +21,7 @@ module ShopifyApp::LoginProtection
   end
   
   def shop_session
-    session[:shopify]
+    ShopifySessionRepository.retrieve(session[:shopify])
   end
 
   def login_again_if_different_shop

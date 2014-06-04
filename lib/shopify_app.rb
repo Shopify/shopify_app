@@ -12,6 +12,8 @@ module ShopifyApp
   end
 end
 
+require 'shopify_app/shopify_session_repository'
+require 'shopify_app/in_memory_session_store'
 require 'shopify_app/login_protection'
 require 'shopify_app/configuration'
 require 'shopify_app/railtie'

@@ -74,6 +74,42 @@ common:
   secret: your secret
 ```
 
+## Set up your ShopifySessionRepository.store
+
+`ShopifySessionRepository` allows you as a developer to define how your sessions are retrieved and
+stored for a shop. This can simply be your `Shop` model that stores the API Token and shop name. If
+you are using ActiveRecord, then all you need to implement is `self.store(shopify_session)` and
+`self.retrieve(id)` in order to store the record on disk or retrieve it for use at a later point.
+It is imperative that your store method returns the identifier for the session. Typically this is
+just the record ID.
+
+Your ActiveRecord model would look something like this:
+
+```ruby
+class Shop < ActiveRecord::Base
+  def self.store(session)
+    shop = Shop.new(domain: session.url, token: session.token)
+    shop.save!
+    shop.id
+  end
+
+  def retrieve(id)
+    shop = Shop.find(id)
+    ShopifyAPI::Session.new(shop.domain, shop.token)
+  end
+end
+```
+
+By default you will have an in memory store but it really won't work on multi-server environments since
+they won't be sharing the static data that would be required in case your user gets directed to a
+different server by your load balancer.
+
+The in memory store also does not behave well on Heroku because the session data would be destroyed
+when a dyno is killed due to inactivity.
+
+Changing the `ShopifySessionRepository.storage` can simply be done by editing
+`config/initializers/shopify_session_repository.rb` to use the correct model.
+
 ## Set your required API permissions
 
 Before making API requests, your application must state which API permissions it requires from the shop it's installed in. These requested permissions will be listed on the screen the merchant sees when approving your app to be installed in their shop.
