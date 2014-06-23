@@ -1,3 +1,7 @@
+---
+layout: index
+---
+
 # Shopify App
 
 [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
