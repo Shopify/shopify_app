@@ -13,6 +13,7 @@
 #   end
 #
 #   def self.retrieve(id)
+#     return nil if id.blank?
 #     shop = Shop.find(id)
 #     ShopifyAPI::Session.new(shop.domain, shop.token)
 #   end
