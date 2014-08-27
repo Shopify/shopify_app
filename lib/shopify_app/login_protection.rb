@@ -1,17 +1,17 @@
 module ShopifyApp::LoginProtection
   extend ActiveSupport::Concern
-  
+
   included do
     rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
   end
-  
+
   def shopify_session
     if shop_session
       begin
         # session[:shopify] set in LoginController#show
         ShopifyAPI::Base.activate_session(shop_session)
         yield
-      ensure 
+      ensure
         ShopifyAPI::Base.clear_session
       end
     else
@@ -19,19 +19,19 @@ module ShopifyApp::LoginProtection
       redirect_to login_path(shop: params[:shop])
     end
   end
-  
+
   def shop_session
-    ShopifySessionRepository.retrieve(session[:shopify])
+    session[:shopify] && ShopifySessionRepository.retrieve(session[:shopify])
   end
 
   def login_again_if_different_shop
     if shop_session && params[:shop] && params[:shop].is_a?(String) && shop_session.url != params[:shop]
-      redirect_to login_path(shop: params[:shop]) 
-    end  
+      redirect_to login_path(shop: params[:shop])
+    end
   end
-  
+
   protected
-  
+
   def close_session
     session[:shopify] = nil
     redirect_to login_path
