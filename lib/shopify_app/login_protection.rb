@@ -15,8 +15,7 @@ module ShopifyApp::LoginProtection
         ShopifyAPI::Base.clear_session
       end
     else
-      session[:return_to] = request.fullpath if request.get?
-      redirect_to login_path(shop: params[:shop])
+      redirect_to_login
     end
   end
 
@@ -26,11 +25,16 @@ module ShopifyApp::LoginProtection
 
   def login_again_if_different_shop
     if shop_session && params[:shop] && params[:shop].is_a?(String) && shop_session.url != params[:shop]
-      redirect_to login_path(shop: params[:shop])
+      redirect_to_login
     end
   end
 
   protected
+
+  def redirect_to_login
+    session[:return_to] = request.fullpath if request.get?
+    redirect_to login_path(shop: params[:shop])
+  end
 
   def close_session
     session[:shopify] = nil
