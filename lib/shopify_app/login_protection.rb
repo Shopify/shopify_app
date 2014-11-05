@@ -20,7 +20,8 @@ module ShopifyApp::LoginProtection
   end
 
   def shop_session
-    @shop_session ||= session[:shopify] && ShopifySessionRepository.retrieve(session[:shopify])
+    return unless session[:shopify]
+    @shop_session ||= ShopifySessionRepository.retrieve(session[:shopify])
   end
 
   def login_again_if_different_shop
