@@ -34,7 +34,7 @@ If you don't have an API key yet, create a Shopify Partner account at http://sho
 
 When you create your app in the Shopify Partner Account, set the Application Callback URL to
 
-	http://localhost:3000
+	http://localhost:3000/login
 
 You can also create a private application that only works for your shop by visiting https://YOUR-SHOP.myshopify.com/admin/apps/private.
 
