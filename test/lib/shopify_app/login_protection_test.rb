@@ -30,7 +30,7 @@ class LoginProtectionTest < ActionController::TestCase
       session[:shopify] = "foobar"
       get :index
       ShopifySessionRepository.expects(:retrieve).returns(session).once
-      @controller.shop_session
+      assert @controller.shop_session
     end
   end
 
@@ -39,8 +39,8 @@ class LoginProtectionTest < ActionController::TestCase
       session[:shopify] = "foobar"
       get :index
       ShopifySessionRepository.expects(:retrieve).returns(session).once
-      @controller.shop_session
-      @controller.shop_session
+      assert @controller.shop_session
+      assert @controller.shop_session
     end
   end
 
