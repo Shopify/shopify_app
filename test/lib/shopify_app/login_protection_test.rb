@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'action_controller'
 
-class HelpersController < ActionController::Base
+class LoginProtectionController < ActionController::Base
   include ShopifyApp::LoginProtection
   helper_method :shop_session
 
@@ -11,7 +11,7 @@ class HelpersController < ActionController::Base
 end
 
 class LoginProtectionTest < ActionController::TestCase
-  tests HelpersController
+  tests LoginProtectionController
 
   def setup
     ShopifySessionRepository.storage = InMemorySessionStore
@@ -48,7 +48,7 @@ class LoginProtectionTest < ActionController::TestCase
   def with_application_test_routes
     with_routing do |set|
       set.draw do
-        get '/' => 'helpers#index'
+        get '/' => 'login_protection#index'
       end
       yield
     end
