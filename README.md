@@ -111,6 +111,10 @@ when a dyno is killed due to inactivity.
 Changing the `ShopifySessionRepository.storage` can simply be done by editing
 `config/initializers/shopify_session_repository.rb` to use the correct model.
 
+```ruby
+ShopifySessionRepository.storage = 'Shop'
+```
+
 ## Set your required API permissions
 
 Before making API requests, your application must state which API permissions it requires from the shop it's installed in. These requested permissions will be listed on the screen the merchant sees when approving your app to be installed in their shop.

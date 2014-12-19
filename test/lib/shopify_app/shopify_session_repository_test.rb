@@ -17,6 +17,14 @@ class TestSessionStore
   end
 end
 
+class TestSessionStoreClass
+  def self.store(session)
+  end
+
+  def self.retrieve(id)
+  end
+end
+
 class ShopifySessionRepositoryTest < Minitest::Test
   attr_reader :session_store, :session
   def setup
@@ -53,5 +61,10 @@ class ShopifySessionRepositoryTest < Minitest::Test
     assert_raises ShopifySessionRepository::ConfigurationError do
       ShopifySessionRepository.store(session)
     end
+  end
+
+  def test_accepts_a_string_and_constantizes_it
+    ShopifySessionRepository.storage = 'TestSessionStoreClass'
+    assert_equal TestSessionStoreClass, ShopifySessionRepository.storage
   end
 end
