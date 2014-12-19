@@ -1,22 +1,32 @@
 class ShopifySessionRepository
   class ConfigurationError < StandardError; end
 
-  def self.storage=(storage)
-    @@storage = storage
-  end
+  class << self
+    def storage=(storage)
+      @storage = storage
 
-  def self.retrieve(id)
-    validate
-    @@storage.retrieve(id)
-  end
+      unless storage.nil? || self.storage.respond_to?(:store) && self.storage.respond_to?(:retrieve)
+        raise ArgumentError, "storage must respond to :store and :retrieve"
+      end
+    end
 
-  def self.store(session)
-    validate
-    @@storage.store(session)
-  end
+    def retrieve(id)
+      storage.retrieve(id)
+    end
 
-  def self.validate
-    raise ConfigurationError.new("ShopifySessionRepository.store is not configured!") unless @@storage
-  end
+    def store(session)
+      storage.store(session)
+    end
 
+    def storage
+      load_storage || raise(ConfigurationError.new("ShopifySessionRepository.storage is not configured!"))
+    end
+
+    private
+
+    def load_storage
+      return unless @storage
+      @storage.respond_to?(:safe_constantize) ? @storage.safe_constantize : @storage
+    end
+  end
 end
