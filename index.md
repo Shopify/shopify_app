@@ -82,7 +82,7 @@ Your ActiveRecord model would look something like this:
         shop.id
       end
 
-      def retrieve(id)
+      def self.retrieve(id)
         shop = Shop.find(id)
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
