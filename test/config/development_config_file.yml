@@ -5,3 +5,4 @@ common:
 development:
   api_key: development key
   secret: development secret
+  myshopify_domain: myshopify.com
