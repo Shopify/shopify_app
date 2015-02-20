@@ -1,5 +1,5 @@
 class ShopifyApp::Configuration
-  VALID_KEYS = [:api_key, :secret]
+  VALID_KEYS = [:api_key, :secret, :myshopify_domain]
   attr_writer *VALID_KEYS
 
   def initialize(params={})
