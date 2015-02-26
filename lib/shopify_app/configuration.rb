@@ -6,25 +6,36 @@ module ShopifyApp
     # `config/initializers/shopify_app.rb`
     attr_accessor :api_key
     attr_accessor :secret
+    attr_accessor :scope
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
+
+    # use the built in session routes?
+    attr_accessor :routes
+
+    def routes_enabled?
+      @routes
+    end
 
     def initialize
       @api_key = ENV["SHOPIFY_APP_API_KEY"]
       @secret =  ENV["SHOPIFY_APP_SECRET"]
+      @scope = 'read_orders, read_products'
       @embedded_app = true
-    end
 
-    def self.configuration
-      @configuration ||= Configuration.new
+      @routes = true
     end
+  end
 
-    def self.configuration=(config)
-      @configuration = config
-    end
+  def self.configuration
+    @configuration ||= Configuration.new
+  end
 
-    def self.configure
-      yield configuration
-    end
+  def self.configuration=(config)
+    @configuration = config
+  end
+
+  def self.configure
+    yield configuration
   end
 end

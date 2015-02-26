@@ -7,6 +7,9 @@ require 'omniauth-shopify-oauth2'
 # config
 require 'shopify_app/configuration'
 
+# engine
+require 'shopify_app/engine'
+
 # helpers and concerns
 require 'shopify_app/shop'
 require 'shopify_app/controller'
