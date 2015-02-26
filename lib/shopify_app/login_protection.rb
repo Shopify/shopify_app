@@ -9,7 +9,6 @@ module ShopifyApp
     def shopify_session
       if shop_session
         begin
-          # session[:shopify] set in LoginController#show
           ShopifyAPI::Base.activate_session(shop_session)
           yield
         ensure

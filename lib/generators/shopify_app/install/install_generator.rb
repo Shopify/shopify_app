@@ -41,6 +41,13 @@ module ShopifyApp
         copy_file 'shopify_session_repository.rb', 'config/initializers/shopify_session_repository.rb'
       end
 
+      def add_embedded_app_options_to_application
+        if ShopifyApp.configuration.embedded_app?
+          application "config.action_dispatch.default_headers.delete('X-Frame-Options')"
+          application "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'"
+        end
+      end
+
       def inject_into_application_controller
         inject_into_class(
           "app/controllers/application_controller.rb",
@@ -50,11 +57,20 @@ module ShopifyApp
       end
 
       def create_embedded_app_layout
-        copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+        if ShopifyApp.configuration.embedded_app?
+          copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+        end
       end
 
       def create_home_controller
         copy_file 'home_controller.rb', 'app/controllers/home_controller.rb'
+        if ShopifyApp.configuration.embedded_app?
+          inject_into_file(
+          'app/controllers/home_controller.rb',
+          "  layout 'embedded_app'\n",
+          after: "around_filter :shopify_session\n"
+        )
+        end
       end
 
       def create_home_index_view
