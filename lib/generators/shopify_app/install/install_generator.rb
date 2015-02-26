@@ -49,6 +49,10 @@ module ShopifyApp
         )
       end
 
+      def create_embedded_app_layout
+        copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+      end
+
       def create_home_controller
         copy_file 'home_controller.rb', 'app/controllers/home_controller.rb'
       end
