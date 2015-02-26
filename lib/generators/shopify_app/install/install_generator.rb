@@ -49,28 +49,17 @@ module ShopifyApp
         )
       end
 
-      def create_or_inject_into_home_controller
-        unless File.exist? "app/controllers/home_controller.rb"
-          copy_file 'home_controller.rb', 'app/controllers/home_controller.rb'
-        end
-
-        inject_into_file(
-          "app/controllers/home_controller.rb",
-          after: "class HomeController < ApplicationController\n"
-        ) do <<-'RUBY'
-  around_filter :shopify_session
-
-  def index
-    'hello world'
-  end
-
-        RUBY
-        end
+      def create_home_controller
+        copy_file 'home_controller.rb', 'app/controllers/home_controller.rb'
       end
 
-    def add_home_index_route
-      route "root :to => 'home#index'"
-    end
+      def create_home_index_view
+        copy_file 'index.html.erb', 'app/views/home/index.html.erb'
+      end
+
+      def add_home_index_route
+        route "root :to => 'home#index'"
+      end
 
     end
   end
