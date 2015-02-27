@@ -9,6 +9,14 @@ module ShopifyApp
         route(session_routes)
       end
 
+      def disable_engine_routes
+        inject_into_file(
+          'config/initializers/shopify_app.rb',
+          "  config.routes = false\n",
+          before: 'end'
+        )
+      end
+
       private
 
       def session_routes
