@@ -1,18 +1,30 @@
-# Shopify App
+Shopify App      [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+===========
 
-[![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+Shopify Application Rails engine and generator
 
-Shopify application generator for Rails 3.1 and Rails 4.0
 
-## Description
-
-This gem makes it easy to get a Rails 3.1 or Rails 4.0 app up and running with the Shopify API.
-
-The generator creates a basic SessionsController for authenticating with your shop and a HomeController which displays basic information about your products, orders and articles.
+Description
+-----------
+This gem includes some common code and generators for writing Rails applications using the Shopify API.
 
 *Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete some of your files.*
 
-## Installation
+
+Becoming a Shopify App Developer
+--------------------------------
+If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
+
+Once you have a Partner account create a new application to get an Api key and other Api credentials. To create a development application set the Application Callback URL to
+
+	http://localhost:3000/login
+
+This way you'll be able to run the app on your local machine.
+
+
+Installation
+------------
+To get started add shopify_app to your Gemfile and bundle install
 
 ``` sh
 # Create a new rails app
@@ -24,59 +36,72 @@ $ echo "gem 'shopify_app'" >> Gemfile
 $ bundle install
 ```
 
-## Usage
+Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
 
-``` sh
-$ rails generate shopify_app your_app_api_key your_app_secret
+
+Generators
+----------
+
+### Install Generator
+
+```sh
+$ rails generate shopify_app:install
+
+# or optionally with arguments:
+
+$ rails generate shopify_app:install -api_key <your_api_key> -secret <your_app_secret>
 ```
 
-If you don't have an API key yet, create a Shopify Partner account at http://shopify.com/partners and create an app. You can also create test shops once you're logged in as a partner.
+Other options include:
+* `scope` - the Oauth access scope required for your app, eg 'read_products, write_orders'. For more information read the [docs](http://docs.shopify.com/api/tutorials/oauth)
+* `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `-embedded false`
 
-When you create your app in the Shopify Partner Account, set the Application Callback URL to
+You can update any of these settings later on easily, the arguments are simply for convenience.
 
-	http://localhost:3000/login
+The generator creates a basic SessionsController for authenticating with your shop and a HomeController which displays basic information about your products using the ShopifyAPI. The generated controllers include concerns provided by this gem - in this way code sharing is possible and if some of these core methods are updated everyone can benefit. It is completely safe to override any of the methods provided by this gem in your application.
 
-You can also create a private application that only works for your shop by visiting https://YOUR-SHOP.myshopify.com/admin/apps/private.
+After running the `install` generator you can start your app with `bundle exec rails server` and install your app by visiting localhost.
 
-### Example
 
-``` sh
-$ rails generate shopify_app edffbb1bb793e2750686e6f4647a384a fed5bb18hde3e2750686e6f4647a781a
+### Shop Model Generator
+
+```sh
+$ rails generate shopify_app:shop_model
 ```
 
-This will create a LoginController and a HomeController with their own views.
+The install generator doesn't create any database models for you and if you are starting a new app its quite likely that you will want one (most our internally developed apps do!). This generator creates a simple shop model and a migration. It also create a model called `SessionStorage` which interacts with `ShopifyApp::SessionRepository`. Check out the later section to learn more about `ShopifyApp::SessionRepository`
 
-## Configuring Shopify App
+*Note that you will need to run rake db:migrate after this generator*
 
-It's possible to set your API key and secret key from different sources:
+### Controllers, Routes and Views
 
-* `SHOPIFY_APP_API_KEY` and `SHOPIFY_APP_SECRET` environment variables
-* Configuration in a Rails `<environment>.rb` config file
+The last group of generators are for your convenience when you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
 
-``` ruby
-config.shopify.api_key = 'your api key'
-config.shopify.secret = 'your secret'
+
+### Default Generator
+
+If you just run `rails generate shopify_app` then all the generators will be run for you. This is how we do it internally!
+
+
+
+Managing Api Keys
+-----------------
+
+The `install` generator places your Api credentials directly into the shopify_app initializer which is convient and fine for development but once your app goes into production **your api credentials should not be in source control**. When we develop apps we keep our keys in environment variables so a product shopify_app initializer would look like this:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.api_key = ENV['SHOPIFY_CLIENT_API_KEY']
+  config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
+  config.scope = 'read_customers, read_orders, write_products'
+  config.embedded_app = true
+end
 ```
 
-* Configuration loaded from `<environment>` key in `shopify_app.yml`
+ShopifyApp::SessionRepository
+-----------------------------
 
-``` yaml
-development:
-  api_key: your api key
-  secret: your secret
-```
-
-* Configuration loaded from common key in `shopify_app.yml`
-
-``` yaml
-common:
-  api_key: your api key
-  secret: your secret
-```
-
-## Set up your ShopifySessionRepository.store
-
-`ShopifySessionRepository` allows you as a developer to define how your sessions are retrieved and
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and
 stored for a shop. This can simply be your `Shop` model that stores the API Token and shop name. If
 you are using ActiveRecord, then all you need to implement is `self.store(shopify_session)` and
 `self.retrieve(id)` in order to store the record on disk or retrieve it for use at a later point.
@@ -101,85 +126,25 @@ class Shop < ActiveRecord::Base
 end
 ```
 
-By default you will have an in memory store but it really won't work on multi-server environments since
+By default you will have an in memory store but it **won't work** on multi-server environments since
 they won't be sharing the static data that would be required in case your user gets directed to a
 different server by your load balancer.
 
 The in memory store also does not behave well on Heroku because the session data would be destroyed
 when a dyno is killed due to inactivity.
 
-Changing the `ShopifySessionRepository.storage` can simply be done by editing
+Changing the `ShopifyApp::SessionRepository.storage` can simply be done by editing
 `config/initializers/shopify_session_repository.rb` to use the correct model.
 
 ```ruby
-ShopifySessionRepository.storage = 'Shop'
+ShopifyApp::SessionRepository.storage = 'Shop'
 ```
 
-## Set your required API permissions
+If you run the `shop_model` generator it will create the required code to use the generated Shop model as the SessionRepository and update the initializer.
 
-Before making API requests, your application must state which API permissions it requires from the shop it's installed in. These requested permissions will be listed on the screen the merchant sees when approving your app to be installed in their shop.
 
-Start by reviewing the documentation on API permission scopes: http://docs.shopify.com/api/tutorials/oauth
-
-When you know which ones your app will need, add a scope line to the `config/initializers/omniauth.rb` file.
-
-### Example
-
-Make this change to request write access to products and read access to orders:
-
-``` ruby
-Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :shopify, 
-       ShopifyApp.configuration.api_key, 
-       ShopifyApp.configuration.secret,
-       :scope => "write_products,read_orders",
-       :setup => lambda {|env| 
-                   params = Rack::Utils.parse_query(env['QUERY_STRING'])
-                   site_url = "https://#{params['shop']}"
-                   env['omniauth.strategy'].options[:client_options][:site] = site_url
-                 }
-end
-```
-
-*Note that you can change your API permission scopes on the fly, but the merchant will have to approve each change and your computed API password will change.*
-
-## After running the generator
-
-First, start your application:
-
-``` sh
-$ rails server
-```
-
-Now visit http://localhost:3000 and install your application in a Shopify store. Even if Rails tells you to visit your app at http://0.0.0.0:3000, go to http://localhost:3000.
-
-After your application has been given whatever API permissions you requested by the shop, you're ready to start experimenting with the Shopify API.
-
-## Rails 3.0 (as in before 3.1) Support
-
-Rails 3.0 (as in before the big changes in 3.1) is supported on a branch of our github repo: https://github.com/Shopify/shopify_app/tree/rails_3.0_support
-
-## Common problems
-
-If you are getting the following error:
-
-```
-Faraday::Error::ConnectionFailed error when accessing app.
-```
-    
-It probably means that the CA certificate on your computer is out of date. A simple solution on the Mac is to install XCode.
-
-If you are getting the following error:
-
-```
-ActiveResource::ForbiddenAccess in HomeController#index
-Failed.  Response code = 403.  Response message = Forbidden.
-```
-
-It means that you have not set appropriate permissions in your `config/initializers/omniauth.rb` file for what you are trying to do in your HomeController#index action. Example: you set your permissions to 'write_content' because that's what your app will do, but your HomeController#index still has that default code generated by shopify_app which attempts to read products and orders, neither being covered by the 'write_content' scope.
-
-## Questions or problems?
-
+Questions or problems?
+----------------------
 http://api.shopify.com <= Read up on the possible API calls!
 
 http://ecommerce.shopify.com/c/shopify-apis-and-technology <= Ask questions!
