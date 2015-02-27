@@ -43,7 +43,11 @@ module ShopifyApp
       session[:return_to] || root_url
     end
 
-     def sanitize_shop_param(params)
+    def sanitized_shop_name
+      @sanitized_shop_name ||= sanitize_shop_param(params)
+    end
+
+    def sanitize_shop_param(params)
       return unless params[:shop].present?
       name = params[:shop].to_s.strip
       name += '.myshopify.com' if !name.include?("myshopify.com") && !name.include?(".")
