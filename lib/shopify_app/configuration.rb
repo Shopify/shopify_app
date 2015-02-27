@@ -18,11 +18,6 @@ module ShopifyApp
     end
 
     def initialize
-      @api_key = ENV["SHOPIFY_APP_API_KEY"]
-      @secret =  ENV["SHOPIFY_APP_SECRET"]
-      @scope = 'read_orders, read_products'
-      @embedded_app = true
-
       @routes = true
     end
   end
