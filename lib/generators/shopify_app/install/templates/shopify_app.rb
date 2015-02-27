@@ -1,6 +1,6 @@
 ShopifyApp.configure do |config|
-  config.api_key = '<%= options[:api_key] %>'
-  config.secret = '<%= options[:secret] %>'
-  config.scope = '<%= options[:scope] || "read_orders, read_products" %>'
-  config.embedded_app = <%= options[:embedded_app] %>
+  config.api_key = "<%= @opts[:api_key] %>"
+  config.secret = "<%= @opts[:secret] %>"
+  config.scope = "<%= @opts[:scope] || 'read_orders, read_products' %>"
+  config.embedded_app = <%= @opts[:embedded_app] %>
 end

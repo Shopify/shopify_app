@@ -1,5 +1,6 @@
 require 'rails/generators/base'
 require 'rails/generators/active_record'
+require 'slop'
 
 module ShopifyApp
   module Generators
@@ -7,11 +8,17 @@ module ShopifyApp
       include Rails::Generators::Migration
       source_root File.expand_path('../templates', __FILE__)
 
-      argument :api_key, type: :string, required: false
-      argument :secret,  type: :string, required: false
-      argument :scope,   type: :string, required: false
+      def initialize(args, *options)
+        opts = Slop.parse do |o|
+          o.string '-api_key'
+          o.string '-secret'
+          o.string '-scope'
+          o.string '-embedded'
+        end
+        @opts = opts.to_hash
 
-      class_option :embedded_app, type: :boolean, default: true, desc: 'pass false to create a regular app'
+        super(args, *options)
+      end
 
       def create_shopify_app_initializer
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
@@ -34,7 +41,7 @@ module ShopifyApp
       end
 
       def inject_embedded_app_options_to_application
-        if options[:embedded_app]
+        if embedded_app?
           application "config.action_dispatch.default_headers.delete('X-Frame-Options')"
           application "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'"
         end
@@ -49,7 +56,7 @@ module ShopifyApp
       end
 
       def create_embedded_app_layout
-        if options[:embedded_app]
+        if embedded_app?
           copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
         end
       end
@@ -60,7 +67,7 @@ module ShopifyApp
 
       def create_home_index_view
         copy_file 'index.html.erb', 'app/views/home/index.html.erb'
-        if options[:embedded_app]
+        if embedded_app?
           prepend_to_file(
             'app/views/home/index.html.erb',
             File.read(File.expand_path(find_in_source_paths('shopify_app_ready_script.html')))
@@ -70,6 +77,12 @@ module ShopifyApp
 
       def add_home_index_route
         route "root :to => 'home#index'"
+      end
+
+      private
+
+      def embedded_app?
+        @opts[:embedded] != 'false'
       end
 
     end

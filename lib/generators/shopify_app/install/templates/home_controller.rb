@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
   around_filter :shopify_session
-<% if -%>
+<% if embedded_app? -%>
   layout 'embedded_app'
 <% end -%>
 
