@@ -13,7 +13,7 @@ module ShopifyApp
     def callback
       if response = request.env['omniauth.auth']
         sess = ShopifyAPI::Session.new(params[:shop], response['credentials']['token'])
-        session[:shopify] = ShopifySessionRepository.store(sess)
+        session[:shopify] = ShopifyApp::SessionRepository.store(sess)
         flash[:notice] = "Logged in"
         redirect_to return_address
       else

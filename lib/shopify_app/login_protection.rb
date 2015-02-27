@@ -21,7 +21,7 @@ module ShopifyApp
 
     def shop_session
       return unless session[:shopify]
-      @shop_session ||= ShopifySessionRepository.retrieve(session[:shopify])
+      @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
     end
 
     def login_again_if_different_shop
