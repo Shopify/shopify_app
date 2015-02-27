@@ -30,41 +30,41 @@ class ShopifySessionRepositoryTest < Minitest::Test
   def setup
     @session_store = TestSessionStore.new
     @session = ShopifyAPI::Session.new('shop.myshopify.com', 'abracadabra')
-    ShopifySessionRepository.storage = session_store
+    ShopifyApp::SessionRepository.storage = session_store
   end
 
   def teardown
-    ShopifySessionRepository.storage = nil
+    ShopifyApp::SessionRepository.storage = nil
   end
 
   def test_adding_a_session_to_the_repository
-    assert_equal 0, ShopifySessionRepository.store(session)
+    assert_equal 0, ShopifyApp::SessionRepository.store(session)
     assert_equal session, session_store.retrieve(0)
   end
 
   def test_retrieving_a_session_from_the_repository
     session_store.storage[9] = session
-    assert_equal session, ShopifySessionRepository.retrieve(9)
+    assert_equal session, ShopifyApp::SessionRepository.retrieve(9)
   end
 
   def test_retrieving_a_session_for_an_id_that_does_not_exist
-    ShopifySessionRepository.store(session)
-    assert !ShopifySessionRepository.retrieve(100), "The session with id 100 should not exist in the Repository"
+    ShopifyApp::SessionRepository.store(session)
+    assert !ShopifyApp::SessionRepository.retrieve(100), "The session with id 100 should not exist in the Repository"
   end
 
   def test_retrieving_a_session_for_a_misconfigured_shops_repository
-    ShopifySessionRepository.storage = nil
-    assert_raises ShopifySessionRepository::ConfigurationError do
-      ShopifySessionRepository.retrieve(0)
+    ShopifyApp::SessionRepository.storage = nil
+    assert_raises ShopifyApp::SessionRepository::ConfigurationError do
+      ShopifyApp::SessionRepository.retrieve(0)
     end
 
-    assert_raises ShopifySessionRepository::ConfigurationError do
-      ShopifySessionRepository.store(session)
+    assert_raises ShopifyApp::SessionRepository::ConfigurationError do
+      ShopifyApp::SessionRepository.store(session)
     end
   end
 
   def test_accepts_a_string_and_constantizes_it
-    ShopifySessionRepository.storage = 'TestSessionStoreClass'
-    assert_equal TestSessionStoreClass, ShopifySessionRepository.storage
+    ShopifyApp::SessionRepository.storage = 'TestSessionStoreClass'
+    assert_equal TestSessionStoreClass, ShopifyApp::SessionRepository.storage
   end
 end

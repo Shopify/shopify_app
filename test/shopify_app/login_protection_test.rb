@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'action_controller'
+require 'action_controller/base'
 
 class LoginProtectionController < ActionController::Base
   include ShopifyApp::LoginProtection
@@ -14,7 +15,7 @@ class LoginProtectionTest < ActionController::TestCase
   tests LoginProtectionController
 
   def setup
-    ShopifySessionRepository.storage = InMemorySessionStore
+    ShopifyApp::SessionRepository.storage = InMemorySessionStore
   end
 
   def test_calling_shop_session_returns_nil_when_session_is_nil
@@ -29,7 +30,7 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session[:shopify] = "foobar"
       get :index
-      ShopifySessionRepository.expects(:retrieve).returns(session).once
+      ShopifyApp::SessionRepository.expects(:retrieve).returns(session).once
       assert @controller.shop_session
     end
   end
@@ -38,7 +39,7 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session[:shopify] = "foobar"
       get :index
-      ShopifySessionRepository.expects(:retrieve).returns(session).once
+      ShopifyApp::SessionRepository.expects(:retrieve).returns(session).once
       assert @controller.shop_session
       assert @controller.shop_session
     end

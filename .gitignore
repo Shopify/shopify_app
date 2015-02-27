@@ -5,3 +5,5 @@ pkg/*
 .DS_Store
 .yardoc
 doc/
+*.log
+*.sqlite3
