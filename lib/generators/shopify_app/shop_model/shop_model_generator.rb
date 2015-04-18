@@ -26,27 +26,11 @@ module ShopifyApp
       private
 
       def copy_migration(migration_name, config = {})
-        unless migration_exists?(migration_name)
-          migration_template(
-            "db/migrate/#{migration_name}",
-            "db/migrate/#{migration_name}",
-            config
-          )
-        end
-      end
-
-      def migration_exists?(name)
-        existing_migrations.include?(name)
-      end
-
-      def existing_migrations
-        @existing_migrations ||= Dir.glob("db/migrate/*.rb").map do |file|
-          migration_name_without_timestamp(file)
-        end
-      end
-
-      def migration_name_without_timestamp(file)
-        file.sub(%r{^.*(db/migrate/)(?:\d+_)?}, '')
+        migration_template(
+          "db/migrate/#{migration_name}",
+          "db/migrate/#{migration_name}",
+          config
+        )
       end
 
       # for generating a timestamp when using `create_migration`

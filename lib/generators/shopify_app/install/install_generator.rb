@@ -50,7 +50,7 @@ module ShopifyApp
       def inject_into_application_controller
         inject_into_class(
           "app/controllers/application_controller.rb",
-          ApplicationController,
+          'ApplicationController',
           "  include ShopifyApp::Controller\n"
         )
       end

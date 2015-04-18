@@ -5,7 +5,7 @@ module ShopifyApp
     class RoutesGenerator < Rails::Generators::Base
       source_root File.expand_path('../templates', __FILE__)
 
-      def inject_clearance_routes_into_application_routes
+      def inject_shopify_app_routes_into_application_routes
         route(session_routes)
       end
 
