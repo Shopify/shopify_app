@@ -14,11 +14,11 @@ end
 class LoginProtectionTest < ActionController::TestCase
   tests LoginProtectionController
 
-  def setup
+  setup do
     ShopifyApp::SessionRepository.storage = InMemorySessionStore
   end
 
-  def test_calling_shop_session_returns_nil_when_session_is_nil
+  test "calling shop session returns nil when session is nil" do
     with_application_test_routes do
       session[:shopify] = nil
       get :index
@@ -26,7 +26,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  def test_calling_shop_session_retreives_session_from_storage
+  test "calling shop session retreives session from storage" do
     with_application_test_routes do
       session[:shopify] = "foobar"
       get :index
@@ -35,7 +35,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  def test_shop_session_is_memoized_and_does_not_retreive_session_twice
+  test "shop session is memoized and does not retreive session twice" do
     with_application_test_routes do
       session[:shopify] = "foobar"
       get :index
@@ -44,6 +44,8 @@ class LoginProtectionTest < ActionController::TestCase
       assert @controller.shop_session
     end
   end
+
+  private
 
   def with_application_test_routes
     with_routing do |set|

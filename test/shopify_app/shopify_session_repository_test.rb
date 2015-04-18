@@ -2,6 +2,7 @@ require 'test_helper'
 
 class TestSessionStore
   attr_reader :storage
+
   def initialize
     @storage = []
   end
@@ -25,34 +26,35 @@ class TestSessionStoreClass
   end
 end
 
-class ShopifySessionRepositoryTest < Minitest::Test
+class ShopifySessionRepositoryTest < ActiveSupport::TestCase
   attr_reader :session_store, :session
-  def setup
+
+  setup do
     @session_store = TestSessionStore.new
     @session = ShopifyAPI::Session.new('shop.myshopify.com', 'abracadabra')
     ShopifyApp::SessionRepository.storage = session_store
   end
 
-  def teardown
+  teardown do
     ShopifyApp::SessionRepository.storage = nil
   end
 
-  def test_adding_a_session_to_the_repository
+  test "adding a session to the repository" do
     assert_equal 0, ShopifyApp::SessionRepository.store(session)
     assert_equal session, session_store.retrieve(0)
   end
 
-  def test_retrieving_a_session_from_the_repository
+  test "retrieving a session from the repository" do
     session_store.storage[9] = session
     assert_equal session, ShopifyApp::SessionRepository.retrieve(9)
   end
 
-  def test_retrieving_a_session_for_an_id_that_does_not_exist
+  test "retrieving a session for an id that does not exist" do
     ShopifyApp::SessionRepository.store(session)
     assert !ShopifyApp::SessionRepository.retrieve(100), "The session with id 100 should not exist in the Repository"
   end
 
-  def test_retrieving_a_session_for_a_misconfigured_shops_repository
+  test "retrieving a session for a misconfigured shops repository" do
     ShopifyApp::SessionRepository.storage = nil
     assert_raises ShopifyApp::SessionRepository::ConfigurationError do
       ShopifyApp::SessionRepository.retrieve(0)
@@ -63,8 +65,9 @@ class ShopifySessionRepositoryTest < Minitest::Test
     end
   end
 
-  def test_accepts_a_string_and_constantizes_it
+  test "accepts a string and constantizes it" do
     ShopifyApp::SessionRepository.storage = 'TestSessionStoreClass'
     assert_equal TestSessionStoreClass, ShopifyApp::SessionRepository.storage
   end
+
 end

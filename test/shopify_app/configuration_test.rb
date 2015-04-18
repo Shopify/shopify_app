@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class ConfigurationTest < Minitest::Test
+class ConfigurationTest < ActiveSupport::TestCase
 
-  def test_configure
+  test "configure" do
     ShopifyApp.configure do |config|
       config.embedded_app = true
     end
@@ -10,7 +10,7 @@ class ConfigurationTest < Minitest::Test
     assert_equal true, ShopifyApp.configuration.embedded_app
   end
 
-  def test_routes_enabled
+ test "routes enabled" do
     assert_equal true, ShopifyApp.configuration.routes_enabled?
   end
 
