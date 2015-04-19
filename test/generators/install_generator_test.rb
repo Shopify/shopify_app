@@ -14,7 +14,12 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "creates the ShopifyApp initializer" do
     run_generator
-    assert_file "config/initializers/shopify_app.rb"
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match 'config.api_key = "<api_key>"', shopify_app
+      assert_match 'config.secret = "<secret>"', shopify_app
+      assert_match 'config.scope = "read_orders, read_products"', shopify_app
+      assert_match "config.embedded_app = true", shopify_app
+    end
   end
 
   test "creats and injects into omniauth initializer" do
@@ -90,7 +95,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   private
 
   def stub_embedded_false
-    ShopifyApp::Generators::InstallGenerator.any_instance.stubs(:embedded_app?).returns(false)
+    ShopifyApp::Generators::InstallGenerator.any_instance.stubs(:opts).returns(
+      {embedded: 'false'}
+    )
   end
 
 end

@@ -1,22 +1,15 @@
 require 'rails/generators/base'
 require 'rails/generators/active_record'
-require 'slop'
 
 module ShopifyApp
   module Generators
     class InstallGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
       source_root File.expand_path('../templates', __FILE__)
+      attr_reader :opts
 
       def initialize(args, *options)
-        opts = Slop.parse do |o|
-          o.string '-api_key'
-          o.string '-secret'
-          o.string '-scope'
-          o.string '-embedded'
-        end
-        @opts = opts.to_hash
-
+        @opts = Hash[options.first.join(' ').scan(/--?([^=\s]+)(?:=(\S+))?/)]
         super(args, *options)
       end
 
@@ -82,7 +75,7 @@ module ShopifyApp
       private
 
       def embedded_app?
-        @opts[:embedded] != 'false'
+        opts[:embedded] != 'false'
       end
 
     end
