@@ -2,6 +2,10 @@ require 'test_helper'
 
 class SessionsControllerTest < ActionController::TestCase
 
+  setup do
+    ShopifyApp::SessionRepository.storage = InMemorySessionStore
+  end
+
   test "#new should authenticate the shop if the shop param exists" do
     auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
     get :new, shop: 'my-shop'
