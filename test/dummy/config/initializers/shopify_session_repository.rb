@@ -1,0 +1,1 @@
+ShopifyApp::SessionRepository.storage = InMemorySessionStore
