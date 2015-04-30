@@ -47,18 +47,18 @@ module ShopifyApp
       @sanitized_shop_name ||= sanitize_shop_param(params)
     end
 
-  def sanitize_shop_param(params)
-    return unless params[:shop].present?
+    def sanitize_shop_param(params)
+      return unless params[:shop].present?
 
-    name = params[:shop].to_s.strip
-    name += ".myshopify.com" if !name.include?("myshopify.com") && !name.include?(".")
-    name.sub!(%r|https?://|, '')
+      name = params[:shop].to_s.strip
+      name += ".#{ShopifyApp.configuration.myshopify_domain}" if !name.include?("#{ShopifyApp.configuration.myshopify_domain}") && !name.include?(".")
+      name.sub!(%r|https?://|, '')
 
-    u = URI("http://#{name}")
-    u.host && u.host.ends_with?(".myshopify.com") ? u.host : nil
-  rescue URI::InvalidURIError
-    nil
-  end
+      u = URI("http://#{name}")
+      u.host && u.host.ends_with?(".#{ShopifyApp.configuration.myshopify_domain}") ? u.host : nil
+    rescue URI::InvalidURIError
+      nil
+    end
 
   end
 end
