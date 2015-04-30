@@ -42,6 +42,15 @@ class SessionsControllerTest < ActionController::TestCase
     end
   end
 
+  ['my-shop', 'my-shop.myshopify.io', 'https://my-shop.myshopify.io', 'http://my-shop.myshopify.io'].each do |good_url|
+    test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain" do
+      ShopifyApp.configuration.stubs(:myshopify_domain).returns('myshopify.io')
+      auth_url = '/auth/shopify?shop=my-shop.myshopify.io'
+      post :create, shop: good_url
+      assert response.body.match(/window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/)
+    end
+  end
+
   ['myshop.com', 'myshopify.com', 'shopify.com', 'two words', 'store.myshopify.com.evil.com', '/foo/bar'].each do |bad_url|
     test "#create should return an error for a non-myshopify URL (#{bad_url})" do
       post :create, shop: bad_url
