@@ -4,22 +4,25 @@ class SessionsControllerTest < ActionController::TestCase
 
   setup do
     ShopifyApp::SessionRepository.storage = InMemorySessionStore
+    ShopifyApp.configuration = nil
   end
 
   test "#new should authenticate the shop if the shop param exists" do
+    ShopifyApp.configuration.embedded_app = true
     auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
     get :new, shop: 'my-shop'
     assert response.body.match(/window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/)
   end
 
   test "#new should authenticate the shop if the shop param exists non embedded" do
-    ShopifyApp.configuration.stubs(:embedded_app?).returns(false)
+    ShopifyApp.configuration.embedded_app = false
     auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
     get :new, shop: 'my-shop'
     assert_match "http://test.host/auth/shopify?shop=my-shop.myshopify.com", response.body
   end
 
   test "#new should trust the shop param over the current session" do
+    ShopifyApp.configuration.embedded_app = true
     previously_logged_in_shop_id = 1
     session[:shopify] = previously_logged_in_shop_id
     new_shop_domain = "new-shop.myshopify.com"
@@ -36,6 +39,7 @@ class SessionsControllerTest < ActionController::TestCase
 
   ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
     test "#create should authenticate the shop for the URL (#{good_url})" do
+      ShopifyApp.configuration.embedded_app = true
       auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
       post :create, shop: good_url
       assert response.body.match(/window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/)
@@ -44,7 +48,8 @@ class SessionsControllerTest < ActionController::TestCase
 
   ['my-shop', 'my-shop.myshopify.io', 'https://my-shop.myshopify.io', 'http://my-shop.myshopify.io'].each do |good_url|
     test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain" do
-      ShopifyApp.configuration.stubs(:myshopify_domain).returns('myshopify.io')
+      ShopifyApp.configuration.embedded_app = true
+      ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
       auth_url = '/auth/shopify?shop=my-shop.myshopify.io'
       post :create, shop: good_url
       assert response.body.match(/window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/)
