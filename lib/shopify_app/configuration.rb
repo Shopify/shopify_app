@@ -1,46 +1,36 @@
-class ShopifyApp::Configuration
-  VALID_KEYS = [:api_key, :secret, :myshopify_domain]
-  attr_writer *VALID_KEYS
+module ShopifyApp
+  class Configuration
 
-  def initialize(params={})
-    self.params = default_params.merge(params)
-  end
+    # Shopify App settings. These values should match the configuration
+    # for the app in your Shopify Partners page. Change your settings in
+    # `config/initializers/shopify_app.rb`
+    attr_accessor :api_key
+    attr_accessor :secret
+    attr_accessor :scope
+    attr_accessor :embedded_app
+    alias_method  :embedded_app?, :embedded_app
 
-  VALID_KEYS.each do |meth|
-    define_method meth do
-      meth = meth.to_s
-      config_from_env(meth) || config_from_rails(meth) || config_from_file(meth) || ''
+    # use the built in session routes?
+    attr_accessor :routes
+
+    def routes_enabled?
+      @routes
+    end
+
+    def initialize
+      @routes = true
     end
   end
 
-  private
-
-  attr_accessor :params
-
-  def config_from_env(meth)
-    ENV["SHOPIFY_APP_#{meth.upcase}"]
+  def self.configuration
+    @configuration ||= Configuration.new
   end
 
-  def config_from_rails(meth)
-    instance_variable_get("@#{meth}")
+  def self.configuration=(config)
+    @configuration = config
   end
 
-  def config_from_file(meth)
-    @config_file ||= load_config
-    @config_file[Rails.env].try(:[], meth) || @config_file['common'].try(:[], meth)
-  end
-
-  def load_config
-    File.exist?(config_filepath) ? YAML.load_file(config_filepath) : {}
-  end
-
-  def config_filepath
-    params[:config_file]
-  end
-
-  def default_params
-    {
-      config_file: File.join(Rails.root, 'config', 'shopify_app.yml')
-    }
+  def self.configure
+    yield configuration
   end
 end

@@ -1,20 +1,21 @@
+require 'shopify_app/version'
+
+# deps
 require 'shopify_api'
 require 'omniauth-shopify-oauth2'
 
-module ShopifyApp
+# config
+require 'shopify_app/configuration'
 
-  def self.configuration
-    @configuration ||= ShopifyApp::Configuration.new
-  end
-  
-  def self.setup_session
-    ShopifyAPI::Session.setup(:api_key => ShopifyApp.configuration.api_key, :secret => ShopifyApp.configuration.secret)
-  end
-end
+# engine
+require 'shopify_app/engine'
 
+# helpers and concerns
+require 'shopify_app/shop'
+require 'shopify_app/controller'
+require 'shopify_app/sessions_controller'
+require 'shopify_app/login_protection'
+
+# session repository
 require 'shopify_app/shopify_session_repository'
 require 'shopify_app/in_memory_session_store'
-require 'shopify_app/login_protection'
-require 'shopify_app/configuration'
-require 'shopify_app/railtie'
-require 'shopify_app/version'
