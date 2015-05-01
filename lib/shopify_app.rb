@@ -15,6 +15,7 @@ require 'shopify_app/shop'
 require 'shopify_app/controller'
 require 'shopify_app/sessions_controller'
 require 'shopify_app/login_protection'
+require 'shopify_app/utils'
 
 # session repository
 require 'shopify_app/shopify_session_repository'
