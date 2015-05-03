@@ -1,6 +1,6 @@
 class SessionStorage
   def self.store(session)
-    shop = self.find_or_initialize_by(shopify_domain: session.url)
+    shop = Shop.find_or_initialize_by(shopify_domain: session.url)
     shop.shopify_token = session.token
     shop.save!
     shop.id
@@ -8,7 +8,7 @@ class SessionStorage
 
   def self.retrieve(id)
     return unless id
-    shop = self.find(id)
+    shop = Shop.find(id)
     ShopifyAPI::Session.new(shop.shopify_domain, shop.shopify_token)
   rescue ActiveRecord::RecordNotFound
     nil
