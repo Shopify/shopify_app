@@ -10,6 +10,7 @@ module ShopifyApp
 
       def initialize(args, *options)
         @opts = Hash[options.first.join(' ').scan(/--?([^=\s]+)(?:=(\S+))?/)]
+        @opts = @opts.with_indifferent_access
         super(args, *options)
       end
 
