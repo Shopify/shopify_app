@@ -12,16 +12,12 @@ module ShopifyApp
 
     # use the built in session routes?
     attr_accessor :routes
+    alias_method :routes_enabled?, :routes
 
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
-    def routes_enabled?
-      @routes
-    end
-
     def initialize
-      @routes = true
       @myshopify_domain = 'myshopify.com'
     end
   end

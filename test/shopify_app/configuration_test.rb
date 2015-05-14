@@ -15,6 +15,10 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "routes enabled" do
+    ShopifyApp.configure do |config|
+      config.routes = true
+    end
+
     assert_equal true, ShopifyApp.configuration.routes_enabled?
   end
 
