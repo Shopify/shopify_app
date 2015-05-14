@@ -18,7 +18,7 @@ module ShopifyApp
         redirect_to return_address
       else
         flash[:error] = "Could not log in to Shopify store."
-        redirect_to :action => 'new'
+        redirect_to action: 'new'
       end
     end
 
@@ -26,7 +26,7 @@ module ShopifyApp
       session[:shopify] = nil
       flash[:notice] = "Successfully logged out."
 
-      redirect_to :action => 'new'
+      redirect_to action: 'new'
     end
 
     protected
@@ -40,7 +40,7 @@ module ShopifyApp
     end
 
     def return_address
-      session[:return_to] || root_url
+      session[:return_to] || main_app.root_url
     end
 
     def sanitized_shop_name

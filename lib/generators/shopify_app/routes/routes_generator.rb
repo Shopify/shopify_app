@@ -11,9 +11,9 @@ module ShopifyApp
 
       def disable_engine_routes
         gsub_file(
-          'config/initializers/shopify_app.rb',
-          'config.routes = true',
-          'config.routes = false'
+          'config/routes.rb',
+          "mount ShopifyApp::Engine, at: '/'",
+          ''
         )
       end
 

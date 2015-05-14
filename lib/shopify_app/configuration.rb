@@ -10,10 +10,6 @@ module ShopifyApp
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
 
-    # use the built in session routes?
-    attr_accessor :routes
-    alias_method :routes_enabled?, :routes
-
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
