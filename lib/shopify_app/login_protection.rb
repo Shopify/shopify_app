@@ -42,5 +42,11 @@ module ShopifyApp
       redirect_to login_path
     end
 
+    def login_path(params = {})
+      main_app.login_path(params)
+    rescue NoMethodError => e
+      shopify_app.login_path(params)
+    end
+
   end
 end
