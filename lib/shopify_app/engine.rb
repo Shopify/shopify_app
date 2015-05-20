@@ -1,5 +1,5 @@
 module ShopifyApp
   class Engine < Rails::Engine
-    isolate_namespace ShopifyApp
+    engine_name 'shopify_app'
   end
 end

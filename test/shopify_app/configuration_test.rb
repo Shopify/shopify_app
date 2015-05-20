@@ -14,18 +14,6 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal true, ShopifyApp.configuration.embedded_app
   end
 
-  test "routes enabled" do
-    assert_equal true, ShopifyApp.configuration.routes_enabled?
-  end
-
-  test "disable routes" do
-    ShopifyApp.configure do |config|
-      config.routes = false
-    end
-
-    assert_equal false, ShopifyApp.configuration.routes_enabled?
-  end
-
   test "defaults to myshopify_domain" do
     assert_equal "myshopify.com", ShopifyApp.configuration.myshopify_domain
   end

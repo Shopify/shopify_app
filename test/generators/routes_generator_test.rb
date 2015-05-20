@@ -19,14 +19,7 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
       assert_match "post 'login' => :create, :as => :authenticate", routes
       assert_match "get 'auth/shopify/callback' => :callback", routes
       assert_match "get 'logout' => :destroy, :as => :logout", routes
-    end
-  end
-
-  test "adds routes false to ShopifyApp initializer" do
-    run_generator
-
-    assert_file "config/initializers/shopify_app.rb" do |initializer|
-      assert_match "config.routes = false", initializer
+      refute_match "mount ShopifyApp::Engine, at: '/'", routes
     end
   end
 
