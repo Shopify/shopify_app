@@ -12,8 +12,10 @@ module ShopifyApp
 
     def callback
       if response = request.env['omniauth.auth']
-        sess = ShopifyAPI::Session.new(params[:shop], response['credentials']['token'])
+        shop_name = response.uid
+        sess = ShopifyAPI::Session.new(shop_name, response['credentials']['token'])
         session[:shopify] = ShopifyApp::SessionRepository.store(sess)
+        session[:shopify_domain] = shop_name
         flash[:notice] = "Logged in"
         redirect_to return_address
       else
@@ -24,8 +26,8 @@ module ShopifyApp
 
     def destroy
       session[:shopify] = nil
+      session[:shopify_domain] = nil
       flash[:notice] = "Successfully logged out."
-
       redirect_to action: 'new'
     end
 
