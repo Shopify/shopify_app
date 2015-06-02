@@ -73,14 +73,18 @@ class SessionsControllerTest < ActionController::TestCase
 
     get :callback, shop: 'shop'
     assert_not_nil session[:shopify]
+    assert_equal 'shop.myshopify.com', session[:shopify_domain]
   end
 
   test "#destroy should clear shopify from session and redirect to login with notice" do
     shop_id = 1
     session[:shopify] = shop_id
+    session[:shopify_domain] = 'shop1.myshopify.com'
 
     get :destroy
+
     assert_nil session[:shopify]
+    assert_nil session[:shopify_domain]
     assert_redirected_to login_path
     refute flash[:notice].empty?
   end
@@ -88,7 +92,7 @@ class SessionsControllerTest < ActionController::TestCase
   private
 
   def mock_shopify_omniauth
-    OmniAuth.config.add_mock(:shopify, provider: :shopify, credentials: {token: '1234'})
+    OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: {token: '1234'})
     request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
     request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
   end
