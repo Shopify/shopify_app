@@ -143,6 +143,12 @@ ShopifyApp::SessionRepository.storage = 'Shop'
 If you run the `shop_model` generator it will create the required code to use the generated Shop model as the SessionRepository and update the initializer.
 
 
+AuthenticatedController
+-----------------------
+
+The engine includes a controller called `AuthenticatedController` which inherits from `ApplicationController`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
+
+
 Questions or problems?
 ----------------------
 http://api.shopify.com <= Read up on the possible API calls!
