@@ -11,6 +11,14 @@ This gem includes some common code and generators for writing Rails applications
 *Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete some of your files.*
 
 
+Quickstart
+----------
+
+Check out this screencast on how to create and deploy a new Shopify App to Heroku in 5 minutes:
+
+[https://vimeo.com/130247240](https://vimeo.com/130247240)
+
+
 Becoming a Shopify App Developer
 --------------------------------
 If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
