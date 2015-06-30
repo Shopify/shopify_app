@@ -8,3 +8,4 @@ doc/
 *.log
 *.sqlite3
 test/tmp/*
+.idea
