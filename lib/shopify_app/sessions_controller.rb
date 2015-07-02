@@ -42,7 +42,7 @@ module ShopifyApp
     end
 
     def return_address
-      session[:return_to] || main_app.root_url
+      session.delete(:return_to) || main_app.root_url
     end
 
     def sanitized_shop_name
