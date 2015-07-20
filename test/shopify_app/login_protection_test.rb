@@ -6,7 +6,13 @@ class LoginProtectionController < ActionController::Base
   include ShopifyApp::LoginProtection
   helper_method :shop_session
 
+  before_action :login_again_if_different_shop, only: [:second_login]
+
   def index
+    render nothing: true
+  end
+
+  def second_login
     render nothing: true
   end
 end
@@ -45,12 +51,24 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test "login_again_if_different_shop removes current session and redirects to login path" do
+    with_application_test_routes do
+      session[:shopify] = "foobar"
+      sess = stub(url: 'https://foobar.myshopify.com')
+      ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
+      get :second_login, shop: 'other_shop'
+      assert_redirected_to @controller.send(:login_path, shop: 'other_shop')
+      assert_nil session[:shopify]
+    end
+  end
+
   private
 
   def with_application_test_routes
     with_routing do |set|
       set.draw do
         get '/' => 'login_protection#index'
+        get '/second_login' => 'login_protection#second_login'
       end
       yield
     end
