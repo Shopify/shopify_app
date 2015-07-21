@@ -27,6 +27,7 @@ module ShopifyApp
     def login_again_if_different_shop
       if shop_session && params[:shop] && params[:shop].is_a?(String) && shop_session.url != params[:shop]
         session[:shopify] = nil
+        session[:shopify_domain] = nil
         redirect_to_login
       end
     end
@@ -40,6 +41,7 @@ module ShopifyApp
 
     def close_session
       session[:shopify] = nil
+      session[:shopify_domain] = nil
       redirect_to login_path
     end
 
