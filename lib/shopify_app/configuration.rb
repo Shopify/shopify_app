@@ -6,6 +6,7 @@ module ShopifyApp
     # `config/initializers/shopify_app.rb`
     attr_accessor :api_key
     attr_accessor :secret
+    attr_accessor :redirect_uri
     attr_accessor :scope
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
