@@ -79,6 +79,13 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401' do
+    with_application_test_routes do
+      xhr :get, :index, shop: 'foobar'
+      assert_equal 401, response.status
+    end
+  end
+
   private
 
   def with_application_test_routes
