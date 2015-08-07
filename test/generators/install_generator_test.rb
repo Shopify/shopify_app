@@ -17,6 +17,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.api_key = "<api_key>"', shopify_app
       assert_match 'config.secret = "<secret>"', shopify_app
+      assert_match 'config.redirect_uri = "<redirect_uri>"', shopify_app
       assert_match 'config.scope = "read_orders, read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
     end

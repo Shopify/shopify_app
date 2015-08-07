@@ -19,6 +19,7 @@ module ShopifyApp
         {
           api_key: '<api_key>',
           secret: '<secret>',
+          redirect_uri: '<redirect_uri>',
           scope: 'read_orders, read_products',
           embedded: 'true'
         }
