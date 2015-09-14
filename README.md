@@ -53,6 +53,9 @@ Generators
 ### Install Generator
 
 ```sh
+# stop Spring gem (or confirm it's not running)
+$ bundle exec spring stop
+
 $ rails generate shopify_app:install
 
 # or optionally with arguments:
