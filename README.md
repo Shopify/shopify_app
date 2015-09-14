@@ -53,9 +53,6 @@ Generators
 ### Install Generator
 
 ```sh
-# stop Spring gem (or confirm it's not running)
-$ bundle exec spring stop
-
 $ rails generate shopify_app:install
 
 # or optionally with arguments:
@@ -159,6 +156,17 @@ AuthenticatedController
 -----------------------
 
 The engine includes a controller called `AuthenticatedController` which inherits from `ApplicationController`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
+
+Troubleshooting
+---------------
+
+### Generator shopify_app:install hangs
+
+Shopify_app uses spring gem to speed up the development. Spring must be stopped for generator to proceed. Kill 'shopify_app:install' process and stop Spring:
+```sh
+$ bundle exec spring stop
+```
+Run shopify_app generator again.
 
 
 Questions or problems?
