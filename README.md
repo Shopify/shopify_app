@@ -162,7 +162,7 @@ Troubleshooting
 
 ### Generator shopify_app:install hangs
 
-Shopify_app uses spring gem to speed up the development. Spring must be stopped for generator to proceed. Kill 'shopify_app:install' process and stop Spring:
+Rails uses spring by default to speed up development. To run the generator, spring has to be stopped:
 ```sh
 $ bundle exec spring stop
 ```
