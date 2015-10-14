@@ -68,7 +68,7 @@ You can update any of these settings later on easily, the arguments are simply f
 
 The generator creates a basic SessionsController for authenticating with your shop and a HomeController which displays basic information about your products using the ShopifyAPI. The generated controllers include concerns provided by this gem - in this way code sharing is possible and if some of these core methods are updated everyone can benefit. It is completely safe to override any of the methods provided by this gem in your application.
 
-After running the `install` generator you can start your app with `bundle exec rails server` and install your app by visiting localhost.
+After running the `install` generator, you can start your app with `bundle exec rails server` and install your app by visiting localhost.
 
 
 ### Shop Model Generator
@@ -77,7 +77,7 @@ After running the `install` generator you can start your app with `bundle exec r
 $ rails generate shopify_app:shop_model
 ```
 
-The install generator doesn't create any database models for you and if you are starting a new app its quite likely that you will want one (most our internally developed apps do!). This generator creates a simple shop model and a migration. It also create a model called `SessionStorage` which interacts with `ShopifyApp::SessionRepository`. Check out the later section to learn more about `ShopifyApp::SessionRepository`
+The install generator doesn't create any database models for you and if you are starting a new app its quite likely that you will want one (most our internally developed apps do!). This generator creates a simple shop model and a migration. It also creates a model called `SessionStorage` which interacts with `ShopifyApp::SessionRepository`. Check out the later section to learn more about `ShopifyApp::SessionRepository`
 
 *Note that you will need to run rake db:migrate after this generator*
 
