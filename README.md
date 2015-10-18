@@ -95,7 +95,7 @@ If you just run `rails generate shopify_app` then all the generators will be run
 Managing Api Keys
 -----------------
 
-The `install` generator places your Api credentials directly into the shopify_app initializer which is convient and fine for development but once your app goes into production **your api credentials should not be in source control**. When we develop apps we keep our keys in environment variables so a production shopify_app initializer would look like this:
+The `install` generator places your Api credentials directly into the shopify_app initializer which is convenient and fine for development but once your app goes into production **your api credentials should not be in source control**. When we develop apps we keep our keys in environment variables so a production shopify_app initializer would look like this:
 
 ```ruby
 ShopifyApp.configure do |config|
