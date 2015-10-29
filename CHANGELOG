@@ -1,3 +1,9 @@
+6.2.1
+-----
+
+* add callback url to omniauth provider
+* add default redirect_uri
+
 6.2.0
 -----
 
