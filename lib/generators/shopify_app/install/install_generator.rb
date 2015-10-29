@@ -19,7 +19,7 @@ module ShopifyApp
         {
           api_key: '<api_key>',
           secret: '<secret>',
-          redirect_uri: '<redirect_uri>',
+          redirect_uri: 'http://localhost:3000/auth/shopify/callback',
           scope: 'read_orders, read_products',
           embedded: 'true'
         }
