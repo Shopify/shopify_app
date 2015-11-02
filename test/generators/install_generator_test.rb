@@ -73,6 +73,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "creates the embedded_app layout" do
     run_generator
     assert_file "app/views/layouts/embedded_app.html.erb"
+    assert_file "app/views/layouts/_flash_messages.html.erb"
   end
 
   test "creates the home controller" do
