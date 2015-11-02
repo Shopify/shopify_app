@@ -1,3 +1,10 @@
+Master
+------
+
+* Move SessionStorage from a generated class to a re-usable module. To
+  migrate to the new module, delete the old generated SessionStorage class
+  in the models directory and include the SessionStorage module in your Shop model.
+
 6.2.1
 -----
 

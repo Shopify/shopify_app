@@ -111,47 +111,9 @@ end
 ShopifyApp::SessionRepository
 -----------------------------
 
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and
-stored for a shop. This can simply be your `Shop` model that stores the API Token and shop name. If
-you are using ActiveRecord, then all you need to implement is `self.store(shopify_session)` and
-`self.retrieve(id)` in order to store the record on disk or retrieve it for use at a later point.
-It is imperative that your store method returns the identifier for the session. Typically this is
-just the record ID.
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for a shop. The `SessionRepository` is configured using the `config/initializers/shopify_session_repository.rb` file and can be set to any object the implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `InMemorySessionStore` or the `SessionStorage` module for examples.
 
-Your ActiveRecord model would look something like this:
-
-```ruby
-class Shop < ActiveRecord::Base
-  def self.store(session)
-    shop = self.new(domain: session.url, token: session.token)
-    shop.save!
-    shop.id
-  end
-
-  def self.retrieve(id)
-    if shop = self.where(id: id).first
-      ShopifyAPI::Session.new(shop.domain, shop.token)
-    end
-  end
-end
-```
-
-By default you will have an in memory store but it **won't work** on multi-server environments since
-they won't be sharing the static data that would be required in case your user gets directed to a
-different server by your load balancer.
-
-The in memory store also does not behave well on Heroku because the session data would be destroyed
-when a dyno is killed due to inactivity.
-
-Changing the `ShopifyApp::SessionRepository.storage` can simply be done by editing
-`config/initializers/shopify_session_repository.rb` to use the correct model.
-
-```ruby
-ShopifyApp::SessionRepository.storage = 'Shop'
-```
-
-If you run the `shop_model` generator it will create the required code to use the generated Shop model as the SessionRepository and update the initializer.
-
+If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the Shop model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides an activerecord mixin for the `SessionRepository`. You can use this mixin on any model that responds to `shopify_domain` and `shopify_token`.
 
 AuthenticatedController
 -----------------------
@@ -164,9 +126,11 @@ Troubleshooting
 ### Generator shopify_app:install hangs
 
 Rails uses spring by default to speed up development. To run the generator, spring has to be stopped:
+
 ```sh
 $ bundle exec spring stop
 ```
+
 Run shopify_app generator again.
 
 
