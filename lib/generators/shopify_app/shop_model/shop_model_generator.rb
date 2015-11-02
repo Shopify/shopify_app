@@ -23,6 +23,10 @@ module ShopifyApp
         copy_file 'shopify_session_repository.rb', 'config/initializers/shopify_session_repository.rb', force: true
       end
 
+      def create_shop_fixtures
+        copy_file 'shops.yml', 'test/fixtures/shops.yml'
+      end
+
       private
 
       def copy_migration(migration_name, config = {})

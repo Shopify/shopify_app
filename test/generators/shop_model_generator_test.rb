@@ -37,4 +37,11 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "creates default shop fixtures" do
+    run_generator
+    assert_file "test/fixtures/shops.yml" do |file|
+      assert_match "regular_shop:", file
+    end
+  end
+
 end
