@@ -4,6 +4,9 @@ Master
 * Move SessionStorage from a generated class to a re-usable module. To
   migrate to the new module, delete the old generated SessionStorage class
   in the models directory and include the SessionStorage module in your Shop model.
+* Adds a WebhooksManager class and allows you to configure what webhooks your app
+  needs. The rest is taken care of by ShopifyApp provided you set up a backgroud queue
+  with ActiveJob
 
 6.2.1
 -----

@@ -108,6 +108,23 @@ ShopifyApp.configure do |config|
 end
 ```
 
+
+WebhooksManager
+---------------
+
+ShopifyApp can manage your app's webhooks for you (requires ActiveJob). Set which webhooks you require in the initializer:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.webhooks = [
+    {topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}
+  ]
+end
+```
+
+When the oauth callback is completed successfully ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every oauth callback it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
+
+
 ShopifyApp::SessionRepository
 -----------------------------
 

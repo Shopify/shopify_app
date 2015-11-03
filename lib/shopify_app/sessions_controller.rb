@@ -13,9 +13,14 @@ module ShopifyApp
     def callback
       if response = request.env['omniauth.auth']
         shop_name = response.uid
-        sess = ShopifyAPI::Session.new(shop_name, response['credentials']['token'])
+        token = response['credentials']['token']
+
+        sess = ShopifyAPI::Session.new(shop_name, token)
         session[:shopify] = ShopifyApp::SessionRepository.store(sess)
         session[:shopify_domain] = shop_name
+
+        WebhooksManager.queue(shop_name, token) if ShopifyApp.configuration.has_webhooks?
+
         flash[:notice] = "Logged in"
         redirect_to return_address
       else

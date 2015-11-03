@@ -76,6 +76,28 @@ class SessionsControllerTest < ActionController::TestCase
     assert_equal 'shop.myshopify.com', session[:shopify_domain]
   end
 
+  test "#callback should start the WebhooksManager if webhooks are configured" do
+    ShopifyApp.configure do |config|
+      config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}]
+    end
+
+    ShopifyApp::WebhooksManager.expects(:queue)
+
+    mock_shopify_omniauth
+    get :callback, shop: 'shop'
+  end
+
+  test "#callback doesn't run the WebhooksManager if no webhooks are configured" do
+    ShopifyApp.configure do |config|
+      config.webhooks = []
+    end
+
+    ShopifyApp::WebhooksManager.expects(:queue).never
+
+    mock_shopify_omniauth
+    get :callback, shop: 'shop'
+  end
+
   test "#destroy should clear shopify from session and redirect to login with notice" do
     shop_id = 1
     session[:shopify] = shop_id
