@@ -10,7 +10,4 @@ Releasing ShopifyApp
   $ git push
 7. Push out the tags
   $ git push --tags
-8. Build the new .gem from the updated .gemspec
-  $ gem build shopify_app.gemspec
-9. Publish the Gem to gemcutter
-  $ gem push shopify_app-X.Y.Z.gem
+8. Use Shipit to build and push the gem
