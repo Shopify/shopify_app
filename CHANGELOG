@@ -7,6 +7,8 @@ Master
 * Adds a WebhooksManager class and allows you to configure what webhooks your app
   needs. The rest is taken care of by ShopifyApp provided you set up a backgroud queue
   with ActiveJob
+* Adds a WebhooksController module which can be included to handle the boiler plate code
+  for a controller receiving webhooks from Shopify
 
 6.2.1
 -----

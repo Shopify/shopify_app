@@ -20,6 +20,7 @@ require 'shopify_app/controller'
 require 'shopify_app/sessions_controller'
 require 'shopify_app/login_protection'
 require 'shopify_app/webhooks_manager'
+require 'shopify_app/webhooks_controller'
 require 'shopify_app/utils'
 
 # session repository
