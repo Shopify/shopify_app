@@ -15,10 +15,6 @@ module ShopifyApp
         copy_migration 'create_shops.rb'
       end
 
-      def create_session_storage
-        copy_file 'session_storage.rb', 'app/models/session_storage.rb'
-      end
-
       def create_session_storage_initializer
         copy_file 'shopify_session_repository.rb', 'config/initializers/shopify_session_repository.rb', force: true
       end

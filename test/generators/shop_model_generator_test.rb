@@ -11,6 +11,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     assert_file "app/models/shop.rb" do |shop|
       assert_match "class Shop < ActiveRecord::Base", shop
       assert_match "include ShopifyApp::Shop", shop
+      assert_match "include ShopifyApp::SessionStorage", shop
     end
   end
 
@@ -21,19 +22,10 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "adds the session_storage model" do
-    run_generator
-    assert_file "app/models/session_storage.rb" do |session_storage|
-      assert_match "class SessionStorage", session_storage
-      assert_match "def self.store(session)", session_storage
-      assert_match " def self.retrieve(id)", session_storage
-    end
-  end
-
   test "adds the shopify_session_repository initializer" do
     run_generator
     assert_file "config/initializers/shopify_session_repository.rb" do |file|
-      assert_match "ShopifyApp::SessionRepository.storage = SessionStorage", file
+      assert_match "ShopifyApp::SessionRepository.storage = Shop", file
     end
   end
 
