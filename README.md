@@ -117,7 +117,7 @@ ShopifyApp can manage your app's webhooks for you (requires ActiveJob). Set whic
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}
+    {topic: 'carts/update', address: 'example-app.com/webhooks'}
   ]
 end
 ```

@@ -78,7 +78,7 @@ class SessionsControllerTest < ActionController::TestCase
 
   test "#callback should start the WebhooksManager if webhooks are configured" do
     ShopifyApp.configure do |config|
-      config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}]
+      config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks'}]
     end
 
     ShopifyApp::WebhooksManager.expects(:queue)

@@ -5,9 +5,9 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   setup do
     ShopifyApp.configure do |config|
       config.webhooks = [
-        {topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled", format: 'json'},
-        {topic: 'orders/create', address: "https://example-app.com/webhooks/order_create", format: 'json'},
-        {topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated", format: 'json'},
+        {topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled"},
+        {topic: 'orders/create', address: "https://example-app.com/webhooks/order_create"},
+        {topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated"},
       ]
     end
 
