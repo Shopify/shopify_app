@@ -12,6 +12,7 @@ require 'shopify_app/engine'
 
 # helpers and concerns
 require 'shopify_app/shop'
+require 'shopify_app/session_storage'
 require 'shopify_app/controller'
 require 'shopify_app/sessions_controller'
 require 'shopify_app/login_protection'
