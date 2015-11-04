@@ -1,4 +1,4 @@
-Shopify App      [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+Shopify App      [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app) [![codecov.io](https://codecov.io/github/Shopify/shopify_app/coverage.svg?branch=master)](https://codecov.io/github/Shopify/shopify_app?branch=master)
 ===========
 
 Shopify Application Rails engine and generator
