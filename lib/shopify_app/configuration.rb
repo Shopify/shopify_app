@@ -10,12 +10,17 @@ module ShopifyApp
     attr_accessor :scope
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
+    attr_accessor :webhooks
 
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
     def initialize
       @myshopify_domain = 'myshopify.com'
+    end
+
+    def has_webhooks?
+      webhooks.present?
     end
   end
 
