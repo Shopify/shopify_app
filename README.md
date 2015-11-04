@@ -25,9 +25,19 @@ If you don't have a Shopify Partner account yet head over to http://shopify.com/
 
 Once you have a Partner account create a new application to get an Api key and other Api credentials. To create a development application set the Application Callback URL to
 
-	http://localhost:3000/login
+```
+http://localhost:3000/login
+```
+
+and the `redirect_uri` to
+
+```
+http://localhost:3000/auth/shopify/callback
+```
 
 This way you'll be able to run the app on your local machine.
+
+Also note, ShopifyApp creates embedded apps by default, so remember to check `enabled` for the embedded settings.
 
 
 Installation
