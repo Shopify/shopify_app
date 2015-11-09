@@ -18,6 +18,7 @@ Check out this screencast on how to create and deploy a new Shopify App to Herok
 
 [https://vimeo.com/130247240](https://vimeo.com/130247240)
 
+Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/QUICKSTART.md)
 
 Becoming a Shopify App Developer
 --------------------------------
@@ -122,7 +123,7 @@ end
 WebhooksManager
 ---------------
 
-ShopifyApp can manage your app's webhooks for you (requires ActiveJob). Set which webhooks you require in the initializer:
+ShopifyApp can manage your app's webhooks for you by setting which webhooks you require in the initializer:
 
 ```ruby
 ShopifyApp.configure do |config|
@@ -148,6 +149,8 @@ end
 ```
 
 The module skips the `verify_authenticity_token` before_action and adds an action to verify that the webhook came from Shopify.
+
+The WebhooksManager uses ActiveJob, if ActiveJob is not configured then by default Rails will run the jobs inline. However it is highly recommended to configure a proper background processing queue like sidekiq or resque in production.
 
 
 ShopifyApp::SessionRepository
