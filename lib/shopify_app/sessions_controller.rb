@@ -39,7 +39,7 @@ module ShopifyApp
     protected
 
     def authenticate
-      if shop_name = sanitize_shop_param(params)
+      if shop_name = params[:shop].presence
         fullpage_redirect_to "#{main_app.root_path}auth/shopify?shop=#{shop_name}"
       else
         redirect_to return_address
@@ -48,15 +48,6 @@ module ShopifyApp
 
     def return_address
       session.delete(:return_to) || main_app.root_url
-    end
-
-    def sanitized_shop_name
-      @sanitized_shop_name ||= sanitize_shop_param(params)
-    end
-
-    def sanitize_shop_param(params)
-      return unless params[:shop].present?
-      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 
   end
