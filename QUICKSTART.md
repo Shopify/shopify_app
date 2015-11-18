@@ -29,7 +29,7 @@ git remote set-url heroku git@heroku.com:<name>.git
 now we need to let git know where the remote server is so we'll be able to deploy later
 
 web:
-```  
+```
 https://dashboard.heroku.com/new
 git remote add heroku git@heroku.com:appinfive.git
 ```
@@ -39,7 +39,7 @@ git remote add heroku git@heroku.com:appinfive.git
 [https://app.shopify.com/services/partners/api_clients](https://app.shopify.com/services/partners/api_clients)
 * set the callback url to `https://<name>.herokuapp.com/`
 * choose an embedded app
-* set the redirect_uri to `https://<name>.herokuapp.com/auth/shoify/callback`
+* set the redirect_uri to `https://<name>.herokuapp.com/auth/shopify/callback`
 
 
 4. Add ShopifyApp to gemfile
@@ -56,7 +56,7 @@ bundle install
 -------------------------------
 ```
 use the keys from your app in the partners area
-rails generate shopify_app -api_key=a366cbafaccebd2f615aebdfc932fa1c -secret=8750306a895b3dbc7f4136c2ae2ea293 -redirect_uri=https://<name>.herokuapp.com/auth/shoify/callback
+rails generate shopify_app -api_key=a366cbafaccebd2f615aebdfc932fa1c -secret=8750306a895b3dbc7f4136c2ae2ea293 -redirect_uri=https://<name>.herokuapp.com/auth/shopify/callback
 git add .
 git commit -m 'generated shopify app'
 ```
