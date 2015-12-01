@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shopify App - Installation</title>
+  <title><%= t("shopify_app.installation.title", default: "Shopify App - Installation") %></title>
 
   <style>
     html, body { padding: 0; margin: 0; }
@@ -75,12 +75,12 @@
 <body>
 
   <div class="container">
-    <h1>Shopify App - Installation</h1>
+    <h1><%= t("shopify_app.installation.title", default: "Shopify App - Installation") %></h1>
     <h2>Please enter the "myshopify" domain of your store</h2>
 
     <div class="container__form">
       <form method="GET" action="login">
-        <input type="text" name="shop" placeholder="blabla.myshopify.com"/>
+        <input type="text" name="shop" placeholder="store-name.myshopify.com"/>
         <button type='submit'>Install</button>
       </form>
     </div>
