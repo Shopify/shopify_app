@@ -63,7 +63,15 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "injects into application controller" do
+  test "injects into application controller for embedded app" do
+    run_generator
+    assert_file "app/controllers/application_controller.rb" do |controller|
+      assert_match "  include ShopifyApp::Controller\n  layout \"embedded_app\"\n", controller
+    end
+  end
+
+  test "injects into application controller for non-embedded app" do
+    stub_embedded_false
     run_generator
     assert_file "app/controllers/application_controller.rb" do |controller|
       assert_match "  include ShopifyApp::Controller\n", controller
@@ -73,7 +81,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "creates the embedded_app layout" do
     run_generator
     assert_file "app/views/layouts/embedded_app.html.erb"
-    assert_file "app/views/layouts/_flash_messages.html.erb"
   end
 
   test "creates the home controller" do
