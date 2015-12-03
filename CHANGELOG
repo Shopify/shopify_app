@@ -1,3 +1,11 @@
+6.4.0
+-----
+
+* More semantic and accessible markup in the sessions/new, embedded_app, and product
+  index views.
+* Moved all JavaScript to load at the bottom of the page instead of the head, for
+  page loading better performance.
+
 6.3.0
 -----
 
