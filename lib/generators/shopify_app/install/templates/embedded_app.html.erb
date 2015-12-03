@@ -8,7 +8,14 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class="app-wrapper">
+      <div class="app-content">
+        <main role="main">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+
     <%= render 'layouts/flash_messages' %>
 
     <script src="//cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
