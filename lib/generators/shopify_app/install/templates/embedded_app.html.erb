@@ -1,24 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Shopify Embedded Example App</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>Shopify Embedded Example App</title>
+    <%= stylesheet_link_tag 'application' %>
+    <%= csrf_meta_tags %>
+  </head>
 
-  <script src="//cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
-  <script type="text/javascript">
-    ShopifyApp.init({
-      apiKey: "<%= ShopifyApp.configuration.api_key %>",
-      shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
-      debug: <%= Rails.env.development? ? 'true' : 'false' %>
-    });
-  </script>
+  <body>
+    <div class="app-wrapper">
+      <div class="app-content">
+        <main role="main">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
 
-  <%= stylesheet_link_tag 'application' %>
-  <%= javascript_include_tag 'application' %>
-  <%= csrf_meta_tags %>
-</head>
+    <%= render 'layouts/flash_messages' %>
 
-<body>
-  <%= yield %>
-  <%= render 'layouts/flash_messages' %>
-</body>
+    <script src="//cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
+
+    <script type="text/javascript">
+      ShopifyApp.init({
+        apiKey: "<%= ShopifyApp.configuration.api_key %>",
+        shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
+        debug: <%= Rails.env.development? ? 'true' : 'false' %>,
+        forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
+      });
+    </script>
+
+    <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
+
+    <% if content_for?(:javascript) %>
+      <div id="ContentForJavascript" data-turbolinks-temporary>
+        <%= yield :javascript %>
+      </div>
+    <% end %>
+  </body>
 </html>
