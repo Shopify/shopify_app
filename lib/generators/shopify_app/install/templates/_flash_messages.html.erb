@@ -1,3 +1,4 @@
+<% content_for :javascript do %>
 <script type="text/javascript">
   var eventName = typeof(Turbolinks) !== 'undefined' ? 'page:change' : 'DOMContentLoaded';
 
@@ -11,3 +12,4 @@
     <% end %>
   });
 </script>
+<% end %>
