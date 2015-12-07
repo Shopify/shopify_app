@@ -1,12 +1,7 @@
-<h3>Products</h3>
-<table>
-  <tbody>
-    <% @products.each do |product| %>
-      <tr>
-        <td>
-          <a href='https://<%="#{@shop_session.url}/admin/products/#{product.id}"%>' target="_blank"> <%= product.id %> </a>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<h2>Products</h2>
+
+<ul>
+  <% @products.each do |product| %>
+    <li><%= link_to product.title, "https://#{@shop_session.url}/admin/products/#{product.id}", target: "_top" %></li>
+  <% end %>
+</ul>
