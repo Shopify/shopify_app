@@ -76,7 +76,7 @@ module ShopifyApp
         if embedded_app?
           prepend_to_file(
             'app/views/home/index.html.erb',
-            File.read(File.expand_path(find_in_source_paths('shopify_app_ready_script.html')))
+            File.read(File.expand_path(find_in_source_paths('shopify_app_ready_script.html.erb')))
           )
         end
       end
