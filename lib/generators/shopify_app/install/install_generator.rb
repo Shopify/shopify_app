@@ -53,10 +53,15 @@ module ShopifyApp
       end
 
       def inject_into_application_controller
+        injection = "  include ShopifyApp::Controller\n"
+        if embedded_app?
+          injection << "  layout \"embedded_app\"\n"
+        end
+
         inject_into_class(
           "app/controllers/application_controller.rb",
           'ApplicationController',
-          "  include ShopifyApp::Controller\n"
+          injection
         )
       end
 
