@@ -178,6 +178,14 @@ $ bundle exec spring stop
 
 Run shopify_app generator again.
 
+Testing an embedded app outside the Shopify admin
+-------------------------------------------------
+
+By default, loading your embedded app will redirect to the Shopify admin, with the app view loaded in an `iframe`. If you need to load your app outside of the Shopify admin (e.g., for performance testing), you can change `forceRedirect: false` to `true` in `ShopifyApp.init` block in the `embedded_app` view. To keep the redirect on in production but off in your `development` and `test` environments, you can use:
+
+```javascript
+forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
+```
 
 Questions or problems?
 ----------------------
