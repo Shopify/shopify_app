@@ -25,7 +25,7 @@
         apiKey: "<%= ShopifyApp.configuration.api_key %>",
         shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
         debug: <%= Rails.env.development? ? 'true' : 'false' %>,
-        forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
+        forceRedirect: false
       });
     </script>
 
