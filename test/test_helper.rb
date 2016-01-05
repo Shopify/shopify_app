@@ -11,3 +11,7 @@ require 'byebug'
 Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+
+class ActiveSupport::TestCase
+  include GeneratorTestHelpers
+end
