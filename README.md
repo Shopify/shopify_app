@@ -156,7 +156,7 @@ The WebhooksManager uses ActiveJob, if ActiveJob is not configured then by defau
 ShopifyApp::SessionRepository
 -----------------------------
 
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for a shop. The `SessionRepository` is configured using the `config/initializers/shopify_session_repository.rb` file and can be set to any object the implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `InMemorySessionStore` or the `SessionStorage` module for examples.
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for a shop. The `SessionRepository` is configured using the `config/initializers/shopify_session_repository.rb` file and can be set to any object that implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `InMemorySessionStore` or the `SessionStorage` module for examples.
 
 If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the Shop model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides an activerecord mixin for the `SessionRepository`. You can use this mixin on any model that responds to `shopify_domain` and `shopify_token`.
 
