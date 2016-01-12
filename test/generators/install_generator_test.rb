@@ -76,34 +76,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/layouts/_flash_messages.html.erb"
   end
 
-  test "creates the home controller" do
-    run_generator
-    assert_file "app/controllers/home_controller.rb"
-  end
-
-  test "creates the home index view with embedded options" do
-    run_generator
-    assert_file "app/views/home/index.html.erb" do |index|
-      assert_match "ShopifyApp.ready", index
-    end
-  end
-
-  test "creates the home index view with embedded false" do
-    stub_embedded_false
-    run_generator
-    assert_file "app/views/home/index.html.erb" do |index|
-      refute_match "ShopifyApp.ready", index
-    end
-  end
-
-  test "adds engine and home route to routes" do
-    run_generator
-    assert_file "config/routes.rb" do |routes|
-      assert_match "mount ShopifyApp::Engine, at: '/'", routes
-      assert_match "root :to => 'home#index'", routes
-    end
-  end
-
   private
 
   def stub_embedded_false

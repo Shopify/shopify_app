@@ -67,31 +67,12 @@ module ShopifyApp
         end
       end
 
-      def create_home_controller
-        template 'home_controller.rb', 'app/controllers/home_controller.rb'
-      end
-
-      def create_home_index_view
-        copy_file 'index.html.erb', 'app/views/home/index.html.erb'
-        if embedded_app?
-          prepend_to_file(
-            'app/views/home/index.html.erb',
-            File.read(File.expand_path(find_in_source_paths('shopify_app_ready_script.html.erb')))
-          )
-        end
-      end
-
-      def add_home_index_route
-        route "mount ShopifyApp::Engine, at: '/'"
-        route "root :to => 'home#index'"
-      end
 
       private
 
       def embedded_app?
         opts[:embedded] != 'false'
       end
-
     end
   end
 end
