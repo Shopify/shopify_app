@@ -12,6 +12,7 @@ require 'shopify_app/engine'
 
 # jobs
 require 'shopify_app/webhooks_manager_job'
+require 'shopify_app/scripttags_manager_job'
 
 # helpers and concerns
 require 'shopify_app/shop'
