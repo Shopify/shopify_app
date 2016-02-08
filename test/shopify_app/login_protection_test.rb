@@ -52,23 +52,23 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "login_again_if_different_shop removes current session and redirects to login path" do
+  test "login_again_if_different_shop removes current session and redirects to login url" do
     with_application_test_routes do
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
       sess = stub(url: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
       get :second_login, shop: 'other_shop'
-      assert_redirected_to @controller.send(:login_path, shop: 'other_shop')
+      assert_redirected_to @controller.send(:login_url, shop: 'other_shop')
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
     end
   end
 
-  test '#shopify_session with no Shopify session, redirects to the login path' do
+  test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
       get :index, shop: 'foobar'
-      assert_redirected_to @controller.send(:login_path, shop: 'foobar')
+      assert_redirected_to @controller.send(:login_url, shop: 'foobar')
     end
   end
 
