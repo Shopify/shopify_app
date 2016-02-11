@@ -22,7 +22,7 @@ class WebhooksControllerTest < ActionController::TestCase
   test "#carts_update should verify request" do
     with_application_test_routes do
       data = {foo: :bar}.to_json
-      @controller.expects(:validate_hmac).with('secret', data.to_s).returns(true)
+      @controller.expects(:hmac_valid?).with(data.to_s).returns(true)
       post :carts_update, data
       assert_response :ok
     end
@@ -31,7 +31,7 @@ class WebhooksControllerTest < ActionController::TestCase
   test "un-verified request returns unauthorized" do
     with_application_test_routes do
       data = {foo: :bar}.to_json
-      @controller.expects(:validate_hmac).with('secret', data.to_s).returns(false)
+      @controller.expects(:hmac_valid?).with(data.to_s).returns(false)
       post :carts_update, data
       assert_response :unauthorized
     end
