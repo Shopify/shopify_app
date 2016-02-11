@@ -13,14 +13,16 @@ module ShopifyApp
       request.body.rewind
       data = request.body.read
 
-      unless validate_hmac(ShopifyApp.configuration.secret, data)
-        head :unauthorized
-      end
+      return head :unauthorized unless hmac_valid?(data)
     end
 
-    def validate_hmac(secret, data)
-      digest  = OpenSSL::Digest.new('sha256')
-      shopify_hmac == Base64.encode64(OpenSSL::HMAC.digest(digest, secret, data)).strip
+    def hmac_valid?(data)
+      secret = ShopifyApp.configuration.secret
+      digest = OpenSSL::Digest.new('sha256')
+      ActiveSupport::SecurityUtils.variable_size_secure_compare(
+        shopify_hmac,
+        Base64.encode64(OpenSSL::HMAC.digest(digest, secret, data)).strip
+      )
     end
 
     def shop_domain
