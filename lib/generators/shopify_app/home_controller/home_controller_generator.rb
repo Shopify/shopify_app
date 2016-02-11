@@ -20,7 +20,6 @@ module ShopifyApp
       end
 
       def add_home_index_route
-        route "mount ShopifyApp::Engine, at: '/'"
         route "root :to => 'home#index'"
       end
 
