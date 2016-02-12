@@ -1,0 +1,14 @@
+<% content_for :javascript do %>
+  <script type="text/javascript">
+     window.mainPageTitle = 'Help Page';
+
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.setTitle(window.mainPageTitle);
+      ShopifyApp.Bar.loadingOff();
+    });
+  </script>
+<% end %>
+
+<h2>Hey! This is the help page.</h2>
+
+<p>You can go back to the previous page clicking on the breadcrumb link on the top bar. =)</p>
