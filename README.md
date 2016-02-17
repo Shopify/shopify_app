@@ -128,18 +128,20 @@ ShopifyApp can manage your app's webhooks for you by setting which webhooks you 
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'carts/update', address: 'example-app.com/webhooks'}
+    {topic: 'carts/update', address: 'example-app.com/webhooks/carts_update'}
   ]
 end
 ```
 
 When the oauth callback is completed successfully ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every oauth callback it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
 
-There is also a WebhooksController module that you can include in a controller that receives Shopify webhooks. For example:
+ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the webhook url. For example if you register the webhook from above then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params `shop_domain` and `webhook` which is the webhook body.
+
+If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks:
 
 ```ruby
-class WebhooksController < ApplicationController
-  include ShopifyApp::WebhooksController
+class CustomWebhooksController < ApplicationController
+  include ShopifyApp::WebhookVerification
 
   def carts_update
     SomeJob.perform_later(shopify_domain: shop_domain)

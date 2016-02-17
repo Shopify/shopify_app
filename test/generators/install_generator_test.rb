@@ -76,6 +76,13 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/layouts/_flash_messages.html.erb"
   end
 
+  test "adds engine to routes" do
+    run_generator
+    assert_file "config/routes.rb" do |routes|
+      assert_match "mount ShopifyApp::Engine, at: '/'", routes
+    end
+  end
+
   private
 
   def stub_embedded_false
