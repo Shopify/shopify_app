@@ -61,6 +61,15 @@ Now we are ready to run any of the shopify_app generators. The following section
 Generators
 ----------
 
+### Default Generator
+
+The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start your app.
+
+```sh
+$ rails generate shopify_app -api_key=<your_api_key> -secret=<your_app_secret>
+```
+
+
 ### Install Generator
 
 ```sh
@@ -93,15 +102,19 @@ The install generator doesn't create any database models for you and if you are 
 
 *Note that you will need to run rake db:migrate after this generator*
 
+
+### Home Controller Generator
+
+```sh
+$ rails generate shopify_app:home_controller
+```
+
+This generator creates an example home controller and view which fetches and displays products using the ShopifyAPI
+
+
 ### Controllers, Routes and Views
 
-The last group of generators are for your convenience when you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
-
-
-### Default Generator
-
-If you just run `rails generate shopify_app` then all the generators will be run for you. This is how we do it internally!
-
+The last group of generators are for your convenience if you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
 
 
 Managing Api Keys
