@@ -1,0 +1,32 @@
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    window.mainPageTitle = 'Regular Page';
+
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.initialize({
+        title: window.mainPageTitle,
+        buttons: {
+          secondary: [
+            {
+              label: "Documentation",
+              href: "http://docs.shopify.com/embedded-app-sdk",
+              target: 'new'
+            },
+            {
+              label: "Back",
+              href: "/",
+              target: 'app'
+            }
+          ]
+        }
+      });
+    });
+  </script>
+<% end %>
+
+<h2>Regular application page with different top bar</h2>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Primum in nostrane potestate est, quid meminerimus? Mihi quidem Antiochum, quem audis, satis belle videris attendere. Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Earum etiam rerum, quas terra gignit, educatio quaedam et perfectio est non dissimilis animantium. At hoc in eo M. Duo Reges: constructio interrete. Quia nec honesto quic quam honestius nec turpi turpius. Nihilne te delectat umquam -video, quicum loquar-, te igitur, Torquate, ipsum per se nihil delectat? Dicimus aliquem hilare vivere;
+Et ille ridens: Video, inquit, quid agas; Esse enim quam vellet iniquus iustus poterat inpune. In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Et ille ridens: Video, inquit, quid agas; Quid est, quod ab ea absolvi et perfici debeat? Quid ergo? Quod cum dixissent, ille contra. Ille enim occurrentia nescio quae comminiscebatur; Qua ex cognitione facilior facta est investigatio rerum occultissimarum.
+Cur tantas regiones barbarorum pedibus obiit, tot maria transmisit? Superiores tres erant, quae esse possent, quarum est una sola defensa, eaque vehementer. Omnia peccata paria dicitis. Nam quid possumus facere melius?
+Mihi vero, inquit, placet agi subtilius et, ut ipse dixisti, pressius. Est enim tanti philosophi tamque nobilis audacter sua decreta defendere. Hinc ceteri particulas arripere conati suam quisque videro voluit afferre sententiam. Qui autem esse poteris, nisi te amor ipse ceperit? Non quam nostram quidem, inquit Pomponius iocans; Hanc quoque iucunditatem, si vis, transfer in animum; </p>

@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('minitest')
   s.add_development_dependency('mocha')
 
-  s.files         = `git ls-files`.split("\n")
+  s.files         = `git ls-files`.split("\n").reject { |f| f.match(%r{^(test|example)/}) }
   s.test_files    = `git ls-files -- {test}/*`.split("\n")
   s.require_paths = ["lib"]
 end

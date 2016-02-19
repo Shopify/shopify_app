@@ -1,0 +1,68 @@
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    window.mainPageTitle = 'Main Page';
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.initialize({
+        title: window.mainPageTitle,
+        icon: '/shopify.png',
+        buttons: {
+          secondary: {
+            label: "Documentation",
+            href: "http://docs.shopify.com/embedded-app-sdk",
+            target: 'new'
+          }
+        }
+      });
+    });
+  </script>
+<% end %>
+
+<h2>Shopify Embedded Example.</h2>
+
+<p>This application demos the various ways an app can now interact with the Shopify Admin. See the project README for details.</p>
+
+<p><a href="regular_app_page">Links to another page</a> work normally.</p>
+
+<h2>Function calls</h2>
+<ul>
+  <li><a href="#" onclick="ShopifyApp.Bar.loadingOff()">Turn spinner off</a></li>
+  <li><a href="#" onclick="ShopifyApp.Bar.loadingOn()">Turn spinner on</a></li>
+  <li><a href="#" onclick="window.mainPageTitle = window.mainPageTitle + '!'; ShopifyApp.Bar.setTitle(window.mainPageTitle)">Add an exclamation mark to the title</a></li>
+  <li><a href="#" onclick="ShopifyApp.redirect('/orders')">Redirect to /orders within the Shopify Admin</a></li>
+
+  <li><a href="#" onclick="ShopifyApp.flashNotice('Flash a notice message.');">Flash notice</a></li>
+  <li><a href="#" onclick="ShopifyApp.flashError('Flash an error message.');">Flash error</a></li>
+  <li><a href="#" onclick="ShopifyApp.Bar.setPagination({previous: {loading: false, callback: function(){alert('Previous clicked'); } }}); return false">Add pagination buttons</a></li>
+</ul>
+
+
+<!--
+  This is example code, focusing on simplicity.
+  Try not to use 'onclick' attributes in real applications. Use unobtrusive JavaScript instead.
+  http://en.wikipedia.org/wiki/Unobtrusive_JavaScript)
+
+  See modals.js for the implementation of these calls.
+-->
+
+<h2>Modal Windows</h2>
+<ul>
+  <li><a href="#" onclick="alertModal()">Alert modal</a></li>
+  <li><a href="#" onclick="confirmModal()">Confirm modal</a></li>
+  <li><a href="#" onclick="inputModal('Enter a value:')">Prompt modal</a></li>
+  <li><a href="#" onclick="newModal('<%= modal_url %>','This is a custom modal title')">Modal window containing an iframe</a></li>
+  <li><a href="#" onclick="newButtonModal('<%= modal_buttons_url %>','This modal has many buttons')">Modal window with a variety of buttons</a></li>
+</ul>
+
+<h2>Integrations</h2>
+<ul>
+  <li><a href="form_page">Go to form page</a></li>
+  <li><a href="pagination">Pagination links</a></li>
+  <li><a href="breadcrumbs">Breadcrumbs</a></li>
+  <li><a href="buttons">Buttons</a></li>
+</ul>
+
+<h2>Error pages</h2>
+<ul>
+  <li><a href="/404.html">Error 404</a></li>
+  <li><a href="/500.html">Error 500</a></li>
+</ul>
