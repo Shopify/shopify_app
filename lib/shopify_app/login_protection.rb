@@ -39,7 +39,7 @@ module ShopifyApp
         head :unauthorized
       else
         session[:return_to] = request.fullpath if request.get?
-        redirect_to login_url(shop: params[:shop])
+        redirect_to main_or_engine_login_url(shop: params[:shop])
       end
     end
 
@@ -49,13 +49,7 @@ module ShopifyApp
       redirect_to login_url
     end
 
-    def login_path(params = {})
-      main_app.login_path(params)
-    rescue NoMethodError => e
-      shopify_app.login_path(params)
-    end
-
-    def login_url(params = {})
+    def main_or_engine_login_url(params = {})
       main_app.login_url(params)
     rescue NoMethodError => e
       shopify_app.login_url(params)

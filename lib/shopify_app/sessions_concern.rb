@@ -1,5 +1,5 @@
 module ShopifyApp
-  module SessionsController
+  module SessionsConcern
     extend ActiveSupport::Concern
 
     def new

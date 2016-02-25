@@ -8,7 +8,7 @@ class WebhooksRoutingTest < ActionController::TestCase
   test "webhooks routing" do
     assert_routing(
       { method: 'post', path: 'webhooks/test' },
-      { controller: 'webhooks', action: 'receive', type: 'test' }
+      { controller: 'shopify_app/webhooks', action: 'receive', type: 'test' }
     )
   end
 end

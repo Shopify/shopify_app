@@ -9,7 +9,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   test "copies ShopifyApp views to the host application" do
     run_generator
     assert_directory "app/views"
-    assert_file "app/views/sessions/new.html.erb"
+    assert_file "app/views/shopify_app/sessions/new.html.erb"
   end
 
 end
