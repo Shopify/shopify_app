@@ -59,10 +59,12 @@ use the keys from your app in the partners area
 rails generate shopify_app -api_key=a366cbafaccebd2f615aebdfc932fa1c -secret=8750306a895b3dbc7f4136c2ae2ea293 -redirect_uri=https://<name>.herokuapp.com/auth/shopify/callback
 git add .
 git commit -m 'generated shopify app'
-
-If you forget to set your keys or redirect uri above you will find them in the shopify_app initializer at: /config/initializers/.
-In light of this section we recommend adding a gem or utilizing ENV variables to handle your keys.
 ```
+
+If you forget to set your keys or redirect uri above you will find them in the shopify_app initializer at: `/config/initializers/.`
+In light of this section we recommend adding a gem or utilizing ENV variables to handle your keys.
+* Handle your keys before releasing your app!
+
 
 6. Deploy
 ---------
