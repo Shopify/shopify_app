@@ -61,13 +61,20 @@ git add .
 git commit -m 'generated shopify app'
 ```
 
-6. Deploy
+6. Changing redirect URI in Omniauth
+------------------------------------
+```
+Go to your omniauth config file found at /config/initializers/omniauth and make sure to set the redirect URI.
+Set it to your APPNAME.herokuapp.com/auth/shopify/callback adress, as it will default to localhost:3000 on app creation.
+```
+
+7. Deploy
 ---------
 ```
 git push heroku
 heroku run rake db:migrate
 ```
 
-7. Install the App!
+8. Install the App!
 -------------------
 `https://<name>.herokuapp.com/`
