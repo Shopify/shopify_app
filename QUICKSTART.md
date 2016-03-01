@@ -59,22 +59,18 @@ use the keys from your app in the partners area
 rails generate shopify_app -api_key=a366cbafaccebd2f615aebdfc932fa1c -secret=8750306a895b3dbc7f4136c2ae2ea293 -redirect_uri=https://<name>.herokuapp.com/auth/shopify/callback
 git add .
 git commit -m 'generated shopify app'
+
+If you forget to set your keys or redirect uri above you will find them in the shopify_app initializer at: /config/initializers/.
+In light of this section we recommend adding a gem or utilizing ENV variables to handle your keys.
 ```
 
-6. Changing redirect URI in Omniauth
-------------------------------------
-```
-Go to your omniauth config file found at /config/initializers/omniauth and make sure to set the redirect URI.
-Set it to your APPNAME.herokuapp.com/auth/shopify/callback adress, as it will default to localhost:3000 on app creation.
-```
-
-7. Deploy
+6. Deploy
 ---------
 ```
 git push heroku
 heroku run rake db:migrate
 ```
 
-8. Install the App!
+7. Install the App!
 -------------------
 `https://<name>.herokuapp.com/`
