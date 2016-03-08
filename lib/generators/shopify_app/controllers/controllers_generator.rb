@@ -14,7 +14,7 @@ module ShopifyApp
       private
 
       def controllers
-        files_within_root('.', 'app/controllers/*.*')
+        files_within_root('.', 'app/controllers/shopify_app/*.*')
       end
 
       def files_within_root(prefix, glob)

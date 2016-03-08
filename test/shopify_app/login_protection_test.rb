@@ -59,7 +59,7 @@ class LoginProtectionTest < ActionController::TestCase
       sess = stub(url: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
       get :second_login, shop: 'other_shop'
-      assert_redirected_to @controller.send(:login_url, shop: 'other_shop')
+      assert_redirected_to @controller.send(:main_or_engine_login_url, shop: 'other_shop')
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
     end
@@ -68,7 +68,7 @@ class LoginProtectionTest < ActionController::TestCase
   test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
       get :index, shop: 'foobar'
-      assert_redirected_to @controller.send(:login_url, shop: 'foobar')
+      assert_redirected_to @controller.send(:main_or_engine_login_url, shop: 'foobar')
     end
   end
 

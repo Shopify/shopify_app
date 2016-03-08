@@ -9,8 +9,8 @@ class ControllersGeneratorTest < Rails::Generators::TestCase
   test "copies ShopifyApp controllers to the host application" do
     run_generator
     assert_directory "app/controllers"
-    assert_file "app/controllers/sessions_controller.rb"
-    assert_file "app/controllers/authenticated_controller.rb"
+    assert_file "app/controllers/shopify_app/sessions_controller.rb"
+    assert_file "app/controllers/shopify_app/authenticated_controller.rb"
   end
 
 end

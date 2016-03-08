@@ -4,38 +4,40 @@ class OrderUpdateJob < ActiveJob::Base
   def perform; end
 end
 
-class WebhooksControllerTest < ActionDispatch::IntegrationTest
-  include ActiveJob::TestHelper
+module ShopifyApp
+  class WebhooksControllerTest < ActionDispatch::IntegrationTest
+    include ActiveJob::TestHelper
 
-  setup do
-    WebhooksController.any_instance.stubs(:verify_request).returns(true)
-  end
-
-  test "receives webhook and performs job" do
-    send_webhook 'order_update', {foo: :bar}
-    assert_response :no_content
-    assert_enqueued_jobs 1
-  end
-
-  test "passes webhook to the job" do
-    webhook = {'foo' => 'bar'}
-    job_args = {shop_domain: "test.myshopify.com", webhook: webhook}
-
-    OrderUpdateJob.expects(:perform_later).with(job_args)
-
-    send_webhook 'order_update', webhook
-    assert_response :no_content
-  end
-
-  test "returns error for webhook with no job class" do
-    assert_raises ShopifyApp::MissingWebhookJobError do
-      send_webhook 'test', {foo: :bar}
+    setup do
+      WebhooksController.any_instance.stubs(:verify_request).returns(true)
     end
-  end
 
-  private
+    test "receives webhook and performs job" do
+      send_webhook 'order_update', {foo: :bar}
+      assert_response :no_content
+      assert_enqueued_jobs 1
+    end
 
-  def send_webhook(name, data)
-    post "/webhooks/#{name}", data, {'HTTP_X_SHOPIFY_SHOP_DOMAIN' => 'test.myshopify.com'}
+    test "passes webhook to the job" do
+      webhook = {'foo' => 'bar'}
+      job_args = {shop_domain: "test.myshopify.com", webhook: webhook}
+
+      OrderUpdateJob.expects(:perform_later).with(job_args)
+
+      send_webhook 'order_update', webhook
+      assert_response :no_content
+    end
+
+    test "returns error for webhook with no job class" do
+      assert_raises ShopifyApp::MissingWebhookJobError do
+        send_webhook 'test', {foo: :bar}
+      end
+    end
+
+    private
+
+    def send_webhook(name, data)
+      post shopify_app.webhooks_path(name), data, {'HTTP_X_SHOPIFY_SHOP_DOMAIN' => 'test.myshopify.com'}
+    end
   end
 end
