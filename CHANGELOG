@@ -1,9 +1,12 @@
-Unreleased
+7.0.0
 ----------
+
 * rename WebhooksController module to WebhookVerification
 * added a WebhooksController which automatically delegates to jobs
 * moved all engine controllers under the ShopifyApp namespace
 * rename SessionsController module to SessionsConcern
+* more robust redirects, with valid HTML in HTTP response bodies
+* `ShopifyApp::Controller` has been removed. You’ll need to replace all includes of `ShopifyApp::Controller` with `ShopifyApp::LoginProtection`
 
 6.4.2
 -----

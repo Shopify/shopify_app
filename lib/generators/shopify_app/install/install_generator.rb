@@ -56,7 +56,7 @@ module ShopifyApp
         inject_into_class(
           "app/controllers/application_controller.rb",
           'ApplicationController',
-          "  include ShopifyApp::Controller\n"
+          "  include ShopifyApp::LoginProtection\n"
         )
       end
 

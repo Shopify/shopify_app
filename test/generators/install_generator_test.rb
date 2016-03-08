@@ -66,7 +66,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "injects into application controller" do
     run_generator
     assert_file "app/controllers/application_controller.rb" do |controller|
-      assert_match "  include ShopifyApp::Controller\n", controller
+      assert_match "  include ShopifyApp::LoginProtection\n", controller
     end
   end
 

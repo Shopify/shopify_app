@@ -16,7 +16,6 @@ require 'shopify_app/webhooks_manager_job'
 # helpers and concerns
 require 'shopify_app/shop'
 require 'shopify_app/session_storage'
-require 'shopify_app/controller'
 require 'shopify_app/sessions_concern'
 require 'shopify_app/login_protection'
 require 'shopify_app/webhooks_manager'
