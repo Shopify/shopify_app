@@ -169,6 +169,13 @@ The module skips the `verify_authenticity_token` before_action and adds an actio
 
 The WebhooksManager uses ActiveJob, if ActiveJob is not configured then by default Rails will run the jobs inline. However it is highly recommended to configure a proper background processing queue like sidekiq or resque in production.
 
+ShopifyApp can create webhooks for you using the `add_webhook` generator. This will add the new webhook to your config and create the required job class for you.
+
+```
+rails g shopify_app:add_webhook -t carts/update -a https://example.com/webhooks/carts_update
+```
+
+where `-t` is the topic and `-a` is the address the webhook should be sent to.
 
 ShopifyApp::SessionRepository
 -----------------------------
