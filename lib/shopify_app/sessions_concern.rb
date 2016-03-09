@@ -22,10 +22,10 @@ module ShopifyApp
         WebhooksManager.queue(shop_name, token) if ShopifyApp.configuration.has_webhooks?
 
         flash[:notice] = "Logged in"
-        redirect_to return_address
+        redirect_to_with_fallback return_address
       else
         flash[:error] = "Could not log in to Shopify store."
-        redirect_to login_url
+        redirect_to_with_fallback login_url
       end
     end
 
@@ -33,7 +33,7 @@ module ShopifyApp
       session[:shopify] = nil
       session[:shopify_domain] = nil
       flash[:notice] = "Successfully logged out."
-      redirect_to login_url
+      redirect_to_with_fallback login_url
     end
 
     protected
@@ -42,7 +42,7 @@ module ShopifyApp
       if shop_name = sanitize_shop_param(params)
         fullpage_redirect_to "#{main_app.root_path}auth/shopify?shop=#{shop_name}"
       else
-        redirect_to return_address
+        redirect_to_with_fallback return_address
       end
     end
 

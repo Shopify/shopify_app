@@ -39,20 +39,69 @@ module ShopifyApp
         head :unauthorized
       else
         session[:return_to] = request.fullpath if request.get?
-        redirect_to main_or_engine_login_url(shop: params[:shop])
+        redirect_to_with_fallback main_or_engine_login_url(shop: params[:shop])
       end
     end
 
     def close_session
       session[:shopify] = nil
       session[:shopify_domain] = nil
-      redirect_to login_url
+      redirect_to_with_fallback login_url
     end
 
     def main_or_engine_login_url(params = {})
       main_app.login_url(params)
     rescue NoMethodError => e
       shopify_app.login_url(params)
+    end
+
+    def redirect_to_with_fallback(url)
+      url_json = url.to_json
+      url_json_no_quotes = url_json.gsub(/\A"|"\Z/, '')
+
+      render inline: %Q(
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="refresh" content="0; url=#{url_json_no_quotes}">
+            <title>Redirecting…</title>
+            <script type="text/javascript">
+              window.location.href = #{url_json};
+            </script>
+          </head>
+          <body>
+            <a href=#{url_json}>Continue</a>
+          </body>
+        </html>
+      ), status: 302, location: url
+    end
+
+    def fullpage_redirect_to(url)
+      url_json = url.to_json
+      url_json_no_quotes = url_json.gsub(/\A"|"\Z/, '')
+
+      if ShopifyApp.configuration.embedded_app?
+        render inline: %Q(
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta http-equiv="refresh" content="0; url=#{url_json_no_quotes}">
+              <base target="_top">
+              <title>Redirecting…</title>
+              <script type="text/javascript">
+                window.top.location.href = #{url_json};
+              </script>
+            </head>
+            <body>
+              <a href=#{url_json} target="_top">Continue</a>
+            </body>
+          </html>
+        )
+      else
+        redirect_to_with_fallback url
+      end
     end
   end
 end
