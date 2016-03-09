@@ -6,26 +6,19 @@ module ShopifyApp
     class InstallGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
       source_root File.expand_path('../templates', __FILE__)
-      attr_reader :opts
 
-      def initialize(args, *options)
-        @opts = Hash[options.first.join(' ').scan(/--?([^=\s]+)(?:=(\S+))?/)]
-        @opts = @opts.with_indifferent_access
-        @opts.reverse_merge!(defaults)
-        super(args, *options)
-      end
-
-      def defaults
-        {
-          api_key: '<api_key>',
-          secret: '<secret>',
-          redirect_uri: 'http://localhost:3000/auth/shopify/callback',
-          scope: 'read_orders, read_products',
-          embedded: 'true'
-        }
-      end
+      class_option :api_key, type: :string, default: '<api_key>'
+      class_option :secret, type: :string, default: '<secret>'
+      class_option :redirect_uri, type: :string, default: 'http://localhost:3000/auth/shopify/callback'
+      class_option :scope, type: :string, default: 'read_orders, read_products'
+      class_option :embedded, type: :string, default: 'true'
 
       def create_shopify_app_initializer
+        @api_key = options['api_key']
+        @secret = options['secret']
+        @redirect_uri = options['redirect_uri']
+        @scope = options['scope']
+
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
       end
 
@@ -74,7 +67,7 @@ module ShopifyApp
       private
 
       def embedded_app?
-        opts[:embedded] != 'false'
+        options['embedded'] == 'true'
       end
     end
   end

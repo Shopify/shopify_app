@@ -68,7 +68,7 @@ Generators
 The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start your app.
 
 ```sh
-$ rails generate shopify_app -api_key=<your_api_key> -secret=<your_app_secret>
+$ rails generate shopify_app --api_key <your_api_key> --secret <your_app_secret>
 ```
 
 
@@ -79,12 +79,12 @@ $ rails generate shopify_app:install
 
 # or optionally with arguments:
 
-$ rails generate shopify_app:install -api_key=<your_api_key> -secret=<your_app_secret>
+$ rails generate shopify_app:install --api_key <your_api_key> --secret <your_app_secret>
 ```
 
 Other options include:
 * `scope` - the Oauth access scope required for your app, eg 'read_products, write_orders'. For more information read the [docs](http://docs.shopify.com/api/tutorials/oauth)
-* `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `-embedded false`
+* `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
 * `redirect_uri` - the default is `http://localhost:3000/auth/shopify/callback` which will allow you to develop locally. You'll need to change it to match your domain for production.
 
 You can update any of these settings later on easily, the arguments are simply for convenience.

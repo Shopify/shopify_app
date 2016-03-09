@@ -23,10 +23,19 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "creates the ShopifyApp initializer for non embedded app" do
-    stub_embedded_false
-    run_generator
+  test "creates the ShopifyApp initializer with args" do
+    run_generator %w(--api_key key --secret shhhhh --scope read_orders,write_products --redirect_uri http://example.com/auth/shopify/callback)
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match 'config.api_key = "key"', shopify_app
+      assert_match 'config.secret = "shhhhh"', shopify_app
+      assert_match 'config.redirect_uri = "http://example.com/auth/shopify/callback"', shopify_app
+      assert_match 'config.scope = "read_orders,write_products"', shopify_app
+      assert_match "config.embedded_app = true", shopify_app
+    end
+  end
 
+  test "creates the ShopifyApp initializer for non embedded app" do
+    run_generator %w(--embedded false)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match "config.embedded_app = false", shopify_app
     end
@@ -55,8 +64,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "doesn't add embedd options if -embedded false" do
-    stub_embedded_false
-    run_generator
+    run_generator %w(--embedded false)
     assert_file "config/application.rb" do |application|
       refute_match "config.action_dispatch.default_headers.delete('X-Frame-Options')", application
       refute_match "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'", application
@@ -82,13 +90,4 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "mount ShopifyApp::Engine, at: '/'", routes
     end
   end
-
-  private
-
-  def stub_embedded_false
-    ShopifyApp::Generators::InstallGenerator.any_instance.stubs(:opts).returns(
-      {embedded: 'false'}
-    )
-  end
-
 end
