@@ -8,7 +8,6 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
   setup do
     prepare_destination
     provide_existing_routes_file
-    provide_existing_initializer_file
   end
 
   test "copies ShopifyApp routes to the host application" do

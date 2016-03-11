@@ -7,6 +7,7 @@
 * rename SessionsController module to SessionsConcern
 * more robust redirects, with valid HTML in HTTP response bodies
 * `ShopifyApp::Controller` has been removed. You’ll need to replace all includes of `ShopifyApp::Controller` with `ShopifyApp::LoginProtection`
+* adds add_webhook generator to make it easier to add new webhooks to your app
 
 6.4.2
 -----
