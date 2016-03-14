@@ -9,6 +9,7 @@
 * `ShopifyApp::Controller` has been removed. You’ll need to replace all includes of `ShopifyApp::Controller` with `ShopifyApp::LoginProtection`
 * adds add_webhook generator to make it easier to add new webhooks to your app
 * update the install generator to use standard rails generate arguments, usage has changed from `-api_key=your_key` to `--api_key your_key`
+* remove the redirect uri - this is done automatically inside omniauth now
 
 6.4.2
 -----
