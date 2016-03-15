@@ -44,7 +44,7 @@ git remote add heroku git@heroku.com:appinfive.git
 4. Add ShopifyApp to gemfile
 ----------------------------
 ```
-$ echo "gem 'shopify_app', '~> 7.0.0'" >> Gemfile
+$ echo "gem 'shopify_app'" >> Gemfile
 
 bundle install
 ```
