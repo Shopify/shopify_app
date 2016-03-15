@@ -21,9 +21,8 @@ The next step is to create a new heroku app. Pull up your heroku dashboard and m
 
 cli:
 ```
-heroku new
-git remote -v
-git remote set-url heroku git@heroku.com:<name>.git
+heroku create name
+heroku git:remote -a name
   ```
 
 now we need to let git know where the remote server is so we'll be able to deploy later
@@ -45,9 +44,7 @@ git remote add heroku git@heroku.com:appinfive.git
 4. Add ShopifyApp to gemfile
 ----------------------------
 ```
-vim Gemfile
-  add
-    gem 'shopify_app'
+$ echo "gem 'shopify_app'" >> Gemfile
 
 bundle install
 ```
