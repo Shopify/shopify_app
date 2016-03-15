@@ -17,18 +17,16 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.api_key = "<api_key>"', shopify_app
       assert_match 'config.secret = "<secret>"', shopify_app
-      assert_match 'config.redirect_uri = "http://localhost:3000/auth/shopify/callback"', shopify_app
       assert_match 'config.scope = "read_orders, read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
     end
   end
 
   test "creates the ShopifyApp initializer with args" do
-    run_generator %w(--api_key key --secret shhhhh --scope read_orders,write_products --redirect_uri http://example.com/auth/shopify/callback)
+    run_generator %w(--api_key key --secret shhhhh --scope read_orders,write_products)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.api_key = "key"', shopify_app
       assert_match 'config.secret = "shhhhh"', shopify_app
-      assert_match 'config.redirect_uri = "http://example.com/auth/shopify/callback"', shopify_app
       assert_match 'config.scope = "read_orders,write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
     end

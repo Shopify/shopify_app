@@ -9,14 +9,12 @@ module ShopifyApp
 
       class_option :api_key, type: :string, default: '<api_key>'
       class_option :secret, type: :string, default: '<secret>'
-      class_option :redirect_uri, type: :string, default: 'http://localhost:3000/auth/shopify/callback'
       class_option :scope, type: :string, default: 'read_orders, read_products'
       class_option :embedded, type: :string, default: 'true'
 
       def create_shopify_app_initializer
         @api_key = options['api_key']
         @secret = options['secret']
-        @redirect_uri = options['redirect_uri']
         @scope = options['scope']
 
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'

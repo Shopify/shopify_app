@@ -55,7 +55,7 @@ Note - its recommended to use the latest released version. Check the git tags to
 -------------------------------
 ```
 use the keys from your app in the partners area
-rails generate shopify_app -api_key=a366cbafaccebd2f615aebdfc932fa1c -secret=8750306a895b3dbc7f4136c2ae2ea293 -redirect_uri=https://<name>.herokuapp.com/auth/shopify/callback
+rails generate shopify_app --api_key a366cbafaccebd2f615aebdfc932fa1c --secret 8750306a895b3dbc7f4136c2ae2ea293
 git add .
 git commit -m 'generated shopify app'
 ```
