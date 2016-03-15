@@ -47,10 +47,12 @@ git remote add heroku git@heroku.com:appinfive.git
 ```
 vim Gemfile
   add
-    gem 'shopify_app', '~> 6.0.6'
+    gem 'shopify_app'
 
 bundle install
 ```
+
+Note - its recommended to use the latest released version. Check the git tags to see the latest release and then add it to your Gemfile e.g `gem 'shopify_app', '~> 7.0.0'`
 
 5. Run the ShopifyApp generator
 -------------------------------
