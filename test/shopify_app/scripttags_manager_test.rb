@@ -23,7 +23,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   test "#create_scripttags when creating a scripttag fails, raises an error" do
     ShopifyAPI::ScriptTag.stubs(all: [])
-    scripttag = stub(persisted?: false, errors: stub(messages: ["Source needs to be https"]))
+    scripttag = stub(persisted?: false, errors: stub(full_messages: ["Source needs to be https"]))
     ShopifyAPI::ScriptTag.stubs(create: scripttag)
 
     assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
