@@ -29,7 +29,7 @@ If you don't have a Shopify Partner account yet head over to http://shopify.com/
 Once you have a Partner account create a new application to get an Api key and other Api credentials. To create a development application set the Application Callback URL to
 
 ```
-http://localhost:3000/login
+http://localhost:3000/
 ```
 
 and the `redirect_uri` to
