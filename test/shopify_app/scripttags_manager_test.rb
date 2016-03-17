@@ -31,16 +31,6 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     end
   end
 
-  test "#create_scripttags when creating a scripttag fails and the scripttag exists, do not raise an error" do
-    scripttag = stub(persisted?: false)
-    scripttags = all_scripttag_srcs.map{|t| stub(src: t)}
-    ShopifyAPI::ScriptTag.stubs(create: scripttag, all: scripttags)
-
-    assert_nothing_raised ShopifyApp::ScripttagsManager::CreationFailed do
-      @manager.create_scripttags
-    end
-  end
-
   test "#recreate_scripttags! destroys all scripttags and recreates" do
     @manager.expects(:destroy_scripttags)
     @manager.expects(:create_scripttags)
