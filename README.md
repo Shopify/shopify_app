@@ -175,6 +175,21 @@ rails g shopify_app:add_webhook -t carts/update -a https://example.com/webhooks/
 
 where `-t` is the topic and `-a` is the address the webhook should be sent to.
 
+ScripttagsManager
+-----------------
+
+As with webhooks, ShopifyApp can manage your app's scripttags for you by setting which scripttags you require in the initializer:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.scripttags = [
+    {event:'onload', src: 'https://my-shopifyapp.herokuapp.com/fancy.js'}
+  ]
+end
+```
+
+Scripttags are created in the same way as the Webhooks, with a background job which will create the required scripttags.
+
 ShopifyApp::SessionRepository
 -----------------------------
 

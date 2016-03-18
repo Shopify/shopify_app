@@ -10,6 +10,7 @@ module ShopifyApp
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
     attr_accessor :webhooks
+    attr_accessor :scripttags
 
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
@@ -20,6 +21,10 @@ module ShopifyApp
 
     def has_webhooks?
       webhooks.present?
+    end
+
+    def has_scripttags?
+      scripttags.present?
     end
   end
 

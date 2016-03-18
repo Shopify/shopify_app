@@ -20,6 +20,7 @@ module ShopifyApp
         session[:shopify_domain] = shop_name
 
         WebhooksManager.queue(shop_name, token) if ShopifyApp.configuration.has_webhooks?
+        ScripttagsManager.queue(shop_name, token) if ShopifyApp.configuration.has_scripttags?
 
         flash[:notice] = "Logged in"
         redirect_to_with_fallback return_address
