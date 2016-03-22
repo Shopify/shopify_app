@@ -77,6 +77,23 @@ module ShopifyApp
       assert_redirected_to '/'
     end
 
+    test '#callback should have a success flash message' do
+      mock_shopify_omniauth
+
+      get :callback, shop: 'shop'
+      assert_equal flash[:notice], 'Logged In'
+    end
+
+    test '#callback should have a success flash message in Spanish' do
+      I18n.locale = :es
+      mock_shopify_omniauth
+
+      get :callback, shop: 'shop'
+      assert_equal flash[:notice], 'Has iniciado sesión'
+
+      I18n.locale = :en
+    end
+
     test "#callback should setup a shopify session" do
       mock_shopify_omniauth
 
