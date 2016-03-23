@@ -25,7 +25,7 @@ module ShopifyApp
         flash[:notice] = I18n.t('.logged_in')
         redirect_to_with_fallback return_address
       else
-        flash[:error] = "Could not log in to Shopify store."
+        flash[:error] = I18n.t('could_not_log_in')
         redirect_to_with_fallback login_url
       end
     end
@@ -33,7 +33,7 @@ module ShopifyApp
     def destroy
       session[:shopify] = nil
       session[:shopify_domain] = nil
-      flash[:notice] = "Successfully logged out."
+      flash[:notice] = I18n.t('.logged_out')
       redirect_to_with_fallback login_url
     end
 

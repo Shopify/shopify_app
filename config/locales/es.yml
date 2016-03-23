@@ -1,2 +1,4 @@
 es:
   logged_in: 'Has iniciado sesión'
+  logged_out: 'Cerrado sesión'
+  could_not_log_in: 'No se pudo iniciar sesión'
