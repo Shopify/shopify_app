@@ -102,7 +102,7 @@ module ShopifyApp
     test '#callback should flash error in Spanish' do
       I18n.locale = :es
       get :callback, shop: 'shop'
-      assert_equal flash[:error], 'No se pudo iniciar sesión'
+      assert_equal flash[:error], 'No se pudo iniciar sesión en tu tienda de Shopify'
     end
 
     test "#callback should setup a shopify session" do
@@ -156,7 +156,7 @@ module ShopifyApp
 
       get :destroy
 
-      assert_equal 'Cerrado sesión', flash[:notice]
+      assert_equal 'Cerrar sesión', flash[:notice]
     end
 
     private
