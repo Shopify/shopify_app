@@ -1,4 +1,4 @@
-es: &shopify_app_es
+es:
   logged_in: 'Has iniciado sesión'
   logged_out: 'Cerrar sesión'
   could_not_log_in: 'No se pudo iniciar sesión en tu tienda de Shopify'
