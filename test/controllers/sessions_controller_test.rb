@@ -7,6 +7,8 @@ module ShopifyApp
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.storage = InMemorySessionStore
       ShopifyApp.configuration = nil
+
+      I18n.locale = :en
     end
 
     test "#new should authenticate the shop if the shop param exists" do
@@ -77,6 +79,32 @@ module ShopifyApp
       assert_redirected_to '/'
     end
 
+    test '#callback should have a success flash message' do
+      mock_shopify_omniauth
+
+      get :callback, shop: 'shop'
+      assert_equal flash[:notice], 'Logged In'
+    end
+
+    test '#callback should have a success flash message in Spanish' do
+      I18n.locale = :es
+      mock_shopify_omniauth
+
+      get :callback, shop: 'shop'
+      assert_equal flash[:notice], 'Has iniciado sesión'
+    end
+
+    test '#callback should flash error when omniauth is not present' do
+      get :callback, shop: 'shop'
+      assert_equal flash[:error], 'Could not log in to Shopify store'
+    end
+
+    test '#callback should flash error in Spanish' do
+      I18n.locale = :es
+      get :callback, shop: 'shop'
+      assert_equal flash[:error], 'No se pudo iniciar sesión en tu tienda de Shopify'
+    end
+
     test "#callback should setup a shopify session" do
       mock_shopify_omniauth
 
@@ -117,7 +145,18 @@ module ShopifyApp
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
       assert_redirected_to login_path
-      refute flash[:notice].empty?
+      assert_equal 'Successfully logged out', flash[:notice]
+    end
+
+    test '#destroy should redirect with notice in spanish' do
+      I18n.locale = :es
+      shop_id = 1
+      session[:shopify] = shop_id
+      session[:shopify_domain] = 'shop1.myshopify.com'
+
+      get :destroy
+
+      assert_equal 'Cerrar sesión', flash[:notice]
     end
 
     private
