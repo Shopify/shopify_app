@@ -16,7 +16,7 @@ module ShopifyApp
       auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
       get :new, shop: 'my-shop'
       assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
-      assert_match /meta http-equiv=\"refresh\" content=\"0; url=#{Regexp.escape(auth_url)}\"/, response.body
+      assert_match /meta http-equiv=\"refresh\" content=\"1; url=#{Regexp.escape(auth_url)}\"/, response.body
     end
 
     test "#new should authenticate the shop if the shop param exists non embedded" do
@@ -24,7 +24,7 @@ module ShopifyApp
       auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
       get :new, shop: 'my-shop'
       assert_match /window\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
-      assert_match /meta http-equiv=\"refresh\" content=\"0; url=#{Regexp.escape(auth_url)}\"/, response.body
+      assert_match /meta http-equiv=\"refresh\" content=\"1; url=#{Regexp.escape(auth_url)}\"/, response.body
     end
 
     test "#new should trust the shop param over the current session" do
@@ -35,7 +35,7 @@ module ShopifyApp
       auth_url = "/auth/shopify?shop=#{new_shop_domain}"
       get :new, shop: new_shop_domain
       assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
-      assert_match /meta http-equiv=\"refresh\" content=\"0; url=#{Regexp.escape(auth_url)}\"/, response.body
+      assert_match /meta http-equiv=\"refresh\" content=\"1; url=#{Regexp.escape(auth_url)}\"/, response.body
     end
 
     test "#new should render a full-page if the shop param doesn't exist" do
@@ -50,7 +50,7 @@ module ShopifyApp
         auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
         post :create, shop: good_url
         assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
-        assert_match /meta http-equiv=\"refresh\" content=\"0; url=#{Regexp.escape(auth_url)}\"/, response.body
+        assert_match /meta http-equiv=\"refresh\" content=\"1; url=#{Regexp.escape(auth_url)}\"/, response.body
       end
     end
 
@@ -61,7 +61,7 @@ module ShopifyApp
         auth_url = '/auth/shopify?shop=my-shop.myshopify.io'
         post :create, shop: good_url
         assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
-        assert_match /meta http-equiv=\"refresh\" content=\"0; url=#{Regexp.escape(auth_url)}\"/, response.body
+        assert_match /meta http-equiv=\"refresh\" content=\"1; url=#{Regexp.escape(auth_url)}\"/, response.body
       end
     end
 
