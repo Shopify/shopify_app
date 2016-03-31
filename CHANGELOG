@@ -1,9 +1,15 @@
+7.0.2
+-----
+
+* Fix CSRF redirect issue
+
 7.0.1
-----------
+-----
+
 * add support to i18n for flash messages (English and Spanish).
 
 7.0.0
-----------
+-----
 
 * rename WebhooksController module to WebhookVerification
 * added a WebhooksController which automatically delegates to jobs
