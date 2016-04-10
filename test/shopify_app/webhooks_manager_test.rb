@@ -34,7 +34,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     end
   end
 
-  test "#create_webhooks when creating a webhook fails and the webhook exists, do not raise an error" do
+  test "#create_webhooks when creating a webhook fails if the webhook exists, do not raise an error" do
     webhook = stub(persisted?: false)
     webhooks = all_webhook_topics.map{|t| stub(topic: t)}
     ShopifyAPI::Webhook.stubs(create: webhook, all: webhooks)
@@ -42,6 +42,24 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     assert_nothing_raised ShopifyApp::WebhooksManager::CreationFailed do
       @manager.create_webhooks
     end
+  end
+
+  test "#create_webhook makes call to create webhook" do
+    ShopifyAPI::Webhook.stubs(all: [])
+
+    expect_webhook_creation('app/uninstalled', "https://example-app.com/webhooks/app_uninstalled")
+
+    @manager.create_webhook(topic: 'app/uninstalled', address: 'https://example-app.com/webhooks/app_uninstalled')
+  end
+
+  test "#create_webhook returns existing webhook if it already exist" do
+    webhook = stub(topic: 'app/uninstalled')
+    ShopifyAPI::Webhook.stubs(all: [webhook])
+
+    ShopifyAPI::Webhook.expects(:create).never
+
+    new_webhook = @manager.create_webhook(topic: 'app/uninstalled', address: 'https://example-app.com/webhooks/app_uninstalled')
+    assert_equal new_webhook, webhook
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
