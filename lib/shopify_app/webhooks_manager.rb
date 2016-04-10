@@ -18,10 +18,18 @@ module ShopifyApp
     def create_webhooks
       return unless required_webhooks.present?
 
+      required_webhooks.each do |webhook|
+        create_webhook(webhook)
+      end
+    end
+
+    def create_webhook(attributes)
       with_shopify_session do
-        required_webhooks.each do |webhook|
-          create_webhook(webhook) unless webhook_exists?(webhook[:topic])
-        end
+        return webhook_for(attributes[:topic]) if webhook_exists?(attributes[:topic])
+        attributes.reverse_merge!(format: 'json')
+        webhook = ShopifyAPI::Webhook.create(attributes)
+        raise CreationFailed unless webhook.persisted?
+        webhook
       end
     end
 
@@ -50,14 +58,11 @@ module ShopifyApp
       end
     end
 
-    def create_webhook(attributes)
-      attributes.reverse_merge!(format: 'json')
-      webhook = ShopifyAPI::Webhook.create(attributes)
-      raise CreationFailed unless webhook.persisted?
-      webhook
+    def webhook_exists?(topic)
+      webhook_for(topic).present?
     end
 
-    def webhook_exists?(topic)
+    def webhook_for(topic)
       current_webhooks[topic]
     end
 
