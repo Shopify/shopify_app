@@ -2,12 +2,8 @@ module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
 
-    def self.queue(shop_name, token)
-      ShopifyApp::WebhooksManagerJob.perform_later(shop_name: shop_name, token: token)
-    end
-
-    def initialize(shop_name, token)
-      @shop_name, @token = shop_name, token
+    def self.queue(shop_domain, shop_token)
+      ShopifyApp::WebhooksManagerJob.perform_later(shop_domain: shop_domain, shop_token: shop_token)
     end
 
     def recreate_webhooks!
@@ -18,19 +14,16 @@ module ShopifyApp
     def create_webhooks
       return unless required_webhooks.present?
 
-      with_shopify_session do
-        required_webhooks.each do |webhook|
-          create_webhook(webhook) unless webhook_exists?(webhook[:topic])
-        end
+      required_webhooks.each do |webhook|
+        create_webhook(webhook) unless webhook_exists?(webhook[:topic])
       end
     end
 
     def destroy_webhooks
-      with_shopify_session do
-        ShopifyAPI::Webhook.all.each do |webhook|
-          ShopifyAPI::Webhook.delete(webhook.id) if is_required_webhook?(webhook)
-        end
+      ShopifyAPI::Webhook.all.each do |webhook|
+        ShopifyAPI::Webhook.delete(webhook.id) if is_required_webhook?(webhook)
       end
+
       @current_webhooks = nil
     end
 
@@ -42,12 +35,6 @@ module ShopifyApp
 
     def is_required_webhook?(webhook)
       required_webhooks.map{ |w| w[:address] }.include? webhook.address
-    end
-
-    def with_shopify_session
-      ShopifyAPI::Session.temp(@shop_name, @token) do
-        yield
-      end
     end
 
     def create_webhook(attributes)

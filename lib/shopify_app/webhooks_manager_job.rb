@@ -1,11 +1,10 @@
 module ShopifyApp
   class WebhooksManagerJob < ActiveJob::Base
-    def perform(params = {})
-      shop_name = params.fetch(:shop_name)
-      token = params.fetch(:token)
-
-      manager = WebhooksManager.new(shop_name, token)
-      manager.create_webhooks
+    def perform(shop_domain:, shop_token:)
+      ShopifyAPI::Session.temp(shop_domain, shop_token) do
+        manager = WebhooksManager.new
+        manager.create_webhooks
+      end
     end
   end
 end

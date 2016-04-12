@@ -10,7 +10,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
       ]
     end
 
-    @manager = ShopifyApp::ScripttagsManager.new("regular-shop.myshopify.com", "token")
+    @manager = ShopifyApp::ScripttagsManager.new
   end
 
   test "#create_scripttags makes calls to create scripttags" do
@@ -67,7 +67,6 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     [
       stub(id: 1, src: "https://example-app.com/fancy.js", event: 'onload'),
       stub(id: 2, src: "https://example-app.com/foobar.js", event: 'onload'),
-      
     ]
   end
 end

@@ -11,7 +11,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       ]
     end
 
-    @manager = ShopifyApp::WebhooksManager.new("regular-shop.myshopify.com", "token")
+    @manager = ShopifyApp::WebhooksManager.new
   end
 
   test "#create_webhooks makes calls to create webhooks" do
