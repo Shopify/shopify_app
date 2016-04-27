@@ -1,3 +1,8 @@
+7.0.3
+-----
+
+* Bump required Rails version to >= 4.2.6 since we are now using ActiveSupport::SecurityUtils:Module
+
 7.0.2
 -----
 
