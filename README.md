@@ -157,7 +157,7 @@ class CustomWebhooksController < ApplicationController
   include ShopifyApp::WebhookVerification
 
   def carts_update
-    SomeJob.perform_later(shopify_domain: shop_domain)
+    SomeJob.perform_later(shopify_domain: shop_domain, webhook: params)
     head :ok
   end
 end
