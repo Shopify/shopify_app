@@ -46,7 +46,7 @@ module ShopifyApp
     def close_session
       session[:shopify] = nil
       session[:shopify_domain] = nil
-      redirect_to_with_fallback login_url
+      redirect_to_with_fallback main_or_engine_login_url(shop: params[:shop])
     end
 
     def main_or_engine_login_url(params = {})
