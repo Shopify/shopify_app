@@ -40,8 +40,8 @@ module ShopifyApp
 
       def inject_embedded_app_options_to_application
         if embedded_app?
-          application "config.action_dispatch.default_headers.delete('X-Frame-Options')"
-          application "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'"
+          application "config.action_dispatch.default_headers.delete(\"X-Frame-Options\")"
+          application "config.action_dispatch.default_headers[\"P3P\"] = 'CP=\"Not used\"'"
         end
       end
 
