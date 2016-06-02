@@ -71,7 +71,6 @@ module ShopifyApp
             </script>
           </head>
           <body>
-            <a href=#{url_json}>Continue</a>
           </body>
         </html>
       ), status: 302, location: url
@@ -95,7 +94,6 @@ module ShopifyApp
               </script>
             </head>
             <body>
-              <a href=#{url_json} target="_top">Continue</a>
             </body>
           </html>
         )
