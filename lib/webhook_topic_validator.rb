@@ -1,7 +1,6 @@
 require 'active_support/concern'
 module ShopifyApp
   module WebhookTopicValidator
-    class CreationFailed < StandardError; end
     class InvalidTopic < StandardError; end
     extend ActiveSupport::Concern
 

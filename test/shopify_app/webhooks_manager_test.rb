@@ -39,7 +39,6 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     webhook = stub(topic: 'app/uninstall', persisted?: false)
     ShopifyAPI::Webhook.stubs(create: webhook)
 
-    Rails.logger.expects(:warn)
     assert_raise ShopifyApp::WebhooksManager::CreationFailed do
       @manager.create_webhooks
     end
