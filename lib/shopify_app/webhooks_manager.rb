@@ -1,45 +1,9 @@
+require 'shopify_app/webhook_topic_validator'
+
 module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
-
-    VALID_WEBHOOK_TOPICS = ['carts/create',
-                            'carts/update',
-                            'checkouts/create',
-                            'checkouts/delete',
-                            'checkouts/update',
-                            'collections/create',
-                            'collections/delete',
-                            'collections/update',
-                            'customer_groups/create',
-                            'customer_groups/delete',
-                            'customer_groups/update',
-                            'customers/create',
-                            'customers/delete',
-                            'customers/disable',
-                            'customers/enable',
-                            'customers/update',
-                            'disputes/create',
-                            'disputes/update',
-                            'fulfillment_events/create',
-                            'fulfillment_events/delete',
-                            'fulfillments/create',
-                            'fulfillments/update',
-                            'order_transactions/create',
-                            'orders/cancelled',
-                            'orders/create',
-                            'orders/delete',
-                            'orders/fulfilled',
-                            'orders/paid',
-                            'orders/partially_fulfilled',
-                            'orders/updated',
-                            'products/create',
-                            'products/delete',
-                            'products/update',
-                            'refunds/create',
-                            'shop/update',
-                            'themes/publish'
-                          ]
-
+    include WebhookTopicValidator
 
     def self.queue(shop_domain, shop_token)
       ShopifyApp::WebhooksManagerJob.perform_later(shop_domain: shop_domain, shop_token: shop_token)
@@ -54,7 +18,7 @@ module ShopifyApp
       return unless required_webhooks.present?
 
       required_webhooks.each do |webhook|
-        is_valid_webhook?(webhook[:topic])
+        is_valid_topic?(webhook[:topic])
         create_webhook(webhook) unless webhook_exists?(webhook[:topic])
       end
     end
@@ -75,12 +39,6 @@ module ShopifyApp
 
     def is_required_webhook?(webhook)
       required_webhooks.map{ |w| w[:address] }.include? webhook.address
-    end
-
-    def is_valid_webhook?(webhook)
-      unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == webhook }
-        Rails.logger.warn "#{webhook} isn't a valid topic. Valid topics include: #{VALID_WEBHOOK_TOPICS}"
-      end
     end
 
     def create_webhook(attributes)
