@@ -34,6 +34,17 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     end
   end
 
+  test "#create_webhooks when creating a webhook with invalid topic, fails, raises an error" do
+    ShopifyAPI::Webhook.stubs(all: [])
+    webhook = stub(topic: 'app/uninstall', persisted?: false)
+    ShopifyAPI::Webhook.stubs(create: webhook)
+
+    Rails.logger.expects(:warn)
+    assert_raise ShopifyApp::WebhooksManager::CreationFailed do
+      @manager.create_webhooks
+    end
+  end
+
   test "#create_webhooks when creating a webhook fails and the webhook exists, do not raise an error" do
     webhook = stub(persisted?: false)
     webhooks = all_webhook_topics.map{|t| stub(topic: t)}

@@ -3,6 +3,47 @@ require 'rails/generators/base'
 module ShopifyApp
   module Generators
     class AddWebhookGenerator < Rails::Generators::Base
+    class InvalidTopic < StandardError; end
+
+      VALID_WEBHOOK_TOPICS = ['app/uninstalled',
+                              'carts/create',
+                              'carts/update',
+                              'checkouts/create',
+                              'checkouts/delete',
+                              'checkouts/update',
+                              'collections/create',
+                              'collections/delete',
+                              'collections/update',
+                              'customer_groups/create',
+                              'customer_groups/delete',
+                              'customer_groups/update',
+                              'customers/create',
+                              'customers/delete',
+                              'customers/disable',
+                              'customers/enable',
+                              'customers/update',
+                              'disputes/create',
+                              'disputes/update',
+                              'fulfillment_events/create',
+                              'fulfillment_events/delete',
+                              'fulfillments/create',
+                              'fulfillments/update',
+                              'order_transactions/create',
+                              'orders/cancelled',
+                              'orders/create',
+                              'orders/delete',
+                              'orders/fulfilled',
+                              'orders/paid',
+                              'orders/partially_fulfilled',
+                              'orders/updated',
+                              'products/create',
+                              'products/delete',
+                              'products/update',
+                              'refunds/create',
+                              'shop/update',
+                              'themes/publish'
+                            ]
+
       source_root File.expand_path('../templates', __FILE__)
 
       class_option :topic, type: :string, aliases: "-t", required: true
@@ -10,6 +51,10 @@ module ShopifyApp
 
       def init_webhook_config
         initializer = load_initializer
+        unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == topic }
+          shell.say "A valid topic wasn't entered. Valid topics include #{VALID_WEBHOOK_TOPICS.map { |valid| valid.to_s }}"
+          raise InvalidTopic
+        end
         return if initializer.include?("config.webhooks")
 
         inject_into_file(

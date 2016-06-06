@@ -44,6 +44,30 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "webhook config won't generate with invalid topic" do
+    provide_existing_initializer_file_with_webhooks
+
+    assert_raise ShopifyApp::Generators::AddWebhookGenerator::InvalidTopic do
+      run_generator %w(-t products/updated -a https://example.com/webhooks/product_updated)
+    end
+
+    assert_file "config/initializers/shopify_app.rb" do |config|
+      assert_match 'config.webhooks = [', config
+      assert_match exisiting_webhook, config
+      refute_match invalid_webhook, config
+    end
+  end
+
+  test "webhooks job won't generate with invalid topic" do
+    provide_existing_initializer_file_with_webhooks
+
+    assert_raise ShopifyApp::Generators::AddWebhookGenerator::InvalidTopic do
+      run_generator %w(-t products/updated -a https://example.com/webhooks/product_updated)
+    end
+
+    assert_no_file "app/jobs/product_updated_job.rb"
+  end
+
   private
 
   def exisiting_webhook
@@ -52,5 +76,9 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
 
   def new_webhook
     "{topic: 'products/update', address: 'https://example.com/webhooks/product_update', format: 'json'}"
+  end
+
+  def invalid_webhook
+    "{topic: 'products/updated', address: 'https://example.com/webhooks/product_updated', format: 'json'}"
   end
 end
