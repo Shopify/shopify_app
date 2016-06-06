@@ -2,6 +2,7 @@ require 'active_support/concern'
 module ShopifyApp
   module WebhookTopicValidator
     class CreationFailed < StandardError; end
+    class InvalidTopic < StandardError; end
     extend ActiveSupport::Concern
 
     VALID_WEBHOOK_TOPICS = ['app/uninstalled',
@@ -41,13 +42,22 @@ module ShopifyApp
                             'refunds/create',
                             'shop/update',
                             'themes/publish'
-                            ]
+                        ]
     def is_valid_topic?(options = {})
-      topic = options
-      unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == topic }
-        Rails.logger.warn "A valid topic wasn't entered. Valid topics include: #{VALID_WEBHOOK_TOPICS}"
-        raise CreationFailed
+      @topic = options
+      unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == @topic }
+        raise InvalidTopic
       end
+    end
+
+    def invalid_topic_shell_message
+      shell.say "#{@topic} is an invalid webhook topic. "\
+      "Valid topics include: #{VALID_WEBHOOK_TOPICS}"
+    end
+
+    def invalid_topic_logger_message
+      Rails.logger.warn "#{@topic} is an invalid webhook topic. "\
+      "Valid topics include: #{VALID_WEBHOOK_TOPICS}"
     end
   end
 end

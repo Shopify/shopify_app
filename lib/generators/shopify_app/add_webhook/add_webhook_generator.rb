@@ -4,13 +4,19 @@ module ShopifyApp
   module Generators
     class AddWebhookGenerator < Rails::Generators::Base
       include WebhookTopicValidator
+
       source_root File.expand_path('../templates', __FILE__)
 
       class_option :topic, type: :string, aliases: "-t", required: true
       class_option :address, type: :string, aliases: "-a", required: true
 
       def init_webhook_config
-        is_valid_topic?(topic)
+        begin
+          is_valid_topic?(topic)
+        rescue ShopifyApp::WebhookTopicValidator::InvalidTopic => e
+          invalid_topic_shell_message
+          raise
+        end
         initializer = load_initializer
         return if initializer.include?("config.webhooks")
 

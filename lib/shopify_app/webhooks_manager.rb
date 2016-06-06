@@ -18,7 +18,12 @@ module ShopifyApp
       return unless required_webhooks.present?
 
       required_webhooks.each do |webhook|
-        is_valid_topic?(webhook[:topic])
+        begin
+          is_valid_topic?(webhook[:topic])
+        rescue ShopifyApp::WebhookTopicValidator::InvalidTopic => e
+          invalid_topic_logger_message
+          raise CreationFailed
+        end
         create_webhook(webhook) unless webhook_exists?(webhook[:topic])
       end
     end
