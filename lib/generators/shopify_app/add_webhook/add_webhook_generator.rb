@@ -52,7 +52,7 @@ module ShopifyApp
       def init_webhook_config
         initializer = load_initializer
         unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == topic }
-          shell.say "A valid topic wasn't entered. Valid topics include #{VALID_WEBHOOK_TOPICS.map { |valid| valid.to_s }}"
+          shell.say "A valid topic wasn't entered. Valid topics include: #{VALID_WEBHOOK_TOPICS}"
           raise InvalidTopic
         end
         return if initializer.include?("config.webhooks")

@@ -1,7 +1,6 @@
 module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
-    class InvalidTopic < StandardError; end
 
     VALID_WEBHOOK_TOPICS = ['carts/create',
                             'carts/update',
@@ -41,6 +40,7 @@ module ShopifyApp
                             'themes/publish'
                           ]
 
+
     def self.queue(shop_domain, shop_token)
       ShopifyApp::WebhooksManagerJob.perform_later(shop_domain: shop_domain, shop_token: shop_token)
     end
@@ -54,6 +54,7 @@ module ShopifyApp
       return unless required_webhooks.present?
 
       required_webhooks.each do |webhook|
+        is_valid_webhook?(webhook[:topic])
         create_webhook(webhook) unless webhook_exists?(webhook[:topic])
       end
     end
@@ -74,6 +75,12 @@ module ShopifyApp
 
     def is_required_webhook?(webhook)
       required_webhooks.map{ |w| w[:address] }.include? webhook.address
+    end
+
+    def is_valid_webhook?(webhook)
+      unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == webhook }
+        Rails.logger.warn "#{webhook} isn't a valid topic. Valid topics include: #{VALID_WEBHOOK_TOPICS}"
+      end
     end
 
     def create_webhook(attributes)
