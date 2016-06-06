@@ -1,4 +1,4 @@
-require 'shopify_app/webhook_topic_validator'
+require 'webhook_topic_validator'
 
 module ShopifyApp
   class WebhooksManager
