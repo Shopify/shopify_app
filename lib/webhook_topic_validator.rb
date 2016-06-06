@@ -45,9 +45,7 @@ module ShopifyApp
                         ]
     def is_valid_topic?(options = {})
       @topic = options
-      unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == @topic }
-        raise InvalidTopic
-      end
+      raise InvalidTopic unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == @topic }
     end
   end
 end
