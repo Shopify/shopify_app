@@ -50,11 +50,8 @@ module ShopifyApp
       class_option :address, type: :string, aliases: "-a", required: true
 
       def init_webhook_config
+        is_valid_topic?(topic)
         initializer = load_initializer
-        unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == topic }
-          shell.say "A valid topic wasn't entered. Valid topics include: #{VALID_WEBHOOK_TOPICS}"
-          raise InvalidTopic
-        end
         return if initializer.include?("config.webhooks")
 
         inject_into_file(
@@ -85,6 +82,13 @@ module ShopifyApp
       end
 
       private
+
+      def is_valid_topic?(topic)
+        unless VALID_WEBHOOK_TOPICS.any? { |valid| valid == topic }
+          shell.say "A valid topic wasn't entered. Valid topics include: #{VALID_WEBHOOK_TOPICS}"
+          raise InvalidTopic
+        end
+      end
 
       def load_initializer
         File.read(File.join(destination_root, 'config/initializers/shopify_app.rb'))
