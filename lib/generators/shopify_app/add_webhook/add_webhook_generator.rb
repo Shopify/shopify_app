@@ -15,7 +15,7 @@ module ShopifyApp
           is_valid_topic?(topic)
         rescue ShopifyApp::WebhookTopicValidator::InvalidTopic => e
           shell.say "#{@topic} is an invalid webhook topic. "\
-          "Valid topics include: #{VALID_WEBHOOK_TOPICS}"
+          "Did you mean #{@valid}?\nhttps://help.shopify.com/api/reference/webhook"
           raise
         end
         initializer = load_initializer

@@ -22,7 +22,7 @@ module ShopifyApp
           is_valid_topic?(webhook[:topic])
         rescue ShopifyApp::WebhookTopicValidator::InvalidTopic => e
           Rails.logger.warn "#{@topic} is an invalid webhook topic. "\
-          "Valid topics include: #{VALID_WEBHOOK_TOPICS}"
+          "Did you mean #{@valid}?\nhttps://help.shopify.com/api/reference/webhook"
           raise
         end
         create_webhook(webhook) unless webhook_exists?(webhook[:topic])
