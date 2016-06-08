@@ -5,10 +5,6 @@ module GeneratorTestHelpers
     copy_to_generator_root("app/controllers", "application_controller.rb")
   end
 
-  def provide_existing_authenticated_controller
-    copy_to_generator_root("app/controllers/shopify_app", "authenticated_controller.rb")
-  end
-
   def provide_existing_application_file
     copy_to_generator_root("config", "application.rb")
   end

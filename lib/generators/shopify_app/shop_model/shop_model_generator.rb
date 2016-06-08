@@ -23,14 +23,6 @@ module ShopifyApp
         copy_file 'shops.yml', 'test/fixtures/shops.yml'
       end
 
-      def inject_into_authenticated_controller
-        inject_into_file(
-          'app/controllers/shopify_app/authenticated_controller.rb',
-          File.read(File.expand_path(find_in_source_paths('shop_helper.rb'))),
-          before: "\nend"
-        )
-      end
-
       private
 
       def copy_migration(migration_name, config = {})
