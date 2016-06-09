@@ -6,7 +6,7 @@ Shopify Application Rails engine and generator
 
 Description
 -----------
-This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop.
+This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via the Partner (Oauth) style of authentication. Private App's token based auth is not supported.
 
 The [example](https://github.com/Shopify/shopify_app/tree/master/example) directory contains an app that was generated with this gem. It also contains sample code demonstrating the usage of the embedded app sdk.
 
