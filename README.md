@@ -368,6 +368,32 @@ We've also provided a generator which creates a skeleton job and updates the ini
 bin/rails g shopify_app:add_after_authenticate_job
 ```
 
+FulfillmentServicesManager
+--------------------------
+
+ShopifyApp can manage your app's Fulfillment Services for you by setting which fulfillment services you require in the initializer:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.base_url = 'https://my-shopify-app.example.com'
+  config.fulfillment_services = [
+    {name: 'Custom Warehouse', inventory_management: true, tracking_support: true, requires_shipping_method: false},
+  ]
+end
+```
+
+The `base_url` config property must be set to the url of your App so that the `callback_url` can be set for Shopify to access your Fulfillment Service.
+
+FulfillmentServices are created in the same way as the Webhooks, with a background job which will create the required FulfillmentServices.
+
+ShopifyApp can create FulfillmentServices for you using the `add_fulfillment_service` generator. This will add the new fulfillment service to your config and create the a stub service class for you.
+
+```
+rails g shopify_app:add_fulfillment_service -n Custom Warehouse -inventory_management true -tracking_support true -requires_shipping_method false
+```
+
+Fulfillment services pass the incoming request from Shopify for `fetch_stock` or `fetch_tracking_numbers` to `./app/lib/custom_warehouse_fulfillment_service.rb`. Use the generator to create a stub. The inbound parameters are available as `params`. A hash must be returned by the `fetch_stock` and `fetch_tracking_numbers` methods.
+
 ShopifyApp::SessionRepository
 -----------------------------
 
