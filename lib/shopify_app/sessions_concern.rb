@@ -19,9 +19,9 @@ module ShopifyApp
         session[:shopify] = ShopifyApp::SessionRepository.store(sess)
         session[:shopify_domain] = shop_name
 
-        FulfillmentServicesManager.queue(shop_name, token) if ShopifyApp.configuration.has_fulfillment_services? && ShopifyApp.configuration.has_base_url?
         WebhooksManager.queue(shop_name, token) if ShopifyApp.configuration.has_webhooks?
         ScripttagsManager.queue(shop_name, token) if ShopifyApp.configuration.has_scripttags?
+        FulfillmentServicesManager.queue(shop_name, token) if ShopifyApp.configuration.has_fulfillment_services? && ShopifyApp.configuration.has_base_url?
 
         flash[:notice] = I18n.t('.logged_in')
         redirect_to_with_fallback return_address
