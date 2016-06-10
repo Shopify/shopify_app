@@ -2,8 +2,12 @@ module ShopifyApp
   class FulfillmentServicesController < ApplicationController
     class ShopifyApp::MissingFulfillmentServiceError < StandardError; end
 
-    def action_missing(name)
-      render json: fulfillment_service_klass.send(name, fulfilment_service_params)
+    def fetch_stock
+      render json: fulfillment_service_klass.send(:fetch_stock, fulfilment_service_params)
+    end
+
+    def fetch_tracking_numbers
+      render json: fulfillment_service_klass.send(:fetch_tracking_numbers, fulfilment_service_params)
     end
 
     private
