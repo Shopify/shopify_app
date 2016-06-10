@@ -19,4 +19,8 @@ ShopifyApp::Engine.routes.draw do
   namespace :webhooks do
     post ':type' => :receive
   end
+
+  namespace :fulfillment_services do
+    get ':name/:action' => :process
+  end
 end

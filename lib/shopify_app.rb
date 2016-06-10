@@ -24,10 +24,12 @@ require 'shopify_app/controller_concerns/app_proxy_verification'
 # jobs
 require 'shopify_app/jobs/webhooks_manager_job'
 require 'shopify_app/jobs/scripttags_manager_job'
+require 'shopify_app/jobs/fulfillment_services_manager_job'
 
 # managers
 require 'shopify_app/managers/webhooks_manager'
 require 'shopify_app/managers/scripttags_manager'
+require 'shopify_app/managers/fulfillment_services_manager'
 
 # session
 require 'shopify_app/session/session_storage'

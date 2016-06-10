@@ -14,10 +14,12 @@ module ShopifyApp
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
     attr_accessor :session_repository
+    attr_accessor :fulfillment_services
 
     # customise urls
     attr_accessor :root_url
     attr_accessor :login_url
+    attr_accessor :base_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -56,6 +58,14 @@ module ShopifyApp
 
     def has_scripttags?
       scripttags.present?
+    end
+
+    def has_fulfillment_services?
+      fulfillment_services.present?
+    end
+
+    def has_base_url?
+      base_url.present?
     end
   end
 
