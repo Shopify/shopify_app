@@ -21,6 +21,7 @@ ShopifyApp::Engine.routes.draw do
   end
 
   namespace :fulfillment_services do
-    get ':name/:action' => :process
+    get 'fetch_stock'
+    get 'fetch_tracking_numbers'
   end
 end
