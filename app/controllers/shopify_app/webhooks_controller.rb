@@ -5,7 +5,8 @@ module ShopifyApp
     class ShopifyApp::MissingWebhookJobError < StandardError; end
 
     def receive
-      job_args = {shop_domain: shop_domain, webhook: webhook_params}
+      params.try(:permit!)
+      job_args = {shop_domain: shop_domain, webhook: webhook_params.to_h}
       webhook_job_klass.perform_later(job_args)
       head :no_content
     end
