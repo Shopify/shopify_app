@@ -99,7 +99,7 @@ After running the `install` generator, you can start your app with `bundle exec 
 $ rails generate shopify_app:shop_model
 ```
 
-The install generator doesn't create any database models for you and if you are starting a new app its quite likely that you will want one (most our internally developed apps do!). This generator creates a simple shop model and a migration. It also creates a model called `SessionStorage` which interacts with `ShopifyApp::SessionRepository`. Check out the later section to learn more about `ShopifyApp::SessionRepository`
+The install generator doesn't create any database models for you and if you are starting a new app its quite likely that you will want one (most of our internally developed apps do!). This generator creates a simple shop model and a migration. It also creates a model called `SessionStorage` which interacts with `ShopifyApp::SessionRepository`. Check out the later section to learn more about `ShopifyApp::SessionRepository`
 
 *Note that you will need to run rake db:migrate after this generator*
 
