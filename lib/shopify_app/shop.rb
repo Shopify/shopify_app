@@ -11,5 +11,15 @@ module ShopifyApp
       ShopifyAPI::Session.temp(shopify_domain, shopify_token, &block)
     end
 
+    def connect
+      ShopifyAPI::Base.activate_session(
+        ShopifyAPI::Session.new(
+          ShopifyApp::Utils.sanitize_shop_domain(shopify_domain),
+          shopify_token
+        )
+      )
+      nil
+    end
+
   end
 end
