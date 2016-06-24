@@ -12,13 +12,8 @@ module ShopifyApp
     end
 
     def connect
-      ShopifyAPI::Base.activate_session(
-        ShopifyAPI::Session.new(
-          ShopifyApp::Utils.sanitize_shop_domain(shopify_domain),
-          shopify_token
-        )
-      )
-      nil
+      session = ShopifyAPI::Session.new(shopify_domain, shopify_token)
+      ShopifyAPI::Base.activate_session(session)
     end
 
   end
