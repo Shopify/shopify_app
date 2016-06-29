@@ -40,7 +40,7 @@ module ShopifyApp
     def create_carrier_service(attributes)
       attributes.reverse_merge!(format: 'json')
       carrier_service = ShopifyAPI::CarrierService.create(attributes)
-      binding.pry
+
       raise CreationFailed, carrier_service.errors.full_messages.to_sentence unless carrier_service.persisted?
       carrier_service
     end
