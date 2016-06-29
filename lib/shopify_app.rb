@@ -24,6 +24,7 @@ require 'shopify_app/webhooks_manager'
 require 'shopify_app/scripttags_manager'
 require 'shopify_app/carrier_services_manager'
 require 'shopify_app/webhook_verification'
+require 'shopify_app/carrier_service_verification'
 require 'shopify_app/utils'
 
 # session repository
