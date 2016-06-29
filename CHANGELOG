@@ -1,4 +1,4 @@
-7.0.6
+7.0.9
 -----
 
 * Remove http-equiv meta tag as it causes OAuth issues in Chrome
