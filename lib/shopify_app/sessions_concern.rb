@@ -21,6 +21,7 @@ module ShopifyApp
 
         WebhooksManager.queue(shop_name, token) if ShopifyApp.configuration.has_webhooks?
         ScripttagsManager.queue(shop_name, token) if ShopifyApp.configuration.has_scripttags?
+        CarrierServicesManager.queue(shop_name, token) if ShopifyApp.configuration.has_carrier_services?
 
         flash[:notice] = I18n.t('.logged_in')
         redirect_to_with_fallback return_address
