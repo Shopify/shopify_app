@@ -34,7 +34,10 @@ class ShopifyApp::CarrierServicesManagerTest < ActiveSupport::TestCase
 
   test "#create_carrier_services when creating a carrier_service fails, raises an error" do
     ShopifyAPI::CarrierService.stubs(all: [])
-    carrier_service = stub(persisted?: false)
+    carrier_service = stub(
+      persisted?: false,
+      errors: stub(full_messages: stub(to_sentence: 'There were errors'))
+    )
     ShopifyAPI::CarrierService.stubs(create: carrier_service)
 
     assert_raise ShopifyApp::CarrierServicesManager::CreationFailed do
@@ -82,7 +85,7 @@ class ShopifyApp::CarrierServicesManagerTest < ActiveSupport::TestCase
 
   def expect_carrier_service_creation(name)
     stub_carrier_service = stub(persisted?: true)
-    ShopifyAPI::CarrierService.expects(:create).with(name: name).returns(stub_carrier_service)
+    ShopifyAPI::CarrierService.expects(:create).with(has_entry(name: name)).returns(stub_carrier_service)
   end
 
   def all_mock_carrier_services
