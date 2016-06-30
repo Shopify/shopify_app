@@ -22,6 +22,7 @@ require 'shopify_app/login_protection'
 require 'shopify_app/webhooks_manager'
 require 'shopify_app/scripttags_manager'
 require 'shopify_app/webhook_verification'
+require 'shopify_app/app_proxy_verification'
 require 'shopify_app/utils'
 
 # session repository

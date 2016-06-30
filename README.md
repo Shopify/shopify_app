@@ -202,6 +202,48 @@ AuthenticatedController
 
 The engine includes a controller called `ShopifyApp::AuthenticatedController` which inherits from `ApplicationController`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
 
+AppProxyVerification
+--------------------
+
+The engine provides a mixin for verifying incoming HTTP requests sent via an App Proxy. Any controller that `include`s `ShopifyApp::AppProxyVerification` will verify that each request has a valid `signature` query parameter that is calculated using the other query parameters and the app's shared secret.
+
+### Recommended Usage
+
+1. Use the `namespace` method to create app proxy routes
+    ```ruby
+    # config/routes.rb
+    namespace :app_proxy do
+      # simple routes without a specified controller will go to AppProxyController
+      get :basic
+
+      # more complex routes will go to controllers in the AppProxy namespace
+      resources :reviews
+      # GET /app_proxy/reviews will now be routed to
+      # AppProxy::ReviewsController#index, for example
+    end
+    ```
+
+2. `include` the mixin in your app proxy controllers
+    ```ruby
+    # app/controllers/app_proxy_controller.rb
+    class AppProxyController < ApplicationController
+      include ShopifyApp::AppProxyVerification
+
+      def basic
+        render text: 'Signature verification passed!'
+      end
+    end
+
+    # app/controllers/app_proxy/reviews_controller.rb
+    class ReviewsController < ApplicationController
+      include ShopifyApp::AppProxyVerification
+      # ...
+    end
+    ```
+
+3. Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
+![Creating an App Proxy](/images/app-proxy-screenshot.png)
+
 Troubleshooting
 ---------------
 
