@@ -3,7 +3,9 @@ language: ruby
 rvm:
   - 2.2.4
 
+script: "bundle exec rake test"
+
 gemfile:
   - Gemfile
-
-script: "bundle exec rake test"
+  - Gemfile.rails-5.0.0
+  - Gemfile.rails-4.2.6
