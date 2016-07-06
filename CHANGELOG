@@ -1,3 +1,9 @@
+7.0.10
+-----
+
+* Loosen Rails dependency requirements to `>= 4.2.6` and allow Rails 5.0
+* Add support for App Proxies
+
 7.0.9
 -----
 
