@@ -214,7 +214,11 @@ The engine provides a mixin for verifying incoming HTTP requests sent via an App
     # config/routes.rb
     namespace :app_proxy do
       # simple routes without a specified controller will go to AppProxyController
+      # GET '/app_proxy/basic' will be routed to AppProxyController#basic
       get :basic
+
+      # this will route GET /app_proxy to AppProxyController#main
+      root action: :main
 
       # more complex routes will go to controllers in the AppProxy namespace
       resources :reviews
