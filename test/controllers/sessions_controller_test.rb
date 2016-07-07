@@ -38,7 +38,7 @@ module ShopifyApp
     test "#new should render a full-page if the shop param doesn't exist" do
       get :new
       assert_response :ok
-      assert_template :new
+      assert_match %r{Shopify App — Installation}, response.body
     end
 
     ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
