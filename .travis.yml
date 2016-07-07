@@ -1,9 +1,11 @@
 language: ruby
+cache: bundler
+sudo: false
 
 rvm:
   - 2.2.4
+  - 2.3.1
 
 gemfile:
   - Gemfile
-
-script: "bundle exec rake test"
+  - Gemfile.rails50

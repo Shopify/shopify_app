@@ -3,7 +3,7 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      skip_before_action :verify_authenticity_token
+      skip_before_action :verify_authenticity_token, raise: false
       before_action :verify_request
     end
 
