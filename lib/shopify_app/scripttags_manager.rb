@@ -2,8 +2,18 @@ module ShopifyApp
   class ScripttagsManager
     class CreationFailed < StandardError; end
 
-    def self.queue(shop_domain, shop_token)
-      ShopifyApp::ScripttagsManagerJob.perform_later(shop_domain: shop_domain, shop_token: shop_token)
+    def self.queue(shop_domain, shop_token, scripttags)
+      ShopifyApp::ScripttagsManagerJob.perform_later(
+        shop_domain: shop_domain,
+        shop_token: shop_token,
+        scripttags: scripttags
+      )
+    end
+
+    attr_reader :required_scripttags
+
+    def initialize(scripttags)
+      @required_scripttags = scripttags
     end
 
     def recreate_scripttags!
@@ -28,10 +38,6 @@ module ShopifyApp
     end
 
     private
-
-    def required_scripttags
-      ShopifyApp.configuration.scripttags
-    end
 
     def is_required_scripttag?(scripttag)
       required_scripttags.map{ |w| w[:src] }.include? scripttag.src

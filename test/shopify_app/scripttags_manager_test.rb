@@ -3,14 +3,12 @@ require 'test_helper'
 class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   setup do
-    ShopifyApp.configure do |config|
-      config.scripttags = [
-        {event: 'onload', src: 'https://example-app.com/fancy.js'},
-        {event: 'onload', src: 'https://example-app.com/foobar.js'}
-      ]
-    end
+    @scripttags = [
+      {event: 'onload', src: 'https://example-app.com/fancy.js'},
+      {event: 'onload', src: 'https://example-app.com/foobar.js'}
+    ]
 
-    @manager = ShopifyApp::ScripttagsManager.new
+    @manager = ShopifyApp::ScripttagsManager.new(@scripttags)
   end
 
   test "#create_scripttags makes calls to create scripttags" do

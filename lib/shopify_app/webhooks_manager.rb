@@ -2,8 +2,18 @@ module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
 
-    def self.queue(shop_domain, shop_token)
-      ShopifyApp::WebhooksManagerJob.perform_later(shop_domain: shop_domain, shop_token: shop_token)
+    def self.queue(shop_domain, shop_token, webhooks)
+      ShopifyApp::WebhooksManagerJob.perform_later(
+        shop_domain: shop_domain,
+        shop_token: shop_token,
+        webhooks: webhooks
+      )
+    end
+
+    attr_reader :required_webhooks
+
+    def initialize(webhooks)
+      @required_webhooks = webhooks
     end
 
     def recreate_webhooks!
@@ -28,10 +38,6 @@ module ShopifyApp
     end
 
     private
-
-    def required_webhooks
-      ShopifyApp.configuration.webhooks
-    end
 
     def is_required_webhook?(webhook)
       required_webhooks.map{ |w| w[:address] }.include? webhook.address

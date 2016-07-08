@@ -3,15 +3,13 @@ require 'test_helper'
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
 
   setup do
-    ShopifyApp.configure do |config|
-      config.webhooks = [
-        {topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled"},
-        {topic: 'orders/create', address: "https://example-app.com/webhooks/order_create"},
-        {topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated"},
-      ]
-    end
+    @webhooks = [
+      {topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled"},
+      {topic: 'orders/create', address: "https://example-app.com/webhooks/order_create"},
+      {topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated"},
+    ]
 
-    @manager = ShopifyApp::WebhooksManager.new
+    @manager = ShopifyApp::WebhooksManager.new(@webhooks)
   end
 
   test "#create_webhooks makes calls to create webhooks" do
@@ -34,10 +32,9 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     end
   end
 
-  test "#create_webhooks when creating a webhook fails and the webhook exists, do not raise an error" do
-    webhook = stub(persisted?: false)
-    webhooks = all_webhook_topics.map{|t| stub(topic: t)}
-    ShopifyAPI::Webhook.stubs(create: webhook, all: webhooks)
+  test "#create_webhooks doesn't create webhooks that are already created" do
+    ShopifyAPI::Webhook.stubs(all: all_mock_webhooks)
+    @manager.expects(:create_webhook).never
 
     assert_nothing_raised ShopifyApp::WebhooksManager::CreationFailed do
       @manager.create_webhooks
