@@ -11,16 +11,10 @@ module ShopifyApp
     end
 
     def callback
-      if response = request.env['omniauth.auth']
-        shop_name = response.uid
-        token = response['credentials']['token']
-
-        sess = ShopifyAPI::Session.new(shop_name, token)
-        session[:shopify] = ShopifyApp::SessionRepository.store(sess)
-        session[:shopify_domain] = shop_name
-
-        WebhooksManager.queue(shop_name, token) if ShopifyApp.configuration.has_webhooks?
-        ScripttagsManager.queue(shop_name, token) if ShopifyApp.configuration.has_scripttags?
+      if auth_hash
+        login_shop
+        install_webhooks
+        install_scripttags
 
         flash[:notice] = I18n.t('.logged_in')
         redirect_to_with_fallback return_address
@@ -45,6 +39,44 @@ module ShopifyApp
       else
         redirect_to_with_fallback return_address
       end
+    end
+
+    def login_shop
+      sess = ShopifyAPI::Session.new(shop_name, token)
+      session[:shopify] = ShopifyApp::SessionRepository.store(sess)
+      session[:shopify_domain] = shop_name
+    end
+
+    def auth_hash
+      request.env['omniauth.auth']
+    end
+
+    def shop_name
+      auth_hash.uid
+    end
+
+    def token
+      auth_hash['credentials']['token']
+    end
+
+    def install_webhooks
+      return unless ShopifyApp.configuration.has_webhooks?
+
+      WebhooksManager.queue(
+        shop_name,
+        token,
+        ShopifyApp.configuration.webhooks
+      )
+    end
+
+    def install_scripttags
+      return unless ShopifyApp.configuration.has_scripttags?
+
+      ScripttagsManager.queue(
+        shop_name,
+        token,
+        ShopifyApp.configuration.scripttags
+      )
     end
 
     def return_address

@@ -3,14 +3,12 @@ require 'test_helper'
 class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   setup do
-    ShopifyApp.configure do |config|
-      config.scripttags = [
-        {event: 'onload', src: 'https://example-app.com/fancy.js'},
-        {event: 'onload', src: 'https://example-app.com/foobar.js'}
-      ]
-    end
+    @scripttags = [
+      {event: 'onload', src: 'https://example-app.com/fancy.js'},
+      {event: 'onload', src: 'https://example-app.com/foobar.js'}
+    ]
 
-    @manager = ShopifyApp::ScripttagsManager.new
+    @manager = ShopifyApp::ScripttagsManager.new(@scripttags)
   end
 
   test "#create_scripttags makes calls to create scripttags" do
@@ -26,9 +24,11 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     scripttag = stub(persisted?: false, errors: stub(full_messages: ["Source needs to be https"]))
     ShopifyAPI::ScriptTag.stubs(create: scripttag)
 
-    assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
+    e = assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
       @manager.create_scripttags
     end
+
+    assert_equal 'Source needs to be https', e.message
   end
 
   test "#recreate_scripttags! destroys all scripttags and recreates" do
