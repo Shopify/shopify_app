@@ -46,7 +46,7 @@ module ShopifyApp
     def create_webhook(attributes)
       attributes.reverse_merge!(format: 'json')
       webhook = ShopifyAPI::Webhook.create(attributes)
-      raise CreationFailed unless webhook.persisted?
+      raise CreationFailed, webhook.errors.full_messages.to_sentence unless webhook.persisted?
       webhook
     end
 

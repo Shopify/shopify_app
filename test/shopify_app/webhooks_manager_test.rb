@@ -24,12 +24,14 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
 
   test "#create_webhooks when creating a webhook fails, raises an error" do
     ShopifyAPI::Webhook.stubs(all: [])
-    webhook = stub(persisted?: false)
+    webhook = stub(persisted?: false, errors: stub(full_messages: ['topic already taken']))
     ShopifyAPI::Webhook.stubs(create: webhook)
 
-    assert_raise ShopifyApp::WebhooksManager::CreationFailed do
+    e = assert_raise ShopifyApp::WebhooksManager::CreationFailed do
       @manager.create_webhooks
     end
+
+    assert_equal 'topic already taken', e.message
   end
 
   test "#create_webhooks doesn't create webhooks that are already created" do

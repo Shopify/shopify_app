@@ -24,9 +24,11 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     scripttag = stub(persisted?: false, errors: stub(full_messages: ["Source needs to be https"]))
     ShopifyAPI::ScriptTag.stubs(create: scripttag)
 
-    assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
+    e = assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
       @manager.create_scripttags
     end
+
+    assert_equal 'Source needs to be https', e.message
   end
 
   test "#recreate_scripttags! destroys all scripttags and recreates" do
