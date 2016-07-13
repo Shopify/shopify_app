@@ -113,6 +113,15 @@ $ rails generate shopify_app:home_controller
 This generator creates an example home controller and view which fetches and displays products using the ShopifyAPI
 
 
+### App Proxy Controller Generator
+
+```sh
+$ rails generate shopify_app:app_proxy_controller
+```
+
+This optional generator, not included with the default generator, creates the app proxy controller to handle proxy requests to the app from your shop storefront, modifies 'config/routes.rb' with a namespace route and an example view which displays current shop information using the LiquidAPI
+
+
 ### Controllers, Routes and Views
 
 The last group of generators are for your convenience if you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
