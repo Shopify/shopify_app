@@ -1,3 +1,4 @@
+
   namespace :app_proxy do
     root action: 'index'
     # simple routes without a specified controller will go to AppProxyController
