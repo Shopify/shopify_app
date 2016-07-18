@@ -12,6 +12,10 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
 
+    # customise ActiveJob queue names
+    attr_accessor :scripttags_manager_queue_name
+    attr_accessor :webhooks_manager_queue_name
+
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
@@ -25,6 +29,14 @@ module ShopifyApp
 
     def has_scripttags?
       scripttags.present?
+    end
+
+    def scripttags_manager_queue_name
+      @scripttags_manager_queue_name ||= :default
+    end
+
+    def webhooks_manager_queue_name
+      @webhooks_manager_queue_name ||= :default
     end
   end
 
