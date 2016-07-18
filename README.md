@@ -119,7 +119,7 @@ This generator creates an example home controller and view which fetches and dis
 $ rails generate shopify_app:app_proxy_controller
 ```
 
-This optional generator, not included with the default generator, creates the app proxy controller to handle proxy requests to the app from your shop storefront, modifies 'config/routes.rb' with a namespace route and an example view which displays current shop information using the LiquidAPI
+This optional generator, not included with the default generator, creates the app proxy controller to handle proxy requests to the app from your shop storefront, modifies 'config/routes.rb' with a namespace route, and an example view which displays current shop information using the LiquidAPI
 
 
 ### Controllers, Routes and Views
@@ -218,16 +218,16 @@ The engine provides a mixin for verifying incoming HTTP requests sent via an App
 
 ### Recommended Usage
 
-The App_Proxy_Controller Generator automatically adds the mixin to the generated app_proxy_controller.rb
+The App Proxy Controller Generator automatically adds the mixin to the generated app_proxy_controller.rb
 Additional controllers for resources within the App_Proxy namespace, will need to include the mixin like so: 
 
-    ```ruby
-    # app/controllers/app_proxy/reviews_controller.rb
-    class ReviewsController < ApplicationController
-      include ShopifyApp::AppProxyVerification
-      # ...
-    end
-    ```
+```ruby
+# app/controllers/app_proxy/reviews_controller.rb
+class ReviewsController < ApplicationController
+  include ShopifyApp::AppProxyVerification
+  # ...
+end
+```
 
 Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
