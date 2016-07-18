@@ -218,35 +218,10 @@ The engine provides a mixin for verifying incoming HTTP requests sent via an App
 
 ### Recommended Usage
 
-1. Use the `namespace` method to create app proxy routes
+The App_Proxy_Controller Generator automatically adds the mixin to the generated app_proxy_controller.rb
+Additional controllers for resources within the App_Proxy namespace, will need to include the mixin like so: 
+
     ```ruby
-    # config/routes.rb
-    namespace :app_proxy do
-      # simple routes without a specified controller will go to AppProxyController
-      # GET '/app_proxy/basic' will be routed to AppProxyController#basic
-      get :basic
-
-      # this will route GET /app_proxy to AppProxyController#main
-      root action: :main
-
-      # more complex routes will go to controllers in the AppProxy namespace
-      resources :reviews
-      # GET /app_proxy/reviews will now be routed to
-      # AppProxy::ReviewsController#index, for example
-    end
-    ```
-
-2. `include` the mixin in your app proxy controllers
-    ```ruby
-    # app/controllers/app_proxy_controller.rb
-    class AppProxyController < ApplicationController
-      include ShopifyApp::AppProxyVerification
-
-      def basic
-        render text: 'Signature verification passed!'
-      end
-    end
-
     # app/controllers/app_proxy/reviews_controller.rb
     class ReviewsController < ApplicationController
       include ShopifyApp::AppProxyVerification
@@ -254,7 +229,7 @@ The engine provides a mixin for verifying incoming HTTP requests sent via an App
     end
     ```
 
-3. Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
+Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
 
 Troubleshooting
@@ -278,6 +253,12 @@ By default, loading your embedded app will redirect to the Shopify admin, with t
 ```javascript
 forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
+
+App Tunneling
+-------------
+
+For certain features like Application Proxy or Webhooks to receive requests from Shopify, your app needs to be on a publicly visible URL. This can be a hurdle during development or testing on a local machine. Fortunately, this can be overcome by employing a tunneling service like [Forward](https://forwardhq.com/), [RequestBin](requestb.in/), [ngrok](https://ngrok.com/) etc. These tools allow you to create a secure tunnel from the public Internet to your local machine.
+
 
 Questions or problems?
 ----------------------
