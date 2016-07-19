@@ -2,6 +2,31 @@ Shopify App      [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)
 ===========
 
 Shopify Application Rails engine and generator
+ 
+  
+Table of Contents
+-----------------
+* [**Description**](#description)
+* [**Quickstart**](#quickstart)
+* [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
+* [**Installation**](#installation)
+* [**Generators**](#generators)
+ * [Default Generator](#default-generator)
+ * [Install Generator](#install-generator)
+ * [Shop Model Generator](#shop-model-generator)
+ * [Home Controller Generator](#home-controller-generator)
+ * [Controllers, Routes and Views](#controllers-routes-and-views)
+* [**Managing Api Keys**](#managing-api-keys)
+* [**WebhooksManager**](#webhooksmanager)
+* [**ScripttagsManager**](#scripttagsmanager)
+* [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
+* [**AuthenticatedController**](#authenticatedcontroller)
+* [**AppProxyVerification**](#appproxyverification)
+ * [Recommended Usage](#recommended-usage)
+* [**Troubleshooting**](#troubleshooting)
+ * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
+* [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
+* [**Questions or problems?**](#questions-or-problems)
 
 
 Description
@@ -58,16 +83,6 @@ $ bundle install
 ```
 
 Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
-
-
-#### Rails 5
-
-shopify_app is compatible with Rails 5 but since the latest ActiveResource release (4.1) is locked on Rails 4.x, you'll need to use the unreleased master version:
-
-```ruby
-gem 'shopify_app'
-gem 'activeresource', github: 'rails/activeresource'
-```
 
 
 Generators
