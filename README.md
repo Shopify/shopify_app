@@ -4,6 +4,32 @@ Shopify App      [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)
 Shopify Application Rails engine and generator
 
 
+Table of Contents
+-----------------
+* [Description](#description)
+* [Quickstart](#quickstart)
+* [Becoming a Shopify App Developer](#becoming-a-shopify-app-developer)
+* [Installation](#installation)
+* [Generators](#generators)
+ * [Default Generator](#default-generator)
+ * [Install Generator](#install-generator)
+ * [Shop Model Generator](#shop-model-generator)
+ * [Home Controller Generator](#home-controller-generator)
+ * [App Proxy Controller Generator](#app-proxy-controller-generator)
+ * [Controllers, Routes and Views](#controllers-routes-and-views)
+* [Managing Api Keys](#managing-api-keys)
+* [WebhooksManager](#webhooksmanager)
+* [ScripttagsManager](#scripttagsmanager)
+* [ShopifyApp::SessionRepository](#shopifyappsessionrepository)
+* [AuthenticatedController](#authenticatedcontroller)
+* [AppProxyVerification](#appproxyverification)
+ * [Recommended Usage](#recommended-usage)
+* [Troubleshooting](#troubleshooting)
+ * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
+* [Testing an embedded app outside the Shopify admin](#testing-an-embedded-app-outside-the-shopify-admin)
+* [App Tunneling](#app-tunneling)
+* [Questions or problems?](#questions-or-problems)
+
 Description
 -----------
 This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
