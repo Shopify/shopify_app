@@ -32,11 +32,11 @@ module ShopifyApp
     end
 
     def scripttags_manager_queue_name
-      @scripttags_manager_queue_name ||= :default
+      @scripttags_manager_queue_name ||= Rails.application.config.active_job.queue_name
     end
 
     def webhooks_manager_queue_name
-      @webhooks_manager_queue_name ||= :default
+      @webhooks_manager_queue_name ||= Rails.application.config.active_job.queue_name
     end
   end
 

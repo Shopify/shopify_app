@@ -6,6 +6,10 @@ class ConfigurationTest < ActiveSupport::TestCase
     ShopifyApp.configuration = nil
   end
 
+  teardown do
+    Rails.application.config.active_job.queue_name = nil
+  end
+
   test "configure" do
     ShopifyApp.configure do |config|
       config.embedded_app = true
@@ -46,12 +50,22 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert ShopifyApp.configuration.has_webhooks?
   end
 
-  test "webhooks_manager_queue_name and scripttags_manager_queue_name are :default if not configured" do
-    assert_equal :default, ShopifyApp.configuration.webhooks_manager_queue_name
-    assert_equal :default, ShopifyApp.configuration.scripttags_manager_queue_name
+  test "webhooks_manager_queue_name and scripttags_manager_queue_name are equal to ActiveJob queue_name if not configured" do
+    Rails.application.config.active_job.queue_name = :'custom-queue-name'
+
+    assert_equal :'custom-queue-name', ShopifyApp.configuration.webhooks_manager_queue_name
+    assert_equal :'custom-queue-name', ShopifyApp.configuration.scripttags_manager_queue_name
   end
 
-  test "can configure queue names" do
+  test "webhooks_manager_queue_name and scripttags_manager_queue_name are nil if not configured and ActiveJob queue_name is nil" do
+    Rails.application.config.active_job.stubs(:queue_name).returns(nil)
+
+    assert_equal nil, ShopifyApp.configuration.webhooks_manager_queue_name
+    assert_equal nil, ShopifyApp.configuration.scripttags_manager_queue_name
+  end
+
+  test "can override queue names" do
+    Rails.application.config.active_job.queue_name = :'custom-queue-name'
     ShopifyApp.configure do |config|
       config.webhooks_manager_queue_name = :'my-custom-worker-1'
       config.scripttags_manager_queue_name = :'my-custom-worker-2'
