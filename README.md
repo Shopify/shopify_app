@@ -83,7 +83,6 @@ $ bundle install
 ```
 
 Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
-But before that, a small note:
 
 
 #### Rails 5
