@@ -83,6 +83,17 @@ $ bundle install
 ```
 
 Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
+But before that, a small note:
+
+
+#### Rails 5
+
+shopify_app is compatible with Rails 5 but since the latest ActiveResource release (4.1) is locked on Rails 4.x, you'll need to use the unreleased master version:
+
+```ruby
+gem 'shopify_app'
+gem 'activeresource', github: 'rails/activeresource'
+```
 
 
 Generators
