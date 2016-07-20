@@ -15,11 +15,13 @@ Table of Contents
 * [**Quickstart**](#quickstart)
 * [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
 * [**Installation**](#installation)
+* [**Rails 5**](#rails-5)
 * [**Generators**](#generators)
  * [Default Generator](#default-generator)
  * [Install Generator](#install-generator)
  * [Shop Model Generator](#shop-model-generator)
  * [Home Controller Generator](#home-controller-generator)
+ * [App Proxy Controller Generator](#app-proxy-controller-generator)
  * [Controllers, Routes and Views](#controllers-routes-and-views)
 * [**Managing Api Keys**](#managing-api-keys)
 * [**WebhooksManager**](#webhooksmanager)
@@ -31,6 +33,7 @@ Table of Contents
 * [**Troubleshooting**](#troubleshooting)
  * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
 * [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
+* [**App Tunneling**](#app-tunneling)
 * [**Questions or problems?**](#questions-or-problems)
 
 
@@ -153,6 +156,15 @@ $ rails generate shopify_app:home_controller
 This generator creates an example home controller and view which fetches and displays products using the ShopifyAPI
 
 
+### App Proxy Controller Generator
+
+```sh
+$ rails generate shopify_app:app_proxy_controller
+```
+
+This optional generator, not included with the default generator, creates the app proxy controller to handle proxy requests to the app from your shop storefront, modifies 'config/routes.rb' with a namespace route, and an example view which displays current shop information using the LiquidAPI
+
+
 ### Controllers, Routes and Views
 
 The last group of generators are for your convenience if you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
@@ -249,43 +261,18 @@ The engine provides a mixin for verifying incoming HTTP requests sent via an App
 
 ### Recommended Usage
 
-1. Use the `namespace` method to create app proxy routes
-    ```ruby
-    # config/routes.rb
-    namespace :app_proxy do
-      # simple routes without a specified controller will go to AppProxyController
-      # GET '/app_proxy/basic' will be routed to AppProxyController#basic
-      get :basic
+The App Proxy Controller Generator automatically adds the mixin to the generated app_proxy_controller.rb
+Additional controllers for resources within the App_Proxy namespace, will need to include the mixin like so: 
 
-      # this will route GET /app_proxy to AppProxyController#main
-      root action: :main
+```ruby
+# app/controllers/app_proxy/reviews_controller.rb
+class ReviewsController < ApplicationController
+  include ShopifyApp::AppProxyVerification
+  # ...
+end
+```
 
-      # more complex routes will go to controllers in the AppProxy namespace
-      resources :reviews
-      # GET /app_proxy/reviews will now be routed to
-      # AppProxy::ReviewsController#index, for example
-    end
-    ```
-
-2. `include` the mixin in your app proxy controllers
-    ```ruby
-    # app/controllers/app_proxy_controller.rb
-    class AppProxyController < ApplicationController
-      include ShopifyApp::AppProxyVerification
-
-      def basic
-        render text: 'Signature verification passed!'
-      end
-    end
-
-    # app/controllers/app_proxy/reviews_controller.rb
-    class ReviewsController < ApplicationController
-      include ShopifyApp::AppProxyVerification
-      # ...
-    end
-    ```
-
-3. Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
+Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
 
 Troubleshooting
@@ -309,6 +296,12 @@ By default, loading your embedded app will redirect to the Shopify admin, with t
 ```javascript
 forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
+
+App Tunneling
+-------------
+
+For certain features like Application Proxy or Webhooks to receive requests from Shopify, your app needs to be on a publicly visible URL. This can be a hurdle during development or testing on a local machine. Fortunately, this can be overcome by employing a tunneling service like [Forward](https://forwardhq.com/), [RequestBin](requestb.in/), [ngrok](https://ngrok.com/) etc. These tools allow you to create a secure tunnel from the public Internet to your local machine.
+
 
 Questions or problems?
 ----------------------
