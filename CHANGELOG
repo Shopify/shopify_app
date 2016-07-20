@@ -1,5 +1,7 @@
 7.0.12
 ------
+* Don't include ShopifyApp::LoginProtection in Application controller.
+  Include in Authenticate and Session Controller directly.
 * Add ability to override the ActiveJob queue names in initializer file
 
 7.0.11

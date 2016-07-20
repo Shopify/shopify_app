@@ -43,14 +43,6 @@ module ShopifyApp
         end
       end
 
-      def inject_into_application_controller
-        inject_into_class(
-          "app/controllers/application_controller.rb",
-          'ApplicationController',
-          "  include ShopifyApp::LoginProtection\n"
-        )
-      end
-
       def create_embedded_app_layout
         if embedded_app?
           copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
