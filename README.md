@@ -1,5 +1,10 @@
-Shopify App      [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+Shopify App
 ===========
+[![Version][gem]][gem_url] [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+
+[gem]: https://img.shields.io/gem/v/shopify_app.svg
+[gem_url]: https://rubygems.org/gems/shopify_app
+
 
 Shopify Application Rails engine and generator
  
