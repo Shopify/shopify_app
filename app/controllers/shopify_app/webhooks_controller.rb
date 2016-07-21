@@ -7,6 +7,7 @@ module ShopifyApp
     def receive
       params.try(:permit!)
       job_args = {shop_domain: shop_domain, webhook: webhook_params.to_h}
+      webhook_job_klass.set(ShopifyApp.configuration.webhooks_queue_params) if ShopifyApp.configuration.webhooks_queue_params.present?
       webhook_job_klass.perform_later(job_args)
       head :no_content
     end
