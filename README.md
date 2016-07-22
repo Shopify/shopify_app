@@ -15,7 +15,7 @@ Table of Contents
 * [**Quickstart**](#quickstart)
 * [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
 * [**Installation**](#installation)
-* [**Rails 5**](#rails-5)
+  * [**Rails 5**](#rails-5)
 * [**Generators**](#generators)
  * [Default Generator](#default-generator)
  * [Install Generator](#install-generator)
