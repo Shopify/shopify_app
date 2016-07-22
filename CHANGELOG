@@ -1,7 +1,9 @@
-7.0.12
+7.1.0
 ------
-* Don't include ShopifyApp::LoginProtection in Application controller.
+* Add new optional App Proxy Controller Generator to the Engine. Refer README for details
+* Don't include ShopifyApp::LoginProtection in Application controller
   Include in Authenticate and Session Controller directly.
+* Loosen ShopifyAPI dependency requirements to '>= 4.2.2' and allow ShopifyAPI 4.3.0 and above
 * Add ability to override the ActiveJob queue names in initializer file
 
 7.0.11
