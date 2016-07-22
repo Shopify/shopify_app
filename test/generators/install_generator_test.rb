@@ -69,13 +69,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "injects into application controller" do
-    run_generator
-    assert_file "app/controllers/application_controller.rb" do |controller|
-      assert_match "  include ShopifyApp::LoginProtection\n", controller
-    end
-  end
-
   test "creates the embedded_app layout" do
     run_generator
     assert_file "app/views/layouts/embedded_app.html.erb"
