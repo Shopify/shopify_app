@@ -15,6 +15,7 @@ module ShopifyApp
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
     attr_accessor :webhooks_manager_queue_name
+    attr_accessor :webhooks_queue_params
 
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
