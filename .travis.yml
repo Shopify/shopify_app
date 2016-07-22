@@ -3,9 +3,15 @@ cache: bundler
 sudo: false
 
 rvm:
-  - 2.2.4
   - 2.3.1
 
 gemfile:
   - Gemfile
   - Gemfile.rails50
+
+matrix:
+  include:
+  - rvm: 2.2.4
+    gemfile: Gemfile.ruby22
+  - rvm: 2.2.4
+    gemfile: Gemfile.ruby22.rails50
