@@ -76,15 +76,16 @@
 
   <main class="container" role="main">
     <header>
-      <h1>Shopify App — Installation</h1>
+      <% application_name = ShopifyApp.configuration.application_name %>
+      <h1><%= application_name.presence || 'Shopify App – Installation' %></h1>
       <p class="subhead">
-        <label for="shop">Please enter the “myshopify” domain of your store</label>
+        <label for="shop">Enter your shop domain to log in or install this app.</label>
       </p>
     </header>
 
     <div class="container__form">
       <form method="GET" action="login">
-        <input type="text" name="shop" id="shop" placeholder="blabla.myshopify.com"/>
+        <input type="text" name="shop" id="shop" placeholder="example.myshopify.com"/>
         <button type="submit">Install</button>
       </form>
     </div>

@@ -5,6 +5,8 @@
 * Loosen ShopifyAPI dependency requirements to `>= 4.2.2` and allow ShopifyAPI 4.3.0 and above.
 * Move application.js to inside HEAD in Embedded App Template.
 * Add ability to override the ActiveJob queue names in initializer file.
+* Add application_name configuration option
+* Update login page copy
 
 7.0.11
 ------

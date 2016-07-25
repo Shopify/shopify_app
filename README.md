@@ -7,8 +7,8 @@ Shopify App
 
 
 Shopify Application Rails engine and generator
- 
-  
+
+
 Table of Contents
 -----------------
 * [**Description**](#description)
@@ -177,6 +177,7 @@ The `install` generator places your Api credentials directly into the shopify_ap
 
 ```ruby
 ShopifyApp.configure do |config|
+  config.application_name = 'Your app name' # Optional
   config.api_key = ENV['SHOPIFY_CLIENT_API_KEY']
   config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
   config.scope = 'read_customers, read_orders, write_products'
@@ -262,7 +263,7 @@ The engine provides a mixin for verifying incoming HTTP requests sent via an App
 ### Recommended Usage
 
 The App Proxy Controller Generator automatically adds the mixin to the generated app_proxy_controller.rb
-Additional controllers for resources within the App_Proxy namespace, will need to include the mixin like so: 
+Additional controllers for resources within the App_Proxy namespace, will need to include the mixin like so:
 
 ```ruby
 # app/controllers/app_proxy/reviews_controller.rb
