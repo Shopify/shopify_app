@@ -1,17 +1,17 @@
 7.1.0
-------
-* Add new optional App Proxy Controller Generator to the Engine. Refer README for details
-* Don't include ShopifyApp::LoginProtection in Application controller
-  Include in Authenticate and Session Controller directly.
-* Loosen ShopifyAPI dependency requirements to '>= 4.2.2' and allow ShopifyAPI 4.3.0 and above
-* Add ability to override the ActiveJob queue names in initializer file
+-----
+* Add new optional App Proxy Controller Generator to the Engine. Refer README for details.
+* Include ShopifyApp::LoginProtection in Authenticated and Session Controller directly instead of Application Controller.
+* Loosen ShopifyAPI dependency requirements to `>= 4.2.2` and allow ShopifyAPI 4.3.0 and above.
+* Move application.js to inside HEAD in Embedded App Template.
+* Add ability to override the ActiveJob queue names in initializer file.
 
 7.0.11
 ------
 * Pass configured resources (like webhooks or scripttags) into the job rather than reading the config again. This allows for dynamically setting ShopifyApp config in a web request and having the job handle it correctly. This change does not affect the usage of webhooks or scripttags
 
 7.0.10
------
+------
 * Loosen Rails dependency requirements to `>= 4.2.6` and allow Rails 5.0
 * Add support for App Proxies
 
@@ -33,7 +33,7 @@
 7.0.3
 -----
 
-* Bump required Rails version to >= 4.2.6 since we are now using ActiveSupport::SecurityUtils:Module
+* Bump required Rails version to `>= 4.2.6` since we are now using `ActiveSupport::SecurityUtils:Module`
 
 7.0.2
 -----
