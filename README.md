@@ -1,9 +1,12 @@
 Shopify App
 ===========
-[![Version][gem]][gem_url] [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
+[![Version][gem]][gem_url] [![Version][master]][repo] [![Build Status](https://travis-ci.org/Shopify/shopify_app.png)](https://travis-ci.org/Shopify/shopify_app)
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
 [gem_url]: https://rubygems.org/gems/shopify_app
+[master]: https://img.shields.io/badge/master-v7.1.0-orange.svg
+[requires]: https://img.shields.io/badge/requires-v7.1.0-orange.svg
+[repo]: https://github.com/Shopify/shopify_app
 
 
 Shopify Application Rails engine and generator
@@ -21,7 +24,7 @@ Table of Contents
  * [Install Generator](#install-generator)
  * [Shop Model Generator](#shop-model-generator)
  * [Home Controller Generator](#home-controller-generator)
- * [App Proxy Controller Generator](#app-proxy-controller-generator)
+ * [App Proxy Controller Generator](#app-proxy-controller-generator--)  [![Requires v7.1.0][requires]](#)
  * [Controllers, Routes and Views](#controllers-routes-and-views)
 * [**Managing Api Keys**](#managing-api-keys)
 * [**WebhooksManager**](#webhooksmanager)
@@ -156,7 +159,7 @@ $ rails generate shopify_app:home_controller
 This generator creates an example home controller and view which fetches and displays products using the ShopifyAPI
 
 
-### App Proxy Controller Generator
+### App Proxy Controller Generator  [![Requires v7.1.0][requires]](#)
 
 ```sh
 $ rails generate shopify_app:app_proxy_controller
