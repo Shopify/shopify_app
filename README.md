@@ -126,6 +126,7 @@ $ rails generate shopify_app:install --api_key <your_api_key> --secret <your_app
 ```
 
 Other options include:
+* `application_name` - the name of your app
 * `scope` - the Oauth access scope required for your app, eg 'read_products, write_orders'. For more information read the [docs](http://docs.shopify.com/api/tutorials/oauth)
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
 
