@@ -3,7 +3,11 @@ require 'action_controller'
 require 'action_controller/base'
 
 class WebhookVerificationController < ActionController::Base
+  self.allow_forgery_protection = true
+  protect_from_forgery with: :exception
+
   include ShopifyApp::WebhookVerification
+
   def carts_update
     head :ok
   end
@@ -44,7 +48,7 @@ class WebhookVerificationTest < ActionController::TestCase
   def with_application_test_routes
     with_routing do |set|
       set.draw do
-        get '/carts_update' => 'webhook_verification#carts_update'
+        post '/carts_update' => 'webhook_verification#carts_update'
       end
       yield
     end

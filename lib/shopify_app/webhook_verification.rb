@@ -3,7 +3,12 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      skip_before_action :verify_authenticity_token, raise: false
+      if Rails.version >= '5.0'
+        skip_before_action :verify_authenticity_token, raise: false
+      else
+        skip_before_action :verify_authenticity_token
+      end
+
       before_action :verify_request
     end
 
@@ -30,6 +35,5 @@ module ShopifyApp
     def shopify_hmac
       request.headers['HTTP_X_SHOPIFY_HMAC_SHA256']
     end
-
   end
 end
