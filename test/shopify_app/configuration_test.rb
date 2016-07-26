@@ -57,11 +57,11 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal :'custom-queue-name', ShopifyApp.configuration.scripttags_manager_queue_name
   end
 
-  test "webhooks_manager_queue_name and scripttags_manager_queue_name are nil if not configured and ActiveJob queue_name is nil" do
-    Rails.application.config.active_job.stubs(:queue_name).returns(nil)
+  test "webhooks_manager_queue_name and scripttags_manager_queue_name are nil if not configured and ActiveJob queue_name is nil (activeJob overrides a nil queue_name to default)" do
+    Rails.application.config.active_job.stubs(:queue_name).returns(:default)
 
-    assert_equal nil, ShopifyApp.configuration.webhooks_manager_queue_name
-    assert_equal nil, ShopifyApp.configuration.scripttags_manager_queue_name
+    assert_equal :default, ShopifyApp.configuration.webhooks_manager_queue_name
+    assert_equal :default, ShopifyApp.configuration.scripttags_manager_queue_name
   end
 
   test "can override queue names" do
