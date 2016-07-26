@@ -1,12 +1,12 @@
 7.1.0
 -----
+* Update login page copy
+* Add application_name configuration option
 * Add new optional App Proxy Controller Generator to the Engine. Refer README for details.
 * Include ShopifyApp::LoginProtection in Authenticated and Session Controller directly instead of Application Controller.
 * Loosen ShopifyAPI dependency requirements to `>= 4.2.2` and allow ShopifyAPI 4.3.0 and above.
 * Move application.js to inside HEAD in Embedded App Template.
 * Add ability to override the ActiveJob queue names in initializer file.
-* Add application_name configuration option
-* Update login page copy
 
 7.0.11
 ------
