@@ -1,6 +1,9 @@
 require 'test_helper'
 
 class AppProxyVerificationController < ActionController::Base
+  self.allow_forgery_protection = true
+  protect_from_forgery with: :exception
+
   include ShopifyApp::AppProxyVerification
 
   def basic
