@@ -170,6 +170,22 @@ This optional generator, not included with the default generator, creates the ap
 
 The last group of generators are for your convenience if you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
 
+The default routes of the Shopify rails engine can altered to change where the engine is mounted to. This will allow the custom app to have routes similar to the gem, such as: having login and logout routes for external user accounts.
+
+```ruby
+#Mounted on root which means /logout goes to the gem's logout route.
+mount ShopifyApp::Engine, at: '/'
+#Mounted to /shopify so /shopify/logout goes to the gem's logout route.
+mount ShopifyApp::Engine, at: '/shopify'
+```
+
+To use named routes with the engine so that it can route between the custom app and the engine's routes it should be preficed with `main_app` or `shopify_app`.
+
+```ruby
+main_app.login_path # For a named login route on the rails app.
+
+shopify_app.login_path # For the shopify app store login route.
+```
 
 Managing Api Keys
 -----------------
