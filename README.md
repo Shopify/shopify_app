@@ -23,6 +23,7 @@ Table of Contents
  * [Home Controller Generator](#home-controller-generator)
  * [App Proxy Controller Generator](#app-proxy-controller-generator)
  * [Controllers, Routes and Views](#controllers-routes-and-views)
+* [**Deploying To A Subdirectory**](#deploying-to-a-subdirectory)
 * [**Managing Api Keys**](#managing-api-keys)
 * [**WebhooksManager**](#webhooksmanager)
 * [**ScripttagsManager**](#scripttagsmanager)
@@ -171,7 +172,7 @@ This optional generator, not included with the default generator, creates the ap
 The last group of generators are for your convenience if you want to start overriding code included as part of the Rails engine. For example by default the engine provides a simple SessionController, if you run the `rails generate shopify_app:controllers` generator then this code gets copied out into your app so you can start adding to it. Routes and views follow the exact same pattern.
 
 Deploying to a Subdirectory
------------------
+---------------------------
 
 The default routes of the Shopify rails engine, which is mounted to the root, can be altered to mount on a different route. The `config/routes.rb` can be modified to mount to a subdirectory (say `/app-name`) as:
 
