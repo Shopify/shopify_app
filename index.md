@@ -55,7 +55,7 @@ Check out this screencast on how to create and deploy a new Shopify App to Herok
 
 [https://vimeo.com/130247240](https://vimeo.com/130247240)
 
-Or if you prefer text instructions, the steps in the video are written out [here](quickstart.md)
+Or if you prefer text instructions, the steps in the video are written out [here](quickstart.html)
 
 Becoming a Shopify App Developer
 --------------------------------
