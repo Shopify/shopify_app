@@ -1,3 +1,7 @@
+8.2.3
+-----
+* Send head :forbidden instead of :unauthorized when AppProxyVerification fails
+
 8.2.2
 -----
 * Changes how the ESDK concern allows iframes. Fixes an issue with the first request for some people

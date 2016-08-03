@@ -8,7 +8,7 @@ module ShopifyApp
     end
 
     def verify_proxy_request
-      return head :unauthorized unless query_string_valid?(request.query_string)
+      return head :forbidden unless query_string_valid?(request.query_string)
     end
 
     private
