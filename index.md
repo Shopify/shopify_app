@@ -308,8 +308,9 @@ class ReviewsController < ApplicationController
 end
 ```
 
-Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
-![Creating an App Proxy](/images/app-proxy-screenshot.png)
+Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.  
+  
+![Creating an App Proxy](images/app-proxy-screenshot.png)
 
 Troubleshooting
 ---------------
