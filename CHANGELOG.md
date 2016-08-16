@@ -1,3 +1,7 @@
+7.1.1
+-----
+* Lower required Ruby version to 2.2.2 to better match up with Rails 5.0
+
 7.1.0
 -----
 * Update login page copy
