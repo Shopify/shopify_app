@@ -11,7 +11,7 @@ gemfile:
 
 matrix:
   include:
-  - rvm: 2.2.4
+  - rvm: 2.2.2
     gemfile: Gemfile.ruby22
-  - rvm: 2.2.4
+  - rvm: 2.2.2
     gemfile: Gemfile.ruby22.rails50
