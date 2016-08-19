@@ -4,11 +4,11 @@
 
     document.addEventListener(eventName, function() {
       <% if flash[:notice] %>
-        ShopifyApp.flashNotice("<%= j flash[:notice].html_safe %>");
+        ShopifyApp.flashNotice("<%= escape_javascript flash[:notice].html_safe %>");
       <% end %>
 
       <% if flash[:error] %>
-        ShopifyApp.flashError("<%= j flash[:error].html_safe %>");
+        ShopifyApp.flashError("<%= escape_javascript flash[:error].html_safe %>");
       <% end %>
     });
   </script>
