@@ -4,11 +4,11 @@ module ShopifyApp
 
     included do
       include ShopifyApp::LoginProtection
+      layout false, only: :new
     end
 
     def new
       authenticate if params[:shop].present?
-      render layout: false
     end
 
     def create
