@@ -8,6 +8,7 @@ module ShopifyApp
 
     def new
       authenticate if params[:shop].present?
+      render layout: false
     end
 
     def create
