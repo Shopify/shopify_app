@@ -4,6 +4,7 @@ module ShopifyApp
 
     included do
       include ShopifyApp::LoginProtection
+      layout false, only: :new
     end
 
     def new
