@@ -268,11 +268,14 @@ As with webhooks, ShopifyApp can manage your app's scripttags for you by setting
 ShopifyApp.configure do |config|
   config.scripttags = [
     {event:'onload', src: 'https://my-shopifyapp.herokuapp.com/fancy.js'}
+    {event:'onload', src: ->(domain) { dynamic_tag_url(domain) } }
   ]
 end
 ```
 
 Scripttags are created in the same way as the Webhooks, with a background job which will create the required scripttags.
+
+If `src` responds to `call` its return value will be used as the scripttag's source. It will be called on scripttag creation and deletion.
 
 ShopifyApp::SessionRepository
 -----------------------------
