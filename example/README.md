@@ -32,4 +32,4 @@ To install the application on your dev-shop go to:
 
 You will be prompted to install the application and will be redirected to the embedded Shopify environment once installed.
 
-For local development most modern browsers will block mixed content. Since Shopify runs on HTTPS and a local development server does not, the browser will block the contents of the iframe. The you can either explicitly allow mixed content for your session, or use an HTTPS forwarding service.
+For local development most modern browsers will block mixed content. Since Shopify runs on HTTPS and a local development server does not, the browser will block the contents of the iframe. You can either explicitly allow mixed content for your session, or use an HTTPS forwarding service.
