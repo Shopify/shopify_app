@@ -310,15 +310,7 @@ Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopi
 Troubleshooting
 ---------------
 
-### Generator shopify_app:install hangs
-
-Rails uses spring by default to speed up development. To run the generator, spring has to be stopped:
-
-```sh
-$ bundle exec spring stop
-```
-
-Run shopify_app generator again.
+see [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
 Testing an embedded app outside the Shopify admin
 -------------------------------------------------
