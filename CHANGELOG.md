@@ -1,3 +1,7 @@
+7.2.1
+-----
+* Add support for dynamically generating scripttag URLs
+
 7.2.0
 -----
 * Disable application layout rendering for the `/login` page

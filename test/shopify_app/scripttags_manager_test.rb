@@ -22,7 +22,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     @manager.create_scripttags
   end
 
-  test "#create_scripttags when creating a dynamic src, does overwrite the src with its result" do
+  test "#create_scripttags when creating a dynamic src, does not overwrite the src with its result" do
     ShopifyAPI::ScriptTag.stubs(all: [])
 
     stub_scripttag = stub(persisted?: true)
@@ -76,7 +76,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     @manager.destroy_scripttags
   end
 
-  test "#destroy_scripttags when deleting a dynamic src, does overwrite the src with its result" do
+  test "#destroy_scripttags when deleting a dynamic src, does not overwrite the src with its result" do
     ShopifyAPI::ScriptTag.stubs(all: Array.wrap(all_mock_scripttags.last))
     ShopifyAPI::ScriptTag.expects(:delete).with(all_mock_scripttags.last.id)
 
@@ -108,10 +108,6 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   def expect_scripttag_creation(event, src)
     stub_scripttag = stub(persisted?: true)
     ShopifyAPI::ScriptTag.expects(:create).with(event: event, src: src, format: 'json').returns(stub_scripttag)
-  end
-
-  def all_scripttag_srcs
-    @scripttags ||= ['https://example-app.com/fancy.js', 'https://example-app.com/foobar.js']
   end
 
   def all_mock_scripttags
