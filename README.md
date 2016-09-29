@@ -225,7 +225,7 @@ ShopifyApp can manage your app's webhooks for you by setting which webhooks you 
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'carts/update', address: 'example-app.com/webhooks/carts_update'}
+    {topic: 'carts/update', address: 'https://example-app.com/webhooks/carts_update'}
   ]
 end
 ```
