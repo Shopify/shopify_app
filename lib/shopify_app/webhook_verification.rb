@@ -22,7 +22,7 @@ module ShopifyApp
     def hmac_valid?(data)
       secret = ShopifyApp.configuration.secret
       digest = OpenSSL::Digest.new('sha256')
-      ActiveSupport::SecurityUtils.variable_size_secure_compare(
+      ActiveSupport::SecurityUtils.secure_compare(
         shopify_hmac,
         Base64.encode64(OpenSSL::HMAC.digest(digest, secret, data)).strip
       )
