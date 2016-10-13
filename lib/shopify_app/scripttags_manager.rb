@@ -6,14 +6,25 @@ module ShopifyApp
       ShopifyApp::ScripttagsManagerJob.perform_later(
         shop_domain: shop_domain,
         shop_token: shop_token,
-        scripttags: scripttags
+        # Procs cannot be serialized so we interpolate now, if necessary
+        scripttags: build_src(scripttags, shop_domain)
       )
     end
 
-    attr_reader :required_scripttags
+    def self.build_src(scripttags, domain)
+      scripttags.map do |tag|
+        next tag unless tag[:src].respond_to?(:call)
+        tag = tag.dup
+        tag[:src] = tag[:src].call(domain)
+        tag
+      end
+    end
 
-    def initialize(scripttags)
+    attr_reader :required_scripttags, :shop_domain
+
+    def initialize(scripttags, shop_domain)
       @required_scripttags = scripttags
+      @shop_domain = shop_domain
     end
 
     def recreate_scripttags!
@@ -24,14 +35,15 @@ module ShopifyApp
     def create_scripttags
       return unless required_scripttags.present?
 
-      required_scripttags.each do |scripttag|
+      expanded_scripttags.each do |scripttag|
         create_scripttag(scripttag) unless scripttag_exists?(scripttag[:src])
       end
     end
 
     def destroy_scripttags
-      ShopifyAPI::ScriptTag.all.each do |scripttag|
-        ShopifyAPI::ScriptTag.delete(scripttag.id) if is_required_scripttag?(scripttag)
+      scripttags = expanded_scripttags
+      ShopifyAPI::ScriptTag.all.each do |tag|
+        ShopifyAPI::ScriptTag.delete(tag.id) if is_required_scripttag?(scripttags, tag)
       end
 
       @current_scripttags = nil
@@ -39,8 +51,12 @@ module ShopifyApp
 
     private
 
-    def is_required_scripttag?(scripttag)
-      required_scripttags.map{ |w| w[:src] }.include? scripttag.src
+    def expanded_scripttags
+      self.class.build_src(required_scripttags, shop_domain)
+    end
+
+    def is_required_scripttag?(scripttags, tag)
+      scripttags.map{ |w| w[:src] }.include? tag.src
     end
 
     def create_scripttag(attributes)
