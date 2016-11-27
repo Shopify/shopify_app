@@ -7,17 +7,20 @@ module ShopifyApp
       include Rails::Generators::Migration
       source_root File.expand_path('../templates', __FILE__)
 
-      class_option :application_name, type: :string
+      class_option :application_name, type: :array
       class_option :api_key, type: :string, default: '<api_key>'
       class_option :secret, type: :string, default: '<secret>'
-      class_option :scope, type: :string, default: 'read_orders, read_products'
+      class_option :scope, type: :array, default: ['read_orders,', 'read_products']
       class_option :embedded, type: :string, default: 'true'
 
       def create_shopify_app_initializer
-        @application_name = options['application_name']
+        #
+        # enable users to provide options containing whitespace and strip them off 'double-quotes', if present.
+        #
+        @application_name = options['application_name'].join(' ').tr('"', '') if options['application_name']
         @api_key = options['api_key']
         @secret = options['secret']
-        @scope = options['scope']
+        @scope = options['scope'].join(' ').tr('"', '')
 
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
       end
