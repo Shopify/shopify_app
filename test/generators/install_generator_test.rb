@@ -23,12 +23,23 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "creates the ShopifyApp initializer with args" do
-    run_generator %w(--application_name name --api_key key --secret shhhhh --scope read_orders,write_products)
+    run_generator %w(--application_name Test Name --api_key key --secret shhhhh --scope read_orders, write_products)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
-      assert_match 'config.application_name = "name"', shopify_app
+      assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match 'config.api_key = "key"', shopify_app
       assert_match 'config.secret = "shhhhh"', shopify_app
-      assert_match 'config.scope = "read_orders,write_products"', shopify_app
+      assert_match 'config.scope = "read_orders, write_products"', shopify_app
+      assert_match "config.embedded_app = true", shopify_app
+    end
+  end
+
+  test "creates the ShopifyApp initializer with double-quoted args" do
+    run_generator %w(--application_name "Test Name" --api_key key --secret shhhhh --scope "read_orders, write_products")
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match 'config.application_name = "Test Name"', shopify_app
+      assert_match 'config.api_key = "key"', shopify_app
+      assert_match 'config.secret = "shhhhh"', shopify_app
+      assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
     end
   end
