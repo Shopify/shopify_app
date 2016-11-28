@@ -1,6 +1,7 @@
 7.2.1
 -----
 * Add support for dynamically generating scripttag URLs
+* Bug-fix: `--application_name` and `--scope` generates proper Configuration even when options supplied to them contain whitespaces.
 
 7.2.0
 -----
