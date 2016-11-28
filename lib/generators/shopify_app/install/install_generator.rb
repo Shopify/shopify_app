@@ -14,10 +14,10 @@ module ShopifyApp
       class_option :embedded, type: :string, default: 'true'
 
       def create_shopify_app_initializer
-        @application_name = options['application_name'].join(' ').tr('"', '')
+        @application_name = format_array_argument(options['application_name'])
         @api_key = options['api_key']
         @secret = options['secret']
-        @scope = options['scope'].join(' ').tr('"', '')
+        @scope = format_array_argument(options['scope'])
 
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
       end
@@ -60,6 +60,10 @@ module ShopifyApp
 
       def embedded_app?
         options['embedded'] == 'true'
+      end
+
+      def format_array_argument(array)
+        array.join(' ').tr('"', '')
       end
     end
   end
