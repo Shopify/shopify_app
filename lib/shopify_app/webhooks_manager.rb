@@ -30,7 +30,7 @@ module ShopifyApp
     end
 
     def destroy_webhooks
-      ShopifyAPI::Webhook.all.each do |webhook|
+      ShopifyAPI::Webhook.all.to_a.each do |webhook|
         ShopifyAPI::Webhook.delete(webhook.id) if is_required_webhook?(webhook)
       end
 

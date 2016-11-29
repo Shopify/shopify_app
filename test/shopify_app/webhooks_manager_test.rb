@@ -50,6 +50,12 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     @manager.recreate_webhooks!
   end
 
+  test "#destroy_webhooks doesnt freak out if there are no webhooks" do
+    ShopifyAPI::Webhook.stubs(:all).returns(nil)
+
+    @manager.destroy_webhooks
+  end
+
   test "#destroy_webhooks makes calls to destroy webhooks" do
     ShopifyAPI::Webhook.stubs(:all).returns(Array.wrap(all_mock_webhooks.first))
     ShopifyAPI::Webhook.expects(:delete).with(all_mock_webhooks.first.id)
