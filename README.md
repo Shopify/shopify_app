@@ -236,13 +236,12 @@ When the oauth callback is completed successfully ShopifyApp will queue a backgr
 
 ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the webhook url. For example if you register the webhook from above then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params `shop_domain` and `webhook` which is the webhook body.
 
-If you are only interested in particular fields, you can optionally filter the data sent by Shopify by specifying the `fields` parameter in `config/webhooks`. Note that you will still receive a webhook request from Shopify every time the resource is
-updated, but only the specified fields will be sent.
+If you are only interested in particular fields, you can optionally filter the data sent by Shopify by specifying the `fields` parameter in `config/webhooks`. Note that you will still receive a webhook request from Shopify every time the resource is updated, but only the specified fields will be sent.
 
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'products/update', address: 'https://example-app.com/webhooks/carts_update', fields: ['title', 'vendor']}
+    {topic: 'products/update', address: 'https://example-app.com/webhooks/products_update', fields: ['title', 'vendor']}
   ]
 end
 ```
