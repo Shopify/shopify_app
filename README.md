@@ -127,9 +127,9 @@ $ rails generate shopify_app:install --api_key <your_api_key> --secret <your_app
 ```
 
 Other options include:
-* `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)  
-* `scope` - the Oauth access scope required for your app, eg **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space, and can be supplied with or without double-quotes  
-(e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)  
+* `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)
+* `scope` - the Oauth access scope required for your app, eg **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space, and can be supplied with or without double-quotes
+(e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)
 For more information, refer the [docs](http://docs.shopify.com/api/tutorials/oauth).
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
 
@@ -235,6 +235,17 @@ end
 When the oauth callback is completed successfully ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every oauth callback it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
 
 ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the webhook url. For example if you register the webhook from above then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params `shop_domain` and `webhook` which is the webhook body.
+
+If you are only interested in particular fields, you can optionally filter the data sent by Shopify by specifying the `fields` parameter in `config/webhooks`. Note that you will still receive a webhook request from Shopify every time the resource is
+updated, but only the specified fields will be sent.
+
+```ruby
+ShopifyApp.configure do |config|
+  config.webhooks = [
+    {topic: 'products/update', address: 'https://example-app.com/webhooks/carts_update', fields: ['title', 'vendor']}
+  ]
+end
+```
 
 If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks:
 
