@@ -51,13 +51,12 @@ module ShopifyApp
 
     def main_or_engine_login_url(params = {})
       main_app.login_url(params)
-    rescue NoMethodError => e
+    rescue NoMethodError
       shopify_app.login_url(params)
     end
 
     def redirect_to_with_fallback(url)
       url_json = url.to_json
-      url_json_no_quotes = url_json.gsub(/\A"|"\Z/, '')
 
       render inline: %Q(
         <!DOCTYPE html>
@@ -77,7 +76,6 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       url_json = url.to_json
-      url_json_no_quotes = url_json.gsub(/\A"|"\Z/, '')
 
       if ShopifyApp.configuration.embedded_app?
         render inline: %Q(
