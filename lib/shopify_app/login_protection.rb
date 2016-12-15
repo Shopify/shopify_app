@@ -55,47 +55,33 @@ module ShopifyApp
       shopify_app.login_url(params)
     end
 
-    def redirect_to_with_fallback(url)
-      url_json = url.to_json
-
-      render inline: %Q(
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <title>Redirecting…</title>
-            <script type="text/javascript">
-              window.location.href = #{url_json};
-            </script>
-          </head>
-          <body>
-          </body>
-        </html>
-      ), status: 302, location: url
+    def fullpage_redirect_to(url)
+      render inline: redirection_javascript(url)
     end
 
-    def fullpage_redirect_to(url)
-      url_json = url.to_json
+    def redirect_to_with_fallback(url)
+      render inline: redirection_javascript(url), status: 302, location: url
+    end
 
-      if ShopifyApp.configuration.embedded_app?
-        render inline: %Q(
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8" />
-              <base target="_top">
-              <title>Redirecting…</title>
-              <script type="text/javascript">
-                window.top.location.href = #{url_json};
-              </script>
-            </head>
-            <body>
-            </body>
-          </html>
-        )
-      else
-        redirect_to_with_fallback url
-      end
+    def redirection_javascript(url)
+      %Q(
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>Redirecting…</title>
+          <script type="text/javascript">
+            data = JSON.stringify({
+              message: 'Shopify.API.remoteRedirect',
+              data: { location: window.location.origin + #{url.to_json} }
+            });
+            window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+          </script>
+        </head>
+        <body>
+        </body>
+      </html>
+      )
     end
 
     def sanitized_shop_name
