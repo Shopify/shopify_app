@@ -22,10 +22,10 @@ module ShopifyApp
         install_scripttags
 
         flash[:notice] = I18n.t('.logged_in')
-        redirect_to_with_fallback return_address
+        redirect_to return_address
       else
         flash[:error] = I18n.t('could_not_log_in')
-        redirect_to_with_fallback login_url
+        redirect_to login_url
       end
     end
 
@@ -33,7 +33,7 @@ module ShopifyApp
       session[:shopify] = nil
       session[:shopify_domain] = nil
       flash[:notice] = I18n.t('.logged_out')
-      redirect_to_with_fallback login_url
+      redirect_to login_url
     end
 
     protected
@@ -42,7 +42,7 @@ module ShopifyApp
       if sanitized_shop_name.present?
         fullpage_redirect_to "#{main_app.root_path}auth/shopify?shop=#{sanitized_shop_name}"
       else
-        redirect_to_with_fallback return_address
+        redirect_to return_address
       end
     end
 

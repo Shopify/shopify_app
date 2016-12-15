@@ -39,14 +39,14 @@ module ShopifyApp
         head :unauthorized
       else
         session[:return_to] = request.fullpath if request.get?
-        redirect_to_with_fallback main_or_engine_login_url(shop: params[:shop])
+        redirect_to main_or_engine_login_url(shop: params[:shop])
       end
     end
 
     def close_session
       session[:shopify] = nil
       session[:shopify_domain] = nil
-      redirect_to_with_fallback main_or_engine_login_url(shop: params[:shop])
+      redirect_to main_or_engine_login_url(shop: params[:shop])
     end
 
     def main_or_engine_login_url(params = {})
@@ -56,31 +56,31 @@ module ShopifyApp
     end
 
     def fullpage_redirect_to(url)
-      render inline: redirection_javascript(url)
-    end
-
-    def redirect_to_with_fallback(url)
-      render inline: redirection_javascript(url), status: 302, location: url
+      if ShopifyApp.configuration.embedded_app?
+        render inline: redirection_javascript(url)
+      else
+        redirect_to url
+      end
     end
 
     def redirection_javascript(url)
-      %Q(
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="utf-8" />
-          <title>Redirecting…</title>
-          <script type="text/javascript">
-            data = JSON.stringify({
-              message: 'Shopify.API.remoteRedirect',
-              data: { location: window.location.origin + #{url.to_json} }
-            });
-            window.parent.postMessage(data, "https://#{sanitized_shop_name}");
-          </script>
-        </head>
-        <body>
-        </body>
-      </html>
+      %(
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="utf-8" />
+            <title>Redirecting…</title>
+            <script type="text/javascript">
+              data = JSON.stringify({
+                message: 'Shopify.API.remoteRedirect',
+                data: { location: window.location.origin + #{url.to_json} }
+              });
+              window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+            </script>
+          </head>
+          <body>
+          </body>
+        </html>
       )
     end
 

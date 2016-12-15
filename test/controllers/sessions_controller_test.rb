@@ -20,9 +20,9 @@ module ShopifyApp
 
     test "#new should authenticate the shop if the shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
-      shopify_domain = 'my-shop.myshopify.com'
+      auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
       get :new, shop: 'my-shop'
-      assert_redirected_to_authentication(shopify_domain, response)
+      assert_redirected_to auth_url
     end
 
     test "#new should trust the shop param over the current session" do
