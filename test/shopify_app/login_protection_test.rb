@@ -29,7 +29,7 @@ class LoginProtectionTest < ActionController::TestCase
     ShopifyApp::SessionRepository.storage = InMemorySessionStore
   end
 
-  test "calling shop session returns nil when session is nil" do
+  test "#shop_session returns nil when session is nil" do
     with_application_test_routes do
       session[:shopify] = nil
       get :index
@@ -37,7 +37,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "calling shop session retreives session from storage" do
+  test "#shop_session retreives the session from storage" do
     with_application_test_routes do
       session[:shopify] = "foobar"
       get :index
@@ -46,7 +46,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "shop session is memoized and does not retreive session twice" do
+  test "#shop_session is memoized and does not retreive session twice" do
     with_application_test_routes do
       session[:shopify] = "foobar"
       get :index
@@ -56,7 +56,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "login_again_if_different_shop removes current session and redirects to login url" do
+  test "#login_again_if_different_shop removes current session and redirects to login url" do
     with_application_test_routes do
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
