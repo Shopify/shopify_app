@@ -97,5 +97,15 @@ module ShopifyApp
         redirect_to_with_fallback url
       end
     end
+
+    def sanitized_shop_name
+      @sanitized_shop_name ||= sanitize_shop_param(params)
+    end
+
+    def sanitize_shop_param(params)
+      return unless params[:shop].present?
+      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
+    end
+
   end
 end
