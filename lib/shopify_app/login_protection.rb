@@ -69,13 +69,23 @@ module ShopifyApp
         <html lang="en">
           <head>
             <meta charset="utf-8" />
+            <base target="_top">
             <title>Redirecting…</title>
             <script type="text/javascript">
-              data = JSON.stringify({
-                message: 'Shopify.API.remoteRedirect',
-                data: { location: window.location.origin + #{url.to_json} }
-              });
-              window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+
+              // If the current window is the 'parent', change the URL by setting location.href
+              if (window.top == window.self) {
+                window.top.location.href = #{url.to_json};
+
+              // If the current window is the 'child', change the parent's URL with postMessage
+              } else {
+                data = JSON.stringify({
+                  message: 'Shopify.API.remoteRedirect',
+                  data: { location: window.location.origin + #{url.to_json} }
+                });
+                window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+              }
+
             </script>
           </head>
           <body>
