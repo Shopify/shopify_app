@@ -1,3 +1,8 @@
+7.2.2
+-----
+* Use postMessage to redirect parent iframe during authentication
+  https://github.com/Shopify/shopify_app/pull/366
+
 7.2.1
 -----
 * Add support for dynamically generating scripttag URLs
