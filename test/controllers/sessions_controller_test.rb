@@ -13,16 +13,16 @@ module ShopifyApp
 
     test "#new should authenticate the shop if the shop param exists" do
       ShopifyApp.configuration.embedded_app = true
-      auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
+      shopify_domain = 'my-shop.myshopify.com'
       get :new, shop: 'my-shop'
-      assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
+      assert_redirected_to_authentication(shopify_domain, response)
     end
 
     test "#new should authenticate the shop if the shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
       auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
       get :new, shop: 'my-shop'
-      assert_match /window\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
+      assert_redirected_to auth_url
     end
 
     test "#new should trust the shop param over the current session" do
@@ -30,9 +30,8 @@ module ShopifyApp
       previously_logged_in_shop_id = 1
       session[:shopify] = previously_logged_in_shop_id
       new_shop_domain = "new-shop.myshopify.com"
-      auth_url = "/auth/shopify?shop=#{new_shop_domain}"
       get :new, shop: new_shop_domain
-      assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
+      assert_redirected_to_authentication(new_shop_domain, response)
     end
 
     test "#new should render a full-page if the shop param doesn't exist" do
@@ -44,9 +43,9 @@ module ShopifyApp
     ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url})" do
         ShopifyApp.configuration.embedded_app = true
-        auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
+        shopify_domain = 'my-shop.myshopify.com'
         post :create, shop: good_url
-        assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
+        assert_redirected_to_authentication(shopify_domain, response)
       end
     end
 
@@ -54,9 +53,9 @@ module ShopifyApp
       test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain" do
         ShopifyApp.configuration.embedded_app = true
         ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
-        auth_url = '/auth/shopify?shop=my-shop.myshopify.io'
+        shopify_domain = 'my-shop.myshopify.io'
         post :create, shop: good_url
-        assert_match /window\.top\.location\.href = "#{Regexp.escape(auth_url)}"/, response.body
+        assert_redirected_to_authentication(shopify_domain, response)
       end
     end
 
@@ -70,7 +69,6 @@ module ShopifyApp
 
     test "#create should render the login page if the shop param doesn't exist" do
       post :create
-      assert_response :redirect
       assert_redirected_to '/'
     end
 
@@ -161,5 +159,19 @@ module ShopifyApp
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
     end
+
+    def assert_redirected_to_authentication(shop_domain, response)
+      auth_url = "/auth/shopify?shop=#{shop_domain}".to_json
+      target_origin = "https://#{shop_domain}".to_json
+
+      post_message_handle = "message: 'Shopify.API.remoteRedirect'"
+      post_message_data = "data: { location: window.location.origin + #{auth_url} }"
+      post_message_call = "window.parent.postMessage(data, #{target_origin});"
+
+      assert_includes response.body, post_message_handle
+      assert_includes response.body, post_message_data
+      assert_includes response.body, post_message_call
+    end
+
   end
 end

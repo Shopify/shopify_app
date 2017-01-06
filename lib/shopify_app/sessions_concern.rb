@@ -22,10 +22,10 @@ module ShopifyApp
         install_scripttags
 
         flash[:notice] = I18n.t('.logged_in')
-        redirect_to_with_fallback return_address
+        redirect_to return_address
       else
         flash[:error] = I18n.t('could_not_log_in')
-        redirect_to_with_fallback login_url
+        redirect_to login_url
       end
     end
 
@@ -33,16 +33,16 @@ module ShopifyApp
       session[:shopify] = nil
       session[:shopify_domain] = nil
       flash[:notice] = I18n.t('.logged_out')
-      redirect_to_with_fallback login_url
+      redirect_to login_url
     end
 
     protected
 
     def authenticate
-      if shop_name = sanitize_shop_param(params)
-        fullpage_redirect_to "#{main_app.root_path}auth/shopify?shop=#{shop_name}"
+      if sanitized_shop_name.present?
+        fullpage_redirect_to "#{main_app.root_path}auth/shopify?shop=#{sanitized_shop_name}"
       else
-        redirect_to_with_fallback return_address
+        redirect_to return_address
       end
     end
 
@@ -86,15 +86,6 @@ module ShopifyApp
 
     def return_address
       session.delete(:return_to) || main_app.root_url
-    end
-
-    def sanitized_shop_name
-      @sanitized_shop_name ||= sanitize_shop_param(params)
-    end
-
-    def sanitize_shop_param(params)
-      return unless params[:shop].present?
-      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 
   end

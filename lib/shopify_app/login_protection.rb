@@ -39,14 +39,14 @@ module ShopifyApp
         head :unauthorized
       else
         session[:return_to] = request.fullpath if request.get?
-        redirect_to_with_fallback main_or_engine_login_url(shop: params[:shop])
+        redirect_to main_or_engine_login_url(shop: params[:shop])
       end
     end
 
     def close_session
       session[:shopify] = nil
       session[:shopify_domain] = nil
-      redirect_to_with_fallback main_or_engine_login_url(shop: params[:shop])
+      redirect_to main_or_engine_login_url(shop: params[:shop])
     end
 
     def main_or_engine_login_url(params = {})
@@ -55,47 +55,53 @@ module ShopifyApp
       shopify_app.login_url(params)
     end
 
-    def redirect_to_with_fallback(url)
-      url_json = url.to_json
+    def fullpage_redirect_to(url)
+      if ShopifyApp.configuration.embedded_app?
+        render inline: redirection_javascript(url)
+      else
+        redirect_to url
+      end
+    end
 
-      render inline: %Q(
+    def redirection_javascript(url)
+      %(
         <!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="utf-8" />
+            <base target="_top">
             <title>Redirecting…</title>
             <script type="text/javascript">
-              window.location.href = #{url_json};
+
+              // If the current window is the 'parent', change the URL by setting location.href
+              if (window.top == window.self) {
+                window.top.location.href = #{url.to_json};
+
+              // If the current window is the 'child', change the parent's URL with postMessage
+              } else {
+                data = JSON.stringify({
+                  message: 'Shopify.API.remoteRedirect',
+                  data: { location: window.location.origin + #{url.to_json} }
+                });
+                window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+              }
+
             </script>
           </head>
           <body>
           </body>
         </html>
-      ), status: 302, location: url
+      )
     end
 
-    def fullpage_redirect_to(url)
-      url_json = url.to_json
-
-      if ShopifyApp.configuration.embedded_app?
-        render inline: %Q(
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8" />
-              <base target="_top">
-              <title>Redirecting…</title>
-              <script type="text/javascript">
-                window.top.location.href = #{url_json};
-              </script>
-            </head>
-            <body>
-            </body>
-          </html>
-        )
-      else
-        redirect_to_with_fallback url
-      end
+    def sanitized_shop_name
+      @sanitized_shop_name ||= sanitize_shop_param(params)
     end
+
+    def sanitize_shop_param(params)
+      return unless params[:shop].present?
+      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
+    end
+
   end
 end
