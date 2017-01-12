@@ -1,11 +1,8 @@
-7.2.2
+7.2.3
 -----
-* Use postMessage to redirect parent iframe during authentication
-  https://github.com/Shopify/shopify_app/pull/366
-
-7.2.1
------
+* Use postMessage to redirect parent iframe during authentication [[#366]](https://github.com/Shopify/shopify_app/pull/366)
 * Add support for dynamically generating scripttag URLs
+* Bug-fix: Update scripttags_manager_job
 * Bug-fix: `--application_name` and `--scope` generates proper Configuration even when options supplied to them contain whitespaces.
 
 7.2.0
