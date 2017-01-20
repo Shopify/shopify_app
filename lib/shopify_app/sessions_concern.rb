@@ -8,7 +8,7 @@ module ShopifyApp
     end
 
     def new
-      authenticate if params[:shop].present?
+      authenticate if sanitized_shop_name.present?
     end
 
     def create

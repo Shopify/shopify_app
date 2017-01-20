@@ -11,14 +11,14 @@ module ShopifyApp
       I18n.locale = :en
     end
 
-    test "#new should authenticate the shop if the shop param exists" do
+    test "#new should authenticate the shop if a valid shop param exists" do
       ShopifyApp.configuration.embedded_app = true
       shopify_domain = 'my-shop.myshopify.com'
       get :new, shop: 'my-shop'
       assert_redirected_to_authentication(shopify_domain, response)
     end
 
-    test "#new should authenticate the shop if the shop param exists non embedded" do
+    test "#new should authenticate the shop if a valid shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
       auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
       get :new, shop: 'my-shop'
@@ -36,6 +36,13 @@ module ShopifyApp
 
     test "#new should render a full-page if the shop param doesn't exist" do
       get :new
+      assert_response :ok
+      assert_match %r{Shopify App — Installation}, response.body
+    end
+
+    test "#new should render a full-page if the shop param value is not a shop" do
+      non_shop_address = "example.com"
+      get :new, shop: non_shop_address
       assert_response :ok
       assert_match %r{Shopify App — Installation}, response.body
     end
