@@ -1,3 +1,7 @@
+7.2.4
+-----
+* Fix redirect issue by sanitizing shop name on sessions#new
+
 7.2.3
 -----
 * Use postMessage to redirect parent iframe during authentication [[#366]](https://github.com/Shopify/shopify_app/pull/366)
