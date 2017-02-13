@@ -15,5 +15,21 @@ module ShopifyApp
       @extra ||= JSON.parse(extra_json, object_class: OpenStruct) if extra_json
     end
 
+    def associated_scope
+      extra.try(:associated_user_scope)
+    end
+
+    def associated_user
+      extra.try(:associated_user)
+    end
+
+    def app_scope
+      extra.try(:scope)
+    end
+
+    def authorized_scope
+      associated_scope || app_scope
+    end
+
   end
 end
