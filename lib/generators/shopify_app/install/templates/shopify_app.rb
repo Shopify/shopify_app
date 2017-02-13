@@ -4,4 +4,5 @@ ShopifyApp.configure do |config|
   config.secret = "<%= @secret %>"
   config.scope = "<%= @scope %>"
   config.embedded_app = <%= embedded_app? %>
+  config.online_mode = <%= online_mode? %>
 end

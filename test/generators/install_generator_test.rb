@@ -20,6 +20,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.secret = "<secret>"', shopify_app
       assert_match 'config.scope = "read_orders, read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
+      assert_match "config.online_mode = true", shopify_app
     end
   end
 
@@ -31,6 +32,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.secret = "shhhhh"', shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
+      assert_match "config.online_mode = true", shopify_app
     end
   end
 
@@ -42,6 +44,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.secret = "shhhhh"', shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
+      assert_match "config.online_mode = true", shopify_app
     end
   end
 
@@ -49,6 +52,13 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator %w(--embedded false)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match "config.embedded_app = false", shopify_app
+    end
+  end
+
+  test "creates the ShopifyApp initializer for offline mode" do
+    run_generator %w(--online false)
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match "config.online_mode = false", shopify_app
     end
   end
 

@@ -4,4 +4,5 @@ ShopifyApp.configure do |config|
   config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
   config.scope = 'read_customers, read_orders, write_products'
   config.embedded_app = true
+  config.online_mode = true
 end

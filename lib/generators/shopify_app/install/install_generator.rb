@@ -12,6 +12,7 @@ module ShopifyApp
       class_option :secret, type: :string, default: '<secret>'
       class_option :scope, type: :array, default: ['read_orders,', 'read_products']
       class_option :embedded, type: :string, default: 'true'
+      class_option :online, type: :string, default: 'true'
 
       def create_shopify_app_initializer
         @application_name = format_array_argument(options['application_name'])
@@ -60,6 +61,10 @@ module ShopifyApp
 
       def embedded_app?
         options['embedded'] == 'true'
+      end
+
+      def online_mode?
+        options['online'] == 'true'
       end
 
       def format_array_argument(array)

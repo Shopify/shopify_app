@@ -26,6 +26,10 @@ module ShopifyApp
       def embedded_app?
         ShopifyApp.configuration.embedded_app?
       end
+
+      def online_mode?
+        ShopifyApp.configuration.online_mode?
+      end
     end
   end
 end

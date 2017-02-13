@@ -47,7 +47,7 @@ module ShopifyApp
     end
 
     def login_shop
-      sess = ShopifyAPI::Session.new(shop_name, token)
+      sess = ShopifyAPI::Session.new(shop_name, token, extra)
       session[:shopify] = ShopifyApp::SessionRepository.store(sess)
       session[:shopify_domain] = shop_name
     end
@@ -58,6 +58,10 @@ module ShopifyApp
 
     def shop_name
       auth_hash.uid
+    end
+
+    def extra
+      auth_hash.extra
     end
 
     def token

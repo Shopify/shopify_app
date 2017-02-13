@@ -132,6 +132,7 @@ Other options include:
 (e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)  
 For more information, refer the [docs](http://docs.shopify.com/api/tutorials/oauth).
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
+* `online` - the default is to create an [online mode app](https://help.shopify.com/api/getting-started/authentication/oauth#api-access-modes), if you want an offline mode app set this to false, `--online false`
 
 You can update any of these settings later on easily, the arguments are simply for convenience.
 
@@ -215,6 +216,7 @@ ShopifyApp.configure do |config|
   config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
   config.scope = 'read_customers, read_orders, write_products'
   config.embedded_app = true
+  config.online_mode = true
 end
 ```
 
