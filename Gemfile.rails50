@@ -3,3 +3,4 @@ gemspec
 
 gem 'rails', '~> 5.0'
 gem 'activeresource', github: 'rails/activeresource'
+gem 'shopify_api', '>= 4.3.5'
