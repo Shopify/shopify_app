@@ -79,9 +79,12 @@ module ShopifyApp
 
               // If the current window is the 'child', change the parent's URL with postMessage
               } else {
+                normalizedLink = document.createElement('a');
+                normalizedLink.href = #{url.to_json};
+
                 data = JSON.stringify({
                   message: 'Shopify.API.remoteRedirect',
-                  data: { location: window.location.origin + #{url.to_json} }
+                  data: { location: normalizedLink.href }
                 });
                 window.parent.postMessage(data, "https://#{sanitized_shop_name}");
               }

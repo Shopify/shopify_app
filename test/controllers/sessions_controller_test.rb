@@ -172,10 +172,12 @@ module ShopifyApp
       target_origin = "https://#{shop_domain}".to_json
 
       post_message_handle = "message: 'Shopify.API.remoteRedirect'"
-      post_message_data = "data: { location: window.location.origin + #{auth_url} }"
+      post_message_link = "normalizedLink.href = #{auth_url}"
+      post_message_data = "data: { location: normalizedLink.href }"
       post_message_call = "window.parent.postMessage(data, #{target_origin});"
 
       assert_includes response.body, post_message_handle
+      assert_includes response.body, post_message_link
       assert_includes response.body, post_message_data
       assert_includes response.body, post_message_call
     end
