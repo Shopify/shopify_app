@@ -1,3 +1,8 @@
+7.2.5
+-----
+* Update LoginProtection.redirection_javascript to work with absolute URLS
+  [[#389]](https://github.com/Shopify/shopify_app/pull/389)
+
 7.2.4
 -----
 * Fix redirect issue by sanitizing shop name on sessions#new
