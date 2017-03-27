@@ -285,6 +285,12 @@ ShopifyApp.configure do |config|
 end
 ```
 
+You also need to have write_script_tags permission in the config scope in order to add script tags automatically:
+
+```ruby
+ config.scope = '... , write_script_tags'
+```
+
 Scripttags are created in the same way as the Webhooks, with a background job which will create the required scripttags.
 
 If `src` responds to `call` its return value will be used as the scripttag's source. It will be called on scripttag creation and deletion.
