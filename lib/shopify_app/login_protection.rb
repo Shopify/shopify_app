@@ -2,6 +2,8 @@ module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
 
+    class ShopifyDomainNotFound < StandardError; end
+
     included do
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
@@ -98,7 +100,10 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      sanitized_shop_name || session[:shopify_domain]
+      shopify_domain = sanitized_shop_name || session[:shopify_domain]
+      return shopify_domain if shopify_domain.present?
+
+      raise ShopifyDomainNotFound
     end
 
     def sanitized_shop_name

@@ -118,6 +118,15 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#fullpage_redirect_to raises an exception when no Shopify domains are available' do
+    with_application_test_routes do
+      session[:shopify_domain] = nil
+      assert_raise ShopifyApp::LoginProtection::ShopifyDomainNotFound do
+        get :redirect
+      end
+    end
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, response)
