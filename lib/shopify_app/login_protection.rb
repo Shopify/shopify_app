@@ -86,7 +86,7 @@ module ShopifyApp
                   message: 'Shopify.API.remoteRedirect',
                   data: { location: normalizedLink.href }
                 });
-                window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+                window.parent.postMessage(data, "https://#{current_shopify_domain}");
               }
 
             </script>
@@ -95,6 +95,10 @@ module ShopifyApp
           </body>
         </html>
       )
+    end
+
+    def current_shopify_domain
+      sanitized_shop_name || session[:shopify_domain]
     end
 
     def sanitized_shop_name
