@@ -128,6 +128,17 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#fullpage_redirect_to, when not an embedded app, does a regular redirect' do
+    ShopifyApp.configuration.embedded_app = false
+
+    with_application_test_routes do
+      get :redirect
+      assert_redirected_to 'https://example.com'
+    end
+
+    ShopifyApp.configuration.embedded_app = true
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, response)
