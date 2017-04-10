@@ -2,6 +2,8 @@ module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
 
+    class ShopifyDomainNotFound < StandardError; end
+
     included do
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
@@ -86,7 +88,7 @@ module ShopifyApp
                   message: 'Shopify.API.remoteRedirect',
                   data: { location: normalizedLink.href }
                 });
-                window.parent.postMessage(data, "https://#{sanitized_shop_name}");
+                window.parent.postMessage(data, "https://#{current_shopify_domain}");
               }
 
             </script>
@@ -95,6 +97,13 @@ module ShopifyApp
           </body>
         </html>
       )
+    end
+
+    def current_shopify_domain
+      shopify_domain = sanitized_shop_name || session[:shopify_domain]
+      return shopify_domain if shopify_domain.present?
+
+      raise ShopifyDomainNotFound
     end
 
     def sanitized_shop_name

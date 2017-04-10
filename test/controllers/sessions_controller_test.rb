@@ -11,6 +11,10 @@ module ShopifyApp
       I18n.locale = :en
     end
 
+    teardown do
+      ShopifyApp.configuration.embedded_app = true
+    end
+
     test "#new should authenticate the shop if a valid shop param exists" do
       ShopifyApp.configuration.embedded_app = true
       shopify_domain = 'my-shop.myshopify.com'

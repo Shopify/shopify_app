@@ -17,6 +17,10 @@ class LoginProtectionController < ActionController::Base
     render nothing: true
   end
 
+  def redirect
+    fullpage_redirect_to("https://example.com")
+  end
+
   def raise_unauthorized
     raise ActiveResource::UnauthorizedAccess.new('unauthorized')
   end
@@ -27,6 +31,7 @@ class LoginProtectionTest < ActionController::TestCase
 
   setup do
     ShopifyApp::SessionRepository.storage = InMemorySessionStore
+    ShopifyApp.configuration.embedded_app = true
   end
 
   test "#shop_session returns nil when session is nil" do
@@ -97,13 +102,66 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#fullpage_redirect_to sends a post message to that shop in the shop param' do
+    with_application_test_routes do
+      example_shop = 'shop.myshopify.com'
+      get :redirect, shop: example_shop
+      assert_fullpage_redirected(example_shop, response)
+    end
+  end
+
+  test '#fullpage_redirect_to, when the shop params is missing, sends a post message to the shop in the session' do
+    with_application_test_routes do
+      example_shop = 'shop.myshopify.com'
+      session[:shopify_domain] = example_shop
+      get :redirect
+      assert_fullpage_redirected(example_shop, response)
+    end
+  end
+
+  test '#fullpage_redirect_to raises an exception when no Shopify domains are available' do
+    with_application_test_routes do
+      session[:shopify_domain] = nil
+      assert_raise ShopifyApp::LoginProtection::ShopifyDomainNotFound do
+        get :redirect
+      end
+    end
+  end
+
+  test '#fullpage_redirect_to, when not an embedded app, does a regular redirect' do
+    ShopifyApp.configuration.embedded_app = false
+
+    with_application_test_routes do
+      get :redirect
+      assert_redirected_to 'https://example.com'
+    end
+
+    ShopifyApp.configuration.embedded_app = true
+  end
+
   private
+
+  def assert_fullpage_redirected(shop_domain, response)
+    example_url = "https://example.com".to_json
+    target_origin = "https://#{shop_domain}".to_json
+
+    post_message_handle = "message: 'Shopify.API.remoteRedirect'"
+    post_message_link = "normalizedLink.href = #{example_url}"
+    post_message_data = "data: { location: normalizedLink.href }"
+    post_message_call = "window.parent.postMessage(data, #{target_origin});"
+
+    assert_includes response.body, post_message_handle
+    assert_includes response.body, post_message_link
+    assert_includes response.body, post_message_data
+    assert_includes response.body, post_message_call
+  end
 
   def with_application_test_routes
     with_routing do |set|
       set.draw do
         get '/' => 'login_protection#index'
         get '/second_login' => 'login_protection#second_login'
+        get '/redirect' => 'login_protection#redirect'
         get '/raise_unauthorized' => 'login_protection#raise_unauthorized'
       end
       yield
