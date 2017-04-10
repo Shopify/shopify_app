@@ -29,11 +29,12 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
   end
 
   test "creates the home index view with embedded false" do
-    stub_embedded_false
+    ShopifyApp.configuration.embedded_app = false
     run_generator
     assert_file "app/views/home/index.html.erb" do |index|
       refute_match "ShopifyApp.ready", index
     end
+    ShopifyApp.configuration.embedded_app = true
   end
 
   test "adds home route to routes" do
@@ -42,9 +43,5 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
       assert_match "mount ShopifyApp::Engine, at: '/'", routes
       assert_match "root :to => 'home#index'", routes
     end
-  end
-
-  def stub_embedded_false
-    ShopifyApp.configuration.embedded_app = false
   end
 end
