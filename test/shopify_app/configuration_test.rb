@@ -8,6 +8,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   teardown do
     Rails.application.config.active_job.queue_name = nil
+    ShopifyApp.configuration.myshopify_domain = 'myshopify.com'
   end
 
   test "configure" do

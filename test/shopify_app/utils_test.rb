@@ -6,6 +6,10 @@ class UtilsTest < ActiveSupport::TestCase
     ShopifyApp.configuration = nil
   end
 
+  teardown do
+    ShopifyApp.configuration.myshopify_domain = 'myshopify.com'
+  end
+
   ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
     test "sanitize_shop_domain for (#{good_url})" do
       ShopifyApp.configuration.embedded_app = true
