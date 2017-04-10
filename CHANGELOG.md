@@ -1,3 +1,8 @@
+7.2.6
+-----
+* Update LoginProtection#fullpage_redirect_to to get shopify domain from session
+  [[#401]](https://github.com/Shopify/shopify_app/pull/401)
+
 7.2.5
 -----
 * Update LoginProtection.redirection_javascript to work with absolute URLS
