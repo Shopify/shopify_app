@@ -13,6 +13,7 @@ module ShopifyApp
 
     teardown do
       ShopifyApp.configuration.embedded_app = true
+      ShopifyApp.configuration.myshopify_domain = 'myshopify.com'
     end
 
     test "#new should authenticate the shop if a valid shop param exists" do

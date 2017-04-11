@@ -3,4 +3,5 @@ ShopifyApp.configure do |config|
   config.secret = "secret"
   config.scope = 'read_orders, read_products'
   config.embedded_app = true
+  config.myshopify_domain = 'myshopify.com'
 end
