@@ -7,6 +7,31 @@ Shopify App
 
 
 Shopify Application Rails engine and generator
+ 
+  
+Table of Contents
+-----------------
+* [**Description**](#description)
+* [**Quickstart**](#quickstart)
+* [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
+* [**Installation**](#installation)
+* [**Generators**](#generators)
+ * [Default Generator](#default-generator)
+ * [Install Generator](#install-generator)
+ * [Shop Model Generator](#shop-model-generator)
+ * [Home Controller Generator](#home-controller-generator)
+ * [Controllers, Routes and Views](#controllers-routes-and-views)
+* [**Managing Api Keys**](#managing-api-keys)
+* [**WebhooksManager**](#webhooksmanager)
+* [**ScripttagsManager**](#scripttagsmanager)
+* [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
+* [**AuthenticatedController**](#authenticatedcontroller)
+* [**AppProxyVerification**](#appproxyverification)
+ * [Recommended Usage](#recommended-usage)
+* [**Troubleshooting**](#troubleshooting)
+ * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
+* [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
+* [**Questions or problems?**](#questions-or-problems)
 
 
 Table of Contents
