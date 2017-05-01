@@ -1,3 +1,8 @@
+7.2.7
+-----
+* Rails 5: ActionDispatch::Reloader#to_prepare is deprecated
+  [[#404]](https://github.com/Shopify/shopify_app/pull/404)
+
 7.2.6
 -----
 * Update LoginProtection#fullpage_redirect_to to get shopify domain from session
