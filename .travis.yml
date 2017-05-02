@@ -8,10 +8,3 @@ rvm:
 gemfile:
   - Gemfile
   - Gemfile.rails50
-
-matrix:
-  include:
-  - rvm: 2.2.2
-    gemfile: Gemfile.ruby22
-  - rvm: 2.2.2
-    gemfile: Gemfile.ruby22.rails50
