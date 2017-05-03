@@ -1,0 +1,4 @@
+ja:
+  logged_in: 'ログイン'
+  logged_out: 'ログインに成功しました'
+  could_not_log_in: 'Shopifyストアにログインできませんでした'
