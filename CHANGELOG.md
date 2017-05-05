@@ -1,3 +1,9 @@
+7.2.7
+-----
+* Require `shopify_app` `>= 4.3.2`. This version relaxes the ruby version requirement from `>= 2.3.0` to `>= 2.0`
+* Rails 5: ActionDispatch::Reloader#to_prepare is deprecated
+  [[#404]](https://github.com/Shopify/shopify_app/pull/404)
+
 7.2.6
 -----
 * Update LoginProtection#fullpage_redirect_to to get shopify domain from session
