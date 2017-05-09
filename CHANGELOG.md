@@ -1,3 +1,9 @@
+7.2.8
+-----
+* Add i18n locale param support
+  [[#409]](https://github.com/Shopify/shopify_app/pull/409)
+
+
 7.2.7
 -----
 * Require `shopify_app` `>= 4.3.2`. This version relaxes the ruby version requirement from `>= 2.3.0` to `>= 2.0`
