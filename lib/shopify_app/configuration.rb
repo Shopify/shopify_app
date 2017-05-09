@@ -10,6 +10,8 @@ module ShopifyApp
     attr_accessor :scope
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
+    attr_accessor :online_mode
+    alias_method  :online_mode?, :online_mode
     attr_accessor :webhooks
     attr_accessor :scripttags
 
@@ -22,6 +24,10 @@ module ShopifyApp
 
     def initialize
       @myshopify_domain = 'myshopify.com'
+    end
+
+    def offline_mode?
+      !online_mode?
     end
 
     def has_webhooks?
