@@ -38,9 +38,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     ShopifyAPI::Webhook.stubs(all: all_mock_webhooks)
     @manager.expects(:create_webhook).never
 
-    assert_nothing_raised ShopifyApp::WebhooksManager::CreationFailed do
-      @manager.create_webhooks
-    end
+    assert_nothing_raised { @manager.create_webhooks }
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
