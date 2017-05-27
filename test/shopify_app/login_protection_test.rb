@@ -67,7 +67,7 @@ class LoginProtectionTest < ActionController::TestCase
       session[:shopify_domain] = "foobar"
       sess = stub(url: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
-      get :second_login, shop: 'other_shop'
+      get :second_login, params: { shop: 'other_shop' }
       assert_redirected_to @controller.send(:main_or_engine_login_url, shop: 'other_shop')
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
@@ -76,28 +76,28 @@ class LoginProtectionTest < ActionController::TestCase
 
   test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
-      get :index, shop: 'foobar'
+      get :index, params: { shop: 'foobar' }
       assert_redirected_to @controller.send(:main_or_engine_login_url, shop: 'foobar')
     end
   end
 
   test '#shopify_session with no Shopify session, sets session[:return_to]' do
     with_application_test_routes do
-      get :index, shop: 'foobar'
+      get :index, params: { shop: 'foobar' }
       assert_equal '/?shop=foobar', session[:return_to]
     end
   end
 
   test '#shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401' do
     with_application_test_routes do
-      xhr :get, :index, shop: 'foobar'
+      get :index, params: { shop: 'foobar' }, xhr: true
       assert_equal 401, response.status
     end
   end
 
   test '#shopify_session when rescuing from unauthorized access, redirects to the login url' do
     with_application_test_routes do
-      get :raise_unauthorized, shop: 'foobar'
+      get :raise_unauthorized, params: { shop: 'foobar' }
       assert_redirected_to @controller.send(:main_or_engine_login_url, shop: 'foobar')
     end
   end
@@ -105,7 +105,7 @@ class LoginProtectionTest < ActionController::TestCase
   test '#fullpage_redirect_to sends a post message to that shop in the shop param' do
     with_application_test_routes do
       example_shop = 'shop.myshopify.com'
-      get :redirect, shop: example_shop
+      get :redirect, params: { shop: example_shop }
       assert_fullpage_redirected(example_shop, response)
     end
   end

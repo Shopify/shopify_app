@@ -8,7 +8,7 @@ class WebhookVerificationController < ActionController::Base
 
   include ShopifyApp::WebhookVerification
 
-  def carts_update
+  def webhook_action
     head :ok
   end
 end
@@ -22,23 +22,22 @@ class WebhookVerificationTest < ActionController::TestCase
     end
   end
 
-  test "#carts_update should verify request" do
+  test "authorized requests should be successful" do
     with_application_test_routes do
-      data = {foo: :bar}.to_json
+      params = { foo: 'anything' }
       digest = OpenSSL::Digest.new('sha256')
       secret = ShopifyApp.configuration.secret
-      hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, secret, data)).strip
-      @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = hmac
-      post :carts_update, data
+      valid_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, secret, params.to_query)).strip
+      @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = valid_hmac
+      post :webhook_action, params: params
       assert_response :ok
     end
   end
 
   test "un-verified request returns unauthorized" do
     with_application_test_routes do
-      data = {foo: :bar}.to_json
       @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = "invalid_hmac"
-      post :carts_update, data
+      post :webhook_action, params: { foo: anything }
       assert_response :unauthorized
     end
   end
@@ -48,7 +47,7 @@ class WebhookVerificationTest < ActionController::TestCase
   def with_application_test_routes
     with_routing do |set|
       set.draw do
-        post '/carts_update' => 'webhook_verification#carts_update'
+        post '/webhook_action' => 'webhook_verification#webhook_action'
       end
       yield
     end

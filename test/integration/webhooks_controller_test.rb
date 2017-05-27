@@ -37,7 +37,7 @@ module ShopifyApp
     private
 
     def send_webhook(name, data)
-      post shopify_app.webhooks_path(name), data, {'HTTP_X_SHOPIFY_SHOP_DOMAIN' => 'test.myshopify.com'}
+      post shopify_app.webhooks_path(name), params: data, headers: {'HTTP_X_SHOPIFY_SHOP_DOMAIN' => 'test.myshopify.com'}
     end
   end
 end
