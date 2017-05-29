@@ -4,7 +4,3 @@ sudo: false
 
 rvm:
   - 2.3.1
-
-gemfile:
-  - Gemfile.rails40
-  - Gemfile.rails50

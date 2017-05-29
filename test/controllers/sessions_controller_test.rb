@@ -19,14 +19,14 @@ module ShopifyApp
     test "#new should authenticate the shop if a valid shop param exists" do
       ShopifyApp.configuration.embedded_app = true
       shopify_domain = 'my-shop.myshopify.com'
-      get :new, shop: 'my-shop'
+      get :new, params: { shop: 'my-shop' }
       assert_redirected_to_authentication(shopify_domain, response)
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
       auth_url = '/auth/shopify?shop=my-shop.myshopify.com'
-      get :new, shop: 'my-shop'
+      get :new, params: { shop: 'my-shop' }
       assert_redirected_to auth_url
     end
 
@@ -35,7 +35,7 @@ module ShopifyApp
       previously_logged_in_shop_id = 1
       session[:shopify] = previously_logged_in_shop_id
       new_shop_domain = "new-shop.myshopify.com"
-      get :new, shop: new_shop_domain
+      get :new, params: { shop: new_shop_domain }
       assert_redirected_to_authentication(new_shop_domain, response)
     end
 
@@ -47,7 +47,7 @@ module ShopifyApp
 
     test "#new should render a full-page if the shop param value is not a shop" do
       non_shop_address = "example.com"
-      get :new, shop: non_shop_address
+      get :new, params: { shop: non_shop_address }
       assert_response :ok
       assert_match %r{Shopify App — Installation}, response.body
     end
@@ -56,7 +56,7 @@ module ShopifyApp
       test "#create should authenticate the shop for the URL (#{good_url})" do
         ShopifyApp.configuration.embedded_app = true
         shopify_domain = 'my-shop.myshopify.com'
-        post :create, shop: good_url
+        post :create, params: { shop: good_url }
         assert_redirected_to_authentication(shopify_domain, response)
       end
     end
@@ -66,14 +66,14 @@ module ShopifyApp
         ShopifyApp.configuration.embedded_app = true
         ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
         shopify_domain = 'my-shop.myshopify.io'
-        post :create, shop: good_url
+        post :create, params: { shop: good_url }
         assert_redirected_to_authentication(shopify_domain, response)
       end
     end
 
     ['myshop.com', 'myshopify.com', 'shopify.com', 'two words', 'store.myshopify.com.evil.com', '/foo/bar'].each do |bad_url|
       test "#create should return an error for a non-myshopify URL (#{bad_url})" do
-        post :create, shop: bad_url
+        post :create, params: { shop: bad_url }
         assert_response :redirect
         assert_redirected_to '/'
       end
@@ -87,7 +87,7 @@ module ShopifyApp
     test '#callback should have a success flash message' do
       mock_shopify_omniauth
 
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
       assert_equal flash[:notice], 'Logged In'
     end
 
@@ -95,25 +95,25 @@ module ShopifyApp
       I18n.locale = :es
       mock_shopify_omniauth
 
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
       assert_equal flash[:notice], 'Has iniciado sesión'
     end
 
     test '#callback should flash error when omniauth is not present' do
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
       assert_equal flash[:error], 'Could not log in to Shopify store'
     end
 
     test '#callback should flash error in Spanish' do
       I18n.locale = :es
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
       assert_equal flash[:error], 'No se pudo iniciar sesión en tu tienda de Shopify'
     end
 
     test "#callback should setup a shopify session" do
       mock_shopify_omniauth
 
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
       assert_not_nil session[:shopify]
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
     end
@@ -126,7 +126,7 @@ module ShopifyApp
       ShopifyApp::WebhooksManager.expects(:queue)
 
       mock_shopify_omniauth
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
     end
 
     test "#callback doesn't run the WebhooksManager if no webhooks are configured" do
@@ -137,7 +137,7 @@ module ShopifyApp
       ShopifyApp::WebhooksManager.expects(:queue).never
 
       mock_shopify_omniauth
-      get :callback, shop: 'shop'
+      get :callback, params: { shop: 'shop' }
     end
 
     test "#destroy should clear shopify from session and redirect to login with notice" do
