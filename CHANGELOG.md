@@ -1,3 +1,8 @@
+7.2.9
+-----
+* Remove support for Rails 4
+  [[#417]](https://github.com/Shopify/shopify_app/pull/417)
+
 7.2.8
 -----
 * Add i18n locale param support
