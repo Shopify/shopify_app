@@ -15,7 +15,7 @@ Table of Contents
 * [**Quickstart**](#quickstart)
 * [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
 * [**Installation**](#installation)
-  * [Rails 5](#rails-5)
+  * [Rails Compatibility](#rails-compatibility)
 * [**Generators**](#generators)
  * [Default Generator](#default-generator)
  * [Install Generator](#install-generator)
@@ -94,14 +94,9 @@ $ bundle install
 Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
 
 
-#### Rails 5
+#### Rails Compatibility
 
-shopify_app is compatible with Rails 5 but since the latest ActiveResource release (4.1) is locked on Rails 4.x, you'll need to use the unreleased master version:
-
-```ruby
-gem 'shopify_app'
-gem 'activeresource', github: 'rails/activeresource'
-```
+The lastest version of shopify_app is compatible with Rails `>= 5`. Use version `<= v7.2.8` if you need to work with Rails 4.
 
 
 Generators
