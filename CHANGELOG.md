@@ -1,3 +1,8 @@
+7.2.10
+-----
+* Fix an issue with the create_shops generator template
+  [[#423]](https://github.com/Shopify/shopify_app/pull/423)
+
 7.2.9
 -----
 * Remove support for Rails 4
