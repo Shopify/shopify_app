@@ -21,7 +21,6 @@ module ShopifyApp
         install_webhooks
         install_scripttags
 
-        flash[:notice] = I18n.t('.logged_in')
         redirect_to return_address
       else
         flash[:error] = I18n.t('could_not_log_in')
