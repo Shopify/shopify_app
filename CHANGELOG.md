@@ -1,3 +1,7 @@
+7.2.11
+-----
+* Remove 'Logged in' flash message [[#425]](https://github.com/Shopify/shopify_app/pull/425)
+
 7.2.10
 -----
 * Fix an issue with the create_shops generator template

@@ -1,3 +1,3 @@
 module ShopifyApp
-  VERSION = '7.2.10'
+  VERSION = '7.2.11'
 end
