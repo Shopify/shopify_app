@@ -14,9 +14,13 @@ class ConfigurationTest < ActiveSupport::TestCase
   test "configure" do
     ShopifyApp.configure do |config|
       config.embedded_app = true
+      config.enable_after_install_actions = false
+      config.enable_after_authenticate_actions = false
     end
 
     assert_equal true, ShopifyApp.configuration.embedded_app
+    assert_equal false, ShopifyApp.configuration.enable_after_install_actions
+    assert_equal false, ShopifyApp.configuration.enable_after_authenticate_actions
   end
 
   test "defaults to myshopify_domain" do

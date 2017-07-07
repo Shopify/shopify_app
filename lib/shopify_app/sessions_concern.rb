@@ -20,6 +20,7 @@ module ShopifyApp
         login_shop
         install_webhooks
         install_scripttags
+        perform_after_authenticate_actions
 
         redirect_to return_address
       else
@@ -49,6 +50,8 @@ module ShopifyApp
       sess = ShopifyAPI::Session.new(shop_name, token)
       session[:shopify] = ShopifyApp::SessionRepository.store(sess)
       session[:shopify_domain] = shop_name
+
+      perform_after_install_actions
     end
 
     def auth_hash
@@ -87,5 +90,16 @@ module ShopifyApp
       session.delete(:return_to) || main_app.root_url
     end
 
+    def perform_after_install_actions
+      return unless ShopifyApp.configuration.enable_after_install_actions
+
+      Shopify::AfterInstallJob.perform_later(shop_domain: session[:shopify_domain])
+    end
+
+    def perform_after_authenticate_actions
+      return unless ShopifyApp.configuration.enable_after_authenticate_actions
+
+      Shopify::AfterAuthenticateJob.perform_later(shop_domain: session[:shopify_domain])
+    end
   end
 end
