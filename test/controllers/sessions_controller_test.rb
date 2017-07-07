@@ -1,5 +1,11 @@
 require 'test_helper'
 
+module Shopify
+  class AfterAuthenticateJob < ActiveJob::Base
+    def perform; end
+  end
+end
+
 module ShopifyApp
   class SessionsControllerTest < ActionController::TestCase
 
@@ -138,6 +144,50 @@ module ShopifyApp
       get :destroy
 
       assert_equal 'Cerrar sesión', flash[:notice]
+    end
+
+    test "#callback calls #perform_after_authenticate_job and performs inline when inline is true" do
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
+      end
+
+      Shopify::AfterAuthenticateJob.expects(:perform_now)
+
+      mock_shopify_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
+    test "#callback calls #perform_after_authenticate_job and performs asynchronous when inline isn't true" do
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
+      end
+
+      Shopify::AfterAuthenticateJob.expects(:perform_later)
+
+      mock_shopify_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
+    test "#callback doesn't call #perform_after_authenticate_job if job is nil" do
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: nil, inline: false }
+      end
+
+      Shopify::AfterAuthenticateJob.expects(:perform_later).never
+
+      mock_shopify_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
+    test "#callback calls #perform_after_authenticate_job and performs async if inline isn't present" do
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
+      end
+
+      Shopify::AfterAuthenticateJob.expects(:perform_later)
+
+      mock_shopify_omniauth
+      get :callback, params: { shop: 'shop' }
     end
 
     private

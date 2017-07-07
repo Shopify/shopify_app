@@ -20,6 +20,7 @@ module ShopifyApp
         login_shop
         install_webhooks
         install_scripttags
+        perform_after_authenticate_job
 
         redirect_to return_address
       else
@@ -87,5 +88,16 @@ module ShopifyApp
       session.delete(:return_to) || main_app.root_url
     end
 
+    def perform_after_authenticate_job
+      config = ShopifyApp.configuration.after_authenticate_job
+
+      return unless config && config[:job].present?
+
+      if config[:inline] == true
+        config[:job].perform_now(shop_domain: session[:shopify_domain])
+      else
+        config[:job].perform_later(shop_domain: session[:shopify_domain])
+      end
+    end
   end
 end

@@ -13,9 +13,11 @@ class ConfigurationTest < ActiveSupport::TestCase
   test "configure" do
     ShopifyApp.configure do |config|
       config.embedded_app = true
+      config.after_authenticate_job = false
     end
 
     assert_equal true, ShopifyApp.configuration.embedded_app
+    assert_equal false, ShopifyApp.configuration.after_authenticate_job
   end
 
   test "defaults to myshopify_domain" do
