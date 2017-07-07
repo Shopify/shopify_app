@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'generators/shopify_app/add_after_authenticate_job/enable_after_authenticate_actions_generator'
+require 'generators/shopify_app/enable_after_authenticate_actions/enable_after_authenticate_actions_generator'
 
 class EnableAfterAuthenticateActionsGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::EnableAfterAuthenticateActionsGenerator

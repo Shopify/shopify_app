@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'generators/shopify_app/add_after_install_job/enable_after_install_actions_generator'
+require 'generators/shopify_app/enable_after_install_actions/enable_after_install_actions_generator'
 
 class EnableAfterInstallActionsGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::EnableAfterInstallActionsGenerator
@@ -15,7 +15,7 @@ class EnableAfterInstallActionsGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/initializers/shopify_app.rb" do |config|
-      assert_match 'config.after_install_actions = true', config
+      assert_match 'config.enable_after_install_actions = true', config
     end
   end
 
