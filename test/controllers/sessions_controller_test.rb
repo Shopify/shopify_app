@@ -11,13 +11,7 @@ module ShopifyApp
       I18n.locale = :en
     end
 
-    teardown do
-      ShopifyApp.configuration.embedded_app = true
-      ShopifyApp.configuration.myshopify_domain = 'myshopify.com'
-    end
-
     test "#new should authenticate the shop if a valid shop param exists" do
-      ShopifyApp.configuration.embedded_app = true
       shopify_domain = 'my-shop.myshopify.com'
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to_authentication(shopify_domain, response)
@@ -31,7 +25,6 @@ module ShopifyApp
     end
 
     test "#new should trust the shop param over the current session" do
-      ShopifyApp.configuration.embedded_app = true
       previously_logged_in_shop_id = 1
       session[:shopify] = previously_logged_in_shop_id
       new_shop_domain = "new-shop.myshopify.com"
@@ -54,7 +47,6 @@ module ShopifyApp
 
     ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url})" do
-        ShopifyApp.configuration.embedded_app = true
         shopify_domain = 'my-shop.myshopify.com'
         post :create, params: { shop: good_url }
         assert_redirected_to_authentication(shopify_domain, response)
@@ -63,7 +55,6 @@ module ShopifyApp
 
     ['my-shop', 'my-shop.myshopify.io', 'https://my-shop.myshopify.io', 'http://my-shop.myshopify.io'].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain" do
-        ShopifyApp.configuration.embedded_app = true
         ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
         shopify_domain = 'my-shop.myshopify.io'
         post :create, params: { shop: good_url }

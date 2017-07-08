@@ -34,7 +34,6 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/home/index.html.erb" do |index|
       refute_match "ShopifyApp.ready", index
     end
-    ShopifyApp.configuration.embedded_app = true
   end
 
   test "adds home route to routes" do
