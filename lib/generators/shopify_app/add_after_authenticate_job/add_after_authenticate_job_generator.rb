@@ -2,7 +2,7 @@ require 'rails/generators/base'
 
 module ShopifyApp
   module Generators
-    class EnableAfterAuthenticateActionsGenerator < Rails::Generators::Base
+    class AddAfterAuthenticateJobGenerator < Rails::Generators::Base
       source_root File.expand_path('../templates', __FILE__)
 
       hook_for :test_framework, as: :job, in: :rails do |instance, generator|
@@ -15,7 +15,7 @@ module ShopifyApp
 
         inject_into_file(
           'config/initializers/shopify_app.rb',
-          "  config.enable_after_authenticate_actions = true\n",
+          "  config.after_authenticate_job = Shopify::AfterAuthenticateJob\n",
           before: 'end'
         )
       end

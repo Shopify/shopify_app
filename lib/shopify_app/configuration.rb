@@ -12,8 +12,7 @@ module ShopifyApp
     alias_method  :embedded_app?, :embedded_app
     attr_accessor :webhooks
     attr_accessor :scripttags
-    attr_accessor :enable_after_install_actions
-    attr_accessor :enable_after_authenticate_actions
+    attr_accessor :after_authenticate_job
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name

@@ -1,8 +1,8 @@
 require 'test_helper'
-require 'generators/shopify_app/enable_after_authenticate_actions/enable_after_authenticate_actions_generator'
+require 'generators/shopify_app/add_after_authenticate_job/add_after_authenticate_job_generator'
 
-class EnableAfterAuthenticateActionsGeneratorTest < Rails::Generators::TestCase
-  tests ShopifyApp::Generators::EnableAfterAuthenticateActionsGenerator
+class AddAfterAuthenticateJobGeneratorTest < Rails::Generators::TestCase
+  tests ShopifyApp::Generators::AddAfterAuthenticateJobGenerator
   destination File.expand_path("../tmp", File.dirname(__FILE__))
 
   setup do
@@ -15,7 +15,7 @@ class EnableAfterAuthenticateActionsGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/initializers/shopify_app.rb" do |config|
-      assert_match 'config.enable_after_authenticate_actions = true', config
+      assert_match 'config.after_authenticate_job = Shopify::AfterAuthenticateJob', config
     end
   end
 
