@@ -1,3 +1,8 @@
+7.2.12
+-----
+* Bump required omniauth-shopify-oauth2 version to 1.2.0.
+* Always expect params[:shop] to be a string.
+
 7.2.11
 -----
 * Remove 'Logged in' flash message [[#425]](https://github.com/Shopify/shopify_app/pull/425)
