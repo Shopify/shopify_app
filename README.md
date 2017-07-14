@@ -199,14 +199,6 @@ This will create the Shopify engine routes under the specified subpath, as a res
     callback_path: '/nested/auth/shopify/callback'
 ```
 
-To use named routes with the engine so that it can route between the application and the engine's routes it should be prefixed with `main_app` or `shopify_app`.
-
-```ruby
-main_app.login_path # For a named login route on the rails app.
-
-shopify_app.login_path # For the shopify app store login route.
-```
-
 Managing Api Keys
 -----------------
 

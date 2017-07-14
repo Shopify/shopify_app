@@ -54,7 +54,7 @@ module ShopifyApp
     def main_or_engine_login_url(params = {})
       main_app.login_url(params)
     rescue NoMethodError
-      shopify_app.login_url(params)
+      shopify_app_engine.login_url(host: "https://#{request.host}", params: params)
     end
 
     def fullpage_redirect_to(url)
@@ -115,5 +115,10 @@ module ShopifyApp
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 
+    private
+
+    def shopify_app_engine
+      ShopifyApp::Engine.routes.url_helpers
+    end
   end
 end
