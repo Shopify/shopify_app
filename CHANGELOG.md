@@ -3,6 +3,7 @@
 * Removed the `shopify_session_repository` initializer. The SessionRepository is now configured through the main ShopifyApp configuration object and the generated initializer
 * Moved InMemorySessionStore into the ShopifyApp namespace
 * Remove ShopifySession concern. This module made the code internal to this engine harder to follow and we want do discourage over-writing the auth code now that we have generic hooks for all extra tasks during install.
+* Changed engine controllers to subclass ActionController::Base to avoid any possible conflict with the parent application
 
 7.4.0
 -----

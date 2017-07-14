@@ -1,5 +1,5 @@
 module ShopifyApp
-  class SessionsController < ApplicationController
+  class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
     layout false, only: :new
 

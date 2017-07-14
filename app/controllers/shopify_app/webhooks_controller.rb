@@ -1,5 +1,5 @@
 module ShopifyApp
-  class WebhooksController < ApplicationController
+  class WebhooksController < ActionController::Base
     include ShopifyApp::WebhookVerification
 
     class ShopifyApp::MissingWebhookJobError < StandardError; end
