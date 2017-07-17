@@ -1,6 +1,7 @@
 8.0.0 (unreleased)
 ------------------
 * Removed the `shopify_session_repository` initializer. The SessionRepository is now configured through the main ShopifyApp configuration object and the generated initializer
+* Moved InMemorySessionStore into the ShopifyApp namespace
 
 7.4.0
 -----
