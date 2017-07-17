@@ -2,6 +2,7 @@
 ------------------
 * Removed the `shopify_session_repository` initializer. The SessionRepository is now configured through the main ShopifyApp configuration object and the generated initializer
 * Moved InMemorySessionStore into the ShopifyApp namespace
+* Remove ShopifySession concern. This module made the code internal to this engine harder to follow and we want do discourage over-writing the auth code now that we have generic hooks for all extra tasks during install.
 
 7.3.0
 -----
