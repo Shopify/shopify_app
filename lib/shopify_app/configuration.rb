@@ -29,9 +29,7 @@ module ShopifyApp
       if Rails.configuration.cache_classes
         ShopifyApp::SessionRepository.storage = klass
       else
-        reloader = defined?(ActiveSupport::Reloader) ? ActiveSupport::Reloader : ActionDispatch::Reloader
-
-        reloader.to_prepare do
+        ActiveSupport::Reloader.to_prepare do
           ShopifyApp::SessionRepository.storage = klass
         end
       end
