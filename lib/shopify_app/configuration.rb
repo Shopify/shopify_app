@@ -13,6 +13,7 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
+    attr_accessor :session_repository
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -23,6 +24,18 @@ module ShopifyApp
 
     def initialize
       @myshopify_domain = 'myshopify.com'
+    end
+
+    def session_repository=(klass)
+      if Rails.configuration.cache_classes
+        ShopifyApp::SessionRepository.storage = klass
+      else
+        reloader = defined?(ActiveSupport::Reloader) ? ActiveSupport::Reloader : ActionDispatch::Reloader
+
+        reloader.to_prepare do
+          ShopifyApp::SessionRepository.storage = klass
+        end
+      end
     end
 
     def has_webhooks?

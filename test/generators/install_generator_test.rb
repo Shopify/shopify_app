@@ -31,7 +31,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.api_key = "key"', shopify_app
       assert_match 'config.secret = "shhhhh"', shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
-      assert_match "config.embedded_app = true", shopify_app
+      assert_match 'config.embedded_app = true', shopify_app
+      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
     end
   end
 
@@ -42,7 +43,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.api_key = "key"', shopify_app
       assert_match 'config.secret = "shhhhh"', shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
-      assert_match "config.embedded_app = true", shopify_app
+      assert_match 'config.embedded_app = true', shopify_app
+      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
     end
   end
 
@@ -57,13 +59,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/initializers/omniauth.rb" do |omniauth|
       assert_match "provider :shopify", omniauth
-    end
-  end
-
-  test "creates the default shopify_session_repository" do
-    run_generator
-    assert_file "config/initializers/shopify_session_repository.rb" do |file|
-      assert_match "ShopifyApp::SessionRepository.storage = InMemorySessionStore", file
     end
   end
 

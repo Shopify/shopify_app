@@ -34,10 +34,6 @@ module ShopifyApp
         )
       end
 
-      def create_shopify_session_repository_initializer
-        copy_file 'shopify_session_repository.rb', 'config/initializers/shopify_session_repository.rb'
-      end
-
       def inject_embedded_app_options_to_application
         if embedded_app?
           application "config.action_dispatch.default_headers.delete('X-Frame-Options')"

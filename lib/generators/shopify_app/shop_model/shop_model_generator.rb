@@ -12,11 +12,11 @@ module ShopifyApp
       end
 
       def create_shop_migration
-        migration_template "db/migrate/create_shops.erb", "db/migrate/create_shops.rb"
+        migration_template 'db/migrate/create_shops.erb', 'db/migrate/create_shops.rb'
       end
 
-      def create_session_storage_initializer
-        copy_file 'shopify_session_repository.rb', 'config/initializers/shopify_session_repository.rb', force: true
+      def update_shopify_app_initializer
+        gsub_file 'config/initializers/shopify_app.rb', 'ShopifyApp::InMemorySessionStore', 'Shop'
       end
 
       def create_shop_fixtures
