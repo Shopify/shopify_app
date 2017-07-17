@@ -185,10 +185,18 @@ Mounting the Engine will provide the basic routes to authenticating a shop with 
 The default routes of the Shopify rails engine, which is mounted to the root, can be altered to mount on a different route. The `config/routes.rb` can be modified to put these under a nested route (say `/app-name`) as:
 
 ```ruby
-mount ShopifyApp::Engine, at: '/app-name'
+mount ShopifyApp::Engine, at: '/nested'
 ```
 
-This will create the Shopify engine routes under the specified Subdirectory, as a result it will redirect new consumers to `/app-name/login` and following a similar format for the other engine routes.
+This will create the Shopify engine routes under the specified subpath, as a result it will redirect new consumers to `/nested/login`. If you mount the engine at a subpath you'll also need to update the omniauth initializer to include a custom `callback_path` e.g:
+
+```ruby
+  provider :shopify,
+    ShopifyApp.configuration.api_key,
+    ShopifyApp.configuration.secret,
+    scope: ShopifyApp.configuration.scope,
+    callback_path: '/nested/auth/shopify/callback'
+```
 
 To use named routes with the engine so that it can route between the application and the engine's routes it should be prefixed with `main_app` or `shopify_app`.
 
