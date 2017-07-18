@@ -60,6 +60,11 @@ git add .
 git commit -m 'generated shopify app'
 ```
 
+If you forget to set your keys or redirect uri above you will find them in the shopify_app initializer at: `/config/initializers/.`
+In light of this section we recommend adding a gem or utilizing ENV variables to handle your keys.
+* Handle your keys before releasing your app!
+
+
 6. Deploy
 ---------
 ```
