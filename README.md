@@ -54,7 +54,7 @@ Check out this screencast on how to create and deploy a new Shopify App to Herok
 
 [https://vimeo.com/130247240](https://vimeo.com/130247240)
 
-Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/QUICKSTART.md)
+Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md)
 
 Becoming a Shopify App Developer
 --------------------------------
@@ -326,7 +326,7 @@ Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopi
 Troubleshooting
 ---------------
 
-see [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+see [TROUBLESHOOTING.md](https://github.com/Shopify/shopify_app/blob/master/docs/Troubleshooting.md)
 
 Testing an embedded app outside the Shopify admin
 -------------------------------------------------
