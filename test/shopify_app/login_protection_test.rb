@@ -30,7 +30,7 @@ class LoginProtectionTest < ActionController::TestCase
   tests LoginProtectionController
 
   setup do
-    ShopifyApp::SessionRepository.storage = InMemorySessionStore
+    ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
   end
 
   test "#shop_session returns nil when session is nil" do
