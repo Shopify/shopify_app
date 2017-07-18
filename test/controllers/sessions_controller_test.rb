@@ -11,7 +11,7 @@ module ShopifyApp
 
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp::SessionRepository.storage = InMemorySessionStore
+      ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
       ShopifyApp.configuration = nil
 
       I18n.locale = :en
