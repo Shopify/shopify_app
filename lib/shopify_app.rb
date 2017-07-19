@@ -11,7 +11,6 @@ require 'shopify_app/configuration'
 require 'shopify_app/engine'
 
 # helpers and concerns
-require 'shopify_app/shop'
 require 'shopify_app/session_storage'
 require 'shopify_app/localization'
 require 'shopify_app/login_protection'
