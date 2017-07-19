@@ -4,7 +4,11 @@ require 'generators/shopify_app/shop_model/shop_model_generator'
 class ShopModelGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::ShopModelGenerator
   destination File.expand_path("../tmp", File.dirname(__FILE__))
-  setup :prepare_destination
+
+  setup do
+    prepare_destination
+    provide_existing_initializer_file
+  end
 
   test "create the shop model" do
     run_generator
@@ -22,10 +26,10 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "adds the shopify_session_repository initializer" do
+  test "updates the shopify_app initializer" do
     run_generator
-    assert_file "config/initializers/shopify_session_repository.rb" do |file|
-      assert_match "ShopifyApp::SessionRepository.storage = Shop", file
+    assert_file "config/initializers/shopify_app.rb" do |file|
+      assert_match "config.session_repository = Shop", file
     end
   end
 
