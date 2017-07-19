@@ -41,20 +41,25 @@ module ShopifyApp
         head :unauthorized
       else
         session[:return_to] = request.fullpath if request.get?
-        redirect_to main_or_engine_login_url(shop: params[:shop])
+        redirect_to login_url
       end
     end
 
     def close_session
       session[:shopify] = nil
       session[:shopify_domain] = nil
-      redirect_to main_or_engine_login_url(shop: params[:shop])
+      redirect_to login_url
     end
 
-    def main_or_engine_login_url(params = {})
-      main_app.login_url(params)
-    rescue NoMethodError
-      shopify_app_engine.login_url(host: "https://#{request.host}", params: params)
+    def login_url
+      url = ShopifyApp.configuration.login_url
+
+      if params[:shop].present?
+        query = { shop: params[:shop] }.to_query
+        url = "#{url}?#{query}"
+      end
+
+      url
     end
 
     def fullpage_redirect_to(url)
@@ -113,12 +118,6 @@ module ShopifyApp
     def sanitize_shop_param(params)
       return unless params[:shop].present?
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
-    end
-
-    private
-
-    def shopify_app_engine
-      ShopifyApp::Engine.routes.url_helpers
     end
   end
 end
