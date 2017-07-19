@@ -1,3 +1,6 @@
+8.0.0 (unreleased)
+------------------
+
 7.4.0
 -----
 * Add an after_authenticate job which will be run once the shop is authenticated. [[#431]](https://github.com/Shopify/shopify_app/pull/432)
