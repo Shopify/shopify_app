@@ -1,3 +1,6 @@
+8.0.0 (unreleased)
+------------------
+
 7.3.0
 -----
 * Bump required omniauth-shopify-oauth2 version to 1.2.0.
