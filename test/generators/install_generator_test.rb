@@ -20,6 +20,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.secret = "<secret>"', shopify_app
       assert_match 'config.scope = "read_orders, read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
+      assert_match "config.after_authenticate_job = false", shopify_app
     end
   end
 

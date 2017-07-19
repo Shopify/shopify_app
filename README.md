@@ -27,6 +27,7 @@ Table of Contents
 * [**Managing Api Keys**](#managing-api-keys)
 * [**WebhooksManager**](#webhooksmanager)
 * [**ScripttagsManager**](#scripttagsmanager)
+* [**AfterAuthenticate Job**](#afterauthenticate-job)
 * [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
 * [**AuthenticatedController**](#authenticatedcontroller)
 * [**AppProxyVerification**](#appproxyverification)
@@ -297,6 +298,31 @@ You also need to have write_script_tags permission in the config scope in order 
 Scripttags are created in the same way as the Webhooks, with a background job which will create the required scripttags.
 
 If `src` responds to `call` its return value will be used as the scripttag's source. It will be called on scripttag creation and deletion.
+
+AfterAuthenticate Job
+---------------------
+
+If your app needs to perform specific actions after it is installed ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.add_after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
+end
+```
+
+If you need the job to run synchronously add the `inline` flag:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.add_after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
+end
+```
+
+We've also provided a generator which creates a skeleton job and updates the initializer for you:
+
+```
+bin/rails g shopify_app:add_after_authenticate_job
+```
 
 ShopifyApp::SessionRepository
 -----------------------------
