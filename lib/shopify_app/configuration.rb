@@ -17,7 +17,6 @@ module ShopifyApp
 
     # customise urls
     attr_accessor :root_url
-    attr_accessor :login_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -27,11 +26,14 @@ module ShopifyApp
     attr_accessor :myshopify_domain
 
     def initialize
-      @myshopify_domain = 'myshopify.com'
       @root_url = '/'
-      @login_url = '/login'
+      @myshopify_domain = 'myshopify.com'
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
+    end
+
+    def login_url
+      File.join(@root_url, 'login')
     end
 
     def session_repository=(klass)

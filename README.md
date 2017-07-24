@@ -189,18 +189,15 @@ If required the engine can be mounted at a nested route, eg:
 mount ShopifyApp::Engine, at: '/nested'
 ```
 
-This will create the Shopify engine routes under the specified subpath. You'll also need to make some updates to your `shopify_app.rb` and `omniauth.rb` initializers.
-
-update the shopify_app initializer to include a custom `root_url` and `login_url` e.g:
+This will create the Shopify engine routes under the specified subpath. You'll also need to make some updates to your `shopify_app.rb` and `omniauth.rb` initializers. First update the shopify_app initializer to include a custom `root_url` e.g:
 
 ```ruby
 ShopifyApp.configure do |config|
   config.root_url = '/nested'
-  config.login_url = '/nested/login'
 end
 ```
 
-and update the omniauth initializer to include a custom `callback_path` e.g:
+then update the omniauth initializer to include a custom `callback_path` e.g:
 
 ```ruby
 provider :shopify,
