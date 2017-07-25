@@ -6,6 +6,7 @@
 * Changed engine controllers to subclass ActionController::Base to avoid any possible conflict with the parent application
 * Removed the `ShopifyApp::Shop` concern and added its methods to `ShopifyApp::SessionStorage`. To update for this change just remove this concern anywhere it is being used in your application.
 * Add `ShopifyApp::EmbeddedApp` controller concern which handles setting the required headers for the ESDK. Previously this was done by injecting configuration into applicaton.rb which affects the entire app.
+* Add webhooks to generated home controller. This should help new users debug issues.
 
 7.4.0
 -----
