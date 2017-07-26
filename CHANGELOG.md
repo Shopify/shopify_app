@@ -5,6 +5,7 @@
 * Remove ShopifySession concern. This module made the code internal to this engine harder to follow and we want do discourage over-writing the auth code now that we have generic hooks for all extra tasks during install.
 * Changed engine controllers to subclass ActionController::Base to avoid any possible conflict with the parent application
 * Removed the `ShopifyApp::Shop` concern and added its methods to `ShopifyApp::SessionStorage`. To update for this change just remove this concern anywhere it is being used in your application.
+* Add `ShopifyApp::EmbeddedApp` controller concern which handles setting the required headers for the ESDK. Previously this was done by injecting configuration into applicaton.rb which affects the entire app.
 
 7.4.0
 -----

@@ -34,13 +34,6 @@ module ShopifyApp
         )
       end
 
-      def inject_embedded_app_options_to_application
-        if embedded_app?
-          application "config.action_dispatch.default_headers.delete('X-Frame-Options')"
-          application "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'"
-        end
-      end
-
       def create_embedded_app_layout
         if embedded_app?
           copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
