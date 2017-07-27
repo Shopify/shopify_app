@@ -62,22 +62,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "adds the embedded app options to application.rb" do
-    run_generator
-    assert_file "config/application.rb" do |application|
-      assert_match "config.action_dispatch.default_headers.delete('X-Frame-Options')", application
-      assert_match "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'", application
-    end
-  end
-
-  test "doesn't add embedd options if -embedded false" do
-    run_generator %w(--embedded false)
-    assert_file "config/application.rb" do |application|
-      refute_match "config.action_dispatch.default_headers.delete('X-Frame-Options')", application
-      refute_match "config.action_dispatch.default_headers['P3P'] = 'CP=\"Not used\"'", application
-    end
-  end
-
   test "creates the embedded_app layout" do
     run_generator
     assert_file "app/views/layouts/embedded_app.html.erb"
