@@ -13,6 +13,10 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
+    attr_accessor :session_repository
+
+    # customise urls
+    attr_accessor :root_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -22,7 +26,24 @@ module ShopifyApp
     attr_accessor :myshopify_domain
 
     def initialize
+      @root_url = '/'
       @myshopify_domain = 'myshopify.com'
+      @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
+      @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
+    end
+
+    def login_url
+      File.join(@root_url, 'login')
+    end
+
+    def session_repository=(klass)
+      if Rails.configuration.cache_classes
+        ShopifyApp::SessionRepository.storage = klass
+      else
+        ActiveSupport::Reloader.to_prepare do
+          ShopifyApp::SessionRepository.storage = klass
+        end
+      end
     end
 
     def has_webhooks?
@@ -31,14 +52,6 @@ module ShopifyApp
 
     def has_scripttags?
       scripttags.present?
-    end
-
-    def scripttags_manager_queue_name
-      @scripttags_manager_queue_name ||= Rails.application.config.active_job.queue_name
-    end
-
-    def webhooks_manager_queue_name
-      @webhooks_manager_queue_name ||= Rails.application.config.active_job.queue_name
     end
   end
 

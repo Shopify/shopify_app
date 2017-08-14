@@ -1,3 +1,13 @@
+8.0.0 (unreleased)
+------------------
+* Removed the `shopify_session_repository` initializer. The SessionRepository is now configured through the main ShopifyApp configuration object and the generated initializer
+* Moved InMemorySessionStore into the ShopifyApp namespace
+* Remove ShopifySession concern. This module made the code internal to this engine harder to follow and we want do discourage over-writing the auth code now that we have generic hooks for all extra tasks during install.
+* Changed engine controllers to subclass ActionController::Base to avoid any possible conflict with the parent application
+* Removed the `ShopifyApp::Shop` concern and added its methods to `ShopifyApp::SessionStorage`. To update for this change just remove this concern anywhere it is being used in your application.
+* Add `ShopifyApp::EmbeddedApp` controller concern which handles setting the required headers for the ESDK. Previously this was done by injecting configuration into applicaton.rb which affects the entire app.
+* Add webhooks to generated home controller. This should help new users debug issues.
+
 7.4.0
 -----
 * Add an after_authenticate job which will be run once the shop is authenticated. [[#431]](https://github.com/Shopify/shopify_app/pull/432)

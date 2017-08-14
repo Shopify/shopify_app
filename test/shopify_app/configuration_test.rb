@@ -20,6 +20,18 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal false, ShopifyApp.configuration.after_authenticate_job
   end
 
+  test "defaults login_url" do
+    assert_equal "/login", ShopifyApp.configuration.login_url
+  end
+
+  test "can set root_url which affects login_url" do
+    ShopifyApp.configure do |config|
+      config.root_url = "/nested"
+    end
+
+    assert_equal "/nested/login", ShopifyApp.configuration.login_url
+  end
+
   test "defaults to myshopify_domain" do
     assert_equal "myshopify.com", ShopifyApp.configuration.myshopify_domain
   end
@@ -54,6 +66,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "webhooks_manager_queue_name and scripttags_manager_queue_name are equal to ActiveJob queue_name if not configured" do
     Rails.application.config.active_job.queue_name = :'custom-queue-name'
+    ShopifyApp.configuration = nil
 
     assert_equal :'custom-queue-name', ShopifyApp.configuration.webhooks_manager_queue_name
     assert_equal :'custom-queue-name', ShopifyApp.configuration.scripttags_manager_queue_name
@@ -61,6 +74,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "webhooks_manager_queue_name and scripttags_manager_queue_name are nil if not configured and ActiveJob queue_name is nil (activeJob overrides a nil queue_name to default)" do
     Rails.application.config.active_job.stubs(:queue_name).returns(:default)
+    ShopifyApp.configuration = nil
 
     assert_equal :default, ShopifyApp.configuration.webhooks_manager_queue_name
     assert_equal :default, ShopifyApp.configuration.scripttags_manager_queue_name
