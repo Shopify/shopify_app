@@ -100,6 +100,15 @@ module ShopifyApp
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
     end
 
+    test "#callback should setup a shopify session with a user for online mode" do
+      mock_shopify_user_omniauth
+
+      get :callback, params: { shop: 'shop' }
+      assert_not_nil session[:shopify]
+      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+      assert_equal 'user_object', session[:shopify_user]
+    end
+
     test "#callback should start the WebhooksManager if webhooks are configured" do
       ShopifyApp.configure do |config|
         config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks'}]
@@ -194,6 +203,17 @@ module ShopifyApp
 
     def mock_shopify_omniauth
       OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: {token: '1234'})
+      request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
+      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
+    end
+
+    def mock_shopify_user_omniauth
+      OmniAuth.config.add_mock(:shopify,
+        provider: :shopify,
+        uid: 'shop.myshopify.com',
+        credentials: {token: '1234'},
+        extra: {associated_user: 'user_object'}
+      )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
     end

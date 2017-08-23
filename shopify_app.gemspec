@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.2.2"
 
   s.add_runtime_dependency('rails', '>= 5.0.0')
-  s.add_runtime_dependency('shopify_api', '>= 4.3.2')
+  s.add_runtime_dependency('shopify_api', '>= 4.3.5')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 1.2.0')
 
   s.add_development_dependency('rake')
