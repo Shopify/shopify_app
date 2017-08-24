@@ -1,6 +1,7 @@
 8.0.1 (unreleased)
 ------------------
 * Add support for per_user_authentication
+* Pass the shop param in the sesssion for authentication instead of a url param (prevents csrf)
 
 8.0.0
 -----
