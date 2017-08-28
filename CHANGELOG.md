@@ -1,3 +1,7 @@
+8.0.1 (unreleased)
+------------------
+* Add support for per_user_authentication
+
 8.0.0
 -----
 * Removed the `shopify_session_repository` initializer. The SessionRepository is now configured through the main ShopifyApp configuration object and the generated initializer

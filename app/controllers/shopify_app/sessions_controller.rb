@@ -26,8 +26,7 @@ module ShopifyApp
     end
 
     def destroy
-      session[:shopify] = nil
-      session[:shopify_domain] = nil
+      reset_session
       flash[:notice] = I18n.t('.logged_out')
       redirect_to login_url
     end
@@ -46,6 +45,7 @@ module ShopifyApp
       sess = ShopifyAPI::Session.new(shop_name, token)
       session[:shopify] = ShopifyApp::SessionRepository.store(sess)
       session[:shopify_domain] = shop_name
+      session[:shopify_user] = associated_user if associated_user.present?
     end
 
     def auth_hash
@@ -54,6 +54,11 @@ module ShopifyApp
 
     def shop_name
       auth_hash.uid
+    end
+
+    def associated_user
+      return unless auth_hash['extra'].present?
+      auth_hash['extra']['associated_user']
     end
 
     def token

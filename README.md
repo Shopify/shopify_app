@@ -207,6 +207,22 @@ provider :shopify,
   callback_path: '/nested/auth/shopify/callback'
 ```
 
+Per User Authentication
+-----------------------
+To enable per user authentication you need to update the `omniauth.rb` initializer:
+
+```ruby
+provider :shopify,
+  ShopifyApp.configuration.api_key,
+  ShopifyApp.configuration.secret,
+  scope: ShopifyApp.configuration.scope,
+  per_user_permissions: true
+```
+
+The current Shopify user will be stored in the rails session at `session[:shopify_user]`
+
+This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
+
 Managing Api Keys
 -----------------
 
