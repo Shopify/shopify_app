@@ -35,7 +35,8 @@ module ShopifyApp
 
     def authenticate
       if sanitized_shop_name.present?
-        fullpage_redirect_to "#{main_app.root_path}auth/shopify?shop=#{sanitized_shop_name}"
+        session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
+        fullpage_redirect_to "#{main_app.root_path}auth/shopify"
       else
         redirect_to return_address
       end
@@ -43,6 +44,10 @@ module ShopifyApp
 
     def login_shop
       sess = ShopifyAPI::Session.new(shop_name, token)
+
+      request.session_options[:renew] = true
+      session.delete(:_csrf_token)
+
       session[:shopify] = ShopifyApp::SessionRepository.store(sess)
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user if associated_user.present?
