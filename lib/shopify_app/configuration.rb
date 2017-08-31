@@ -25,6 +25,9 @@ module ShopifyApp
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
+    # allow namespacing webhook jobs
+    attr_accessor :webhook_jobs_namespace
+
     def initialize
       @root_url = '/'
       @myshopify_domain = 'myshopify.com'

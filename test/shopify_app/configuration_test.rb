@@ -91,4 +91,24 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal :'my-custom-worker-2', ShopifyApp.configuration.scripttags_manager_queue_name
   end
 
+  test "webhook_jobs_namespace handles default" do
+    assert_equal "TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+  end
+
+  test "webhook_jobs_namespace handles single plural value" do
+    ShopifyApp.configure do |config|
+      config.webhook_jobs_namespace = 'webhooks'
+    end
+
+    assert_equal "Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+  end
+
+  test "webhook_jobs_namespace handles nested values" do
+    ShopifyApp.configure do |config|
+      config.webhook_jobs_namespace = 'shopify/webhooks'
+    end
+
+    assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+  end
+
 end
