@@ -1,7 +1,7 @@
 8.1.0
 -----
 * Add support for per_user_authentication
-* Pass the shop param in the session for authentication instead of a url param (prevents csrf)
+* Pass the shop param in the session for authentication instead of a url param (prevents csrf). If you are upgrading from an older version of the gem you will need to update your omniauth.rb initializer file. Check the example app for what it what it should look like.
 
 8.0.0
 -----
