@@ -3,92 +3,111 @@
 <head>
   <title>Shopify App — Installation</title>
 
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
-    html, body { padding: 0; margin: 0; }
+    * {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
 
     body {
-      font-family: "ProximaNovaLight", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background-color: #f2f7fa;
-    }
-
-    h1 {
-      font-weight: 300;
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-
-    .subhead {
-      font-size: 17px;
-      line-height: 32px;
-      font-weight: 300;
-      color: #969A9C;
-    }
-
-    input {
-      width: 300px;
-      height: 50px;
-      padding: 10px;
-      border: 1px solid #479CCf;
-      color: #575757;
-      background-color: #ffffff;
-      box-sizing: border-box;
-      border-radius: 4px 0 0 4px;
-      font-size: 18px;
-      float: left;
-    }
-
-    button {
-      color: #ffffff;
-      background-color: #3793cb;
-      width: 100px;
-      height: 50px;
-      padding: 10px 20px 10px 20px;
-      box-sizing: border-box;
-      border: none;
-      text-shadow: 0 1px 0 #3188bc;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 0 4px 4px 0;
-      float: right;
-    }
-
-    button:hover {
-      background-color: #479CCf;
-    }
-
-    form {
-      display: block;
+      padding: 2.5em 0;
+      color: #212b37;
+      font-family: -apple-system,BlinkMacSystemFont,San Francisco,Roboto,Segoe UI,Helvetica Neue,sans-serif;
     }
 
     .container {
+      width: 100%;
       text-align: center;
-      margin-top: 100px;
-      padding: 20px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .container__form {
-      width: 400px;
-      margin: auto;
+    @media screen and (min-width: 510px) {
+      .container {
+        width: 510px;
+      }
+    }
+
+    .title {
+      font-size: 1.5em;
+      margin: 2em auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-all;
+    }
+
+    .subtitle {
+      font-size: 0.8em;
+      font-weight: 500;
+      color: #64737f;
+      line-height: 2em;
+    }
+
+    input.marketing-input {
+      width: 100%;
+      height: 52px;
+      padding: 0 15px;
+      box-shadow: 0 0 0 1px #ddd;
+      border: 0;
+      border-radius: 5px;
+      background-color: #fff;
+      font-size: 1em;
+      margin-bottom: 15px;
+    }
+
+    input.marketing-input:focus {
+      color: #000;
+      outline: 0;
+      box-shadow: 0 0 0 2px #5e6ebf;
+    }
+
+    button.marketing-button {
+      display: inline-block;
+      width: 100%;
+      padding: 1.0625em 1.875em;
+      background-color: #5e6ebf;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1em;
+      text-align: center;
+      outline: none;
+      border: 0 solid transparent;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button.marketing-button:hover {
+      background: linear-gradient(to bottom, #5c6ac4, #4959bd);
+      border-color: #3f4eae;
+    }
+
+    button.marketing-button:focus {
+      box-shadow: 0 0 0.1875em 0.1875em rgba(94,110,191,0.5);
+      background-color: #223274;
+      color: #fff;
     }
   </style>
 </head>
 <body>
 
   <main class="container" role="main">
-    <header>
-      <% application_name = ShopifyApp.configuration.application_name %>
-      <h1><%= application_name.presence || 'Shopify App – Installation' %></h1>
-      <p class="subhead">
-        <label for="shop">Enter your shop domain to log in or install this app.</label>
-      </p>
-    </header>
+    <% application_name = ShopifyApp.configuration.application_name %>
+    <h3 class="title">
+      <%= application_name.presence || 'Shopify App – Installation' %>
+    </h3>
+    <p class="subtitle">
+      <label for="shop">Enter your shop domain to log in or install this app.</label>
+    </p>
 
-    <div class="container__form">
-      <form method="GET" action="login">
-        <input type="text" name="shop" id="shop" placeholder="example.myshopify.com"/>
-        <button type="submit">Install</button>
-      </form>
-    </div>
+    <form method="GET" action="login">
+      <input id="shop" name="shop" type="text" autofocus="autofocus" placeholder="example.myshopify.com" class="marketing-input">
+      <button type="submit" class="marketing-button">Install</button>
+    </form>
   </main>
 
 </body>
