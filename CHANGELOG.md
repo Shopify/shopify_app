@@ -1,3 +1,7 @@
+Upcoming
+-----
+* Add `webhook_jobs_namespace` config option. [[#463]](https://github.com/Shopify/shopify_app/pull/463)
+
 8.1.0
 -----
 * Add support for per_user_authentication

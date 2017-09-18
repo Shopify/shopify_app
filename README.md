@@ -182,14 +182,15 @@ Mounting the Engine will provide the basic routes to authenticating a shop with 
 |GET     |'/logout'                      |Logout                        |
 |POST    |'/webhooks/:type'              |Webhook Callback              |
 
+### Nested Routes
 
-If required the engine can be mounted at a nested route, eg:
+The engine may also be mounted at a nested route, for example:
 
 ```ruby
 mount ShopifyApp::Engine, at: '/nested'
 ```
 
-This will create the Shopify engine routes under the specified subpath. You'll also need to make some updates to your `shopify_app.rb` and `omniauth.rb` initializers. First update the shopify_app initializer to include a custom `root_url` e.g:
+This will create the Shopify engine routes under the specified subpath. You'll also need to make some updates to your `shopify_app.rb` and `omniauth.rb` initializers. First update the shopify_app initializer to include a custom `root_url` e.g.:
 
 ```ruby
 ShopifyApp.configure do |config|
@@ -197,7 +198,7 @@ ShopifyApp.configure do |config|
 end
 ```
 
-then update the omniauth initializer to include a custom `callback_path` e.g:
+then update the omniauth initializer to include a custom `callback_path` e.g.:
 
 ```ruby
 provider :shopify,
@@ -242,7 +243,7 @@ end
 WebhooksManager
 ---------------
 
-ShopifyApp can manage your app's webhooks for you by setting which webhooks you require in the initializer:
+ShopifyApp can manage your app's webhooks for you if you set which webhooks you require in the initializer:
 
 ```ruby
 ShopifyApp.configure do |config|
@@ -254,7 +255,15 @@ end
 
 When the oauth callback is completed successfully ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every oauth callback it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
 
-ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the webhook url. For example if you register the webhook from above then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params `shop_domain` and `webhook` which is the webhook body.
+ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the received topic. For example if you register the webhook from above then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params: `shop_domain` and `webhook` (which is the webhook body).
+
+If you would like to namespace your jobs you may set `webhook_jobs_namespace` in the config. For example if your app handles webhooks from other ecommerce applications as well, and you want Shopify cart update webhooks to be processed by a job living in `jobs/shopify/webhooks/carts_update_job.rb` rather than `jobs/carts_update_job.rb`):
+
+```ruby
+ShopifyApp.configure do |config|
+  config.webhook_jobs_namespace = 'shopify/webhooks'
+end
+```
 
 If you are only interested in particular fields, you can optionally filter the data sent by Shopify by specifying the `fields` parameter in `config/webhooks`. Note that you will still receive a webhook request from Shopify every time the resource is updated, but only the specified fields will be sent.
 
