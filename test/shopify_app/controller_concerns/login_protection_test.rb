@@ -10,11 +10,11 @@ class LoginProtectionController < ActionController::Base
   before_action :login_again_if_different_shop, only: [:second_login]
 
   def index
-    render nothing: true
+    render plain: "OK"
   end
 
   def second_login
-    render nothing: true
+    render plain: "OK"
   end
 
   def redirect
@@ -70,6 +70,18 @@ class LoginProtectionTest < ActionController::TestCase
       assert_redirected_to '/login?shop=other_shop'
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
+    end
+  end
+
+  test "#login_again_if_different_shop ignores non-String shop params so that Rails params for Shop model can be accepted" do
+    with_application_test_routes do
+      session[:shopify] = "foobar"
+      session[:shopify_domain] = "foobar"
+      sess = stub(url: 'https://foobar.myshopify.com')
+      ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
+
+      get :second_login, params: { shop: { id: 123, disabled: true } }
+      assert_response :ok
     end
   end
 
