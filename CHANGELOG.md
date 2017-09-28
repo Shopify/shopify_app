@@ -5,16 +5,22 @@
 
 8.2.0
 -----
+Known bug: Shop logged out when submitting a form for 'Shop' objects, fixed in 8.2.1 [[See #480 for details]](https://github.com/Shopify/shopify_app/issues/480)
+
 * Add `webhook_jobs_namespace` config option. [[#463]](https://github.com/Shopify/shopify_app/pull/463)
 * Updates login page styles to match the [Polaris](https://polaris.shopify.com/) design system. [[#474]](https://github.com/Shopify/shopify_app/pull/474)
 
 8.1.0
 -----
+Known bug: Shop logged out when submitting a form for 'Shop' objects, fixed in 8.2.1 [[See #480 for details]](https://github.com/Shopify/shopify_app/issues/480)
+
 * Add support for per_user_authentication
 * Pass the shop param in the session for authentication instead of a url param (prevents csrf). If you are upgrading from an older version of the gem you will need to update your omniauth.rb initializer file. Check the example app for what it what it should look like.
 
 8.0.0
 -----
+Known bug: Shop logged out when submitting a form for 'Shop' objects, fixed in 8.2.1 [[See #480 for details]](https://github.com/Shopify/shopify_app/issues/480)
+
 * Removed the `shopify_session_repository` initializer. The SessionRepository is now configured through the main ShopifyApp configuration object and the generated initializer
 * Moved InMemorySessionStore into the ShopifyApp namespace
 * Remove ShopifySession concern. This module made the code internal to this engine harder to follow and we want to discourage over-writing the auth code now that we have generic hooks for all extra tasks during install.
@@ -25,10 +31,14 @@
 
 7.4.0
 -----
+Known bug: Shop logged out when submitting a form for 'Shop' objects, fixed in 8.2.1 [[See #480 for details]](https://github.com/Shopify/shopify_app/issues/480)
+
 * Add an after_authenticate job which will be run once the shop is authenticated. [[#431]](https://github.com/Shopify/shopify_app/pull/432)
 
 7.3.0
 -----
+Known bug: Shop logged out when submitting a form for 'Shop' objects, fixed in 8.2.1 [[See #480 for details]](https://github.com/Shopify/shopify_app/issues/480)
+
 * Bump required omniauth-shopify-oauth2 version to 1.2.0.
 * Always expect params[:shop] to be a string.
 
