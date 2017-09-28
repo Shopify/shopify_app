@@ -1,3 +1,8 @@
+8.2.1
+-----
+* Bugfix: Don't logout shops from `login_again_if_different_shop` when Rails
+  params for a 'Shop' model are passed in [[#477]](https://github.com/Shopify/shopify_app/pull/477)
+
 8.2.0
 -----
 * Add `webhook_jobs_namespace` config option. [[#463]](https://github.com/Shopify/shopify_app/pull/463)
