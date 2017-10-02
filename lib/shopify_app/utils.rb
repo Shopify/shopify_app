@@ -7,7 +7,7 @@ module ShopifyApp
       name.sub!(%r|https?://|, '')
 
       u = URI("http://#{name}")
-      u.host && u.host.ends_with?(".#{ShopifyApp.configuration.myshopify_domain}") ? u.host : nil
+      u.host if u.host&.match(/^[a-z0-9][a-z0-9\-]*[a-z0-9]\.#{Regexp.escape(ShopifyApp.configuration.myshopify_domain)}$/)
     rescue URI::InvalidURIError
       nil
     end
