@@ -19,10 +19,9 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
-  ['myshop.com', 'myshopify.com', 'shopify.com', 'two words', 'store.myshopify.com.evil.com', '/foo/bar'].each do |bad_url|
+  ['myshop.com', 'myshopify.com', 'shopify.com', 'two words', 'store.myshopify.com.evil.com', '/foo/bar', 'foo.myshopify.io.evil.ru', '%0a123.myshopify.io', 'foo.bar.myshopify.io'].each do |bad_url|
     test "sanitize_shop_domain for a non-myshopify URL (#{bad_url})" do
       assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
     end
   end
-
 end
