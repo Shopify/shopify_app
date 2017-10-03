@@ -1,3 +1,7 @@
+8.2.2
+-----
+* Changes how the ESDK concern allows iframes. Fixes an issue with the first request for some people
+
 8.2.1
 -----
 * Bugfix: Don't logout shops from `login_again_if_different_shop` when Rails
