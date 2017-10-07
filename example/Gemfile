@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.5.1'
+gem 'rails' # v4.2.5.1 is outdated, causing bundler to fail. all works well with latest version of rails
 gem 'sqlite3'
 
 gem 'dotenv-rails'
