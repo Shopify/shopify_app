@@ -275,20 +275,27 @@ ShopifyApp.configure do |config|
 end
 ```
 
-If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks:
+If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks, example:
 
 ```ruby
 class CustomWebhooksController < ApplicationController
   include ShopifyApp::WebhookVerification
 
   def carts_update
-    SomeJob.perform_later(shopify_domain: shop_domain, webhook: params)
-    head :ok
+    params.permit!
+    SomeJob.perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h)
+    head :no_content
+  end
+
+  private
+
+  def webhook_params
+    params.except(:controller, :action, :type)
   end
 end
 ```
 
-The module skips the `verify_authenticity_token` before_action and adds an action to verify that the webhook came from Shopify.
+The module skips the `verify_authenticity_token` before_action and adds an action to verify that the webhook came from Shopify. You can now add a post route to your application pointing to the controller and action to accept the webhook data from Shopify.
 
 The WebhooksManager uses ActiveJob, if ActiveJob is not configured then by default Rails will run the jobs inline. However it is highly recommended to configure a proper background processing queue like sidekiq or resque in production.
 
