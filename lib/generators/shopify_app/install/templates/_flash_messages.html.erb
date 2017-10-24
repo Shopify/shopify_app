@@ -1,8 +1,8 @@
 <% content_for :javascript do %>
 <script type="text/javascript">
-  var eventName = typeof(Turbolinks) !== 'undefined' ? 'page:change' : 'DOMContentLoaded';
+  var eventName = typeof(Turbolinks) !== 'undefined' ? 'turbolinks:load' : 'DOMContentLoaded';
 
-  document.addEventListener(eventName, function() {
+  document.addEventListener(eventName, function flash() {
     <% if flash[:notice] %>
       ShopifyApp.flashNotice("<%= j flash[:notice].html_safe %>");
     <% end %>
@@ -10,6 +10,8 @@
     <% if flash[:error] %>
       ShopifyApp.flashError("<%= j flash[:error].html_safe %>");
     <% end %>
+                             
+    document.removeEventListener(eventName, flash)
   });
 </script>
 <% end %>
