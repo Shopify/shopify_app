@@ -1,3 +1,7 @@
+8.3.0
+-----
+* Add CSRF protection through `protect_from_forgery with: :exception` on `ShopifyApp::AuthenticatedController`
+
 8.2.3
 -----
 * Send head :forbidden instead of :unauthorized when AppProxyVerification fails
