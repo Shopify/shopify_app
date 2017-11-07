@@ -8,6 +8,7 @@ Shopify App
 
 Shopify Application Rails engine and generator
 
+#### NOTE : Versions 8.0.0 through 8.2.3 contained a CSRF vulnerability that was addressed in version 8.2.4. Please update to version 8.2.4 if you're using an old version.
 
 Table of Contents
 -----------------
