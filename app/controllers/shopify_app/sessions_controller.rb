@@ -2,6 +2,9 @@ module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
     layout false, only: :new
+    after_action only: :new do |controller|
+      controller.response.headers.except!('X-Frame-Options')
+    end
 
     def new
       authenticate if sanitized_shop_name.present?
