@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.author      = "Shopify"
   s.summary     = %q{This gem is used to get quickly started with the Shopify API}
 
-  s.required_ruby_version = ">= 2.2.2"
+  s.required_ruby_version = ">= 2.3.1"
 
   s.add_runtime_dependency('rails', '>= 5.0.0')
   s.add_runtime_dependency('shopify_api', '>= 4.3.5')
