@@ -73,6 +73,7 @@ module ShopifyApp
         post :create, params: { shop: bad_url }
         assert_response :redirect
         assert_redirected_to '/'
+        assert_equal I18n.t('invalid_shop_url'), flash[:error]
       end
     end
 

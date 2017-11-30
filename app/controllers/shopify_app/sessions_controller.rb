@@ -41,6 +41,7 @@ module ShopifyApp
         session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
         fullpage_redirect_to "#{main_app.root_path}auth/shopify"
       else
+        flash[:error] = I18n.t('invalid_shop_url')
         redirect_to return_address
       end
     end
