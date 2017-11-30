@@ -1,3 +1,4 @@
 en:
   logged_out: 'Successfully logged out'
   could_not_log_in: 'Could not log in to Shopify store'
+  invalid_shop_url: 'Invalid shop domain'
