@@ -1,3 +1,6 @@
+8.2.5
+* fix iframe headers on session controller
+
 8.2.4
 -----
 * Add CSRF protection through `protect_from_forgery with: :exception` on `ShopifyApp::AuthenticatedController`
