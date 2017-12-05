@@ -1,6 +1,8 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::EmbeddedApp
+
     layout false, only: :new
     after_action only: :new do |controller|
       controller.response.headers.except!('X-Frame-Options')
