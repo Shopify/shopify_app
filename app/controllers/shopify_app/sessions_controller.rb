@@ -2,7 +2,7 @@ module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
     layout false, only: :new
-    after_action only: :new do |controller|
+    after_action only: [:new, :create] do |controller|
       controller.response.headers.except!('X-Frame-Options')
     end
 
