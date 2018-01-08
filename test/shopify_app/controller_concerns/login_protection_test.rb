@@ -151,18 +151,13 @@ class LoginProtectionTest < ActionController::TestCase
   private
 
   def assert_fullpage_redirected(shop_domain, response)
-    example_url = "https://example.com".to_json
-    target_origin = "https://#{shop_domain}".to_json
+    example_url = "https://example.com"
 
-    post_message_handle = "message: 'Shopify.API.remoteRedirect'"
-    post_message_link = "normalizedLink.href = #{example_url}"
-    post_message_data = "data: { location: normalizedLink.href }"
-    post_message_call = "window.parent.postMessage(data, #{target_origin});"
-
-    assert_includes response.body, post_message_handle
-    assert_includes response.body, post_message_link
-    assert_includes response.body, post_message_data
-    assert_includes response.body, post_message_call
+    assert_template 'shared/redirect'
+    assert_select '[name=redirection-target]', 1 do |elements|
+      assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
+        elements.first['data-target']
+    end
   end
 
   def with_application_test_routes

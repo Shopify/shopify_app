@@ -64,44 +64,10 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render inline: redirection_javascript(url)
+        render 'shopify_app/shared/redirect', locals: { url: url, current_shopify_domain: current_shopify_domain }
       else
         redirect_to url
       end
-    end
-
-    def redirection_javascript(url)
-      %(
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <base target="_top">
-            <title>Redirecting…</title>
-            <script type="text/javascript">
-
-              // If the current window is the 'parent', change the URL by setting location.href
-              if (window.top == window.self) {
-                window.top.location.href = #{url.to_json};
-
-              // If the current window is the 'child', change the parent's URL with postMessage
-              } else {
-                normalizedLink = document.createElement('a');
-                normalizedLink.href = #{url.to_json};
-
-                data = JSON.stringify({
-                  message: 'Shopify.API.remoteRedirect',
-                  data: { location: normalizedLink.href }
-                });
-                window.parent.postMessage(data, "https://#{current_shopify_domain}");
-              }
-
-            </script>
-          </head>
-          <body>
-          </body>
-        </html>
-      )
     end
 
     def current_shopify_domain
