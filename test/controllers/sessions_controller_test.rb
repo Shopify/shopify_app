@@ -220,22 +220,13 @@ module ShopifyApp
     end
 
     def assert_redirected_to_authentication(shop_domain, response)
-      auth_url = "/auth/shopify".to_json
-      target_origin = "https://#{shop_domain}".to_json
+      auth_url = "/auth/shopify"
 
-      session_shop = session['shopify.omniauth_params'][:shop]
-
-      post_message_handle = "message: 'Shopify.API.remoteRedirect'"
-      post_message_link = "normalizedLink.href = #{auth_url}"
-      post_message_data = "data: { location: normalizedLink.href }"
-      post_message_call = "window.parent.postMessage(data, #{target_origin});"
-
-      assert_includes response.body, post_message_handle
-      assert_includes response.body, post_message_link
-      assert_includes response.body, post_message_data
-      assert_includes response.body, post_message_call
-      assert_equal session_shop, shop_domain
+      assert_template 'shared/redirect'
+      assert_select '[id=redirection-target]', 1 do |elements|
+        assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{auth_url}\"}",
+          elements.first['data-target']
+      end
     end
-
   end
 end
