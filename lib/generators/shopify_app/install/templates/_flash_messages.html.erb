@@ -1,5 +1,5 @@
 <% content_for :javascript do %>
-<script type="text/javascript">
+<script type="text/javascript" data-turbolinks-eval="false">
   var eventName = typeof(Turbolinks) !== 'undefined' ? 'turbolinks:load' : 'DOMContentLoaded';
 
   document.addEventListener(eventName, function flash() {
