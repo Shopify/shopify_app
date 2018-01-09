@@ -154,7 +154,7 @@ class LoginProtectionTest < ActionController::TestCase
     example_url = "https://example.com"
 
     assert_template 'shared/redirect'
-    assert_select '[name=redirection-target]', 1 do |elements|
+    assert_select '[id=redirection-target]', 1 do |elements|
       assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
         elements.first['data-target']
     end
