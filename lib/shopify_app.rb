@@ -19,6 +19,7 @@ require 'shopify_app/controller_concerns/login_protection'
 require 'shopify_app/controller_concerns/embedded_app'
 require 'shopify_app/controller_concerns/webhook_verification'
 require 'shopify_app/controller_concerns/app_proxy_verification'
+require 'shopify_app/controller_concerns/authenticated_by_shopify'
 
 # jobs
 require 'shopify_app/jobs/webhooks_manager_job'

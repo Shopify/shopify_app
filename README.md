@@ -364,10 +364,24 @@ ShopifyApp::SessionRepository
 
 If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain` and `shopify_token`.
 
-AuthenticatedController
+ShopifyApp::AuthenticatedByShopify
 -----------------------
 
-The engine includes a controller called `ShopifyApp::AuthenticatedController` which inherits from `ActionController::Base`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
+The engine includes a controller concern called `ShopifyApp::AuthenticatedByShopify` that wraps up all the necessary integration logic, adding some before_filters which ensure the user is authenticated and will redirect to the login page if not. 
+
+It is best practice to have all custom controllers you add that belong to the Shopify part of your app include the concern:
+
+```ruby
+class ShopifyHomeController < ApplicationController
+  include ShopifyApp::AuthenticatedByShopify
+
+  def index
+    @products = ShopifyAPI::Product.find(:all, params: { limit: 10 })
+  end
+end
+```
+
+Note that controllers in the engine itself inherit from `ShopifyApp::AuthenticatedController`, a wrapper around `ActionController::Base` with the concern included, rather than directly from `ApplicationController` in order to avoid interference with any custom logic you may have installed in your own application. You may alternatively inherit from `ShopifyApp::AuthenticatedController` as well, but be aware that unlike the rest of your app these controllers won't share any customizations you've made in ApplicationController.
 
 AppProxyVerification
 --------------------
