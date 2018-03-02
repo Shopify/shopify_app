@@ -367,7 +367,7 @@ If you only run the install generator then by default you will have an in memory
 AuthenticatedController
 -----------------------
 
-The engine includes a controller called `ShopifyApp::AuthenticatedController` which inherits from `ApplicationController`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
+The engine includes a controller called `ShopifyApp::AuthenticatedController` which inherits from `ActionController::Base`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
 
 AppProxyVerification
 --------------------
