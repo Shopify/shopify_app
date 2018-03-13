@@ -110,6 +110,8 @@ The default generator will run the `install`, `shop`, and `home_controller` gene
 
 ```sh
 $ rails generate shopify_app --api_key <your_api_key> --secret <your_app_secret>
+$ rake db:migrate
+$ bundle exec rails server
 ```
 
 
