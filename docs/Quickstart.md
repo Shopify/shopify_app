@@ -54,12 +54,12 @@ Note - its recommended to use the latest released version. Check the git tags to
 -------------------------------
 ```sh
 # use the keys from your app in the partners area
-$ rails generate shopify_app --api_key a366cbafaccebd2f615aebdfc932fa1c --secret 8750306a895b3dbc7f4136c2ae2ea293
+$ rails generate shopify_app --api_key <shopify_api_key> --secret <shopify_api_secret>
 $ git add .
 $ git commit -m 'generated shopify app'
 ```
 
-If you forget to set your keys or redirect uri above you will find them in the shopify_app initializer at: `/config/initializers/.`
+If you forget to set your keys or redirect uri above, you will find them in the shopify_app initializer at: `/config/initializers/shopify_app.rb`.
 
 We recommend adding a gem or utilizing ENV variables to handle your keys before releasing your app.
 
