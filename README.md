@@ -58,26 +58,20 @@ Check out this screencast on how to create and deploy a new Shopify App to Herok
 
 Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md)
 
+App Tunneling
+-------------
+
+When using the Embedded App SDK, you'll need to provide SSL to avoid mixed content issues. One of the easiest ways to do this is to create a secure tunnel from the public Internet to your local machine with a service like [Forward](https://forwardhq.com/) or  [ngrok](https://ngrok.com/).
+
+Using a secure tunnel will also allow you to test Application Proxies, Webhooks, and Carrier Services, since the tunnel will provide a publicly visible URL for Shopify to send requests to.
+
 Becoming a Shopify App Developer
 --------------------------------
 If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
 
-Once you have a Partner account create a new application to get an Api key and other Api credentials. To create a development application set the Application Callback URL to
-
-```
-http://localhost:3000/
-```
-
-and the `redirect_uri` to
-
-```
-http://localhost:3000/auth/shopify/callback
-```
-
-This way you'll be able to run the app on your local machine.
+Once you have a Partner account create a new application to get an Api key and other Api credentials. If you're using a tunneling service as described above, you will set the **App URL** and **Whitelisted redirection URL(s)** to match the URL given to you by the tunneling service.
 
 Also note, ShopifyApp creates embedded apps by default, so remember to check `enabled` for the embedded settings.
-
 
 Installation
 ------------
@@ -95,11 +89,9 @@ $ bundle install
 
 Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
 
-
 #### Rails Compatibility
 
 The lastest version of shopify_app is compatible with Rails `>= 5`. Use version `<= v7.2.8` if you need to work with Rails 4.
-
 
 Generators
 ----------
@@ -390,6 +382,7 @@ end
 Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
 
+
 Troubleshooting
 ---------------
 
@@ -403,13 +396,6 @@ By default, loading your embedded app will redirect to the Shopify admin, with t
 ```javascript
 forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
-
-App Tunneling
--------------
-
-For certain features like Application Proxy or Webhooks to receive requests from Shopify, your app needs to be on a publicly visible URL. This can be a hurdle during development or testing on a local machine. Fortunately, this can be overcome by employing a tunneling service like [Forward](https://forwardhq.com/), [RequestBin](https://requestb.in/), [ngrok](https://ngrok.com/) etc. These tools allow you to create a secure tunnel from the public Internet to your local machine.
-
-Tunneling is also useful for working the the embedded app sdk to solve mixed content issues since most tunnles provide ssl.
 
 Questions or problems?
 ----------------------
