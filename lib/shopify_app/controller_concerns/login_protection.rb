@@ -39,6 +39,8 @@ module ShopifyApp
     def redirect_to_login
       if request.xhr?
         head :unauthorized
+      elsif params[:shop].present?
+        fullpage_redirect_to login_url
       else
         session[:return_to] = request.fullpath if request.get?
         redirect_to login_url
