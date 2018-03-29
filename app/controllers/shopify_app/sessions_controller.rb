@@ -1,6 +1,9 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
+    rescue_from ActionController::InvalidAuthenticityToken,
+                with: :redirect_to_login
+
     layout false, only: :new
     after_action only: [:new, :create] do |controller|
       controller.response.headers.except!('X-Frame-Options')
