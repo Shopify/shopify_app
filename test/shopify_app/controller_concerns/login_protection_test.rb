@@ -66,8 +66,8 @@ class LoginProtectionTest < ActionController::TestCase
       session[:shopify_domain] = "foobar"
       sess = stub(url: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
-      get :second_login, params: { shop: 'other_shop' }
-      assert_redirected_to '/login?shop=other_shop'
+      get :second_login, params: { shop: 'other-shop' }
+      assert_redirected_to '/login?shop=other-shop.myshopify.com'
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
     end
@@ -88,14 +88,32 @@ class LoginProtectionTest < ActionController::TestCase
   test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
-      assert_redirected_to '/login?shop=foobar'
+      assert_redirected_to '/login?shop=foobar.myshopify.com'
+    end
+  end
+
+  test '#shopify_session with no Shopify session, redirects to the login url \
+        with non-String shop param' do
+    with_application_test_routes do
+      params = { shop: { id: 123 } }
+      get :index, params: params
+      assert_redirected_to "/login?#{params.to_query}"
     end
   end
 
   test '#shopify_session with no Shopify session, sets session[:return_to]' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
-      assert_equal '/?shop=foobar', session[:return_to]
+      assert_equal '/?shop=foobar.myshopify.com', session[:return_to]
+    end
+  end
+
+  test '#shopify_session with no Shopify session, sets session[:return_to]\
+        with non-String shop param' do
+    with_application_test_routes do
+      params = { shop: { id: 123 } }
+      get :index, params: params
+      assert_equal "/?#{params.to_query}", session[:return_to]
     end
   end
 
@@ -109,7 +127,7 @@ class LoginProtectionTest < ActionController::TestCase
   test '#shopify_session when rescuing from unauthorized access, redirects to the login url' do
     with_application_test_routes do
       get :raise_unauthorized, params: { shop: 'foobar' }
-      assert_redirected_to '/login?shop=foobar'
+      assert_redirected_to '/login?shop=foobar.myshopify.com'
     end
   end
 

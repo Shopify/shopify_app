@@ -40,7 +40,9 @@ module ShopifyApp
       if request.xhr?
         head :unauthorized
       else
-        session[:return_to] = request.fullpath if request.get?
+        if request.get?
+          session[:return_to] = "#{request.path}?#{sanitized_params.to_query}"
+        end
         redirect_to login_url
       end
     end
@@ -55,7 +57,7 @@ module ShopifyApp
       url = ShopifyApp.configuration.login_url
 
       if params[:shop].present?
-        query = { shop: params[:shop] }.to_query
+        query = { shop: sanitized_params[:shop] }.to_query
         url = "#{url}?#{query}"
       end
 
@@ -84,6 +86,14 @@ module ShopifyApp
     def sanitize_shop_param(params)
       return unless params[:shop].present?
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
+    end
+
+    def sanitized_params
+      request.query_parameters.clone.tap do |query_params|
+        if params[:shop].is_a?(String)
+          query_params[:shop] = sanitize_shop_param(params)
+        end
+      end
     end
   end
 end
