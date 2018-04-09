@@ -1,4 +1,9 @@
+8.2.6
+----
+* Sanitize the shop query param to include `.myshopify.com` if no domain was provided 
+
 8.2.5
+----
 * fix iframe headers on session controller
 
 8.2.4
