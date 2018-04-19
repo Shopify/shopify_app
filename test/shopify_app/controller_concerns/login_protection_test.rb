@@ -64,12 +64,14 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
+      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
       sess = stub(url: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
       get :second_login, params: { shop: 'other-shop' }
       assert_redirected_to '/login?shop=other-shop.myshopify.com'
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
+      assert_nil session[:shopify_user]
     end
   end
 
@@ -128,6 +130,20 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       get :raise_unauthorized, params: { shop: 'foobar' }
       assert_redirected_to '/login?shop=foobar.myshopify.com'
+    end
+  end
+
+  test '#shopify_session when rescuing from unauthorized access, clears shop session' do
+    with_application_test_routes do
+      session[:shopify] = 'foobar'
+      session[:shopify_domain] = 'foobar'
+      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+
+      get :raise_unauthorized, params: { shop: 'foobar' }
+
+      assert_nil session[:shopify]
+      assert_nil session[:shopify_domain]
+      assert_nil session[:shopify_user]
     end
   end
 
