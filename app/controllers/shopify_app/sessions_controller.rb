@@ -24,14 +24,14 @@ module ShopifyApp
         redirect_to return_address
       else
         flash[:error] = I18n.t('could_not_log_in')
-        redirect_to login_url
+        redirect_to login_url_with_optional_shop
       end
     end
 
     def destroy
       reset_session
       flash[:notice] = I18n.t('.logged_out')
-      redirect_to login_url
+      redirect_to login_url_with_optional_shop
     end
 
     private
