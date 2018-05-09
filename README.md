@@ -30,7 +30,7 @@ Table of Contents
 * [**ScripttagsManager**](#scripttagsmanager)
 * [**AfterAuthenticate Job**](#afterauthenticate-job)
 * [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
-* [**AuthenticatedController**](#authenticatedcontroller)
+* [**ShopifyApp::AuthenticatedByShopify**](#shopifyappauthenticatedbyshopify)
 * [**AppProxyVerification**](#appproxyverification)
  * [Recommended Usage](#recommended-usage)
 * [**Troubleshooting**](#troubleshooting)
@@ -380,8 +380,6 @@ class ShopifyHomeController < ApplicationController
   end
 end
 ```
-
-Note that controllers in the engine itself inherit from `ShopifyApp::AuthenticatedController`, a wrapper around `ActionController::Base` with the concern included, rather than directly from `ApplicationController` in order to avoid interference with any custom logic you may have installed in your own application. You may alternatively inherit from `ShopifyApp::AuthenticatedController` as well, but be aware that unlike the rest of your app these controllers won't share any customizations you've made in ApplicationController.
 
 AppProxyVerification
 --------------------

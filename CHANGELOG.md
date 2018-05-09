@@ -1,3 +1,7 @@
+Unrealeased
+---
+* Deprecated `ShopifyApp::AuthenticatedController` in favor of including `ShopifyApp::AuthenticatedByShopify`
+
 8.2.6
 ----
 * Sanitize the shop query param to include `.myshopify.com` if no domain was provided 

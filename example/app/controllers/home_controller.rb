@@ -1,4 +1,6 @@
-class HomeController < ShopifyApp::AuthenticatedController
+class HomeController < ApplicationController
+  include ShopifyApp::AuthenticatedByShopify
+
   def index
   end
 
