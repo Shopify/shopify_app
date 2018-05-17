@@ -5,11 +5,11 @@
   if (!document.documentElement.hasAttribute("data-turbolinks-preview")) {
     document.addEventListener(eventName, function flash() {
       <% if flash[:notice] %>
-        ShopifyApp.flashNotice("<%= j flash[:notice].html_safe %>");
+        ShopifyApp.flashNotice(<%== flash[:notice].to_json %>);
       <% end %>
 
       <% if flash[:error] %>
-        ShopifyApp.flashError("<%= j flash[:error].html_safe %>");
+        ShopifyApp.flashError(<%== flash[:error].to_json %>);
       <% end %>
                              
       document.removeEventListener(eventName, flash)
