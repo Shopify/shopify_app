@@ -1,8 +1,10 @@
 require 'test_helper'
 require 'action_controller'
 require 'action_controller/base'
+require 'action_view/testing/resolvers'
 
 class LoginProtectionController < ActionController::Base
+  include ShopifyApp::EmbeddedApp
   include ShopifyApp::LoginProtection
   helper_method :shop_session
 
@@ -170,6 +172,15 @@ class LoginProtectionTest < ActionController::TestCase
       assert_raise ShopifyApp::LoginProtection::ShopifyDomainNotFound do
         get :redirect
       end
+    end
+  end
+
+  test '#fullpage_redirect_to skips rendering layout' do
+    with_application_test_routes do
+      example_shop = 'shop.myshopify.com'
+      get :redirect, params: { shop: example_shop }
+      rendered_templates = @_templates.keys
+      assert_equal(['shopify_app/shared/redirect'], rendered_templates)
     end
   end
 
