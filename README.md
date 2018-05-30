@@ -413,8 +413,6 @@ Tunneling is also useful for working the the embedded app sdk to solve mixed con
 
 Questions or problems?
 ----------------------
-http://api.shopify.com <= Read up on the possible API calls!
 
-http://ecommerce.shopify.com/c/shopify-apis-and-technology <= Ask questions!
-
-http://docs.shopify.com/api/the-basics/getting-started <= Read the docs!
+- [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
+- [Read the docs!](https://help.shopify.com/api/guides)
