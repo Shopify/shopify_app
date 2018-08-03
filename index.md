@@ -54,7 +54,7 @@ Quickstart
 
 Check out this screencast on how to create and deploy a new Shopify App to Heroku in 5 minutes:
 
-[https://vimeo.com/130247240](https://vimeo.com/130247240)
+[https://www.youtube.com/watch?v=yGxeoAHlQOg](https://www.youtube.com/watch?v=yGxeoAHlQOg)
 
 Or if you prefer text instructions, the steps in the video are written out [here](quickstart.html)
 
