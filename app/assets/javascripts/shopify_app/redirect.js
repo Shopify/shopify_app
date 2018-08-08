@@ -2,19 +2,15 @@ document.addEventListener("DOMContentLoaded", function() {
   var redirectTargetElement = document.getElementById("redirection-target");
   var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
 
-  // If the current window is the 'parent', change the URL by setting location.href
   function redirect() {
     window.top.location.href = targetInfo.url;
   }
 
-  // Feature detect
-  // User interaction on the TLD
-  // Set a cookie? (if not already)
-  // Redirect to embedded
   if (window.top == window.self) {
+    // If Storage Access API is available, generate UI for user to interact with to trigger cookie partitioning
     if (document.hasStorageAccess) {
       const button = document.createElement('button');
-      button.value = 'Request Storage Access';
+      button.innerHTML = 'Request Storage Access';
       button.addEventListener('click', redirect);
       document.body.appendChild(button);
       return;

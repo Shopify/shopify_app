@@ -36,7 +36,7 @@ module ShopifyApp
 
     private
 
-    def authenticate
+    def authenticate      
       if sanitized_shop_name.present?
         session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
         if session['been_here_before']

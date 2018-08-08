@@ -27,8 +27,7 @@ module ShopifyApp
       end
     end
 
-    def shop_session
-      session[:francine] = 'Hello'      
+    def shop_session   
       return unless session[:shopify]
       @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
     end
