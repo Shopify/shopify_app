@@ -5,19 +5,19 @@ module ShopifyApp
     class ShopifyDomainNotFound < StandardError; end
 
     included do
+      after_action :set_test_cookie
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
 
     def shopify_session
-      if shop_session
-        begin
-          ShopifyAPI::Base.activate_session(shop_session)
-          yield
-        ensure
-          ShopifyAPI::Base.clear_session
-        end
-      else
-        redirect_to_login
+      return redirect_to_login unless shop_session
+      clear_top_level_oauth_cookie
+
+      begin
+        ShopifyAPI::Base.activate_session(shop_session)
+        yield
+      ensure
+        ShopifyAPI::Base.clear_session
       end
     end
 
@@ -57,14 +57,18 @@ module ShopifyApp
       session[:shopify_user] = nil
     end
 
-    def login_url
+    def login_url(top_level: false)
       url = ShopifyApp.configuration.login_url
 
-      if params[:shop].present?
-        query = { shop: sanitized_params[:shop] }.to_query
-        url = "#{url}?#{query}"
-      end
+      query_params = {}
+      query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
 
+      has_referer_shop_name = referer_sanitized_shop_name.present?
+      query_params[:shop] ||= referer_sanitized_shop_name if has_referer_shop_name
+
+      query_params[:top_level] = true if top_level
+
+      url = "#{url}?#{query_params.to_query}" if query_params.present?
       url
     end
 
@@ -87,6 +91,17 @@ module ShopifyApp
       @sanitized_shop_name ||= sanitize_shop_param(params)
     end
 
+    def referer_sanitized_shop_name
+      return unless request.referer.present?
+
+      @referer_sanitized_shop_name ||= begin
+        referer_uri = URI(request.referer)
+        query_params = Rack::Utils.parse_query(referer_uri.query)
+
+        sanitize_shop_param(query_params.with_indifferent_access)
+      end
+    end
+
     def sanitize_shop_param(params)
       return unless params[:shop].present?
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
@@ -98,6 +113,19 @@ module ShopifyApp
           query_params[:shop] = sanitize_shop_param(params)
         end
       end
+    end
+
+    def set_test_cookie
+      return unless ShopifyApp.configuration.embedded_app?
+      session['shopify.cookies_persist'] = true
+    end
+
+    def clear_top_level_oauth_cookie
+      session.delete('shopify.top_level_oauth')
+    end
+
+    def set_top_level_oauth_cookie
+      session['shopify.top_level_oauth'] = true
     end
   end
 end

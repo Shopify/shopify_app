@@ -13,21 +13,57 @@ module ShopifyApp
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
       ShopifyApp.configuration = nil
+      ShopifyApp.configuration.embedded_app = true
 
       I18n.locale = :en
+
+      session['shopify.cookies_persist'] = true
     end
 
-    test "#new should authenticate the shop if a valid shop param exists" do
+    test '#new redirects to the enable_cookies page if we can\'t set cookies' do
+      session.delete('shopify.cookies_persist')
       shopify_domain = 'my-shop.myshopify.com'
       get :new, params: { shop: 'my-shop' }
-      assert_redirected_to_authentication(shopify_domain, response)
+      assert_redirected_to_top_level(shopify_domain, '/enable_cookies?shop=my-shop.myshopify.com')
+    end
+
+    test '#new redirects to the top-level login if a valid shop param exists' do
+      shopify_domain = 'my-shop.myshopify.com'
+      get :new, params: { shop: 'my-shop' }
+      assert_redirected_to_top_level(shopify_domain)
+      assert_equal true, session['shopify.top_level_oauth']
+    end
+
+    test '#new sets the top_level_oauth cookie if a valid shop param exists' do
+      get :new, params: { shop: 'my-shop' }
+      assert_equal true, session['shopify.top_level_oauth']
+    end
+
+    test '#new redirects to the auth page if top_level param' do
+      session.delete('shopify.cookies_persist')
+      get :new, params: { shop: 'my-shop', top_level: true }
+      assert_redirected_to '/auth/shopify'
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
+      session.delete('shopify.cookies_persist')
       ShopifyApp.configuration.embedded_app = false
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to '/auth/shopify'
       assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
+    end
+
+    test '#new authenticates the shop if we\'ve just returned from top-level login flow' do
+      session['shopify.top_level_oauth'] = true
+      get :new, params: { shop: 'my-shop' }
+      assert_redirected_to '/auth/shopify'
+      assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
+    end
+
+    test '#new removes the top_level_oauth cookie if we\'ve just returned from top-level login flow' do
+      session['shopify.top_level_oauth'] = true
+      get :new, params: { shop: 'my-shop' }
+      assert_nil session['shopify.top_level_oauth']
     end
 
     test "#new should trust the shop param over the current session" do
@@ -35,7 +71,7 @@ module ShopifyApp
       session[:shopify] = previously_logged_in_shop_id
       new_shop_domain = "new-shop.myshopify.com"
       get :new, params: { shop: new_shop_domain }
-      assert_redirected_to_authentication(new_shop_domain, response)
+      assert_redirected_to_top_level(new_shop_domain)
     end
 
     test "#new should render a full-page if the shop param doesn't exist" do
@@ -55,7 +91,7 @@ module ShopifyApp
       test "#create should authenticate the shop for the URL (#{good_url})" do
         shopify_domain = 'my-shop.myshopify.com'
         post :create, params: { shop: good_url }
-        assert_redirected_to_authentication(shopify_domain, response)
+        assert_redirected_to_top_level(shopify_domain)
       end
     end
 
@@ -64,7 +100,7 @@ module ShopifyApp
         ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
         shopify_domain = 'my-shop.myshopify.io'
         post :create, params: { shop: good_url }
-        assert_redirected_to_authentication(shopify_domain, response)
+        assert_redirected_to_top_level(shopify_domain)
       end
     end
 
@@ -80,6 +116,17 @@ module ShopifyApp
     test "#create should render the login page if the shop param doesn't exist" do
       post :create
       assert_redirected_to '/'
+    end
+
+    test '#enable_cookies renders the correct template' do
+      get :enable_cookies, params: { shop: 'shop' }
+      assert_template 'sessions/enable_cookies'
+    end
+
+    test '#enable_cookies displays an error if no shop is provided' do
+      get :enable_cookies
+      assert_redirected_to ShopifyApp.configuration.root_url
+      assert_equal I18n.t('invalid_shop_url'), flash[:error]
     end
 
     test '#callback should flash error when omniauth is not present' do
@@ -221,12 +268,12 @@ module ShopifyApp
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
     end
 
-    def assert_redirected_to_authentication(shop_domain, response)
-      auth_url = "/auth/shopify"
+    def assert_redirected_to_top_level(shop_domain, expected_url = nil)
+      expected_url ||= "/login?shop=#{shop_domain}\\u0026top_level=true"
 
       assert_template 'shared/redirect'
       assert_select '[id=redirection-target]', 1 do |elements|
-        assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{auth_url}\"}",
+        assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{expected_url}\"}",
           elements.first['data-target']
       end
     end
