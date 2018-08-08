@@ -17,11 +17,18 @@ module ShopifyApp
           ShopifyAPI::Base.clear_session
         end
       else
-        redirect_to_login
+        # A fullpage redirect is needed in order for the session to be set correctly
+        if session['been_here_before']
+          redirect_to_login
+        else
+          session['been_here_before'] = true
+          fullpage_redirect_to login_url
+        end
       end
     end
 
     def shop_session
+      session[:francine] = 'Hello'      
       return unless session[:shopify]
       @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
     end
