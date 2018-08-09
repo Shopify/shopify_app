@@ -7,26 +7,15 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   if (window.top == window.self) {
-    // If Storage Access API is available, generate UI for user to interact with to trigger cookie partitioning
-
-    var isSafari = window.navigator.userAgent.indexOf('Safari');
-    var versionNumber;
-    
-    if (isSafari) {
-      versionNumber = parseFloat(window.navigator.userAgent.match(/Version\/(\d+\.?\d*)/)[1]);
-    }
-
-    // TODO: Replace user agent checking with library
-    if (!document.hasStorageAccess || !isSafari || versionNumber < 12) {
+    if (!shouldTriggerCookiePartitioning()) {
       redirect();
       return;
     }
 
     var button = document.createElement('button');
-    button.innerHTML = 'Request Storage Access';
+    button.innerHTML = 'Allow third-party cookies';
     button.addEventListener('click', redirect);
     document.body.appendChild(button);
-
   } else {
     // If the current window is the 'child', change the parent's URL with postMessage
     normalizedLink = document.createElement('a');
