@@ -39,10 +39,10 @@ module ShopifyApp
     def authenticate      
       if sanitized_shop_name.present?
         session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
-        if session['been_here_before']
+        if session['shopify.cookies_persist'] || !ShopifyApp.configuration.embedded_app?
           redirect_to "#{main_app.root_path}auth/shopify"
         else
-          fullpage_redirect_to "#{main_app.root_path}auth/shopify"
+          fullpage_redirect_to login_url
         end
       else
         flash[:error] = I18n.t('invalid_shop_url')

@@ -5,6 +5,7 @@ module ShopifyApp
     class ShopifyDomainNotFound < StandardError; end
 
     included do
+      after_action :attempt_to_set_cookie if ShopifyApp.configuration.embedded_app?
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
 
@@ -17,13 +18,7 @@ module ShopifyApp
           ShopifyAPI::Base.clear_session
         end
       else
-        # A fullpage redirect is needed in order for the session to be set correctly
-        if session['been_here_before']
-          redirect_to_login
-        else
-          session['been_here_before'] = true
-          fullpage_redirect_to login_url
-        end
+        redirect_to_login
       end
     end
 
@@ -104,6 +99,10 @@ module ShopifyApp
           query_params[:shop] = sanitize_shop_param(params)
         end
       end
+    end
+
+    def attempt_to_set_cookie
+      session['shopify.cookies_persist'] = true
     end
   end
 end
