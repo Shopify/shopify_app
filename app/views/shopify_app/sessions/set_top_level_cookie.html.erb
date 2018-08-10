@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <base target="_top">
+    <title>Shopify App</title>
+    <script src="https://cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
+    <script>
+      var redirectToEmbedded = function() {
+        ShopifyApp.init({
+          apiKey: "<%= ShopifyApp.configuration.api_key %>",
+          shopOrigin: "<%= "https://#{ params[:shop] }" %>",
+          debug: false,
+          forceRedirect: true
+        });
+      };
+    </script>
+    <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>
+  </head>
+  <body>
+  </body>
+</html>

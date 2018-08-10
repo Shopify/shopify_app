@@ -28,6 +28,9 @@ module ShopifyApp
       end
     end
 
+    def set_top_level_cookie
+    end
+
     def destroy
       reset_session
       flash[:notice] = I18n.t('.logged_out')
@@ -36,13 +39,14 @@ module ShopifyApp
 
     private
 
-    def authenticate      
+    def authenticate
       if sanitized_shop_name.present?
         session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
-        if session['shopify.cookies_persist'] || !ShopifyApp.configuration.embedded_app?
+        if !ShopifyApp.configuration.embedded_app? || session['shopify.cookies_persist']
           redirect_to "#{main_app.root_path}auth/shopify"
         else
-          fullpage_redirect_to login_url
+          # TODO: Do we have a CSRF problem here? We're not really doing anything different than #new
+          fullpage_redirect_to set_top_level_cookie_path(shop: sanitized_shop_name)
         end
       else
         flash[:error] = I18n.t('invalid_shop_url')
