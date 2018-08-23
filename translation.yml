@@ -1,0 +1,7 @@
+source_language: en
+target_languages: [de, es, fr, it, ja, pt-BR]
+components:
+  - name: 'merchant'
+    paths:
+      - config/locales/{{language}}.yml
+      - config/locales/**/{{language}}.yml
