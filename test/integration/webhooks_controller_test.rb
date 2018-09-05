@@ -10,6 +10,7 @@ module ShopifyApp
 
     setup do
       WebhooksController.any_instance.stubs(:verify_request).returns(true)
+      WebhooksController.any_instance.stubs(:webhook_namespace).returns(nil)
     end
 
     test "receives webhook and performs job" do
