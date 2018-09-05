@@ -60,16 +60,24 @@ module ShopifyApp
     def login_url(top_level: false)
       url = ShopifyApp.configuration.login_url
 
+      query_params = login_url_params(top_level: top_level)
+
+      url = "#{url}?#{query_params.to_query}" if query_params.present?
+      url
+    end
+
+    def login_url_params(top_level:)
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
 
       has_referer_shop_name = referer_sanitized_shop_name.present?
-      query_params[:shop] ||= referer_sanitized_shop_name if has_referer_shop_name
+
+      if has_referer_shop_name
+        query_params[:shop] ||= referer_sanitized_shop_name
+      end
 
       query_params[:top_level] = true if top_level
-
-      url = "#{url}?#{query_params.to_query}" if query_params.present?
-      url
+      query_params
     end
 
     def fullpage_redirect_to(url)
