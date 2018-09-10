@@ -35,6 +35,22 @@ class LoginProtectionTest < ActionController::TestCase
     ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
   end
 
+  test '#index sets test cookie if embedded app' do
+    with_application_test_routes do
+      get :index
+      assert_equal true, session['shopify.cookies_persist']
+    end
+  end
+
+  test '#index doesn\'t set test cookie if non embedded app' do
+    with_application_test_routes do
+      ShopifyApp.configuration.embedded_app = false
+
+      get :index
+      assert_nil session['shopify.cookies_persist']
+    end
+  end
+
   test "#shop_session returns nil when session is nil" do
     with_application_test_routes do
       session[:shopify] = nil
@@ -89,10 +105,33 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#shopify_session with Shopify session, clears top-level auth cookie' do
+    with_application_test_routes do
+      session['shopify.top_level_oauth'] = true
+      sess = stub(url: 'https://foobar.myshopify.com')
+      @controller.expects(:shop_session).returns(sess).at_least_once
+      ShopifyAPI::Base.expects(:activate_session).with(sess)
+
+      get :index, params: { shop: 'foobar' }
+      assert_nil session['shopify.top_level_oauth']
+    end
+  end
+
   test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
       assert_redirected_to '/login?shop=foobar.myshopify.com'
+    end
+  end
+
+  test "#shopify_session with no Shopify session, redirects to login_url with \
+        shop param of referer" do
+    with_application_test_routes do
+      @controller.expects(:shop_session).returns(nil)
+      request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
+
+      get :index
+      assert_redirected_to '/login?shop=my-shop.myshopify.com'
     end
   end
 

@@ -14,6 +14,11 @@ module ShopifyApp
       authenticate
     end
 
+    def enable_cookies
+      @shop = sanitized_shop_name
+      render_invalid_shop_error unless @shop
+    end
+
     def callback
       if auth_hash
         login_shop
@@ -37,13 +42,45 @@ module ShopifyApp
     private
 
     def authenticate
-      if sanitized_shop_name.present?
-        session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
-        fullpage_redirect_to "#{main_app.root_path}auth/shopify"
+      return render_invalid_shop_error unless sanitized_shop_name.present?
+      session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
+
+      if redirect_for_cookie_access?
+        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
+      elsif authenticate_in_context?
+        authenticate_in_context
       else
-        flash[:error] = I18n.t('invalid_shop_url')
-        redirect_to return_address
+        authenticate_at_top_level
       end
+    end
+
+    def render_invalid_shop_error
+      flash[:error] = I18n.t('invalid_shop_url')
+      redirect_to return_address
+    end
+
+    def authenticate_in_context
+      clear_top_level_oauth_cookie
+      redirect_to "#{main_app.root_path}auth/shopify"
+    end
+
+    def authenticate_at_top_level
+      set_top_level_oauth_cookie
+      fullpage_redirect_to login_url(top_level: true)
+    end
+
+    def authenticate_in_context?
+      return true unless ShopifyApp.configuration.embedded_app?
+      return true if params[:top_level]
+      session['shopify.top_level_oauth']
+    end
+
+    def redirect_for_cookie_access?
+      return false unless ShopifyApp.configuration.embedded_app?
+      return false if params[:top_level]
+      return false if session['shopify.cookies_persist']
+
+      true
     end
 
     def login_shop
