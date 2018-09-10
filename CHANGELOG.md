@@ -1,3 +1,8 @@
+8.3.0
+----
+* Fix embedded app session management in Safari 12
+* Add support for translation platform
+
 8.2.6
 ----
 * Sanitize the shop query param to include `.myshopify.com` if no domain was provided 
