@@ -1,0 +1,5 @@
+{
+  "babel": {
+    "presets": ["shopify/web"]
+  }
+}

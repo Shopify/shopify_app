@@ -35,8 +35,9 @@ class LoginProtectionTest < ActionController::TestCase
     ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
   end
 
-  test '#index sets test cookie if embedded app' do
+  test '#index sets test cookie if embedded app and user agent can partition cookies' do
     with_application_test_routes do
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :index
       assert_equal true, session['shopify.cookies_persist']
     end
