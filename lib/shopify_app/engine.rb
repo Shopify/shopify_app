@@ -7,6 +7,7 @@ module ShopifyApp
       app.config.assets.precompile += %w[
         shopify_app/redirect.js
         shopify_app/itp_polyfill.js
+        shopify_app/storage_access.js
       ]
     end
   end

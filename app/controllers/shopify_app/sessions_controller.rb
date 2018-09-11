@@ -45,8 +45,8 @@ module ShopifyApp
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
 
-      if redirect_for_cookie_access?
-        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
+      if request_storage_access?
+        redirect_to_request_storage_access
       elsif authenticate_in_context?
         authenticate_in_context
       else
@@ -65,7 +65,7 @@ module ShopifyApp
     end
 
     def authenticate_at_top_level
-      set_top_level_oauth_cookie
+      set_top_level_oauth_cookie # Is this vestigal now?
       fullpage_redirect_to login_url(top_level: true)
     end
 
@@ -75,10 +75,10 @@ module ShopifyApp
       session['shopify.top_level_oauth']
     end
 
-    def redirect_for_cookie_access?
+    def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if session['shopify.cookies_persist']
+      return false if session['shopify.cookies_persist'] # Maybe also vestigal?
 
       true
     end
@@ -88,7 +88,6 @@ module ShopifyApp
 
       request.session_options[:renew] = true
       session.delete(:_csrf_token)
-
       session[:shopify] = ShopifyApp::SessionRepository.store(sess)
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user if associated_user.present?
