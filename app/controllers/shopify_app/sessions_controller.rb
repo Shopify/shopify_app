@@ -88,7 +88,7 @@ module ShopifyApp
 
       request.session_options[:renew] = true
       session.delete(:_csrf_token)
-
+      byebug
       session[:shopify] = ShopifyApp::SessionRepository.store(sess)
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user if associated_user.present?
