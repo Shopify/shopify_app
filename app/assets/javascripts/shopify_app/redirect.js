@@ -39,7 +39,7 @@
 
               // at this stage, document.cookie = "shopify.cookies_persist=true"
               // Create a new controller that is not protected that will redirect to app home page in iframe
-              location.replace = targetInfo.home; // https://ab4a1b48.ngrok.io
+              window.location.href = targetInfo.home; // https://ab4a1b48.ngrok.io
             }, () => {
               // needed for first redirect, if user has not interacted with TLD
               redirectViaPostMessage();
