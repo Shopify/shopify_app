@@ -44,7 +44,8 @@ module ShopifyApp
     def authenticate
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
-
+      # if session['shopify.cookies_persist']
+      #   authenticate_in_context
       if redirect_for_cookie_access?
         fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
       elsif authenticate_in_context?
