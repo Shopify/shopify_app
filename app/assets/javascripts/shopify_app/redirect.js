@@ -38,13 +38,14 @@
         } else if (!sessionStorage.getItem('shopify.has_redirected')) {
           redirectViaPostMessage();
         } else {
-          const requestButton = document.createElement('button');
-          requestButton.innerHTML = 'Give me access';
-          requestButton.addEventListener('click', () => {
-            document.requestStorageAccess().then(redirectToAppHome, redirectViaPostMessage);
-          });
+          window.location.href = targetInfo.requestStorageAccess;
+          // const requestButton = document.createElement('button');
+          // requestButton.innerHTML = 'Give me access';
+          // requestButton.addEventListener('click', () => {
+          //   document.requestStorageAccess().then(redirectToAppHome, redirectViaPostMessage);
+          // });
     
-          document.body.appendChild(requestButton);
+          // document.body.appendChild(requestButton);
         }
       });
     }
