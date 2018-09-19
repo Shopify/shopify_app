@@ -316,7 +316,7 @@ As with webhooks, ShopifyApp can manage your app's scripttags for you by setting
 ```ruby
 ShopifyApp.configure do |config|
   config.scripttags = [
-    {event:'onload', src: 'https://my-shopifyapp.herokuapp.com/fancy.js'}
+    {event:'onload', src: 'https://my-shopifyapp.herokuapp.com/fancy.js'},
     {event:'onload', src: ->(domain) { dynamic_tag_url(domain) } }
   ]
 end
