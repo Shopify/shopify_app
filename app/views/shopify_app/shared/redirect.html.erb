@@ -339,6 +339,7 @@
       color:white;
     }
   </style>
+  <%= javascript_include_tag('shopify_app/storage_access', crossorigin: 'anonymous', integrity: true) %>
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
@@ -349,7 +350,7 @@
       target: {
         myshopifyUrl: "https://#{current_shopify_domain}",
         url: url,
-        home: 'https://e5836d9b.ngrok.io',
+        home: 'https://7ececdec.ngrok.io',
         requestStorageAccess: request_storage_access_path
       },
     },

@@ -17,6 +17,9 @@ module ShopifyApp
     def enable_cookies
       @shop = sanitized_shop_name
       render_invalid_shop_error unless @shop
+      if request.params[:hasStorageAccess]
+        authenticate_at_top_level
+      end
     end
 
     def request_storage_access
