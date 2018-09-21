@@ -124,6 +124,15 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#shopify_session with no Shopify session, redirects to a custom config login url' do
+    with_custom_login_url 'https://domain.com/custom/route/login' do
+      with_application_test_routes do
+        get :index, params: { shop: 'foobar' }
+        assert_redirected_to 'https://domain.com/custom/route/login?shop=foobar.myshopify.com'
+      end
+    end
+  end
+
   test "#shopify_session with no Shopify session, redirects to login_url with \
         shop param of referer" do
     with_application_test_routes do
@@ -135,12 +144,36 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test "#shopify_session with no Shopify session, redirects to a custom config login url with \
+        shop param of referer" do
+    with_custom_login_url 'https://domain.com/custom/route/login' do
+      with_application_test_routes do
+        @controller.expects(:shop_session).returns(nil)
+        request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
+
+        get :index
+        assert_redirected_to 'https://domain.com/custom/route/login?shop=my-shop.myshopify.com'
+      end
+    end
+  end
+
   test '#shopify_session with no Shopify session, redirects to the login url \
         with non-String shop param' do
     with_application_test_routes do
       params = { shop: { id: 123 } }
       get :index, params: params
       assert_redirected_to "/login?#{params.to_query}"
+    end
+  end
+
+  test '#shopify_session with no Shopify session, redirects to a custom config login url \
+        with non-String shop param' do
+    with_custom_login_url 'https://domain.com/custom/route/login' do
+      with_application_test_routes do
+        params = { shop: { id: 123 } }
+        get :index, params: params
+        assert_redirected_to "https://domain.com/custom/route/login?#{params.to_query}"
+      end
     end
   end
 
@@ -254,5 +287,14 @@ class LoginProtectionTest < ActionController::TestCase
       end
       yield
     end
+  end
+
+  def with_custom_login_url(url)
+    original_url = ShopifyApp.configuration.login_url.dup
+
+    ShopifyApp.configure { |config| config.login_url = url }
+    yield
+  ensure
+    ShopifyApp.configure { |config| config.login_url = original_url }
   end
 end
