@@ -39,13 +39,12 @@
           redirectViaPostMessage();
         } else {
           // window.location.href = targetInfo.requestStorageAccess;
-          const requestButton = document.createElement('button');
-          requestButton.innerHTML = 'Give me access';
+          const requestContent = document.querySelector('#RequestStorageAccess');
+          const requestButton = document.querySelector('#TriggerAllowCookiesPrompt');
           requestButton.addEventListener('click', () => {
             document.requestStorageAccess().then(redirectToAppHome, redirectViaPostMessage);
           });
-    
-          document.body.appendChild(requestButton);
+          requestContent.style.display = 'block';
         }
       });
     }
