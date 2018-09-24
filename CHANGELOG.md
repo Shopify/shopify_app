@@ -1,3 +1,7 @@
+8.3.1
+----
+* Adds the ability to customize the login URL through the initializer
+
 8.3.0
 ----
 * Fix embedded app session management in Safari 12
