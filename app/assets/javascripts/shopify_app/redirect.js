@@ -12,7 +12,6 @@
       // If the current window is the 'parent', change the URL by setting location.href
       window.top.location.href = targetInfo.url;
     } else {
-      // If the current window is the 'child', check if child has storage access.
       handleStorageAccess(targetInfo);
     }
   }

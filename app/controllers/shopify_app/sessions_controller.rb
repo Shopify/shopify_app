@@ -44,16 +44,9 @@ module ShopifyApp
     def authenticate
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
-      # if session['shopify.cookies_persist']
-      #   authenticate_in_context
+
       if request_storage_access?
-        render :request_storage_access,
-               layout: false,
-               locals: {
-                 doesNotHaveStorageAccessUrl: enable_cookies_path(shop: sanitized_shop_name),
-                 hasStorageAccessUrl: login_url(top_level: true),
-                 current_shopify_domain: current_shopify_domain,
-               }
+        redirect_to_request_storage_access
       elsif authenticate_in_context?
         authenticate_in_context
       else

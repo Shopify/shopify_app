@@ -33,6 +33,14 @@ module ShopifyApp
       end
     end
 
+    def redirect_to_request_storage_access
+      render :request_storage_access, layout: false, locals: {
+        doesNotHaveStorageAccessUrl: enable_cookies_path(shop: sanitized_shop_name),
+        hasStorageAccessUrl: login_url(top_level: true),
+        current_shopify_domain: current_shopify_domain,
+      }
+    end
+
     protected
 
     def redirect_to_login
@@ -82,7 +90,7 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain, request_storage_access_path: request_storage_access_path }
+        redirect_to_request_storage_access
       else
         redirect_to url
       end
