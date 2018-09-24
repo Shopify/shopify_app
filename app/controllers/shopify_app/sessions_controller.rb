@@ -22,10 +22,6 @@ module ShopifyApp
       end
     end
 
-    def request_storage_access
-      render 'shopify_app/sessions/request_storage_access', layout: false
-    end
-
     def callback
       if auth_hash
         login_shop
