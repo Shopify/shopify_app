@@ -17,9 +17,6 @@ module ShopifyApp
     def enable_cookies
       @shop = sanitized_shop_name
       render_invalid_shop_error unless @shop
-      if request.params[:hasStorageAccess]
-        authenticate_at_top_level
-      end
     end
 
     def callback
@@ -49,8 +46,14 @@ module ShopifyApp
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
       # if session['shopify.cookies_persist']
       #   authenticate_in_context
-      if redirect_for_cookie_access?
-        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
+      if request_storage_access?
+        render :request_storage_access,
+               layout: false,
+               locals: {
+                 doesNotHaveStorageAccessUrl: enable_cookies_path(shop: sanitized_shop_name),
+                 hasStorageAccessUrl: login_url(top_level: true),
+                 current_shopify_domain: current_shopify_domain,
+               }
       elsif authenticate_in_context?
         authenticate_in_context
       else
@@ -69,7 +72,7 @@ module ShopifyApp
     end
 
     def authenticate_at_top_level
-      set_top_level_oauth_cookie
+      set_top_level_oauth_cookie # Is this vestigal now?
       fullpage_redirect_to login_url(top_level: true)
     end
 
@@ -79,10 +82,10 @@ module ShopifyApp
       session['shopify.top_level_oauth']
     end
 
-    def redirect_for_cookie_access?
+    def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if session['shopify.cookies_persist']
+      return false if session['shopify.cookies_persist'] # Maybe also vestigal?
 
       true
     end

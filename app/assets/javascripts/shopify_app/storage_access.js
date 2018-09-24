@@ -2,7 +2,7 @@ function redirectViaPostMessage(opts) {
   // needed for first redirect, if merchant has not interacted with TLD
   var normalizedLink = document.createElement('a');
 
-  normalizedLink.href = opts.hasStorageAccess ? `${opts.redirectInfo.url}&hasStorageAccess=true` : `${opts.redirectInfo.url}`;
+  normalizedLink.href = opts.hasStorageAccess ? ${opts.redirectInfo.hasStorageAccessUrl} : `${opts.redirectInfo.doesNotHaveStorageAccessUrl}`;
 
   data = JSON.stringify({
     message: 'Shopify.API.remoteRedirect',
