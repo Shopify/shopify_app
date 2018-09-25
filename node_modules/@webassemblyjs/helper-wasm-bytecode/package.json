@@ -1,0 +1,20 @@
+{
+  "name": "@webassemblyjs/helper-wasm-bytecode",
+  "version": "1.7.8",
+  "description": "WASM's Bytecode constants",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sven Sauleau",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xtuc/webassemblyjs.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "43b83b600939b19c48c3c27a1733592c493c4386"
+}

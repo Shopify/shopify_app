@@ -1,0 +1,33 @@
+{
+  "name": "karma-chai-sinon",
+  "description": "Chai + Sinon-Chai + Sinon for Karma",
+  "keywords": [
+    "karma",
+    "karma-plugin",
+    "chai",
+    "sinon",
+    "sinon-chai",
+    "mocha"
+  ],
+  "version": "0.1.5",
+  "author": "Túbal Martín <tubalmartin@gmail.com> (http://tubalmartin.me)",
+  "main": "./index.js",
+  "license": "MIT",
+  "homepage": "https://github.com/tubalmartin/karma-chai-sinon",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tubalmartin/karma-chai-sinon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tubalmartin/karma-chai-sinon/issues"
+  },
+  "peerDependencies": {
+    "karma": ">=0.6",
+    "chai": "*",
+    "sinon-chai": "*",
+    "sinon": "*"
+  },
+  "engines": {
+   "node": ">=0.8"
+  }
+}

@@ -10,7 +10,7 @@
 
     if (window.top == window.self) {
       // If the current window is the 'parent', change the URL by setting location.href
-      window.top.location.href = targetInfo.url;
+      window.top.location.href = targetInfo.hasStorageAccess;
     } else {
       var storageAccessHelper = new StorageAccessHelper(targetInfo);
       storageAccessHelper.execute();

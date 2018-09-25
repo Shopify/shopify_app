@@ -1,0 +1,37 @@
+{
+    "name": "mocha-debug",
+    "homepage": "https://github.com/khrome/mocha-debug",
+    "version": "0.0.1",
+    "main": "mocha-debug.js",
+    "description": "Find out why your test scripts are hanging",
+    "keywords": [
+        "mocha",
+        "hang"
+    ],
+    "author": "Abbey Hawk Sparrow <@khrome> (http://patternweaver.com)",
+    "contributors": [],
+    "bugs": {
+        "url": "https://github.com/khrome/mocha-debug/issues"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/khrome/mocha-debug.git"
+    },
+    "dependencies": {
+        "mocha": "*",
+        "why-is-node-running": "*"
+    },
+    "devDependencies": {
+    },
+    "bin": {
+        "mocha-debug": "./bin/mocha-debug.sh"
+    },
+    "scripts": {
+        "mocha-debug": "./bin/mocha-debug.sh"
+    },
+    "optionalDependencies": {},
+    "engines": {
+        "node": "*"
+    }
+}
