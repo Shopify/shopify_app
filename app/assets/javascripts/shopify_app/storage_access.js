@@ -5,11 +5,14 @@ function StorageAccessHelper(redirectInfo) {
   this.redirectInfo = redirectInfo;
 }
 
+StorageAccessHelper.prototype.setNormalizedLink = function(storageAccessStatus) {
+  return storageAccessStatus === ACCESS_GRANTED_STATUS ? this.redirectInfo.hasStorageAccessUrl : this.redirectInfo.doesNotHaveStorageAccessUrl;
+}
+
 StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
-  // needed for first redirect, if merchant has not interacted with TLD
   var normalizedLink = document.createElement('a');
 
-  normalizedLink.href = storageAccessStatus === ACCESS_GRANTED_STATUS ? this.redirectInfo.hasStorageAccessUrl : this.redirectInfo.doesNotHaveStorageAccessUrl;
+  normalizedLink.href = this.setNormalizedLink(storageAccessStatus);
 
   data = JSON.stringify({
     message: 'Shopify.API.remoteRedirect',
@@ -23,63 +26,56 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
 
 StorageAccessHelper.prototype.redirectToAppHome = function() {
   sessionStorage.setItem('shopify.granted_storage_access', 'true');
-  window.location.href = `${this.redirectInfo.home}`;
+  window.location.href = this.redirectInfo.home;
 }
 
-StorageAccessHelper.prototype.renderRequestStorageAccess = function() {
+StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
+  return document.requestStorageAccess().then(this.redirectToAppHome.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
+}
+
+StorageAccessHelper.prototype.setupRequestStorageAccess = function() {
   const requestContent = document.querySelector('#RequestStorageAccess');
   const requestButton = document.querySelector('#TriggerAllowCookiesPrompt');
 
-  requestButton.addEventListener('click', () => {
-    // If request for storage access is rejected, change the parent's URL with postMessage.
-    // If storage access is granted, redirect child to app home page
-    document.requestStorageAccess().then(this.redirectToAppHome.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
-  });
+  requestButton.addEventListener('click', this.handleRequestStorageAccess.bind(this));
   requestContent.style.display = 'block';
 }
 
-StorageAccessHelper.prototype.execute = function() {
-  document.hasStorageAccess().then((hasAccess) => {
-    if (hasAccess) {
-      if (sessionStorage.getItem('shopify.granted_storage_access')) {
-        // If app was classified by ITP and used Storage Access API to acquire access
-        this.redirectToAppHome();
-      } else {
-        // If app has not been classified by ITP and still has storage access
-        this.redirectToAppTLD(ACCESS_GRANTED_STATUS);
-      }
-    } else {
-      if (sessionStorage.getItem('shopify.has_redirected')) {
-        // If merchant has been redirected to interact with TLD (requirement for prompting request to gain storage access)
-        this.renderRequestStorageAccess();
-      } else {
-        // If merchant has not been redirected to interact with TLD (requirement for prompting request to gain storage access)
-        this.redirectToAppTLD(ACCESS_DENIED_STATUS);
-      }
-    }
-  });
+StorageAccessHelper.prototype.handleHasStorageAccess = function() {
+  if (sessionStorage.getItem('shopify.granted_storage_access')) {
+    // If app was classified by ITP and used Storage Access API to acquire access
+    this.redirectToAppHome();
+  } else {
+    // If app has not been classified by ITP and still has storage access
+    this.redirectToAppTLD(ACCESS_GRANTED_STATUS);
+  }
 }
 
-function handleStorageAccess(redirectInfo) {
-  const storageAccessHelper = new StorageAccessHelper(redirectInfo);
+StorageAccessHelper.prototype.handleGetStorageAccess = function() {
+  if (sessionStorage.getItem('shopify.has_redirected')) {
+    // If merchant has been redirected to interact with TLD (requirement for prompting request to gain storage access)
+    this.setupRequestStorageAccess();
+  } else {
+    // If merchant has not been redirected to interact with TLD (requirement for prompting request to gain storage access)
+    this.redirectToAppTLD(ACCESS_DENIED_STATUS);
+  }
+}
 
-  document.hasStorageAccess().then((hasAccess) => {
+StorageAccessHelper.prototype.manageStorageAccess = function() {
+  return document.hasStorageAccess().then(function(hasAccess) {
     if (hasAccess) {
-      if (sessionStorage.getItem('shopify.granted_storage_access')) {
-        // If app was classified by ITP and used Storage Access API to acquire access
-        storageAccessHelper.redirectToAppHome();
-      } else {
-        // If app has not been classified by ITP and still has storage access
-        storageAccessHelper.redirectToAppTLD(ACCESS_GRANTED_STATUS);
-      }
+      this.handleHasStorageAccess();
     } else {
-      if (sessionStorage.getItem('shopify.has_redirected')) {
-        // If merchant has been redirected to interact with TLD (requirement for prompting request to gain storage access)
-        storageAccessHelper.renderRequestStorageAccess();
-      } else {
-        // If merchant has not been redirected to interact with TLD (requirement for prompting request to gain storage access)
-        storageAccessHelper.redirectToAppTLD(ACCESS_DENIED_STATUS);
-      }
+      this.handleGetStorageAccess();
     }
-  });
+  }.bind(this));
+}
+
+StorageAccessHelper.prototype.execute = function() {
+  const userAgentUtilities = new UserAgentUtilities();
+  if (userAgentUtilities.shouldRenderITPContent()) {
+    this.manageStorageAccess();
+  } else {
+    this.redirectToAppHome();
+  }
 }
