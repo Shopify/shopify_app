@@ -1,10 +1,15 @@
 (function() {
-  function setCookieAndRedirect() {
+  function ITPHelper() {
+    this.itpContent = document.querySelector('#CookiePartitionPrompt');
+    this.itpAction = document.querySelector('#AcceptCookies');
+  }
+
+  ITPHelper.prototype.setCookieAndRedirect = function() {
     document.cookie = "shopify.cookies_persist=true";
     window.location.href = window.shopOrigin + "/admin/apps/" + window.apiKey;
   }
 
-  function shouldDisplayPrompt() {
+  ITPHelper.prototype.shouldDisplayPrompt = function() {
     if (navigator.userAgent.indexOf('com.jadedpixel.pos') !== -1) {
       return false;
     }
@@ -16,15 +21,20 @@
     return Boolean(document.hasStorageAccess);
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    if (shouldDisplayPrompt()) {
-      var itpContent = document.querySelector('#CookiePartitionPrompt');
-      itpContent.style.display = 'block';
-
-      var button = document.querySelector('#AcceptCookies');
-      button.addEventListener('click', setCookieAndRedirect);
+  ITPHelper.prototype.execute = function() {
+    if (this.shouldDisplayPrompt()) {
+      this.itpContent.style.display = 'block';
+      this.itpAction.addEventListener('click', this.setCookieAndRedirect.bind(this));
     } else {
-      setCookieAndRedirect();
+      this.setCookieAndRedirect();
     }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var itpHelper = new ITPHelper();
+    if (!itpHelper.itpContent) {
+      return;
+    }
+    itpHelper.execute();
   });
 })();

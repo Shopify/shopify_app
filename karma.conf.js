@@ -6,6 +6,7 @@ function isDebug(argument) {
 
 module.exports = function(config) {
   config.set({
+    mode: 'development',
     basePath: '',
     frameworks: ['mocha-debug', 'mocha', 'chai-sinon'],
     files: [
