@@ -208,8 +208,8 @@ suite('StorageAccessHelper', () => {
       const redirectToAppTLDStub = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.called(redirectToAppHomeSpy);
-        sinon.assert.notCalled(redirectToAppTLDSpy);
+        sinon.assert.called(redirectToAppHomeStub);
+        sinon.assert.notCalled(redirectToAppTLDStub);
 
         redirectToAppHomeStub.restore();
         redirectToAppTLDStub.restore();
@@ -227,8 +227,8 @@ suite('StorageAccessHelper', () => {
       const redirectToAppTLDStub = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.notCalled(redirectToAppHomeSpy);
-        sinon.assert.calledWith(redirectToAppTLDSpy, 'access denied');
+        sinon.assert.notCalled(redirectToAppHomeStub);
+        sinon.assert.calledWith(redirectToAppTLDStub, 'access denied');
 
         redirectToAppHomeStub.restore();
         redirectToAppTLDStub.restore();

@@ -1,10 +1,6 @@
 function ITPHelper(selectors) {
   this.itpContent = document.querySelector(selectors.content);
   this.itpAction = document.querySelector(selectors.action);
-
-  if (!this.itpContent) {
-    return null;
-  }
 }
 
 ITPHelper.prototype.redirectToEmbedded = function() {
@@ -24,7 +20,7 @@ ITPHelper.prototype.userAgentIsAffected = function() {
 }
 
 ITPHelper.prototype.canPartitionCookies = function() {
-  var versionRegEx = new RegExp('Version/12.0.?\d? Safari');
+  var versionRegEx = /Version\/12\.0\.?\d? Safari/;
   return versionRegEx.test(navigator.userAgent);
 }
 

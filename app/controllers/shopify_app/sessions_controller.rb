@@ -105,7 +105,7 @@ module ShopifyApp
     end
 
     def userAgentCanPartitionCookies
-      request.user_agent.match(/Version\/12.0.?\d? Safari/)
+      request.user_agent.match(/Version\/12\.0\.?\d? Safari/)
     end
 
     def login_shop
