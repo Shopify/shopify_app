@@ -1,4 +1,4 @@
-import '../../../app/assets/javascripts/shopify_app/utilities/user_agent';
+import '../../../app/assets/javascripts/shopify_app/itp_polyfill';
 import '../../../app/assets/javascripts/shopify_app/storage_access';
 
 suite('StorageAccessHelper', () => { 
@@ -33,8 +33,8 @@ suite('StorageAccessHelper', () => {
   });
 
   suite('execute', () => {
-    test('calls redirectToAppHome instead of manageStorageAccess if UserAgentUtilities.shouldRenderITPContent returns false', async () => {
-      sinon.stub(UserAgentUtilities.prototype, 'shouldRenderITPContent').callsFake(() => false);
+    test('calls redirectToAppHome instead of manageStorageAccess if ITPHelper.userAgentIsAffected returns true', async () => {
+      sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
 
       const manageStorageAccessStub = sinon.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
@@ -45,13 +45,13 @@ suite('StorageAccessHelper', () => {
       sinon.assert.notCalled(manageStorageAccessStub);
       sinon.assert.called(redirectToAppHomeStub);
 
-      UserAgentUtilities.prototype.shouldRenderITPContent.restore();
+     ITPHelper.prototype.userAgentIsAffected.restore();
       manageStorageAccessStub.restore();
       redirectToAppHomeStub.restore();
     });
 
-    test('calls manageStorageAccess instead of redirectToAppHome if UserAgentUtilities.shouldRenderITPContent returns true', async () => {
-      sinon.stub(UserAgentUtilities.prototype, 'shouldRenderITPContent').callsFake(() => true);
+    test('calls manageStorageAccess instead of redirectToAppHome if ITPHelper.userAgentIsAffected returns true', async () => {
+      sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
 
       const manageStorageAccessStub = sinon.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
@@ -62,7 +62,7 @@ suite('StorageAccessHelper', () => {
       sinon.assert.called(manageStorageAccessStub);
       sinon.assert.notCalled(redirectToAppHomeStub);
 
-      UserAgentUtilities.prototype.shouldRenderITPContent.restore();manageStorageAccessStub.restore();
+      ITPHelper.prototype.userAgentIsAffected.restore();manageStorageAccessStub.restore();
       redirectToAppHomeStub.restore();
     });
   });

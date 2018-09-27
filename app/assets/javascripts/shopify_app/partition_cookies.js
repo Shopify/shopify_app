@@ -9,6 +9,10 @@
       action: '#AcceptCookies',
     });
 
+    if (!PartitionCookies.itpContent) {
+      return;
+    }
+
     PartitionCookies.redirectToEmbedded = function() {
       setCookiesPersist();
       redirect();

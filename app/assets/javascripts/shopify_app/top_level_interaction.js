@@ -5,6 +5,10 @@
       action: '#TopLevelInteractionButton',
     });
 
+    if (!TopLevelInteraction.itpContent) {
+      return;
+    }
+
     if (TopLevelInteraction.userAgentIsAffected()) {
       TopLevelInteraction.setUpContent();
     } else {
