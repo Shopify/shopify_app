@@ -14,14 +14,13 @@ module ShopifyApp
       authenticate
     end
 
+    # TODO: Find a way to remove duplication of enable_cookies and top_level_interaction code
     def enable_cookies
-      @shop = sanitized_shop_name
-      render_invalid_shop_error unless @shop
+      validate_shop
     end
 
     def top_level_interaction
-      @shop = sanitized_shop_name
-      render_invalid_shop_error unless @shop
+      validate_shop
     end
 
     def callback
@@ -59,6 +58,11 @@ module ShopifyApp
       else
         authenticate_at_top_level
       end
+    end
+    
+    def validate_shop
+      @shop = sanitized_shop_name
+      render_invalid_shop_error unless @shop
     end
 
     def render_invalid_shop_error
