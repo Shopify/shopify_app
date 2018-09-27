@@ -17,36 +17,41 @@ module ShopifyApp
 
       I18n.locale = :en
 
-      session['shopify.cookies_persist'] = true
+      session['shopify.granted_storage_access'] = true
     end
 
-    test '#new redirects to the enable_cookies page if we can\'t set cookies' do
-      session.delete('shopify.cookies_persist')
+    test '#new redirects to the enable_cookies page if we can\'t set cookies and the user agent supports cookie partitioning' do
       shopify_domain = 'my-shop.myshopify.com'
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to_top_level(shopify_domain, '/enable_cookies?shop=my-shop.myshopify.com')
+    end
+
+    test '#new renders the request_storage_access layout if we do not have storage access' do
+      session.delete('shopify.granted_storage_access')
+      shopify_domain = 'my-shop.myshopify.com'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'sessions/request_storage_access'
     end
 
     test '#new redirects to the top-level login if a valid shop param exists' do
       shopify_domain = 'my-shop.myshopify.com'
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to_top_level(shopify_domain)
-      assert_equal true, session['shopify.top_level_oauth']
     end
 
-    test '#new sets the top_level_oauth cookie if a valid shop param exists' do
+    test '#new sets the top_level_oauth cookie if a valid shop param exists and user agent supports cookie partitioning' do
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :new, params: { shop: 'my-shop' }
       assert_equal true, session['shopify.top_level_oauth']
     end
 
     test '#new redirects to the auth page if top_level param' do
-      session.delete('shopify.cookies_persist')
       get :new, params: { shop: 'my-shop', top_level: true }
       assert_redirected_to '/auth/shopify'
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
-      session.delete('shopify.cookies_persist')
       ShopifyApp.configuration.embedded_app = false
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to '/auth/shopify'
@@ -55,13 +60,16 @@ module ShopifyApp
 
     test '#new authenticates the shop if we\'ve just returned from top-level login flow' do
       session['shopify.top_level_oauth'] = true
-      get :new, params: { shop: 'my-shop' }
+      get :new, params: { shop: 'my-shop', top_level: true }
       assert_redirected_to '/auth/shopify'
       assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
     end
 
-    test '#new removes the top_level_oauth cookie if we\'ve just returned from top-level login flow' do
+    test '#new removes the top_level_oauth cookie if the user agent supports partitioning and we\'ve just returned from top-level login flow where the cookies_persist cookie was set' do
+    session.delete('shopify.granted_storage_access')
       session['shopify.top_level_oauth'] = true
+      session['shopify.cookies_persist'] = true
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :new, params: { shop: 'my-shop' }
       assert_nil session['shopify.top_level_oauth']
     end
@@ -69,6 +77,7 @@ module ShopifyApp
     test "#new should trust the shop param over the current session" do
       previously_logged_in_shop_id = 1
       session[:shopify] = previously_logged_in_shop_id
+      session['shopify.granted_storage_access'] = true
       new_shop_domain = "new-shop.myshopify.com"
       get :new, params: { shop: new_shop_domain }
       assert_redirected_to_top_level(new_shop_domain)
@@ -125,6 +134,17 @@ module ShopifyApp
 
     test '#enable_cookies displays an error if no shop is provided' do
       get :enable_cookies
+      assert_redirected_to ShopifyApp.configuration.root_url
+      assert_equal I18n.t('invalid_shop_url'), flash[:error]
+    end
+
+    test '#top_level_interaction renders the ccorrect template' do
+      get :top_level_interaction, params: { shop: 'shop' }
+      assert_template 'sessions/top_level_interaction'
+    end
+
+    test '#top_level_interaction displays an error if no shop is provided' do
+      get :top_level_interaction
       assert_redirected_to ShopifyApp.configuration.root_url
       assert_equal I18n.t('invalid_shop_url'), flash[:error]
     end

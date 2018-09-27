@@ -25,12 +25,17 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
 }
 
 StorageAccessHelper.prototype.redirectToAppHome = function() {
+  window.location.href = this.redirectInfo.appHomeUrl;
+}
+
+StorageAccessHelper.prototype.grantedStorageAccess = function() {
   sessionStorage.setItem('shopify.granted_storage_access', 'true');
-  window.location.href = this.redirectInfo.home;
+  document.cookie = 'shopify.granted_storage_access=true';
+  this.redirectToAppHome();
 }
 
 StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
-  return document.requestStorageAccess().then(this.redirectToAppHome.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
+  return document.requestStorageAccess().then(this.grantedStorageAccess.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
 }
 
 StorageAccessHelper.prototype.setupRequestStorageAccess = function() {
@@ -72,10 +77,35 @@ StorageAccessHelper.prototype.manageStorageAccess = function() {
 }
 
 StorageAccessHelper.prototype.execute = function() {
-  const userAgentUtilities = new UserAgentUtilities();
-  if (userAgentUtilities.shouldRenderITPContent()) {
+  if (ITPHelper.prototype.canPartitionCookies()) {
+    this.setUpCookiePartitioning();
+    return;
+  }
+
+  if (ITPHelper.prototype.userAgentIsAffected()) {
     this.manageStorageAccess();
   } else {
-    this.redirectToAppHome();
+    this.grantedStorageAccess();
   }
 }
+
+/* ITP 2.0 solution: handles cookie partitioning */
+StorageAccessHelper.prototype.setUpHelper = function() {
+  return new ITPHelper({redirectUrl: window.shopOrigin + "/admin/apps/" + window.apiKey});
+}
+
+StorageAccessHelper.prototype.setCookieAndRedirect = function() {
+  document.cookie = "shopify.cookies_persist=true";
+  var helper = this.setUpHelper();
+  helper.redirect();
+}
+
+StorageAccessHelper.prototype.setUpCookiePartitioning = function() {
+  var itpContent = document.querySelector('#CookiePartitionPrompt');
+  itpContent.style.display = 'block';
+
+  var button = document.querySelector('#AcceptCookies');
+  button.addEventListener('click', this.setCookieAndRedirect.bind(this));
+}
+
+

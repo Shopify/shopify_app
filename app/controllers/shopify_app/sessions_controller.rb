@@ -15,8 +15,17 @@ module ShopifyApp
     end
 
     def enable_cookies
-      @shop = sanitized_shop_name
-      render_invalid_shop_error unless @shop
+      validate_shop
+    end
+
+    def top_level_interaction
+      @url = login_url(top_level: true)
+      validate_shop
+    end
+
+    def granted_storage_access
+      session['shopify.granted_storage_access'] = true
+      redirect_to ShopifyApp::configuration.root_url
     end
 
     def callback
@@ -45,6 +54,14 @@ module ShopifyApp
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
 
+      if user_agent_can_partition_cookies
+        authenticate_with_partitioning
+      else
+        authenticate_normally
+      end
+    end
+
+    def authenticate_normally
       if request_storage_access?
         redirect_to_request_storage_access
       elsif authenticate_in_context?
@@ -54,33 +71,43 @@ module ShopifyApp
       end
     end
 
+    def authenticate_with_partitioning
+      if session['shopify.cookies_persist']
+        clear_top_level_oauth_cookie
+        authenticate_in_context
+      else
+        set_top_level_oauth_cookie
+        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
+      end
+    end
+    
+    def validate_shop
+      @shop = sanitized_shop_name
+      render_invalid_shop_error unless @shop
+    end
+
     def render_invalid_shop_error
       flash[:error] = I18n.t('invalid_shop_url')
       redirect_to return_address
     end
 
     def authenticate_in_context
-      clear_top_level_oauth_cookie
       redirect_to "#{main_app.root_path}auth/shopify"
     end
 
     def authenticate_at_top_level
-      set_top_level_oauth_cookie # Is this vestigal now?
       fullpage_redirect_to login_url(top_level: true)
     end
 
     def authenticate_in_context?
       return true unless ShopifyApp.configuration.embedded_app?
-      return true if params[:top_level]
-      session['shopify.top_level_oauth']
+      params[:top_level]
     end
 
     def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if session['shopify.cookies_persist'] # Maybe also vestigal?
-
-      true
+      !session['shopify.granted_storage_access']
     end
 
     def login_shop

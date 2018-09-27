@@ -35,8 +35,9 @@ module ShopifyApp
 
     def redirect_to_request_storage_access
       render :request_storage_access, layout: false, locals: {
-        doesNotHaveStorageAccessUrl: enable_cookies_path(shop: sanitized_shop_name),
+        doesNotHaveStorageAccessUrl: top_level_interaction_path(shop: sanitized_shop_name),
         hasStorageAccessUrl: login_url(top_level: true),
+        appHomeUrl: granted_storage_access_path,
         current_shopify_domain: current_shopify_domain,
       }
     end
@@ -90,7 +91,7 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        redirect_to_request_storage_access
+        render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain }
       else
         redirect_to url
       end
@@ -133,6 +134,7 @@ module ShopifyApp
 
     def set_test_cookie
       return unless ShopifyApp.configuration.embedded_app?
+      return unless user_agent_can_partition_cookies
       session['shopify.cookies_persist'] = true
     end
 
@@ -142,6 +144,10 @@ module ShopifyApp
 
     def set_top_level_oauth_cookie
       session['shopify.top_level_oauth'] = true
+    end
+
+    def user_agent_can_partition_cookies
+      request.user_agent.match(/Version\/12\.0\.?\d? Safari/)
     end
   end
 end
