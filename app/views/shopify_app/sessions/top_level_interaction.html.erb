@@ -59,7 +59,7 @@
       font-weight:400;
     }
 
-    #CookiePartitionPrompt {
+    #TopLevelInteractionContent {
       display: none;
     }
 
@@ -346,9 +346,10 @@
   </script>
 
   <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>
+  <%= javascript_include_tag('shopify_app/top_level_interaction', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
-  <main id="CookiePartitionPrompt">
+  <main id="TopLevelInteractionContent">
     <div class="Polaris-Page">
       <div class="Polaris-Page__Content">
         <div class="Polaris-Layout">
@@ -370,7 +371,7 @@
               <div class="Polaris-Stack__Item">
                 <div class="Polaris-Stack Polaris-Stack--distributionTrailing">
                   <div class="Polaris-Stack__Item">
-                    <button type="button" class="Polaris-Button Polaris-Button--primary" id="AcceptCookies">
+                    <button type="button" class="Polaris-Button Polaris-Button--primary" id="TopLevelInteractionButton">
                       <span class="Polaris-Button__Content"><span><%= I18n.t('top_level_interaction_action') %></span></span>
                     </button>
                   </div>
