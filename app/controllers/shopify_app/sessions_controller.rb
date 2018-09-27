@@ -94,7 +94,7 @@ module ShopifyApp
     def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if session['shopify.cookies_persist']
+      return false if session['shopify.granted_storage_access']
       return false if !request.user_agent.match(/Version\/12.[^0] Safari/)
 
       true
