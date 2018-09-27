@@ -19,6 +19,11 @@ module ShopifyApp
       render_invalid_shop_error unless @shop
     end
 
+    def top_level_interaction
+      @shop = sanitized_shop_name
+      render_invalid_shop_error unless @shop
+    end
+
     def callback
       if auth_hash
         login_shop
@@ -47,6 +52,8 @@ module ShopifyApp
 
       if request_storage_access?
         redirect_to_request_storage_access
+      elsif redirect_for_cookie_access?
+        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
       elsif authenticate_in_context?
         authenticate_in_context
       else
@@ -75,10 +82,20 @@ module ShopifyApp
       session['shopify.top_level_oauth']
     end
 
+    def redirect_for_cookie_access?
+      return false unless ShopifyApp.configuration.embedded_app?
+      return false if params[:top_level]
+      return false if session['shopify.cookies_persist']
+      return false if request.user_agent.match(/Version\/12.[^0] Safari/)
+
+      true
+    end
+
     def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if session['shopify.cookies_persist'] # Maybe also vestigal?
+      return false if session['shopify.cookies_persist']
+      return false if !request.user_agent.match(/Version\/12.[^0] Safari/)
 
       true
     end

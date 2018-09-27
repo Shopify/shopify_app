@@ -35,7 +35,7 @@ module ShopifyApp
 
     def redirect_to_request_storage_access
       render :request_storage_access, layout: false, locals: {
-        doesNotHaveStorageAccessUrl: enable_cookies_path(shop: sanitized_shop_name),
+        doesNotHaveStorageAccessUrl: top_level_interaction_path(shop: sanitized_shop_name),
         hasStorageAccessUrl: login_url(top_level: true),
         current_shopify_domain: current_shopify_domain,
       }
@@ -90,7 +90,11 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        redirect_to_request_storage_access
+        if request.user_agent.match(/Version\/12.[^0] Safari/)
+          redirect_to_request_storage_access
+        else
+          render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain }
+        end
       else
         redirect_to url
       end

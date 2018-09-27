@@ -2,10 +2,14 @@ en:
   logged_out: 'Successfully logged out'
   could_not_log_in: 'Could not log in to Shopify store'
   invalid_shop_url: 'Invalid shop domain'
-  enable_cookies_heading: "You must interact with %{app} outside of Shopify"
-  enable_cookies_body: "Safari requires you to interact with %{app} outside of Shopify for the app to load in the Shopify admin."
-  enable_cookies_footer: 'You will not need to do this for another 30 days.'
-  enable_cookies_action: 'Continue'
+  enable_cookies_heading: "Enable cookies from %{app}"
+  enable_cookies_body: "You must manually enable cookies in this browser in order to use %{app} within Shopify."
+  enable_cookies_footer: 'Cookies let the app authenticate you by temporarily storing your preferences and personal information. They expire after 30 days.'
+  enable_cookies_action: 'Enable cookies'
+  top_level_interaction_heading: "You must interact with %{app} outside of Shopify"
+  top_level_interaction_body: "Safari requires you to interact with %{app} outside of Shopify for the app to load in the Shopify admin."
+  top_level_interaction_footer: 'You will not need to do this for another 30 days.'
+  top_level_interaction_action: 'Continue'
   request_storage_access_heading: "%{app} wants to request access to cookies"
   request_storage_access_body: "You must manually enable cookies in this browser in order to use %{app} within Shopify."
   request_storage_access_body: 'Cookies let the app authenticate you by temporarily storing your preferences and personal information. They expire after 30 days.'

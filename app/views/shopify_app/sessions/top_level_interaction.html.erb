@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8" />
-  <base target="_top">
-  <title>Redirecting…</title>
   <style>
     html,
     body {
       min-height:100%;
-      height:100%;
+      height:100%; 
       font-size:1.5rem;
       font-weight:400;
       line-height:2rem;
@@ -61,14 +59,14 @@
       font-weight:400;
     }
 
-    #RequestStorageAccess {
+    #CookiePartitionPrompt {
       display: none;
     }
 
     .Polaris-Page {
       margin:0 auto;
       padding:0;
-      max-width:99.8rem;
+      max-width:99.8rem; 
     }
 
     @media (min-width: 30.625em) {
@@ -298,11 +296,11 @@
       min-width:1px;
       min-height:1px;
     }
-
+      
     @media (min-width: 40em) {
       .Polaris-Button__Content {
         font-size:1.4rem;
-      }
+      } 
     }
 
     .Polaris-Button--primary {
@@ -339,48 +337,43 @@
       color:white;
     }
   </style>
-  <%= javascript_include_tag('shopify_app/utilities/user_agent', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/storage_access', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/storage_access_redirect', crossorigin: 'anonymous', integrity: true) %>
+  <base target="_top">
+  <title>Redirecting…</title>
+
+  <script>
+    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
+    window.shopOrigin = "https://<%= @shop %>";
+  </script>
+
+  <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
-<%=
-  content_tag(:div, nil,
-              id: 'redirection-target',
-              data: {
-                  target: {
-                      myshopifyUrl: "https://#{current_shopify_domain}",
-                      hasStorageAccessUrl: "#{hasStorageAccessUrl}",
-                      doesNotHaveStorageAccessUrl: "#{doesNotHaveStorageAccessUrl}"
-                  },
-              },
-              )
-%>
-<main id="RequestStorageAccess">
-  <div class="Polaris-Page">
-    <div class="Polaris-Page__Content">
-      <div class="Polaris-Layout">
-        <div class="Polaris-Layout__Section">
-          <div class="Polaris-Stack Polaris-Stack--vertical">
-            <div class="Polaris-Stack__Item">
-              <div class="Polaris-Card">
-                <div class="Polaris-Card__Header">
-                  <h1 class="Polaris-Heading"><%= I18n.t('request_storage_access_heading', app: ShopifyApp.configuration.application_name) %></h1>
-                </div>
-                <div class="Polaris-Card__Section">
-                  <p><%= I18n.t('request_storage_access_body', app: ShopifyApp.configuration.application_name) %></p>
-                </div>
-                <div class="Polaris-Card__Section Polaris-Card__Section--subdued">
-                  <p><%= I18n.t('enable_cookies_footer') %></p>
+  <main id="CookiePartitionPrompt">
+    <div class="Polaris-Page">
+      <div class="Polaris-Page__Content">
+        <div class="Polaris-Layout">
+          <div class="Polaris-Layout__Section">
+            <div class="Polaris-Stack Polaris-Stack--vertical">
+              <div class="Polaris-Stack__Item">
+                <div class="Polaris-Card">
+                  <div class="Polaris-Card__Header">
+                    <h1 class="Polaris-Heading"><%= I18n.t('top_level_interaction_heading', app: ShopifyApp.configuration.application_name) %></h1>
+                  </div>
+                  <div class="Polaris-Card__Section">
+                    <p><%= I18n.t('top_level_interaction_body', app: ShopifyApp.configuration.application_name) %></p>
+                  </div>
+                  <div class="Polaris-Card__Section Polaris-Card__Section--subdued">
+                    <p><%= I18n.t('top_level_interaction_footer') %></p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="Polaris-Stack__Item">
-              <div class="Polaris-Stack Polaris-Stack--distributionTrailing">
-                <div class="Polaris-Stack__Item">
-                  <button type="button" class="Polaris-Button Polaris-Button--primary" id="TriggerAllowCookiesPrompt">
-                    <span class="Polaris-Button__Content"><span><%= I18n.t('request_storage_access_action') %></span></span>
-                  </button>
+              <div class="Polaris-Stack__Item">
+                <div class="Polaris-Stack Polaris-Stack--distributionTrailing">
+                  <div class="Polaris-Stack__Item">
+                    <button type="button" class="Polaris-Button Polaris-Button--primary" id="AcceptCookies">
+                      <span class="Polaris-Button__Content"><span><%= I18n.t('top_level_interaction_action') %></span></span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -388,7 +381,6 @@
         </div>
       </div>
     </div>
-  </div>
-</main>
+  </main>
 </body>
 </html>

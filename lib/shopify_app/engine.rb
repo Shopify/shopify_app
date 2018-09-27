@@ -8,6 +8,7 @@ module ShopifyApp
         shopify_app/redirect.js
         shopify_app/itp_polyfill.js
         shopify_app/storage_access.js
+        shopify_app/storage_access_redirect.js
         shopify_app/utilities/user_agent.js
       ]
     end

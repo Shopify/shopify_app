@@ -26,7 +26,7 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
 
 StorageAccessHelper.prototype.redirectToAppHome = function() {
   sessionStorage.setItem('shopify.granted_storage_access', 'true');
-  window.location.href = this.redirectInfo.home;
+  window.location.href = this.redirectInfo.hasStorageAccessUrl;
 }
 
 StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
