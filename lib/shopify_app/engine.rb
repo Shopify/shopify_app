@@ -11,7 +11,6 @@ module ShopifyApp
         shopify_app/storage_access.js
         shopify_app/storage_access_redirect.js
         shopify_app/top_level_interaction.js
-        shopify_app/utilities/user_agent.js
       ]
     end
   end

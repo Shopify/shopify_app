@@ -23,13 +23,12 @@ ITPHelper.prototype.userAgentIsAffected = function() {
   return Boolean(document.hasStorageAccess);
 }
 
+ITPHelper.prototype.canPartitionCookies = function() {
+  var versionRegEx = new RegExp('Version/12.0.?\d? Safari');
+  return versionRegEx.test(navigator.userAgent);
+}
+
 ITPHelper.prototype.setUpContent = function(onClick) {
   this.itpContent.style.display = 'block';
-  this.itpAction.addEventListener('click', function() {
-    if (onClick) {
-      onClick();
-    }
-
-    this.redirectToEmbedded();
-  }.bind(this));
+  this.itpAction.addEventListener('click', this.redirectToEmbedded);
 }

@@ -5,7 +5,7 @@
       action: '#TopLevelInteractionButton',
     });
 
-    if (TopLevelInteraction.userAgentIsAffected() && navigator.userAgent.indexOf('Version/12.1 Safari') >= 0) {
+    if (TopLevelInteraction.userAgentIsAffected()) {
       TopLevelInteraction.setUpContent();
     } else {
       TopLevelInteraction.redirectToEmbedded();

@@ -72,8 +72,7 @@ StorageAccessHelper.prototype.manageStorageAccess = function() {
 }
 
 StorageAccessHelper.prototype.execute = function() {
-  const userAgentUtilities = new UserAgentUtilities();
-  if (userAgentUtilities.shouldRenderITPContent()) {
+  if (ITPHelper.prototype.userAgentIsAffected()) {
     this.manageStorageAccess();
   } else {
     this.redirectToAppHome();

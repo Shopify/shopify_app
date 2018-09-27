@@ -12,12 +12,8 @@
       // If the current window is the 'parent', change the URL by setting location.href
       window.top.location.href = targetInfo.hasStorageAccess;
     } else {
-      if (navigator.userAgent.indexOf('Version/12.1 Safari') !== -1) {
         var storageAccessHelper = new StorageAccessHelper(targetInfo);
         storageAccessHelper.execute();
-      } else {
-        // TODO
-      }
     }
   }
 

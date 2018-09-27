@@ -1,4 +1,4 @@
-(function() {
+(function(redirect) {
   function setCookiesPersist() {
     document.cookie = "shopify.cookies_persist=true";
   }
@@ -9,13 +9,18 @@
       action: '#AcceptCookies',
     });
 
-    if (PartitionCookies.userAgentIsAffected() && navigator.userAgent.indexOf('Version/12.1 Safari') === -1) {
-      PartitionCookies.setUpContent(setCookiesPersist);
+    PartitionCookies.redirectToEmbedded = function() {
+      setCookiesPersist();
+      redirect();
+    }
+
+    if (PartitionCookies.userAgentIsAffected()) {
+      PartitionCookies.setUpContent.call(PartitionCookies);
     } else {
       PartitionCookies.redirectToEmbedded();
     }
   }
 
   document.addEventListener("DOMContentLoaded", setUpPartitionCookies);
-})();
+})(ITPHelper.prototype.redirectToEmbedded);
 

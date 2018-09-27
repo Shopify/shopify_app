@@ -90,7 +90,7 @@ module ShopifyApp
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
       return false if session['shopify.cookies_persist']
-      return false if request.user_agent.match(/Version\/12.[^0] Safari/)
+      return false if !userAgentCanPartitionCookies
 
       true
     end
@@ -99,9 +99,13 @@ module ShopifyApp
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
       return false if session['shopify.granted_storage_access']
-      return false if !request.user_agent.match(/Version\/12.[^0] Safari/)
+      return false if userAgentCanPartitionCookies
 
       true
+    end
+
+    def userAgentCanPartitionCookies
+      request.user_agent.match(/Version\/12.0.?\d? Safari/)
     end
 
     def login_shop
