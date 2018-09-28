@@ -173,38 +173,136 @@
       }
     }
 
-    .Polaris-Card {
-      overflow:hidden;
-      background-color:white;
-      box-shadow:0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    .Polaris-EmptyState {
+      display:-webkit-box;
+      display:-ms-flexbox;
+      display:flex;
+      -webkit-box-orient:vertical;
+      -webkit-box-direction:normal;
+      -ms-flex-direction:column;
+      flex-direction:column;
+      -webkit-box-align:center;
+      -ms-flex-align:center;
+      align-items:center;
+      width:100%;
+      margin:2rem auto 0 auto;
+      padding:2rem 0;
+      max-width:99.8rem;
     }
 
-    .Polaris-Card + .Polaris-Card {
-      margin-top:2rem;
-    }
-
-    @media (min-width: 30.625em) {
-      .Polaris-Card {
-        border-radius:3px;
+    @media (min-width: 46.5em) {
+      .Polaris-EmptyState--imageContained .Polaris-EmptyState__Image{
+        position:initial;
+        width:100%;
       }
     }
 
-    .Polaris-Card__Header {
-      padding:2rem 2rem 0;
+    .Polaris-EmptyState__Section {
+      position:relative;
+      display:-webkit-box;
+      display:-ms-flexbox;
+      display:flex;
+      -webkit-box-orient:vertical;
+      -webkit-box-direction:normal;
+      -ms-flex-direction:column;
+      flex-direction:column;
+      -webkit-box-flex:1;
+      -ms-flex:1 1 auto;
+      flex:1 1 auto;
+      width:100%;
     }
 
-    .Polaris-Card__Section {
-      padding:2rem;
+    @media (min-width: 46.5em) {
+      .Polaris-EmptyState__Section {
+        left:2rem;
+        -webkit-box-orient:horizontal;
+        -webkit-box-direction:normal;
+        -ms-flex-direction:row;
+        flex-direction:row;
+        -webkit-box-align:center;
+        -ms-flex-align:center;
+        align-items:center;
+      }
     }
 
-    .Polaris-Card__Section + .Polaris-Card__Section {
-      border-top:1px solid #dfe3e8;
+    .Polaris-EmptyState__ImageContainer,
+    .Polaris-EmptyState__DetailsContainer {
+      -webkit-box-flex:1;
+      -ms-flex:1 1 auto;
+      flex:1 1 auto;
+      padding:0;
+      margin:0; 
     }
 
-    .Polaris-Card__Section--subdued {
-      background-color:#f9fafb;
+    @media (min-width: 46.5em) {
+      .Polaris-EmptyState__ImageContainer,
+      .Polaris-EmptyState__DetailsContainer {
+        -ms-flex-preferred-size:50%;
+        flex-basis:50%;
+      }
     }
 
+    @media (max-width: 30.625em) {
+      .Polaris-EmptyState__ImageContainer,
+      .Polaris-EmptyState__DetailsContainer {
+        overflow-x:hidden;
+      }
+    }
+
+    .Polaris-EmptyState__Details {
+      position:relative;
+      z-index:10;
+      padding:0 1.6rem;
+      width:33.6rem;
+    }
+
+    @media (min-width: 30.625em) {
+      .Polaris-EmptyState__Details {
+        padding:0;
+      }
+    }
+
+    .Polaris-EmptyState__Content {
+      font-size:1.6rem;
+      font-weight:400;
+      line-height:2.4rem;
+      color:#637381;
+    }
+
+    @media (min-width: 40em) {
+      .Polaris-EmptyState__Content {
+        font-size:2rem;
+        line-height:2.8rem;
+      }
+    }
+
+    .Polaris-EmptyState__Actions {
+      margin-top:1.6rem;
+    }
+
+    .Polaris-EmptyState__Image {
+      position:relative;
+      z-index:0;
+      margin-top:-2rem;
+      margin-left:-70%;
+      width:190%;
+      max-width:none;
+    }
+
+    @media (min-width: 30.625em) {
+      .Polaris-EmptyState__Image {
+        margin-left:0;
+        width:100%;
+      }
+    }
+
+    @media (min-width: 46.5em) {
+      .Polaris-EmptyState__Image {
+        margin-top:0;
+        margin-left:-70%;
+        width:170%;
+      } 
+    }
 
     .Polaris-Stack--distributionTrailing {
       -webkit-box-pack:end;
@@ -336,6 +434,27 @@
       box-shadow:none;
       color:white;
     }
+
+    .Polaris-DisplayText{
+      margin:0;
+    }
+
+    .Polaris-DisplayText--sizeMedium {
+      font-size:2.1rem;
+      font-weight:400;
+      line-height:2.8rem;
+    }
+
+    @media (min-width: 40em) {
+      .Polaris-DisplayText--sizeMedium {
+        font-size:2.6rem;
+        line-height:3.2rem;
+      }
+    }
+
+    .Polaris-TextContainer > * + * {
+      margin-top:1.6rem;
+    }
   </style>
   <base target="_top">
   <title>Redirecting…</title>
@@ -356,24 +475,24 @@
           <div class="Polaris-Layout__Section">
             <div class="Polaris-Stack Polaris-Stack--vertical">
               <div class="Polaris-Stack__Item">
-                <div class="Polaris-Card">
-                  <div class="Polaris-Card__Header">
-                    <h1 class="Polaris-Heading"><%= I18n.t('top_level_interaction_heading', app: ShopifyApp.configuration.application_name) %></h1>
-                  </div>
-                  <div class="Polaris-Card__Section">
-                    <p><%= I18n.t('top_level_interaction_body', app: ShopifyApp.configuration.application_name) %></p>
-                  </div>
-                  <div class="Polaris-Card__Section Polaris-Card__Section--subdued">
-                    <p><%= I18n.t('top_level_interaction_footer') %></p>
-                  </div>
-                </div>
-              </div>
-              <div class="Polaris-Stack__Item">
-                <div class="Polaris-Stack Polaris-Stack--distributionTrailing">
-                  <div class="Polaris-Stack__Item">
-                    <button type="button" class="Polaris-Button Polaris-Button--primary" id="TopLevelInteractionButton">
-                      <span class="Polaris-Button__Content"><span><%= I18n.t('top_level_interaction_action') %></span></span>
-                    </button>
+                <div class="Polaris-EmptyState">
+                  <div class="Polaris-EmptyState__Section">
+                    <div class="Polaris-EmptyState__DetailsContainer">
+                      <div class="Polaris-EmptyState__Details">
+                        <div class="Polaris-TextContainer">
+                          <h1 class="Polaris-DisplayText Polaris-DisplayText--sizeMedium"><%= I18n.t('top_level_interaction_heading', app: ShopifyApp.configuration.application_name) %></h1>
+                          <div class="Polaris-EmptyState__Content">
+                            <p><%= I18n.t('top_level_interaction_body', app: ShopifyApp.configuration.application_name) %></p>
+                          </div>
+                        </div>
+                        <div class="Polaris-EmptyState__Actions">
+                          <div class="Polaris-Stack Polaris-Stack--alignmentCenter">
+                            <div class="Polaris-Stack__Item"><button type="button" id="TopLevelInteractionButton" class="Polaris-Button Polaris-Button--primary Polaris-Button--sizeLarge"><span class="Polaris-Button__Content"><span class="Polaris-Button__Icon"></span><span><%= I18n.t('top_level_interaction_action') %></span></span></button></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="Polaris-EmptyState__ImageContainer"><img src="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg" role="presentation" alt="" class="Polaris-EmptyState__Image"></div>
                   </div>
                 </div>
               </div>
