@@ -36,7 +36,7 @@ module ShopifyApp
     def redirect_to_request_storage_access
       render :request_storage_access, layout: false, locals: {
         doesNotHaveStorageAccessUrl: top_level_interaction_path(shop: sanitized_shop_name),
-        hasStorageAccessUrl: "#{login_url(top_level: true)}&has_access=true",
+        hasStorageAccessUrl: login_url(top_level: true),
         current_shopify_domain: current_shopify_domain,
       }
     end

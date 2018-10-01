@@ -98,7 +98,6 @@ module ShopifyApp
     def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if params[:has_access]
       return false if session['shopify.granted_storage_access']
       return false if userAgentCanPartitionCookies
 
