@@ -37,6 +37,7 @@ module ShopifyApp
       render :request_storage_access, layout: false, locals: {
         doesNotHaveStorageAccessUrl: top_level_interaction_path(shop: sanitized_shop_name),
         hasStorageAccessUrl: login_url(top_level: true),
+        appHomeUrl: granted_storage_access_path,
         current_shopify_domain: current_shopify_domain,
       }
     end
@@ -137,6 +138,7 @@ module ShopifyApp
 
     def set_test_cookie
       return unless ShopifyApp.configuration.embedded_app?
+      return unless userAgentCanPartitionCookies
       session['shopify.cookies_persist'] = true
     end
 
@@ -146,6 +148,10 @@ module ShopifyApp
 
     def set_top_level_oauth_cookie
       session['shopify.top_level_oauth'] = true
+    end
+
+    def userAgentCanPartitionCookies
+      request.user_agent.match(/Version\/12\.0\.?\d? Safari/)
     end
   end
 end

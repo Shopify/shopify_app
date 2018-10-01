@@ -23,6 +23,11 @@ module ShopifyApp
       validate_shop
     end
 
+    def granted_storage_access
+      session['shopify.granted_storage_access'] = true
+      redirect_to ShopifyApp::configuration.root_url
+    end
+
     def callback
       if auth_hash
         login_shop
@@ -102,10 +107,6 @@ module ShopifyApp
       return false if userAgentCanPartitionCookies
 
       true
-    end
-
-    def userAgentCanPartitionCookies
-      request.user_agent.match(/Version\/12\.0\.?\d? Safari/)
     end
 
     def login_shop

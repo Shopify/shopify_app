@@ -25,8 +25,9 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
 }
 
 StorageAccessHelper.prototype.redirectToAppHome = function() {
-  sessionStorage.setItem('shopify.granted_storage_access', 'true');
-  window.location.href = this.redirectInfo.hasStorageAccessUrl;
+  document.cookie = 'shopify.granted_storage_access=true';
+  // sessionStorage.setItem('shopify.granted_storage_access', 'true');
+  window.location.href = this.redirectInfo.appHomeUrl;
 }
 
 StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
@@ -42,7 +43,8 @@ StorageAccessHelper.prototype.setupRequestStorageAccess = function() {
 }
 
 StorageAccessHelper.prototype.handleHasStorageAccess = function() {
-  if (sessionStorage.getItem('shopify.granted_storage_access')) {
+  // if (sessionStorage.getItem('shopify.granted_storage_access')) {
+  if (document.cookie.match(/shopify\.granted_storage_access/)) {
     // If app was classified by ITP and used Storage Access API to acquire access
     this.redirectToAppHome();
   } else {
