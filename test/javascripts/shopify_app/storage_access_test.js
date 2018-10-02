@@ -1,6 +1,3 @@
-import '../../../app/assets/javascripts/shopify_app/itp_polyfill';
-import '../../../app/assets/javascripts/shopify_app/storage_access';
-
 suite('StorageAccessHelper', () => { 
   let storageAccessHelper;
   const redirectInfoStub = {
@@ -12,6 +9,7 @@ suite('StorageAccessHelper', () => {
 
   let contentContainer;
   let button;
+  let redirectToEmbeddedStub;
 
   setup(() => {
     window.parent.postMessage = sinon.stub();
@@ -26,15 +24,17 @@ suite('StorageAccessHelper', () => {
     contentContainer.appendChild(button);
     document.body.appendChild(contentContainer);
     storageAccessHelper = new StorageAccessHelper(redirectInfoStub);
+    redirectToEmbeddedStub = sinon.stub(ITPHelper.prototype, 'redirectToEmbedded');
   });
 
   teardown(() => {
     document.body.removeChild(contentContainer);
+    redirectToEmbeddedStub.restore();
   });
 
   suite('execute', () => {
     test('calls redirectToAppHome instead of manageStorageAccess if ITPHelper.userAgentIsAffected returns true', async () => {
-      sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
+      var userAgentIsAffectedStub = sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
 
       const manageStorageAccessStub = sinon.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
@@ -45,13 +45,13 @@ suite('StorageAccessHelper', () => {
       sinon.assert.notCalled(manageStorageAccessStub);
       sinon.assert.called(redirectToAppHomeStub);
 
-     ITPHelper.prototype.userAgentIsAffected.restore();
+      userAgentIsAffectedStub.restore();
       manageStorageAccessStub.restore();
       redirectToAppHomeStub.restore();
     });
 
     test('calls manageStorageAccess instead of redirectToAppHome if ITPHelper.userAgentIsAffected returns true', async () => {
-      sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
+      var userAgentIsAffectedStub = sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
 
       const manageStorageAccessStub = sinon.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
@@ -62,7 +62,8 @@ suite('StorageAccessHelper', () => {
       sinon.assert.called(manageStorageAccessStub);
       sinon.assert.notCalled(redirectToAppHomeStub);
 
-      ITPHelper.prototype.userAgentIsAffected.restore();manageStorageAccessStub.restore();
+      userAgentIsAffectedStub.restore();
+      manageStorageAccessStub.restore();
       redirectToAppHomeStub.restore();
     });
   });
@@ -135,38 +136,6 @@ suite('StorageAccessHelper', () => {
       sinon.assert.called(redirectToAppTLDSpy);
 
       setupRequestStorageAccessSpy.restore();
-      redirectToAppTLDSpy.restore();
-    });
-  });
-
-  suite('handleHasStorageAccess', () => {
-    test('calls redirectToAppHome instead of redirectToAppTLD if shopify.granted_storage_access is defined in sessionStorage', () => {
-      const redirectToAppHomeSpy = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const redirectToAppTLDSpy = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
-
-      sessionStorage.setItem('shopify.granted_storage_access', 'true');
-
-      storageAccessHelper.handleHasStorageAccess();
-
-      sinon.assert.called(redirectToAppHomeSpy);
-      sinon.assert.notCalled(redirectToAppTLDSpy);
-
-      redirectToAppHomeSpy.restore();
-      redirectToAppTLDSpy.restore();
-    });
-
-    test('calls redirectToAppTLD instead of redirectToAppHome if shopify.granted_storage_access is defined in sessionStorage', () => {
-      const redirectToAppHomeSpy = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const redirectToAppTLDSpy = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
-
-      sessionStorage.removeItem('shopify.granted_storage_access');
-
-      storageAccessHelper.handleHasStorageAccess();
-
-      sinon.assert.notCalled(redirectToAppHomeSpy);
-      sinon.assert.called(redirectToAppTLDSpy);
-
-      redirectToAppHomeSpy.restore();
       redirectToAppTLDSpy.restore();
     });
   });

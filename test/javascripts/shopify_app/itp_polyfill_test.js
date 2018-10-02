@@ -1,8 +1,7 @@
-import '../../../app/assets/javascripts/shopify_app/itp_polyfill';
-
 suite('ITPHelper', () => {
   let contentContainer;
   let button;
+  let redirectToEmbeddedStub;
 
   setup(() => {
     contentContainer = document.createElement('div');
@@ -14,10 +13,12 @@ suite('ITPHelper', () => {
 
     contentContainer.appendChild(button);
     document.body.appendChild(contentContainer);
+    redirectToEmbeddedStub = sinon.stub(ITPHelper.prototype, 'redirectToEmbedded');
   });
 
   teardown(() => {
     document.body.removeChild(contentContainer);
+    redirectToEmbeddedStub.restore();
   });
 
   suite('userAgentIsAffected', () => {
@@ -101,15 +102,12 @@ suite('ITPHelper', () => {
         action: '#Action',
       });
 
-      const redirectToEmbeddedStub = sinon.stub(helper, 'redirectToEmbedded');
-
       helper.setUpContent();
 
       button = document.querySelector('#Action');
       button.click();
 
       sinon.assert.called(redirectToEmbeddedStub);
-      redirectToEmbeddedStub.restore();
     });
 
     test('sets display property of the expected node to "block"', () => {
