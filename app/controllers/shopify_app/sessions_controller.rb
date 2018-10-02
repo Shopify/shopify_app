@@ -95,7 +95,7 @@ module ShopifyApp
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
       return false if session['shopify.cookies_persist']
-      return false if !userAgentCanPartitionCookies
+      return false unless userAgentCanPartitionCookies
 
       true
     end
