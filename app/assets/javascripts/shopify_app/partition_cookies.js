@@ -1,7 +1,8 @@
 (function() {
   function setCookieAndRedirect() {
     document.cookie = "shopify.cookies_persist=true";
-    ITPHelper.prototype.redirectToEmbedded();
+    var helper = new ITPHelper({redirectUrl: window.shopOrigin + "/admin/apps/" + window.apiKey});
+    helper.redirect();
   }
 
   document.addEventListener("DOMContentLoaded", function() {

@@ -13,19 +13,14 @@
       window.top.location.href = targetInfo.url;
     } else {
       // If the current window is the 'child', change the parent's URL with postMessage
-      if (navigator.userAgent.indexOf('Version/12.1 Safari') !== -1) {
-        var storageAccessHelper = new StorageAccessHelper(targetInfo);
-        storageAccessHelper.execute();
-      } else {
-        normalizedLink = document.createElement('a');
-        normalizedLink.href = targetInfo.url;
+      normalizedLink = document.createElement('a');
+      normalizedLink.href = targetInfo.url;
 
-        data = JSON.stringify({
-          message: 'Shopify.API.remoteRedirect',
-          data: {location: normalizedLink.href}
-        });
-        window.parent.postMessage(data, targetInfo.myshopifyUrl);
-      }
+      data = JSON.stringify({
+        message: 'Shopify.API.remoteRedirect',
+        data: {location: normalizedLink.href}
+      });
+      window.parent.postMessage(data, targetInfo.myshopifyUrl);
     }
   }
 

@@ -1,10 +1,11 @@
 function ITPHelper(selectors) {
   this.itpContent = document.querySelector(selectors.content);
   this.itpAction = document.querySelector(selectors.action);
+  this.redirectUrl = selectors.redirectUrl;
 }
 
-ITPHelper.prototype.redirectToEmbedded = function() {
-  window.location.href = window.shopOrigin + "/admin/apps/" + window.apiKey;
+ITPHelper.prototype.redirect = function() {
+  window.location.href = this.redirectUrl;
 }
 
 ITPHelper.prototype.userAgentIsAffected = function() {
@@ -26,5 +27,5 @@ ITPHelper.prototype.canPartitionCookies = function() {
 
 ITPHelper.prototype.setUpContent = function(onClick) {
   this.itpContent.style.display = 'block';
-  this.itpAction.addEventListener('click', this.redirectToEmbedded);
+  this.itpAction.addEventListener('click', this.redirect.bind(this));
 }

@@ -3,6 +3,7 @@
     var TopLevelInteraction = new ITPHelper({
       content: '#TopLevelInteractionContent',
       action: '#TopLevelInteractionButton',
+      redirectUrl: window.redirectUrl
     });
 
     if (!TopLevelInteraction.itpContent) {
@@ -12,7 +13,7 @@
     if (TopLevelInteraction.userAgentIsAffected()) {
       TopLevelInteraction.setUpContent();
     } else {
-      TopLevelInteraction.redirectToEmbedded();
+      TopLevelInteraction.redirect();
     }
   }
 

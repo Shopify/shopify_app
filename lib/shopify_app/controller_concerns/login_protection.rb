@@ -91,11 +91,7 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        if request.user_agent.match(/Version\/12.[^0] Safari/)
-          redirect_to_request_storage_access
-        else
-          render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain }
-        end
+        render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain }
       else
         redirect_to url
       end

@@ -25,12 +25,17 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
 }
 
 StorageAccessHelper.prototype.redirectToAppHome = function() {
-  sessionStorage.setItem('shopify.granted_storage_access', 'true');
   window.location.href = this.redirectInfo.appHomeUrl;
 }
 
+StorageAccessHelper.prototype.grantedStorageAccess = function() {
+  sessionStorage.setItem('shopify.granted_storage_access', 'true');
+  document.cookie = 'shopify.granted_storage_access=true';
+  this.redirectToAppHome();
+}
+
 StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
-  return document.requestStorageAccess().then(this.redirectToAppHome.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
+  return document.requestStorageAccess().then(this.grantedStorageAccess.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
 }
 
 StorageAccessHelper.prototype.setupRequestStorageAccess = function() {
@@ -75,6 +80,6 @@ StorageAccessHelper.prototype.execute = function() {
   if (ITPHelper.prototype.userAgentIsAffected()) {
     this.manageStorageAccess();
   } else {
-    this.redirectToAppHome();
+    this.grantedStorageAccess();
   }
 }

@@ -462,6 +462,7 @@
   <script>
     window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
     window.shopOrigin = "https://<%= @shop %>";
+    window.redirectUrl = "<%= @url %>";
   </script>
 
   <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>

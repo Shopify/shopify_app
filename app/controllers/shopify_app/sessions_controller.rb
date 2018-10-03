@@ -20,6 +20,7 @@ module ShopifyApp
     end
 
     def top_level_interaction
+      @url = login_url(top_level: true)
       validate_shop
     end
 
@@ -54,15 +55,27 @@ module ShopifyApp
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
 
+      if userAgentCanPartitionCookies
+        authenticate_with_partitioning
+      else
+        authenticate_normally
+      end
+    end
+
+    def authenticate_normally
       if request_storage_access?
+        byebug
         redirect_to_request_storage_access
-      elsif redirect_for_cookie_access?
-        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
       elsif authenticate_in_context?
         authenticate_in_context
       else
+        byebug
         authenticate_at_top_level
       end
+    end
+
+    def authenticate_with_partitioning
+      # TODO
     end
     
     def validate_shop
@@ -76,37 +89,22 @@ module ShopifyApp
     end
 
     def authenticate_in_context
-      clear_top_level_oauth_cookie
       redirect_to "#{main_app.root_path}auth/shopify"
     end
 
     def authenticate_at_top_level
-      set_top_level_oauth_cookie # Is this vestigal now?
       fullpage_redirect_to login_url(top_level: true)
     end
 
     def authenticate_in_context?
       return true unless ShopifyApp.configuration.embedded_app?
-      return true if params[:top_level]
-      session['shopify.top_level_oauth']
-    end
-
-    def redirect_for_cookie_access?
-      return false unless ShopifyApp.configuration.embedded_app?
-      return false if params[:top_level]
-      return false if session['shopify.cookies_persist']
-      return false unless userAgentCanPartitionCookies
-
-      true
+      params[:top_level]
     end
 
     def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
-      return false if session['shopify.granted_storage_access']
-      return false if userAgentCanPartitionCookies
-
-      true
+      !session['shopify.granted_storage_access']
     end
 
     def login_shop
