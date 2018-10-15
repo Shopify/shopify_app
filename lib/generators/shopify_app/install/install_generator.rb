@@ -9,7 +9,7 @@ module ShopifyApp
       class_option :application_name, type: :array, default: ['My', 'Shopify', 'App']
       class_option :api_key, type: :string, default: '<api_key>'
       class_option :secret, type: :string, default: '<secret>'
-      class_option :scope, type: :array, default: ['read_products']
+      class_option :scope, type: :array, default: ['read_orders,', 'read_products']
       class_option :embedded, type: :string, default: 'true'
 
       def create_shopify_app_initializer
