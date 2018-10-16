@@ -1,0 +1,11 @@
+---
+it:
+  logged_out: Disconnessione effettuata correttamente
+  could_not_log_in: Impossibile accedere al negozio Shopify
+  invalid_shop_url: Dominio negozio non valido
+  enable_cookies_heading: Abilita i cookie di %{app}
+  enable_cookies_body: Devi abilitare manualmente i cookie in questo browser per poter
+    utilizzare %{app} da Shopify.
+  enable_cookies_footer: I cookie consentono all'app di autenticarti memorizzando
+    temporaneamente le tue preferenze e informazioni personali. Scadono dopo 30 giorni.
+  enable_cookies_action: Abilita i cookie

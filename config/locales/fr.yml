@@ -1,4 +1,12 @@
+---
 fr:
-  logged_out: 'Vous êtes déconnecté(e)'
-  could_not_log_in: 'Impossible de se connecter à la boutique Shopify'
-  invalid_shop_url: 'Url invalide'
+  logged_out: Vous êtes déconnecté(e)
+  could_not_log_in: Impossible de se connecter à la boutique Shopify
+  invalid_shop_url: Url invalide
+  enable_cookies_heading: Activer les cookies de %{app}
+  enable_cookies_body: Vous devez manuellement activer les cookies dans ce navigateur
+    pour utiliser %{app} dans Shopify.
+  enable_cookies_footer: Les cookies permettent à l'application de vous authentifier
+    en stockant temporairement vos préférences et informations personnelles. Celles-ci
+    expirent après 30 jours.
+  enable_cookies_action: Activer les cookies

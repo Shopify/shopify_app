@@ -1,3 +1,12 @@
+---
 de:
-  logged_out: 'Erfolgreich ausgelogt'
-  could_not_log_in: 'Shopify Store Login fehlgeschlagen'
+  logged_out: Erfolgreich ausgelogt
+  could_not_log_in: Shopify Store Login fehlgeschlagen
+  invalid_shop_url: Ungültige Shop-Domain
+  enable_cookies_heading: Cookies von %{app} aktivieren
+  enable_cookies_body: Sie müssen Cookies in diesem Browser manuell aktivieren, um
+    %{app} in Shopify verwenden zu können.
+  enable_cookies_footer: Mithilfe von Cookies kann die App Sie authentifizieren, indem
+    Ihre Einstellungen und persönlichen Informationen vorübergehend gespeichert werden.
+    Sie laufen nach 30 Tagen ab.
+  enable_cookies_action: Cookies aktivieren

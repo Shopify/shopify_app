@@ -1,0 +1,12 @@
+---
+pt-BR:
+  logged_out: Você saiu com sucesso
+  could_not_log_in: Não foi possível fazer login na Shopify store
+  invalid_shop_url: Domínio de loja inválido
+  enable_cookies_heading: Ativar cookies de %{app}
+  enable_cookies_body: Você deve ativar manualmente os cookies neste navegador para
+    usar %{app} dentro da Shopify.
+  enable_cookies_footer: Os cookies permitem que o aplicativo o autentique armazenando
+    temporariamente suas preferências e informações pessoais. Eles expiram depois
+    de 30 dias.
+  enable_cookies_action: Ativar cookies
