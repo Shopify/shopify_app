@@ -1,3 +1,7 @@
+8.3.2
+----
+* Removes `read_orders` from the default scopes provided upon app generation
+
 8.3.1
 ----
 * Adds the ability to customize the login URL through the initializer
