@@ -185,7 +185,7 @@ suite('StorageAccessHelper', () => {
   });
 
   suite('handleRequestStorageAccess', () => {
-    test('calls redirectToAppHome instead of redirectToAppTLD when document.requestStorageAccess resolves', () => {
+    test('calls redirectToAppHome instead of redirectToAppsIndex when document.requestStorageAccess resolves', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve) => {
           resolve();
@@ -193,18 +193,18 @@ suite('StorageAccessHelper', () => {
       };
 
       const redirectToAppHomeStub = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const redirectToAppTLDStub = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
+      const redirectToAppsIndexStub = sinon.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
         sinon.assert.called(redirectToAppHomeStub);
-        sinon.assert.notCalled(redirectToAppTLDStub);
+        sinon.assert.notCalled(redirectToAppsIndexStub);
 
         redirectToAppHomeStub.restore();
-        redirectToAppTLDStub.restore();
+        redirectToAppsIndexStub.restore();
       });
     });
 
-    test('calls redirectToAppTLD with "access denied" instead of calling redirectToAppHome when document.requestStorageAccess fails', () => {
+    test('calls redirectToAppsIndex with "access denied" instead of calling redirectToAppHome when document.requestStorageAccess fails', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve, reject) => {
           reject();
@@ -212,14 +212,14 @@ suite('StorageAccessHelper', () => {
       };
 
       const redirectToAppHomeStub = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const redirectToAppTLDStub = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
+      const redirectToAppsIndexStub = sinon.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
         sinon.assert.notCalled(redirectToAppHomeStub);
-        sinon.assert.calledWith(redirectToAppTLDStub, 'access denied');
+        sinon.assert.calledWith(redirectToAppsIndexStub, 'access denied');
 
         redirectToAppHomeStub.restore();
-        redirectToAppTLDStub.restore();
+        redirectToAppsIndexStub.restore();
       });
     });
   });

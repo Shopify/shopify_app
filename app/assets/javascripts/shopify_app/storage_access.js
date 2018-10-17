@@ -24,6 +24,10 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
   sessionStorage.setItem('shopify.has_redirected', 'true');
 }
 
+StorageAccessHelper.prototype.redirectToAppsIndex = function() {
+  window.parent.location.href = this.redirectInfo.myshopifyUrl + '/admin/apps';
+}
+
 StorageAccessHelper.prototype.redirectToAppHome = function() {
   window.location.href = this.redirectInfo.appHomeUrl;
 }
@@ -35,7 +39,7 @@ StorageAccessHelper.prototype.grantedStorageAccess = function() {
 }
 
 StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
-  return document.requestStorageAccess().then(this.grantedStorageAccess.bind(this), this.redirectToAppTLD.bind(this, ACCESS_DENIED_STATUS));
+  return document.requestStorageAccess().then(this.grantedStorageAccess.bind(this), this.redirectToAppsIndex.bind(this, ACCESS_DENIED_STATUS));
 }
 
 StorageAccessHelper.prototype.setupRequestStorageAccess = function() {
