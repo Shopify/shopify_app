@@ -22,4 +22,3 @@
   },
   devtool: 'source-map'
  };
- 
