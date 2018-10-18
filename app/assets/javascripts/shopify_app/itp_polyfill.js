@@ -5,6 +5,7 @@ function ITPHelper(selectors) {
 }
 
 ITPHelper.prototype.redirect = function() {
+  sessionStorage.setItem('shopify.top_level_interaction', 'true');
   window.location.href = this.redirectUrl;
 }
 

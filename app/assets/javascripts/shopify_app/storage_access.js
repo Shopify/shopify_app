@@ -21,7 +21,6 @@ StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
     }
   });
   window.parent.postMessage(data, this.redirectInfo.myshopifyUrl);
-  sessionStorage.setItem('shopify.has_redirected', 'true');
 }
 
 StorageAccessHelper.prototype.redirectToAppsIndex = function() {
@@ -61,7 +60,7 @@ StorageAccessHelper.prototype.handleHasStorageAccess = function() {
 }
 
 StorageAccessHelper.prototype.handleGetStorageAccess = function() {
-  if (sessionStorage.getItem('shopify.has_redirected')) {
+  if (sessionStorage.getItem('shopify.top_level_interaction')) {
     // If merchant has been redirected to interact with TLD (requirement for prompting request to gain storage access)
     this.setupRequestStorageAccess();
   } else {

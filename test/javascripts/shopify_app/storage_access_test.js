@@ -128,11 +128,11 @@ suite('StorageAccessHelper', () => {
   });
 
   suite('handleGetStorageAccess', () => {
-    test('calls setupRequestStorageAccess instead of redirectToAppTLD if shopify.has_redirected is defined in sessionStorage', () => {
+    test('calls setupRequestStorageAccess instead of redirectToAppTLD if shopify.top_level_interaction is defined in sessionStorage', () => {
       const setupRequestStorageAccessSpy = sinon.stub(storageAccessHelper, 'setupRequestStorageAccess');
       const redirectToAppTLDSpy = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
 
-      sessionStorage.setItem('shopify.has_redirected', 'true');
+      sessionStorage.setItem('shopify.top_level_interaction', 'true');
 
       storageAccessHelper.handleGetStorageAccess();
 
@@ -143,11 +143,11 @@ suite('StorageAccessHelper', () => {
       redirectToAppTLDSpy.restore();
     });
 
-    test('calls redirectToAppTLD instead of setupRequestStorageAccess if shopify.has_redirected is defined in sessionStorage', () => {
+    test('calls redirectToAppTLD instead of setupRequestStorageAccess if shopify.top_level_interaction is defined in sessionStorage', () => {
       const setupRequestStorageAccessSpy = sinon.stub(storageAccessHelper, 'setupRequestStorageAccess');
       const redirectToAppTLDSpy = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
 
-      sessionStorage.removeItem('shopify.has_redirected');
+      sessionStorage.removeItem('shopify.top_level_interaction');
 
       storageAccessHelper.handleGetStorageAccess();
 
@@ -228,13 +228,6 @@ suite('StorageAccessHelper', () => {
     test('sets "shopify.granted_storage_access" in sessionStorage', () => {
       storageAccessHelper.redirectToAppHome();
       sinon.assert.match(sessionStorage.getItem('shopify.granted_storage_access'), 'true');
-    });
-  });
-
-  suite('redirectToAppTLD', () => {
-    test('sets "shopify.has_redirected" in sessionStorage', () => {
-      storageAccessHelper.redirectToAppTLD();
-      sinon.assert.match(sessionStorage.getItem('shopify.has_redirected'), 'true');
     });
   });
 
