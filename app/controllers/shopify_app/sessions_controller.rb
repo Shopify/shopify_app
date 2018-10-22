@@ -24,8 +24,11 @@ module ShopifyApp
     end
 
     def granted_storage_access
+      return unless validate_shop
       session['shopify.granted_storage_access'] = true
-      redirect_to ShopifyApp.configuration.root_url
+
+      params = { shop: @shop }
+      redirect_to "#{ShopifyApp.configuration.root_url}?#{params.to_query}"
     end
 
     def callback
@@ -83,7 +86,12 @@ module ShopifyApp
 
     def validate_shop
       @shop = sanitized_shop_name
-      render_invalid_shop_error unless @shop
+      unless @shop
+        render_invalid_shop_error
+        return false
+      end
+
+      true
     end
 
     def render_invalid_shop_error

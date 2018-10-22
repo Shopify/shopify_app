@@ -39,7 +39,7 @@ module ShopifyApp
           shop: sanitized_shop_name
         ),
         has_storage_access_url: login_url(top_level: true),
-        app_home_url: granted_storage_access_path,
+        app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
         current_shopify_domain: current_shopify_domain
       }
     end

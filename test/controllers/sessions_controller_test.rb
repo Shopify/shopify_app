@@ -149,6 +149,24 @@ module ShopifyApp
       assert_equal I18n.t('invalid_shop_url'), flash[:error]
     end
 
+    test '#granted_storage_access displays an error if no shop is provided' do
+      get :granted_storage_access
+      assert_redirected_to ShopifyApp.configuration.root_url
+      assert_equal I18n.t('invalid_shop_url'), flash[:error]
+    end
+
+    test '#granted_storage_access sets shopify.granted_storage_access' do
+      get :granted_storage_access, params: { shop: 'shop' }
+
+      assert_equal true, session['shopify.granted_storage_access']
+    end
+
+    test '#granted_storage_access redirects to app root url with shop param' do
+      get :granted_storage_access, params: { shop: 'shop.myshopify.com' }
+
+      assert_redirected_to "#{ShopifyApp.configuration.root_url}?shop=shop.myshopify.com"
+    end
+
     test '#callback should flash error when omniauth is not present' do
       get :callback, params: { shop: 'shop' }
       assert_equal flash[:error], 'Could not log in to Shopify store'
