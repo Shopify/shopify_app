@@ -25,7 +25,7 @@ module ShopifyApp
 
     def granted_storage_access
       session['shopify.granted_storage_access'] = true
-      redirect_to ShopifyApp::configuration.root_url
+      redirect_to ShopifyApp.configuration.root_url
     end
 
     def callback
@@ -80,7 +80,7 @@ module ShopifyApp
         fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
       end
     end
-    
+
     def validate_shop
       @shop = sanitized_shop_name
       render_invalid_shop_error unless @shop

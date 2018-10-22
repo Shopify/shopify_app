@@ -35,10 +35,12 @@ module ShopifyApp
 
     def redirect_to_request_storage_access
       render :request_storage_access, layout: false, locals: {
-        doesNotHaveStorageAccessUrl: top_level_interaction_path(shop: sanitized_shop_name),
+        doesNotHaveStorageAccessUrl: top_level_interaction_path(
+          shop: sanitized_shop_name
+        ),
         hasStorageAccessUrl: login_url(top_level: true),
         appHomeUrl: granted_storage_access_path,
-        current_shopify_domain: current_shopify_domain,
+        current_shopify_domain: current_shopify_domain
       }
     end
 
@@ -135,6 +137,7 @@ module ShopifyApp
     def set_test_cookie
       return unless ShopifyApp.configuration.embedded_app?
       return unless user_agent_can_partition_cookies
+
       session['shopify.cookies_persist'] = true
     end
 
@@ -147,7 +150,8 @@ module ShopifyApp
     end
 
     def user_agent_can_partition_cookies
-      request.user_agent.match(/Version\/12\.0\.?\d? Safari/)
+      regex = %r{Version\/12\.0\.?\d? Safari}
+      request.user_agent.match(regex)
     end
   end
 end
