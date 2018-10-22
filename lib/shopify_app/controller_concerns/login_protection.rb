@@ -35,11 +35,11 @@ module ShopifyApp
 
     def redirect_to_request_storage_access
       render :request_storage_access, layout: false, locals: {
-        doesNotHaveStorageAccessUrl: top_level_interaction_path(
+        does_not_have_storage_access_url: top_level_interaction_path(
           shop: sanitized_shop_name
         ),
-        hasStorageAccessUrl: login_url(top_level: true),
-        appHomeUrl: granted_storage_access_path,
+        has_storage_access_url: login_url(top_level: true),
+        app_home_url: granted_storage_access_path,
         current_shopify_domain: current_shopify_domain
       }
     end
