@@ -29,7 +29,6 @@ module ShopifyApp
 
     test '#new renders the request_storage_access layout if we do not have storage access' do
       session.delete('shopify.granted_storage_access')
-      shopify_domain = 'my-shop.myshopify.com'
       get :new, params: { shop: 'my-shop' }
       assert_template 'sessions/request_storage_access'
     end
@@ -66,7 +65,7 @@ module ShopifyApp
     end
 
     test '#new removes the top_level_oauth cookie if the user agent supports partitioning and we\'ve just returned from top-level login flow where the cookies_persist cookie was set' do
-    session.delete('shopify.granted_storage_access')
+      session.delete('shopify.granted_storage_access')
       session['shopify.top_level_oauth'] = true
       session['shopify.cookies_persist'] = true
       request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'

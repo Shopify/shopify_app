@@ -25,6 +25,7 @@ module ShopifyApp
 
     def granted_storage_access
       return unless validate_shop
+
       session['shopify.granted_storage_access'] = true
 
       params = { shop: @shop }
