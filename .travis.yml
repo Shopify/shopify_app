@@ -1,9 +1,30 @@
+sudo: required
+dist: trusty
+addons:
+    chrome: stable
+before_script:
+    - "sudo chown root /opt/google/chrome/chrome-sandbox"
+    - "sudo chmod 4755 /opt/google/chrome/chrome-sandbox"
 language: ruby
-before_install: gem update --system
-cache: bundler
-sudo: false
+before_install: 
+  - gem update --system
+cache: 
+  bundler: true
+  directories:
+    - node_modules
+  yarn: true
 
 rvm:
   - 2.3.6
   - 2.4.3
   - 2.5.0
+
+install:
+  - bundle install
+  - nvm install node
+  - yarn
+
+script:
+  - yarn test
+  - bundle exec rake test
+  
