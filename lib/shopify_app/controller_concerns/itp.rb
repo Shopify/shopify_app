@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module ShopifyApp
+  # Cookie management helpers required for ITP implementation
   module Itp
-    
     private
 
     def set_test_cookie

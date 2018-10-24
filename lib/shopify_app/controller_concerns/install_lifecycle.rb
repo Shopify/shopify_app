@@ -1,6 +1,8 @@
-module ShopifyApp
-  module InstallLifecycle
+# frozen_string_literal: true
 
+module ShopifyApp
+  # Concerns that are used in the install lifecycle
+  module InstallLifecycle
     private
 
     def install_webhooks
