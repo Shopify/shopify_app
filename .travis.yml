@@ -1,9 +1,21 @@
 language: ruby
 before_install: gem update --system
-cache: bundler
+cache: 
+  bundler: true
+  directories:
+    - node_modules
+  yarn: true
 sudo: false
 
 rvm:
   - 2.3.6
   - 2.4.3
   - 2.5.0
+
+install:
+  - bundle install
+  - nvm install node
+  - yarn
+
+script:
+  - karma start karma.conf.js
