@@ -16,7 +16,6 @@ require 'shopify_app/utils'
 # controller concerns
 require 'shopify_app/controller_concerns/localization'
 require 'shopify_app/controller_concerns/itp'
-require 'shopify_app/controller_concerns/install_lifecycle'
 require 'shopify_app/controller_concerns/login_protection'
 require 'shopify_app/controller_concerns/embedded_app'
 require 'shopify_app/controller_concerns/webhook_verification'

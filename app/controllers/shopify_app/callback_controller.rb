@@ -3,7 +3,6 @@
 module ShopifyApp
   # Performs login after OAuth completes
   class CallbackController < ActionController::Base
-    include ShopifyApp::InstallLifecycle
     include ShopifyApp::LoginProtection
 
     def callback
@@ -56,6 +55,38 @@ module ShopifyApp
       session[:shopify] = ShopifyApp::SessionRepository.store(session_store)
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user if associated_user.present?
+    end
+
+    def install_webhooks
+      return unless ShopifyApp.configuration.has_webhooks?
+
+      WebhooksManager.queue(
+        shop_name,
+        token,
+        ShopifyApp.configuration.webhooks
+      )
+    end
+
+    def install_scripttags
+      return unless ShopifyApp.configuration.has_scripttags?
+
+      ScripttagsManager.queue(
+        shop_name,
+        token,
+        ShopifyApp.configuration.scripttags
+      )
+    end
+
+    def perform_after_authenticate_job
+      config = ShopifyApp.configuration.after_authenticate_job
+
+      return unless config && config[:job].present?
+
+      if config[:inline] == true
+        config[:job].perform_now(shop_domain: session[:shopify_domain])
+      else
+        config[:job].perform_later(shop_domain: session[:shopify_domain])
+      end
     end
   end
 end
