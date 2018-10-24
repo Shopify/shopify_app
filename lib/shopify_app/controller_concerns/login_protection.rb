@@ -123,5 +123,9 @@ module ShopifyApp
         end
       end
     end
+
+    def return_address
+      session.delete(:return_to) || ShopifyApp::configuration.root_url
+    end
   end
 end

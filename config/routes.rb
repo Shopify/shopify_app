@@ -9,8 +9,11 @@ ShopifyApp::Engine.routes.draw do
     get 'granted_storage_access' =>
       :granted_storage_access,
         :as => :granted_storage_access
-    get 'auth/shopify/callback' => :callback
     get 'logout' => :destroy, :as => :logout
+  end
+
+  controller :callback do
+    get 'auth/shopify/callback' => :callback
   end
 
   namespace :webhooks do

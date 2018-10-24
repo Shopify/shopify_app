@@ -1,7 +1,6 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
-    include ShopifyApp::InstallLifecycle
 
     layout false, only: :new
     after_action only: [:new, :create] do |controller|
@@ -32,20 +31,6 @@ module ShopifyApp
 
       params = { shop: @shop }
       redirect_to "#{ShopifyApp.configuration.root_url}?#{params.to_query}"
-    end
-
-    def callback
-      if auth_hash
-        login_shop
-        install_webhooks
-        install_scripttags
-        perform_after_authenticate_job
-
-        redirect_to return_address
-      else
-        flash[:error] = I18n.t('could_not_log_in')
-        redirect_to login_url
-      end
     end
 
     def destroy
@@ -130,37 +115,6 @@ module ShopifyApp
         app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
         current_shopify_domain: current_shopify_domain
       }
-    end
-
-    def login_shop
-      sess = ShopifyAPI::Session.new(shop_name, token)
-
-      request.session_options[:renew] = true
-      session.delete(:_csrf_token)
-      session[:shopify] = ShopifyApp::SessionRepository.store(sess)
-      session[:shopify_domain] = shop_name
-      session[:shopify_user] = associated_user if associated_user.present?
-    end
-
-    def auth_hash
-      request.env['omniauth.auth']
-    end
-
-    def shop_name
-      auth_hash.uid
-    end
-
-    def associated_user
-      return unless auth_hash['extra'].present?
-      auth_hash['extra']['associated_user']
-    end
-
-    def token
-      auth_hash['credentials']['token']
-    end
-
-    def return_address
-      session.delete(:return_to) || ShopifyApp::configuration.root_url
     end
   end
 end
