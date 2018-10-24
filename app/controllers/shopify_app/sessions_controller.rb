@@ -119,6 +119,17 @@ module ShopifyApp
       !session['shopify.granted_storage_access']
     end
 
+    def redirect_to_request_storage_access
+      render :request_storage_access, layout: false, locals: {
+        does_not_have_storage_access_url: top_level_interaction_path(
+          shop: sanitized_shop_name
+        ),
+        has_storage_access_url: login_url(top_level: true),
+        app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
+        current_shopify_domain: current_shopify_domain
+      }
+    end
+
     def login_shop
       sess = ShopifyAPI::Session.new(shop_name, token)
 

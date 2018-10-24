@@ -1,6 +1,7 @@
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
+    include ShopifyApp::Itp
 
     class ShopifyDomainNotFound < StandardError; end
 
@@ -31,17 +32,6 @@ module ShopifyApp
         clear_shop_session
         redirect_to_login
       end
-    end
-
-    def redirect_to_request_storage_access
-      render :request_storage_access, layout: false, locals: {
-        does_not_have_storage_access_url: top_level_interaction_path(
-          shop: sanitized_shop_name
-        ),
-        has_storage_access_url: login_url(top_level: true),
-        app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
-        current_shopify_domain: current_shopify_domain
-      }
     end
 
     protected
@@ -132,26 +122,6 @@ module ShopifyApp
           query_params[:shop] = sanitize_shop_param(params)
         end
       end
-    end
-
-    def set_test_cookie
-      return unless ShopifyApp.configuration.embedded_app?
-      return unless user_agent_can_partition_cookies
-
-      session['shopify.cookies_persist'] = true
-    end
-
-    def clear_top_level_oauth_cookie
-      session.delete('shopify.top_level_oauth')
-    end
-
-    def set_top_level_oauth_cookie
-      session['shopify.top_level_oauth'] = true
-    end
-
-    def user_agent_can_partition_cookies
-      regex = %r{Version\/12\.0\.?\d? Safari}
-      request.user_agent.match(regex)
     end
   end
 end
