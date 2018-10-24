@@ -10,6 +10,6 @@ class CallbackRoutesTest < ActionController::TestCase
   end
 
   test 'auth_shopify_callback routes to callback#callback' do
-    assert_routing '/auth/shopify/callback', controller: 'shopify_app/callback', action: 'callback'
+    assert_routing '/auth/shopify/callback', controller: 'shopify_app/callback', action: 'callbacks'
   end
 end
