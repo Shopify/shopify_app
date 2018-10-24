@@ -23,13 +23,8 @@ module ShopifyApp
     private
 
     def login_shop
-      sess = ShopifyAPI::Session.new(shop_name, token)
-
-      request.session_options[:renew] = true
-      session.delete(:_csrf_token)
-      session[:shopify] = ShopifyApp::SessionRepository.store(sess)
-      session[:shopify_domain] = shop_name
-      session[:shopify_user] = associated_user if associated_user.present?
+      reset_session_options
+      set_shopify_session
     end
 
     def auth_hash
@@ -48,6 +43,19 @@ module ShopifyApp
 
     def token
       auth_hash['credentials']['token']
+    end
+
+    def reset_session_options
+      request.session_options[:renew] = true
+      session.delete(:_csrf_token)
+    end
+
+    def set_shopify_session
+      session_store = ShopifyAPI::Session.new(shop_name, token)
+
+      session[:shopify] = ShopifyApp::SessionRepository.store(session_store)
+      session[:shopify_domain] = shop_name
+      session[:shopify_user] = associated_user if associated_user.present?
     end
   end
 end
