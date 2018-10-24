@@ -1,6 +1,8 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::InstallLifecycle
+
     layout false, only: :new
     after_action only: [:new, :create] do |controller|
       controller.response.headers.except!('X-Frame-Options')
@@ -155,38 +157,6 @@ module ShopifyApp
 
     def token
       auth_hash['credentials']['token']
-    end
-
-    def install_webhooks
-      return unless ShopifyApp.configuration.has_webhooks?
-
-      WebhooksManager.queue(
-        shop_name,
-        token,
-        ShopifyApp.configuration.webhooks
-      )
-    end
-
-    def install_scripttags
-      return unless ShopifyApp.configuration.has_scripttags?
-
-      ScripttagsManager.queue(
-        shop_name,
-        token,
-        ShopifyApp.configuration.scripttags
-      )
-    end
-
-    def perform_after_authenticate_job
-      config = ShopifyApp.configuration.after_authenticate_job
-
-      return unless config && config[:job].present?
-
-      if config[:inline] == true
-        config[:job].perform_now(shop_domain: session[:shopify_domain])
-      else
-        config[:job].perform_later(shop_domain: session[:shopify_domain])
-      end
     end
 
     def return_address
