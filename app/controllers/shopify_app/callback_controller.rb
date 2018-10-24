@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module ShopifyApp
+  # Performs login after OAuth completes
   class CallbackController < ActionController::Base
     include ShopifyApp::InstallLifecycle
     include ShopifyApp::LoginProtection
@@ -39,6 +42,7 @@ module ShopifyApp
 
     def associated_user
       return unless auth_hash['extra'].present?
+
       auth_hash['extra']['associated_user']
     end
 

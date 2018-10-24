@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 module Shopify
@@ -8,7 +10,6 @@ end
 
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
-
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
@@ -18,18 +19,18 @@ module ShopifyApp
       I18n.locale = :en
     end
 
-    test '#callback should flash error when omniauth is not present' do
+    test '#callback flashes error when omniauth is not present' do
       get :callback, params: { shop: 'shop' }
       assert_equal flash[:error], 'Could not log in to Shopify store'
     end
 
-    test '#callback should flash error in Spanish' do
+    test '#callback flashes error in Spanish' do
       I18n.locale = :es
       get :callback, params: { shop: 'shop' }
       assert_equal flash[:error], 'No se pudo iniciar sesión en tu tienda de Shopify'
     end
 
-    test "#callback should setup a shopify session" do
+    test '#callback sets up a shopify session' do
       mock_shopify_omniauth
 
       get :callback, params: { shop: 'shop' }
@@ -37,7 +38,7 @@ module ShopifyApp
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
     end
 
-    test "#callback should setup a shopify session with a user for online mode" do
+    test '#callback sets up a shopify session with a user for online mode' do
       mock_shopify_user_omniauth
 
       get :callback, params: { shop: 'shop' }
@@ -46,9 +47,9 @@ module ShopifyApp
       assert_equal 'user_object', session[:shopify_user]
     end
 
-    test "#callback should start the WebhooksManager if webhooks are configured" do
+    test '#callback starts the WebhooksManager if webhooks are configured' do
       ShopifyApp.configure do |config|
-        config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks'}]
+        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
       ShopifyApp::WebhooksManager.expects(:queue)
@@ -68,7 +69,7 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
     end
 
-    test "#callback calls #perform_after_authenticate_job and performs inline when inline is true" do
+    test '#callback calls #perform_after_authenticate_job and performs inline when inline is true' do
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
@@ -115,17 +116,18 @@ module ShopifyApp
     private
 
     def mock_shopify_omniauth
-      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: {token: '1234'})
+      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: { token: '1234' })
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
     end
 
     def mock_shopify_user_omniauth
-      OmniAuth.config.add_mock(:shopify,
-                               provider: :shopify,
-                               uid: 'shop.myshopify.com',
-                               credentials: {token: '1234'},
-                               extra: {associated_user: 'user_object'}
+      OmniAuth.config.add_mock(
+        :shopify,
+        provider: :shopify,
+        uid: 'shop.myshopify.com',
+        credentials: { token: '1234' },
+        extra: { associated_user: 'user_object' }
       )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request

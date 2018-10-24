@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class CallbackRoutesTest < ActionController::TestCase
@@ -7,7 +9,7 @@ class CallbackRoutesTest < ActionController::TestCase
     ShopifyApp.configuration = nil
   end
 
-  test "auth_shopify_callback routes to callback#callback" do
-    assert_routing '/auth/shopify/callback', { controller: 'shopify_app/callback', action: "callback" }
+  test 'auth_shopify_callback routes to callback#callback' do
+    assert_routing '/auth/shopify/callback', controller: 'shopify_app/callback', action: 'callback'
   end
 end
