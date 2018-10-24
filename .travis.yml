@@ -1,11 +1,18 @@
+sudo: required
+dist: trusty
+addons:
+    chrome: stable
+before_script:
+    - "sudo chown root /opt/google/chrome/chrome-sandbox"
+    - "sudo chmod 4755 /opt/google/chrome/chrome-sandbox"
 language: ruby
-before_install: gem update --system
+before_install: 
+  - gem update --system
 cache: 
   bundler: true
   directories:
     - node_modules
   yarn: true
-sudo: false
 
 rvm:
   - 2.3.6
@@ -18,4 +25,5 @@ install:
   - yarn
 
 script:
-  - karma start karma.conf.js
+  - yarn test
+  
