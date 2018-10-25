@@ -2,11 +2,17 @@
 <html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8" />
+  <base target="_top">
+  <title>Redirecting…</title>
   <style>
+    #TopLevelInteractionContent {
+      display: none;
+    }
+
     html,
     body {
       min-height:100%;
-      height:100%; 
+      height:100%;
       font-size:1.5rem;
       font-weight:400;
       line-height:2rem;
@@ -59,14 +65,10 @@
       font-weight:400;
     }
 
-    #TopLevelInteractionContent {
-      display: none;
-    }
-
     .Polaris-Page {
       margin:0 auto;
       padding:0;
-      max-width:99.8rem; 
+      max-width:99.8rem;
     }
 
     @media (min-width: 30.625em) {
@@ -173,6 +175,116 @@
       }
     }
 
+    .Polaris-Stack--vertical {
+      -webkit-box-orient:vertical;
+      -webkit-box-direction:normal;
+      -ms-flex-direction:column;
+      flex-direction:column;
+    }
+
+    .Polaris-Button {
+      fill:#637381;
+      position:relative;
+      display:-webkit-inline-box;
+      display:-ms-inline-flexbox;
+      display:inline-flex;
+      -webkit-box-align:center;
+      -ms-flex-align:center;
+      align-items:center;
+      -webkit-box-pack:center;
+      -ms-flex-pack:center;
+      justify-content:center;
+      min-height:3.6rem;
+      min-width:3.6rem;
+      margin:0;
+      padding:0.7rem 1.6rem;
+      background:linear-gradient(to bottom, white, #f9fafb);
+      border:1px solid #c4cdd5;
+      box-shadow:0 1px 0 0 rgba(22, 29, 37, 0.05);
+      border-radius:3px;
+      line-height:1;
+      color:#212b36;
+      text-align:center;
+      cursor:pointer;
+      -webkit-user-select:none;
+      -moz-user-select:none;
+      -ms-user-select:none;
+      user-select:none;
+      text-decoration:none;
+      transition-property:background, border, box-shadow;
+      transition-duration:200ms;
+      transition-timing-function:cubic-bezier(0.64, 0, 0.35, 1);
+    }
+
+    .Polaris-Button:hover {
+      background:linear-gradient(to bottom, #f9fafb, #f4f6f8);
+      border-color:#c4cdd5;
+    }
+
+    .Polaris-Button:focus {
+      border-color:#5c6ac4;
+      outline:0;
+      box-shadow:0 0 0 1px #5c6ac4;
+    }
+
+    .Polaris-Button:active {
+      background:linear-gradient(to bottom, #f4f6f8, #f4f6f8);
+      border-color:#c4cdd5;
+      box-shadow:0 0 0 0 transparent, inset 0 1px 1px 0 rgba(99, 115, 129, 0.1), inset 0 1px 4px 0 rgba(99, 115, 129, 0.2);
+    }
+
+    .Polaris-Button__Content {
+      font-size:1.5rem;
+      font-weight:400;
+      line-height:1.6rem;
+      text-transform:initial;
+      letter-spacing:initial;
+      position:relative;
+      display:-webkit-box;
+      display:-ms-flexbox;
+      display:flex;
+      -webkit-box-pack:center;
+      -ms-flex-pack:center;
+      justify-content:center;
+      -webkit-box-align:center;
+      -ms-flex-align:center;
+      align-items:center;
+      min-width:1px;
+      min-height:1px;
+    }
+
+    @media (min-width: 40em) {
+      .Polaris-Button__Content {
+        font-size:1.4rem;
+      }
+    }
+
+    .Polaris-Button--primary {
+      background:linear-gradient(to bottom, #6371c7, #5563c1);
+      border-color:#3f4eae;
+      box-shadow:inset 0 1px 0 0 #6774c8, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 0 0 transparent;
+      color:white;
+      fill:white;
+    }
+
+    .Polaris-Button--primary:hover {
+      background:linear-gradient(to bottom, #5c6ac4, #4959bd);
+      border-color:#3f4eae;
+      color:white;
+      text-decoration:none;
+    }
+
+    .Polaris-Button--primary:focus {
+      border-color:#202e78;
+      box-shadow:inset 0 1px 0 0 #6f7bcb, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 0 1px #202e78;
+    }
+
+    .Polaris-Button--primary:active {
+      background:linear-gradient(to bottom, #3f4eae, #3f4eae);
+      border-color:#38469b;
+      box-shadow:inset 0 0 0 0 transparent, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 1px 0 #38469b;
+    }
+
     .Polaris-EmptyState {
       display:-webkit-box;
       display:-ms-flexbox;
@@ -191,7 +303,7 @@
     }
 
     @media (min-width: 46.5em) {
-      .Polaris-EmptyState--imageContained .Polaris-EmptyState__Image{
+      .Polaris-EmptyState--imageContained .Polaris-EmptyState__Image {
         position:initial;
         width:100%;
       }
@@ -281,158 +393,24 @@
     }
 
     .Polaris-EmptyState__Image {
-      position:relative;
-      z-index:0;
-      margin-top:-2rem;
-      margin-left:-70%;
-      width:190%;
-      max-width:none;
+      display: none;
     }
 
     @media (min-width: 30.625em) {
       .Polaris-EmptyState__Image {
-        margin-left:0;
-        width:100%;
+        display: block;
+        margin-left:-60%;
+        margin-top:-30%;
+        width:200%;
       }
     }
 
     @media (min-width: 46.5em) {
       .Polaris-EmptyState__Image {
         margin-top:0;
-        margin-left:-70%;
-        width:170%;
+        margin-left:-90%;
+        width:200%;
       } 
-    }
-
-    .Polaris-Stack--distributionTrailing {
-      -webkit-box-pack:end;
-      -ms-flex-pack:end;
-      justify-content:flex-end;
-    }
-
-    .Polaris-Stack--vertical {
-      -webkit-box-orient:vertical;
-      -webkit-box-direction:normal;
-      -ms-flex-direction:column;
-      flex-direction:column;
-    }
-
-    .Polaris-Button {
-      fill:#637381;
-      position:relative;
-      display:-webkit-inline-box;
-      display:-ms-inline-flexbox;
-      display:inline-flex;
-      -webkit-box-align:center;
-      -ms-flex-align:center;
-      align-items:center;
-      -webkit-box-pack:center;
-      -ms-flex-pack:center;
-      justify-content:center;
-      min-height:3.6rem;
-      min-width:3.6rem;
-      margin:0;
-      padding:0.7rem 1.6rem;
-      background:linear-gradient(to bottom, white, #f9fafb);
-      border:1px solid #c4cdd5;
-      box-shadow:0 1px 0 0 rgba(22, 29, 37, 0.05);
-      border-radius:3px;
-      line-height:1;
-      color:#212b36;
-      text-align:center;
-      cursor:pointer;
-      -webkit-user-select:none;
-      -moz-user-select:none;
-      -ms-user-select:none;
-      user-select:none;
-      text-decoration:none;
-      transition-property:background, border, box-shadow;
-      transition-duration:200ms;
-      transition-timing-function:cubic-bezier(0.64, 0, 0.35, 1);
-    }
-
-    .Polaris-Button:hover {
-      background:linear-gradient(to bottom, #f9fafb, #f4f6f8);
-      border-color:#c4cdd5;
-    }
-
-    .Polaris-Button:focus {
-      border-color:#5c6ac4;
-      outline:0;
-      box-shadow:0 0 0 1px #5c6ac4;
-    }
-
-    .Polaris-Button:active {
-      background:linear-gradient(to bottom, #f4f6f8, #f4f6f8);
-      border-color:#c4cdd5;
-      box-shadow:0 0 0 0 transparent, inset 0 1px 1px 0 rgba(99, 115, 129, 0.1), inset 0 1px 4px 0 rgba(99, 115, 129, 0.2);
-    }
-
-    .Polaris-Button.Polaris-Button--disabled {
-      fill:#919eab;
-      transition:none;
-      background:linear-gradient(to bottom, #f4f6f8, #f4f6f8);
-      color:#919eab;
-    }
-
-    .Polaris-Button__Content {
-      font-size:1.5rem;
-      font-weight:400;
-      line-height:1.6rem;
-      text-transform:initial;
-      letter-spacing:initial;
-      position:relative;
-      display:-webkit-box;
-      display:-ms-flexbox;
-      display:flex;
-      -webkit-box-pack:center;
-      -ms-flex-pack:center;
-      justify-content:center;
-      -webkit-box-align:center;
-      -ms-flex-align:center;
-      align-items:center;
-      min-width:1px;
-      min-height:1px;
-    }
-      
-    @media (min-width: 40em) {
-      .Polaris-Button__Content {
-        font-size:1.4rem;
-      } 
-    }
-
-    .Polaris-Button--primary {
-      background:linear-gradient(to bottom, #6371c7, #5563c1);
-      border-color:#3f4eae;
-      box-shadow:inset 0 1px 0 0 #6774c8, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 0 0 transparent;
-      color:white;
-      fill:white;
-    }
-
-    .Polaris-Button--primary:hover {
-      background:linear-gradient(to bottom, #5c6ac4, #4959bd);
-      border-color:#3f4eae;
-      color:white;
-      text-decoration:none;
-    }
-
-    .Polaris-Button--primary:focus {
-      border-color:#202e78;
-      box-shadow:inset 0 1px 0 0 #6f7bcb, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 0 1px #202e78;
-    }
-
-    .Polaris-Button--primary:active {
-      background:linear-gradient(to bottom, #3f4eae, #3f4eae);
-      border-color:#38469b;
-      box-shadow:inset 0 0 0 0 transparent, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 1px 0 #38469b;
-    }
-
-    .Polaris-Button--primary.Polaris-Button--disabled {
-      fill:white;
-      background:linear-gradient(to bottom, #bac0e6, #bac0e6);
-      border-color:#a7aedf;
-      box-shadow:none;
-      color:white;
     }
 
     .Polaris-DisplayText{
@@ -456,8 +434,6 @@
       margin-top:1.6rem;
     }
   </style>
-  <base target="_top">
-  <title>Redirecting…</title>
 
   <script>
     window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
@@ -465,8 +441,7 @@
     window.redirectUrl = "<%= @url %>";
   </script>
 
-  <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/top_level_interaction', crossorigin: 'anonymous', integrity: true) %>
+  <%= javascript_include_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
   <main id="TopLevelInteractionContent">

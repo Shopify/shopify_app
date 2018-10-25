@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8" />
   <base target="_top">
   <title>Redirecting…</title>
   <style>
+    #RequestStorageAccess {
+      display: none;
+    }
+
     html,
     body {
       min-height:100%;
@@ -59,10 +63,6 @@
       margin:0;
       font-size:1em;
       font-weight:400;
-    }
-
-    #RequestStorageAccess {
-      display: none;
     }
 
     .Polaris-Page {
@@ -272,13 +272,6 @@
       box-shadow:0 0 0 0 transparent, inset 0 1px 1px 0 rgba(99, 115, 129, 0.1), inset 0 1px 4px 0 rgba(99, 115, 129, 0.2);
     }
 
-    .Polaris-Button.Polaris-Button--disabled {
-      fill:#919eab;
-      transition:none;
-      background:linear-gradient(to bottom, #f4f6f8, #f4f6f8);
-      color:#919eab;
-    }
-
     .Polaris-Button__Content {
       font-size:1.5rem;
       font-weight:400;
@@ -330,18 +323,7 @@
       border-color:#38469b;
       box-shadow:inset 0 0 0 0 transparent, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 1px 0 #38469b;
     }
-
-    .Polaris-Button--primary.Polaris-Button--disabled {
-      fill:white;
-      background:linear-gradient(to bottom, #bac0e6, #bac0e6);
-      border-color:#a7aedf;
-      box-shadow:none;
-      color:white;
-    }
   </style>
-  <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/storage_access', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/storage_access_redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
 <%=
@@ -391,5 +373,6 @@
     </div>
   </div>
 </main>
+<%= javascript_include_tag('shopify_app/request_storage_access', crossorigin: 'anonymous', integrity: true) %>
 </body>
 </html>

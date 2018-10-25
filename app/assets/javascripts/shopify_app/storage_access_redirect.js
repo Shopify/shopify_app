@@ -14,9 +14,4 @@
   }
 
   document.addEventListener("DOMContentLoaded", redirect);
-
-  // In the turbolinks context, neither DOMContentLoaded nor turbolinks:load
-  // consistently fires. This ensures that we at least attempt to fire in the
-  // turbolinks situation as well.
-  redirect();
 })();

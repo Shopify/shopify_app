@@ -33,6 +33,18 @@ module ShopifyApp
       assert_template 'sessions/request_storage_access'
     end
 
+    test '#new renders the redirect layout if user agent is Shopify Mobile' do
+      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/iOS'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
+    test '#new renders the redirect layout if user agent is POS' do
+      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
     test '#new redirects to the top-level login if a valid shop param exists' do
       shopify_domain = 'my-shop.myshopify.com'
       get :new, params: { shop: 'my-shop' }

@@ -1,20 +1,10 @@
 (function() {
   function setUpTopLevelInteraction() {
     var TopLevelInteraction = new ITPHelper({
-      content: '#TopLevelInteractionContent',
-      action: '#TopLevelInteractionButton',
-      redirectUrl: window.redirectUrl
+      redirectUrl: window.redirectUrl,
     });
 
-    if (!TopLevelInteraction.itpContent) {
-      return;
-    }
-
-    if (TopLevelInteraction.userAgentIsAffected()) {
-      TopLevelInteraction.setUpContent();
-    } else {
-      TopLevelInteraction.redirect();
-    }
+    TopLevelInteraction.execute();
   }
 
   document.addEventListener("DOMContentLoaded", setUpTopLevelInteraction);

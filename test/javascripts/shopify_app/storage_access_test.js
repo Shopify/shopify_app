@@ -1,6 +1,7 @@
-suite('StorageAccessHelper', () => { 
+suite('StorageAccessHelper', () => {
+  const storageAccessHelperSandbox = sinon.createSandbox();
   let storageAccessHelper;
-  const redirectInfoStub = {
+  const redirectDataStub = {
     hasStorageAccessUrl: 'https://hasStorageAccess.com',
     doesNotHaveStorageAccessUrl: 'https://doesNotHaveStorageAccess.com',
     myShopifyUrl: 'https://shop1.myshopify.io',
@@ -9,10 +10,9 @@ suite('StorageAccessHelper', () => {
 
   let contentContainer;
   let button;
-  let redirectStub;
 
   setup(() => {
-    window.parent.postMessage = sinon.stub();
+    storageAccessHelperSandbox.stub(window.parent, 'postMessage');
 
     contentContainer = document.createElement('div');
     button = document.createElement('button');
@@ -23,67 +23,54 @@ suite('StorageAccessHelper', () => {
 
     contentContainer.appendChild(button);
     document.body.appendChild(contentContainer);
-    storageAccessHelper = new StorageAccessHelper(redirectInfoStub);
-    redirectStub = sinon.stub(ITPHelper.prototype, 'redirect');
+    storageAccessHelper = new StorageAccessHelper(redirectDataStub);
+    storageAccessHelperSandbox.stub(ITPHelper.prototype, 'redirect');
   });
 
   teardown(() => {
     document.body.removeChild(contentContainer);
-    redirectStub.restore();
+    storageAccessHelperSandbox.restore();
   });
 
   suite('execute', () => {
     test('calls setUpCookiePartitioning if ITPHelper.canPartitionCookies returns true', () => {
-      var canPartitionCookiesStub = sinon.stub(ITPHelper.prototype, 'canPartitionCookies').callsFake(() => true);
+      storageAccessHelperSandbox.stub(ITPHelper.prototype, 'canPartitionCookies').callsFake(() => true);
 
-      const setUpCookiePartitioningStub = sinon.stub(storageAccessHelper, 'setUpCookiePartitioning');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
-      sinon.assert.called(setUpCookiePartitioningStub);
-
-      canPartitionCookiesStub.restore();
-      setUpCookiePartitioningStub.restore();
+      sinon.assert.called(storageAccessHelper.setUpCookiePartitioning);
     });
 
     test('calls redirectToAppHome instead of manageStorageAccess or setUpCookiePartitioningStub if ITPHelper.userAgentIsAffected returns true', async () => {
-      var userAgentIsAffectedStub = sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
+      storageAccessHelperSandbox.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
 
-      const manageStorageAccessStub = sinon.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
-      const redirectToAppHomeStub = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const setUpCookiePartitioningStub = sinon.stub(storageAccessHelper, 'setUpCookiePartitioning');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
-      sinon.assert.notCalled(manageStorageAccessStub);
-      sinon.assert.called(redirectToAppHomeStub);
-      sinon.assert.notCalled(setUpCookiePartitioningStub);
-
-      userAgentIsAffectedStub.restore();
-      manageStorageAccessStub.restore();
-      redirectToAppHomeStub.restore();
-      setUpCookiePartitioningStub.restore();
+      sinon.assert.notCalled(storageAccessHelper.manageStorageAccess);
+      sinon.assert.called(storageAccessHelper.redirectToAppHome);
+      sinon.assert.notCalled(storageAccessHelper.setUpCookiePartitioning);
     });
 
     test('calls manageStorageAccess instead of redirectToAppHome if ITPHelper.userAgentIsAffected returns true', async () => {
-      var userAgentIsAffectedStub = sinon.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
+      storageAccessHelperSandbox.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
 
-      const manageStorageAccessStub = sinon.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
-      const redirectToAppHomeStub = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const setUpCookiePartitioningStub = sinon.stub(storageAccessHelper, 'setUpCookiePartitioning');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
-      sinon.assert.called(manageStorageAccessStub);
-      sinon.assert.notCalled(redirectToAppHomeStub);
-      sinon.assert.notCalled(setUpCookiePartitioningStub);
-
-      userAgentIsAffectedStub.restore();
-      manageStorageAccessStub.restore();
-      redirectToAppHomeStub.restore();
-      setUpCookiePartitioningStub.restore();
+      sinon.assert.called(storageAccessHelper.manageStorageAccess);
+      sinon.assert.notCalled(storageAccessHelper.redirectToAppHome);
+      sinon.assert.notCalled(storageAccessHelper.setUpCookiePartitioning);
     });
   });
 
@@ -95,15 +82,12 @@ suite('StorageAccessHelper', () => {
         });
       };
 
-      const handleGetStorageAccessSpy = sinon.stub(storageAccessHelper, 'handleGetStorageAccess');
-      const handleHasStorageAccessSpy = sinon.stub(storageAccessHelper, 'handleHasStorageAccess');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'handleGetStorageAccess');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'handleHasStorageAccess');
 
       storageAccessHelper.manageStorageAccess().then(() => {
-        sinon.assert.called(handleHasStorageAccessSpy);
-        sinon.assert.notCalled(handleGetStorageAccessSpy);
-
-        handleHasStorageAccessSpy.restore();
-        handleGetStorageAccessSpy.restore();
+        sinon.assert.called(storageAccessHelper.handleHasStorageAccess);
+        sinon.assert.notCalled(storageAccessHelper.handleGetStorageAccess);
       });
     });
 
@@ -114,48 +98,39 @@ suite('StorageAccessHelper', () => {
         });
       };
 
-      const handleGetStorageAccessSpy = sinon.stub(storageAccessHelper, 'handleGetStorageAccess');
-      const handleHasStorageAccessSpy = sinon.stub(storageAccessHelper, 'handleHasStorageAccess');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'handleGetStorageAccess');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'handleHasStorageAccess');
 
       storageAccessHelper.manageStorageAccess().then(() => { 
-        sinon.assert.called(handleGetStorageAccessSpy);
-        sinon.assert.notCalled(handleHasStorageAccessSpy);
-
-        handleHasStorageAccessSpy.restore();
-        handleGetStorageAccessSpy.restore();
+        sinon.assert.called(storageAccessHelper.handleGetStorageAccess);
+        sinon.assert.notCalled(storageAccessHelper.handleHasStorageAccess);
       });
     });
   });
 
   suite('handleGetStorageAccess', () => {
     test('calls setupRequestStorageAccess instead of redirectToAppTLD if shopify.top_level_interaction is defined in sessionStorage', () => {
-      const setupRequestStorageAccessSpy = sinon.stub(storageAccessHelper, 'setupRequestStorageAccess');
-      const redirectToAppTLDSpy = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setupRequestStorageAccess');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTLD');
 
       sessionStorage.setItem('shopify.top_level_interaction', 'true');
 
       storageAccessHelper.handleGetStorageAccess();
 
-      sinon.assert.called(setupRequestStorageAccessSpy);
-      sinon.assert.notCalled(redirectToAppTLDSpy);
-
-      setupRequestStorageAccessSpy.restore();
-      redirectToAppTLDSpy.restore();
+      sinon.assert.called(storageAccessHelper.setupRequestStorageAccess);
+      sinon.assert.notCalled(storageAccessHelper.redirectToAppTLD);
     });
 
     test('calls redirectToAppTLD instead of setupRequestStorageAccess if shopify.top_level_interaction is defined in sessionStorage', () => {
-      const setupRequestStorageAccessSpy = sinon.stub(storageAccessHelper, 'setupRequestStorageAccess');
-      const redirectToAppTLDSpy = sinon.stub(storageAccessHelper, 'redirectToAppTLD');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setupRequestStorageAccess');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTLD');
 
       sessionStorage.removeItem('shopify.top_level_interaction');
 
       storageAccessHelper.handleGetStorageAccess();
 
-      sinon.assert.notCalled(setupRequestStorageAccessSpy);
-      sinon.assert.called(redirectToAppTLDSpy);
-
-      setupRequestStorageAccessSpy.restore();
-      redirectToAppTLDSpy.restore();
+      sinon.assert.notCalled(storageAccessHelper.setupRequestStorageAccess);
+      sinon.assert.called(storageAccessHelper.redirectToAppTLD);
     });
   });
 
@@ -167,14 +142,13 @@ suite('StorageAccessHelper', () => {
         });
       };
 
-      const handleRequestStorageAccessSpy = sinon.spy(storageAccessHelper, 'handleRequestStorageAccess');
+      storageAccessHelperSandbox.spy(storageAccessHelper, 'handleRequestStorageAccess');
 
       storageAccessHelper.setupRequestStorageAccess();
       button = document.querySelector('#TriggerAllowCookiesPrompt');
       button.click();
 
-      sinon.assert.called(handleRequestStorageAccessSpy);
-      handleRequestStorageAccessSpy.restore();
+      sinon.assert.called(storageAccessHelper.handleRequestStorageAccess);
     });
 
     test('sets display property of the expected node to "block"', () => {
@@ -192,34 +166,28 @@ suite('StorageAccessHelper', () => {
         });
       };
 
-      const redirectToAppHomeStub = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const redirectToAppsIndexStub = sinon.stub(storageAccessHelper, 'redirectToAppsIndex');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.called(redirectToAppHomeStub);
-        sinon.assert.notCalled(redirectToAppsIndexStub);
-
-        redirectToAppHomeStub.restore();
-        redirectToAppsIndexStub.restore();
+        sinon.assert.called(storageAccessHelper.redirectToAppHome);
+        sinon.assert.notCalled(storageAccessHelper.redirectToAppsIndex);
       });
     });
 
-    test('calls redirectToAppsIndex with "access denied" instead of calling redirectToAppHome when document.requestStorageAccess fails', () => {
+    test('calls redirectToAppsIndex with "storage_access_denied" instead of calling redirectToAppHome when document.requestStorageAccess fails', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve, reject) => {
           reject();
         });
       };
 
-      const redirectToAppHomeStub = sinon.stub(storageAccessHelper, 'redirectToAppHome');
-      const redirectToAppsIndexStub = sinon.stub(storageAccessHelper, 'redirectToAppsIndex');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.notCalled(redirectToAppHomeStub);
-        sinon.assert.calledWith(redirectToAppsIndexStub, 'access denied');
-
-        redirectToAppHomeStub.restore();
-        redirectToAppsIndexStub.restore();
+        sinon.assert.notCalled(storageAccessHelper.redirectToAppHome);
+        sinon.assert.calledWith(storageAccessHelper.redirectToAppsIndex, 'storage_access_denied');
       });
     });
   });
@@ -232,14 +200,14 @@ suite('StorageAccessHelper', () => {
   });
 
   suite('setNormalizedLink', () => {
-    test('returns redirectInfo.hasStorageAccessUrl if storage access is granted', () => {
-      const link = storageAccessHelper.setNormalizedLink('access granted');
-      sinon.assert.match(link, redirectInfoStub.hasStorageAccessUrl);
+    test('returns redirectData.hasStorageAccessUrl if storage access is granted', () => {
+      const link = storageAccessHelper.setNormalizedLink('storage_access_granted');
+      sinon.assert.match(link, redirectDataStub.hasStorageAccessUrl);
     });
 
-    test('returns redirectInfo.doesNotHaveStorageAccessUrl if storage access is denied', () => {
-      const link = storageAccessHelper.setNormalizedLink('access denied');
-      sinon.assert.match(link, redirectInfoStub.doesNotHaveStorageAccessUrl);
+    test('returns redirectData.doesNotHaveStorageAccessUrl if storage access is denied', () => {
+      const link = storageAccessHelper.setNormalizedLink('storage_access_denied');
+      sinon.assert.match(link, redirectDataStub.doesNotHaveStorageAccessUrl);
     });
   });
 
@@ -275,15 +243,14 @@ suite('StorageAccessHelper', () => {
       node.appendChild(button);
       document.body.appendChild(node);
 
-      const setCookieAndRedirectStub = sinon.stub(storageAccessHelper, 'setCookieAndRedirect');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setCookieAndRedirect');
 
       storageAccessHelper.setUpCookiePartitioning();
 
       button.click();
-      sinon.assert.called(setCookieAndRedirectStub);
+      sinon.assert.called(storageAccessHelper.setCookieAndRedirect);
 
       document.body.removeChild(node);
-      setCookieAndRedirectStub.restore();
     });
   });
   

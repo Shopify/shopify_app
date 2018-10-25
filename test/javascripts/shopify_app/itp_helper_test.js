@@ -1,44 +1,28 @@
 suite('ITPHelper', () => {
+  const ITPHelperSandbox = sinon.createSandbox();
   let contentContainer;
   let button;
-  let redirectStub;
 
   setup(() => {
     contentContainer = document.createElement('div');
     button = document.createElement('button');
 
-    contentContainer.setAttribute('id', 'Content');
-    button.setAttribute('id', 'Action');
+    contentContainer.setAttribute('id', 'TopLevelInteractionContent');
+    button.setAttribute('id', 'TopLevelInteractionButton');
     button.setAttribute('type', 'button');
 
     contentContainer.appendChild(button);
     document.body.appendChild(contentContainer);
-    redirectStub = sinon.stub(ITPHelper.prototype, 'redirect');
+    ITPHelperSandbox.stub(ITPHelper.prototype, 'redirect');
   });
 
   teardown(() => {
     document.body.removeChild(contentContainer);
-    redirectStub.restore();
+    ITPHelperSandbox.restore();
   });
 
   suite('userAgentIsAffected', () => {
-    test('returns false the user agent is Shopify POS', () => {
-      navigator.__defineGetter__('userAgent', function(){
-        return 'com.jadedpixel.pos';
-      });
-
-      sinon.assert.match(ITPHelper.prototype.userAgentIsAffected(), false);
-    });
-
-    test('returns false if the user agent is the Shopify mobile app', () => {
-      navigator.__defineGetter__('userAgent', function(){
-        return 'Shopify Mobile/iOS';
-      });
-
-      sinon.assert.match(ITPHelper.prototype.userAgentIsAffected(), false);
-    });
-
-    test('returns false if document.storageAccess is undefined', () => {
+    test('returns false if document.hasStorageAccess is undefined', () => {
       navigator.__defineGetter__('userAgent', function(){
         return '';
       });
@@ -48,12 +32,14 @@ suite('ITPHelper', () => {
       sinon.assert.match(ITPHelper.prototype.userAgentIsAffected(), false);
     });
 
-    test('returns true if document.storageAccess is defined', () => {
+    test('returns true if document.hasStorageAccess is defined', () => {
       navigator.__defineGetter__('userAgent', function(){
         return '';
       });
 
-      document.hasStorageAccess = sinon.stub();
+      document.hasStorageAccess = function() {
+        return true;
+      }
 
       sinon.assert.match(ITPHelper.prototype.userAgentIsAffected(), true);
     });
@@ -96,28 +82,26 @@ suite('ITPHelper', () => {
   });
 
   suite('setUpContent', () => {
-    test('adds an event listener to the expected button that calls redirect on click', () => {
+    test('adds an event listener to the #TopLevelInteractionButton node that calls redirect on click', () => {
       const helper = new ITPHelper({
-        content: '#Content',
-        action: '#Action',
+        redirectUrl: 'https://test',
       });
 
       helper.setUpContent();
 
-      button = document.querySelector('#Action');
+      button = document.querySelector('#TopLevelInteractionButton');
       button.click();
 
-      sinon.assert.called(redirectStub);
+      sinon.assert.called(ITPHelper.prototype.redirect);
     });
 
-    test('sets display property of the expected node to "block"', () => {
+    test('sets display property of the #TopLevelInteractionContent node to "block"', () => {
       const helper = new ITPHelper({
-        content: '#Content',
-        action: '#Action',
+        redirectUrl: 'https://test',
       });
 
       helper.setUpContent();
-      contentContainer = document.querySelector('#Content');
+      contentContainer = document.querySelector('#TopLevelInteractionContent');
       sinon.assert.match(contentContainer.style.display, 'block');
     });
   });

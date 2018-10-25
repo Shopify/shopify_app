@@ -2,11 +2,17 @@
 <html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8" />
+  <base target="_top">
+  <title>Redirecting…</title>
   <style>
+    #CookiePartitionPrompt {
+      display: none;
+    }
+
     html,
     body {
       min-height:100%;
-      height:100%; 
+      height:100%;
       font-size:1.5rem;
       font-weight:400;
       line-height:2rem;
@@ -59,14 +65,10 @@
       font-weight:400;
     }
 
-    #CookiePartitionPrompt {
-      display: none;
-    }
-
     .Polaris-Page {
       margin:0 auto;
       padding:0;
-      max-width:99.8rem; 
+      max-width:99.8rem;
     }
 
     @media (min-width: 30.625em) {
@@ -270,13 +272,6 @@
       box-shadow:0 0 0 0 transparent, inset 0 1px 1px 0 rgba(99, 115, 129, 0.1), inset 0 1px 4px 0 rgba(99, 115, 129, 0.2);
     }
 
-    .Polaris-Button.Polaris-Button--disabled {
-      fill:#919eab;
-      transition:none;
-      background:linear-gradient(to bottom, #f4f6f8, #f4f6f8);
-      color:#919eab;
-    }
-
     .Polaris-Button__Content {
       font-size:1.5rem;
       font-weight:400;
@@ -296,11 +291,11 @@
       min-width:1px;
       min-height:1px;
     }
-      
+
     @media (min-width: 40em) {
       .Polaris-Button__Content {
         font-size:1.4rem;
-      } 
+      }
     }
 
     .Polaris-Button--primary {
@@ -328,26 +323,13 @@
       border-color:#38469b;
       box-shadow:inset 0 0 0 0 transparent, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 1px 0 #38469b;
     }
-
-    .Polaris-Button--primary.Polaris-Button--disabled {
-      fill:white;
-      background:linear-gradient(to bottom, #bac0e6, #bac0e6);
-      border-color:#a7aedf;
-      box-shadow:none;
-      color:white;
-    }
   </style>
-  <base target="_top">
-  <title>Redirecting…</title>
-
   <script>
     window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
     window.shopOrigin = "https://<%= @shop %>";
   </script>
 
-  <%= javascript_include_tag('shopify_app/itp_polyfill', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/storage_access', crossorigin: 'anonymous', integrity: true) %>
-  <%= javascript_include_tag('shopify_app/partition_cookies', crossorigin: 'anonymous', integrity: true) %>
+  <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
   <main id="CookiePartitionPrompt">

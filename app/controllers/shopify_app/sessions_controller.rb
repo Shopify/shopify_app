@@ -103,6 +103,8 @@ module ShopifyApp
     def request_storage_access?
       return false unless ShopifyApp.configuration.embedded_app?
       return false if params[:top_level]
+      return false if user_agent_is_mobile
+      return false if user_agent_is_pos
       !session['shopify.granted_storage_access']
     end
 
