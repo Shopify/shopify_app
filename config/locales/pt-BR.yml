@@ -10,3 +10,13 @@ pt-BR:
     temporariamente suas preferências e informações pessoais. Eles expiram depois
     de 30 dias.
   enable_cookies_action: Ativar cookies
+  top_level_interaction_heading: Seu navegador precisa autenticar %{app}
+  top_level_interaction_body: Seu navegador exige que apps de terceiros como o %{app}
+    consultem você sobre o acesso a cookies antes da Shopify abri-los.
+  top_level_interaction_action: Continuar
+  request_storage_access_heading: "%{app} precisa acessar cookies"
+  request_storage_access_body: Isso permite que o app autentique você armazenando
+    temporariamente seus dados pessoais. Clique em continuar e permita os cookies
+    para usar o app.
+  request_storage_access_footer: Os cookies expiram depois de 30 dias.
+  request_storage_access_action: Continuar
