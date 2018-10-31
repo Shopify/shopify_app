@@ -7,7 +7,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     @scripttags = [
       {event: 'onload', src: 'https://example-app.com/fancy.js'},
       {event: 'onload', src: 'https://example-app.com/foobar.js'},
-      {event: 'onload', src: ->(domain) { "https://example-app.com/#{domain}-123.js" } }
+      {event: 'onload', src: ->(shop_domain) { "https://example-app.com/#{shop_domain}-123.js" } }
     ]
 
     @manager = ShopifyApp::ScripttagsManager.new(@scripttags, 'example-app.com')
@@ -46,7 +46,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   test "#create_scripttags when a script src raises an exception, it's propagated" do
     ShopifyAPI::ScriptTag.stubs(:all).returns(all_mock_scripttags[0..1])
-    @manager.required_scripttags.last[:src] = -> (domain) { raise 'oops!' }
+    @manager.required_scripttags.last[:src] = -> (shop_domain) { raise 'oops!' }
 
     e = assert_raise do
       @manager.create_scripttags
