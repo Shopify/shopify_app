@@ -26,6 +26,9 @@ module ShopifyApp
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
+    # configure old_client_secret if rotating secrets
+    attr_accessor :old_client_secret
+
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
