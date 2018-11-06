@@ -112,6 +112,7 @@ The default generator will run the `install`, `shop`, and `home_controller` gene
 $ rails generate shopify_app --api_key <your_api_key> --secret <your_app_secret>
 ```
 
+After running the generator, you will need to run `rake db:migrate` to add tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting localhost.
 
 ### Install Generator
 
