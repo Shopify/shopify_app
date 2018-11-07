@@ -33,6 +33,8 @@ class LoginProtectionTest < ActionController::TestCase
 
   setup do
     ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
+
+    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   end
 
   test '#index sets test cookie if embedded app and user agent can partition cookies' do
