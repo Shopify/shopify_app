@@ -42,21 +42,21 @@ module ShopifyApp
     test '#new redirects to the auth page if top_level param' do
       session.delete('shopify.cookies_persist')
       get :new, params: { shop: 'my-shop', top_level: true }
-      assert_redirected_to '/auth/shopify'
+      assert_redirected_to '/auth/shopify?shop=my-shop'
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
       session.delete('shopify.cookies_persist')
       ShopifyApp.configuration.embedded_app = false
       get :new, params: { shop: 'my-shop' }
-      assert_redirected_to '/auth/shopify'
+      assert_redirected_to '/auth/shopify?shop=my-shop'
       assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
     end
 
     test '#new authenticates the shop if we\'ve just returned from top-level login flow' do
       session['shopify.top_level_oauth'] = true
       get :new, params: { shop: 'my-shop' }
-      assert_redirected_to '/auth/shopify'
+      assert_redirected_to '/auth/shopify?shop=my-shop'
       assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
     end
 

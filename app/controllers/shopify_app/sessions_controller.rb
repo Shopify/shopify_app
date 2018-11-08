@@ -61,7 +61,7 @@ module ShopifyApp
 
     def authenticate_in_context
       clear_top_level_oauth_cookie
-      redirect_to "#{main_app.root_path}auth/shopify"
+      redirect_to URI::Generic.build(path: "#{main_app.root_path}auth/shopify", query: {shop: params[:shop]}.to_param).to_s
     end
 
     def authenticate_at_top_level
