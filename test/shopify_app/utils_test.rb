@@ -19,6 +19,10 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
+  test "sanitize_shop_domain for url with uppercase characters" do
+    assert ShopifyApp::Utils.sanitize_shop_domain('MY-shop.myshopify.com')
+  end
+
   ['myshop.com', 'myshopify.com', 'shopify.com', 'two words', 'store.myshopify.com.evil.com', '/foo/bar', 'foo.myshopify.io.evil.ru', '%0a123.myshopify.io', 'foo.bar.myshopify.io'].each do |bad_url|
     test "sanitize_shop_domain for a non-myshopify URL (#{bad_url})" do
       assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
