@@ -19,7 +19,7 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
-  test "sanitize_shop_domain for url with uppercase characters" do
+  test 'sanitize_shop_domain for url with uppercase characters' do
     assert ShopifyApp::Utils.sanitize_shop_domain('MY-shop.myshopify.com')
   end
 
