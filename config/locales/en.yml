@@ -6,3 +6,10 @@ en:
   enable_cookies_body: "You must manually enable cookies in this browser in order to use %{app} within Shopify."
   enable_cookies_footer: 'Cookies let the app authenticate you by temporarily storing your preferences and personal information. They expire after 30 days.'
   enable_cookies_action: 'Enable cookies'
+  top_level_interaction_heading: "Your browser needs to authenticate %{app}"
+  top_level_interaction_body: "Your browser requires third-party apps like %{app} to ask you for access to cookies before Shopify can open it for you."
+  top_level_interaction_action: 'Continue'
+  request_storage_access_heading: "%{app} needs access to cookies"
+  request_storage_access_body: "This lets the app authenticate you by temporarily storing your personal information. Click continue and allow cookies to use the app."
+  request_storage_access_footer: 'Cookies expire after 30 days.'
+  request_storage_access_action: 'Continue'
