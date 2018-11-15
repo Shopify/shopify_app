@@ -1,3 +1,8 @@
+8.4.0
+----
+* Fix embedded app session management in Safari 12.1
+* Shop names passed to OAuth are no longer case sensitive
+
 8.3.2
 ----
 * Removes `read_orders` from the default scopes provided upon app generation
