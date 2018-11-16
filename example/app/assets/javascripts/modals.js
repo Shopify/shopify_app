@@ -17,17 +17,6 @@ window.confirmModal = function () {
   });
 }
 
-window.inputModal = function (prompt) {
-  ShopifyApp.Modal.input(prompt, function(result, data){
-    if(result){
-      ShopifyApp.flashNotice("Received: \"" + data + "\"");
-    }
-    else{
-      ShopifyApp.flashError("Input cancelled.");
-    }
-  });
-}
-
 window.newModal = function(path, title){
   ShopifyApp.Modal.open({
     src: path,
