@@ -1,1 +1,3 @@
 # using the default shipit config
+ hide:
+  -policial
