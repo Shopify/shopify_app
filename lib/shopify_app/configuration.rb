@@ -24,6 +24,7 @@ module ShopifyApp
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
     attr_accessor :webhooks_manager_queue_name
+    attr_accessor :fulfillment_services_manager_queue_name
 
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
@@ -36,6 +37,7 @@ module ShopifyApp
       @myshopify_domain = 'myshopify.com'
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
+      @fulfillment_services_manager_queue_name = Rails.application.config.active_job.queue_name
     end
 
     def login_url
