@@ -10,6 +10,7 @@ module ShopifyApp
         login_shop
         install_webhooks
         install_scripttags
+        install_fulfillment_services
         perform_after_authenticate_job
 
         redirect_to return_address
@@ -76,6 +77,17 @@ module ShopifyApp
         ShopifyApp.configuration.scripttags
       )
     end
+
+    def install_fulfillment_services
+      return unless ShopifyApp.configuration.has_fulfillment_services?
+      return unless ShopifyApp.configuration.has_base_url?
+
+      FulfillmentServicesManager.queue(
+        shop_name,
+        token
+      )
+    end
+
 
     def perform_after_authenticate_job
       config = ShopifyApp.configuration.after_authenticate_job
