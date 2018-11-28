@@ -14,7 +14,7 @@ module ShopifyApp
 
         after_authenticate_job_config =
           "  config.after_authenticate_job = "\
-          "{ job: Shopify::AfterAuthenticateJob, inline: false }\n"
+          "{ job: \"Shopify::AfterAuthenticateJob\", inline: false }\n"
 
         inject_into_file(
           'config/initializers/shopify_app.rb',

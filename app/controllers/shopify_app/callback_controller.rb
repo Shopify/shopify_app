@@ -86,10 +86,13 @@ module ShopifyApp
 
       return unless config && config[:job].present?
 
+      job = config[:job]
+      job = job.constantize if job.is_a?(String)
+
       if config[:inline] == true
-        config[:job].perform_now(shop_domain: session[:shopify_domain])
+        job.perform_now(shop_domain: session[:shopify_domain])
       else
-        config[:job].perform_later(shop_domain: session[:shopify_domain])
+        job.perform_later(shop_domain: session[:shopify_domain])
       end
     end
   end
