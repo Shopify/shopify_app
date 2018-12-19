@@ -35,6 +35,12 @@ module ShopifyApp
       assert_template 'sessions/request_storage_access'
     end
 
+    test '#new renders the redirect layout if user agent is not set' do
+      request.env['HTTP_USER_AGENT'] = nil
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
     test '#new renders the redirect layout if user agent is Shopify Mobile (Android)' do
       request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/7.7.0 (debug) (Build 1 with API 24 on Google Android SDK built for x86) Mozilla/5.0 (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Safari/537.36'
       get :new, params: { shop: 'my-shop' }
