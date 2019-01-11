@@ -15,6 +15,7 @@ Table of Contents
 * [**Description**](#description)
 * [**Quickstart**](#quickstart)
 * [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
+* [**App Tunneling**](#app-tunneling)
 * [**Installation**](#installation)
   * [Rails Compatibility](#rails-compatibility)
 * [**Generators**](#generators)
@@ -36,7 +37,6 @@ Table of Contents
 * [**Troubleshooting**](#troubleshooting)
  * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
 * [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
-* [**App Tunneling**](#app-tunneling)
 * [**Questions or problems?**](#questions-or-problems)
 
 
@@ -58,26 +58,22 @@ Check out this screencast on how to create and deploy a new Shopify App to Herok
 
 Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md)
 
+App Tunneling
+-------------
+
+Your local app needs to be accessible from the public Internet in order to install it on a shop, use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. Use a tunneling service like [Forward](https://forwardhq.com/), [RequestBin](https://requestb.in/), [ngrok](https://ngrok.com/) etc.
+
+For example with [ngrok](https://ngrok.com/), run this command to set up proxying to Rails' default port:
+
+```sh
+ngrok http 3000
+```
+
 Becoming a Shopify App Developer
 --------------------------------
 If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
 
-Once you have a Partner account create a new application to get an Api key and other Api credentials. To create a development application set the Application Callback URL to
-
-```
-http://localhost:3000/
-```
-
-and the `redirect_uri` to
-
-```
-http://localhost:3000/auth/shopify/callback
-```
-
-This way you'll be able to run the app on your local machine.
-
-Also note, ShopifyApp creates embedded apps by default, so remember to check `enabled` for the embedded settings.
-
+Once you have a Partner account create a new application to get an API key and other API credentials. To create a development application set the `App URL` to the URL provided by [your tunnel](#app-tunneling) or `http://localhost:3000/` if you are not embeddeding your app inside the admin or receiving webhooks and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. Ensure you are using `https://` URLs if you are using tunneling.
 
 Installation
 ------------
@@ -414,13 +410,6 @@ By default, loading your embedded app will redirect to the Shopify admin, with t
 ```javascript
 forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
-
-App Tunneling
--------------
-
-For certain features like Application Proxy or Webhooks to receive requests from Shopify, your app needs to be on a publicly visible URL. This can be a hurdle during development or testing on a local machine. Fortunately, this can be overcome by employing a tunneling service like [Forward](https://forwardhq.com/), [RequestBin](https://requestb.in/), [ngrok](https://ngrok.com/) etc. These tools allow you to create a secure tunnel from the public Internet to your local machine.
-
-Tunneling is also useful for working the the embedded app sdk to solve mixed content issues since most tunnles provide ssl.
 
 Questions or problems?
 ----------------------
