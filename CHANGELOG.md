@@ -1,3 +1,12 @@
+8.4.1
+-----
+* Update README and Releasing.md
+* Allow user agent to not be set
+* Remove legacy EASDK examples
+* Add .ruby-version file
+* Clean up omniauth setup and fix examples
+* Fix infinite redirect loops if users have disabled 3rd party cookies in their browser
+
 8.4.0
 ----
 * Fix embedded app session management in Safari 12.1
@@ -18,7 +27,7 @@
 
 8.2.6
 ----
-* Sanitize the shop query param to include `.myshopify.com` if no domain was provided 
+* Sanitize the shop query param to include `.myshopify.com` if no domain was provided
 
 8.2.5
 ----
