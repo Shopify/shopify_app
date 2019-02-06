@@ -33,9 +33,14 @@
   }
 
   StorageAccessHelper.prototype.grantedStorageAccess = function() {
-    sessionStorage.setItem('shopify.granted_storage_access', true);
-    document.cookie = 'shopify.granted_storage_access=true';
-    this.redirectToAppHome();
+    try {
+      sessionStorage.setItem('shopify.granted_storage_access', true);
+      document.cookie = 'shopify.granted_storage_access=true';
+      this.redirectToAppHome();
+    } catch (error) {
+      console.warn('Third party cookies may be blocked.', error);
+      this.redirectToAppTLD(ACCESS_DENIED_STATUS);
+    }
   }
 
   StorageAccessHelper.prototype.handleRequestStorageAccess = function() {
