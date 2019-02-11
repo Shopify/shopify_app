@@ -1,3 +1,7 @@
+8.4.2
+-----
+* Clear stale user session during auth callback
+
 8.4.1
 -----
 * Update README and Releasing.md
