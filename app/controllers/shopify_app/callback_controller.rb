@@ -54,7 +54,7 @@ module ShopifyApp
 
       session[:shopify] = ShopifyApp::SessionRepository.store(session_store)
       session[:shopify_domain] = shop_name
-      session[:shopify_user] = associated_user if associated_user.present?
+      session[:shopify_user] = associated_user
     end
 
     def install_webhooks

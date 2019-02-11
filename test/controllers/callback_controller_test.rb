@@ -40,6 +40,15 @@ module ShopifyApp
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
     end
 
+    test '#callback clears a stale shopify_user session if none is provided in latest callback' do
+      session[:shopify_user] = 'user_object'
+      mock_shopify_omniauth
+
+      get :callback, params: { shop: 'shop' }
+      assert_not_nil session[:shopify]
+      assert_nil session[:shopify_user]
+    end
+
     test '#callback sets up a shopify session with a user for online mode' do
       mock_shopify_user_omniauth
 
