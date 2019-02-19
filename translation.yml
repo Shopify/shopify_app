@@ -1,5 +1,5 @@
 source_language: en
-target_languages: [de, es, fr, it, ja, pt-BR]
+target_languages: [de, es, fr, it, ja, nl, pt-BR, zh-CN, zh-TW]
 components:
   - name: 'merchant'
     paths:
