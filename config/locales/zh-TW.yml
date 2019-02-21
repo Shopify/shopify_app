@@ -1,0 +1,17 @@
+---
+zh-TW:
+  logged_out: 登出成功
+  could_not_log_in: 無法登入 Shopify 商店
+  invalid_shop_url: 商店網域無效
+  enable_cookies_heading: 啟用 %{app} 的 Cookie
+  enable_cookies_body: 您必須在此瀏覽器中手動啟用 Cookie，才能夠在 Shopify 使用 %{app}。
+  enable_cookies_footer: Cookie 可讓應用程式暫時儲存您的偏好設定和個人資訊，藉此驗證您的身分，這些資料會在 30 天後失效。
+  enable_cookies_action: 啟用 Cookie
+  top_level_interaction_heading: 您的瀏覽器需要驗證 %{app}
+  top_level_interaction_body: 您的瀏覽器會要求第三方應用程式 (例如：%{app}) 向您請求 Cookie 的存取權限，然後才讓 Shopify
+    為您開啟此應用程式。
+  top_level_interaction_action: 繼續
+  request_storage_access_heading: "%{app} 需要 Cookie 存取權限"
+  request_storage_access_body: Cookie 可讓應用程式暫時儲存您的個人資訊，藉此驗證您的身分。按一下繼續並允許 Cookie 使用此應用程式。
+  request_storage_access_footer: Cookie 將於 30 天後失效。
+  request_storage_access_action: 繼續
