@@ -12,3 +12,5 @@ test/tmp/*
 # ignore sprockets cache
 /test/dummy/tmp/*
 /node_modules/
+.byebug_history
+

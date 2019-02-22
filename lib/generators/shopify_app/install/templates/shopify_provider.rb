@@ -1,16 +1,19 @@
-  provider :shopify,
-           ShopifyApp.configuration.api_key,
-           ShopifyApp.configuration.secret,
-           scope: ShopifyApp.configuration.scope,
-           setup: lambda { |env|
-             strategy = env['omniauth.strategy']
+# frozen_string_literal: true
 
-             shopify_auth_params = strategy.session['shopify.omniauth_params']&.with_indifferent_access
-             shop = if shopify_auth_params.present?
-               "https://#{shopify_auth_params[:shop]}"
-             else
-               ''
-             end
+provider :shopify,
+  ShopifyApp.configuration.api_key,
+  ShopifyApp.configuration.secret,
+  scope: ShopifyApp.configuration.scope,
+  setup: lambda { |env|
+    strategy = env['omniauth.strategy']
 
-             strategy.options[:client_options][:site] = shop
-           }
+    shopify_auth_params = strategy.session['shopify.omniauth_params']&.with_indifferent_access
+    shop = if shopify_auth_params.present?
+      "https://#{shopify_auth_params[:shop]}"
+    else
+      ''
+    end
+
+    strategy.options[:client_options][:site] = shop
+    strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
+  }
