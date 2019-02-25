@@ -44,7 +44,10 @@ module ShopifyApp
       def create_embedded_app_layout
         if embedded_app?
           copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+          copy_file 'shopify_app.js', 'app/assets/javascripts/shopify_app.js'
           copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
+          copy_file 'flash_messages.js',
+                    'app/assets/javascripts/flash_messages.js'
         end
       end
 

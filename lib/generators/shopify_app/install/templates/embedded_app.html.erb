@@ -30,6 +30,11 @@
         forceRedirect: true
       });
     </script>
+    <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
+      api_key: ShopifyApp.configuration.api_key,
+      shop_origin: ("https://#{ @shop_session.url }" if @shop_session),
+      debug: (Rails.env.development? ? 'true' : 'false')
+    } ) %>
 
     <% if content_for?(:javascript) %>
       <div id="ContentForJavascript" data-turbolinks-temporary>
