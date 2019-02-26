@@ -9,6 +9,7 @@ module ShopifyApp
       class_option :application_name, type: :array, default: ['My', 'Shopify', 'App']
       class_option :api_key, type: :string, default: '<api_key>'
       class_option :secret, type: :string, default: '<secret>'
+      class_option :old_secret, type: :string, default: '<old_secret>'
       class_option :scope, type: :array, default: ['read_products']
       class_option :embedded, type: :string, default: 'true'
 
@@ -16,6 +17,7 @@ module ShopifyApp
         @application_name = format_array_argument(options['application_name'])
         @api_key = options['api_key']
         @secret = options['secret']
+        @old_secret = options['old_secret']
         @scope = format_array_argument(options['scope'])
 
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'

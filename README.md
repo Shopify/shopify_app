@@ -364,6 +364,32 @@ We've also provided a generator which creates a skeleton job and updates the ini
 bin/rails g shopify_app:add_after_authenticate_job
 ```
 
+RotateShopifyTokenJob
+---------------------
+
+If your Shopify secret key is leaked, you can use the RotateShopifyTokenJob to perform [API Credential Rotation](https://help.shopify.com/en/api/getting-started/authentication/oauth/api-credential-rotation).
+
+Before running the job, you'll need to generate a new secret key from your Shopify Partner dashboard, and update the `/config/initializers/shopify_app.rb` to hold your new and old secret keys:
+
+```ruby
+config.secret = Rails.application.secrets.shopify_secret
+config.old_secret = Rails.application.secrets.old_shopify_secret
+```
+
+We've provided a generator which creates the job and an example rake task:
+
+```sh
+bin/rails g shopify_app:rotate_shopify_token_job
+```
+
+The generated rake task will be found at `lib/tasks/shopify/rotate_shopify_token.rake` and is provided strictly for example purposes. It might not work with your application out of the box without some configuration.
+
+⚠️ Note: if you are updating `shopify_app` from a version prior to 8.4.2 (and do not wish to run the default/install generator again), you will need to add [the following line](https://github.com/Shopify/shopify_app/blob/4f7e6cca2a472d8f7af44b938bd0fcafe4d8e88a/lib/generators/shopify_app/install/templates/shopify_provider.rb#L18) to `config/intializers/omniauth.rb`:
+
+```ruby
+strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
+```
+
 ShopifyApp::SessionRepository
 -----------------------------
 
