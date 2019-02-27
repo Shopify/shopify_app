@@ -1,3 +1,8 @@
+8.5.1
+-----
+
+* Fixed a typo in RotateShopifyTokenJob
+
 8.5.0
 -----
 Added support for rotating Shopify access tokens:
