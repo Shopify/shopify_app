@@ -16,7 +16,7 @@ module Shopify
       }
 
       @response = Net::HTTP.post_form(uri, post_data)
-      return log_error(response_expcetion_error_message) unless @response.is_a?(Net::HTTPSuccess)
+      return log_error(response_exception_error_message) unless @response.is_a?(Net::HTTPSuccess)
 
       access_token = JSON.parse(@response.body)['access_token']
       return log_error(no_access_token_error_message) unless access_token
