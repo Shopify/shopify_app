@@ -36,6 +36,9 @@
     try {
       sessionStorage.setItem('shopify.granted_storage_access', true);
       document.cookie = 'shopify.granted_storage_access=true';
+      if (!document.cookie) {
+        throw 'Cannot set third-party cookie.'
+      }
       this.redirectToAppHome();
     } catch (error) {
       console.warn('Third party cookies may be blocked.', error);
