@@ -1,3 +1,17 @@
+8.5.1
+-----
+
+* Fixed a typo in RotateShopifyTokenJob
+
+8.5.0
+-----
+Added support for rotating Shopify access tokens:
+
+* Added a generator shopify_app:rotate_shopify_token_job for generating the job to perform token rotation
+* Extend Shopify app configuration to support a new and old secret token
+* Extended webhook validation code to support validating against new and old secret tokens
+* See the README for more details: https://github.com/Shopify/shopify_app#rotateshopifytokenjob
+
 8.4.2
 -----
 * Clear stale user session during auth callback
