@@ -22,9 +22,9 @@ module ShopifyApp
 
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
       end
-	  
+
       def create_session_store_initializer
-  		  copy_file 'session_store.rb', 'config/initializers/session_store.rb'
+        copy_file('session_store.rb', 'config/initializers/session_store.rb')
       end
 
       def create_and_inject_into_omniauth_initializer
