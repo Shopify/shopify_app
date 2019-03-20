@@ -1,7 +1,7 @@
 ---
 zh-CN:
   logged_out: 已成功注销
-  could_not_log_in: 无法登录到 Shopify 店铺
+  could_not_log_in: 无法登录到 Shopify 商店
   invalid_shop_url: 商店域无效
   enable_cookies_heading: 从 %{app} 启用 Cookie
   enable_cookies_body: 您必须在此浏览器中手动启用 Cookie 才能在 Shopify 中使用 %{app}。
