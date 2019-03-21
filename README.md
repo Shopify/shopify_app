@@ -31,7 +31,7 @@ Table of Contents
 * [**ScripttagsManager**](#scripttagsmanager)
 * [**AfterAuthenticate Job**](#afterauthenticate-job)
 * [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
-* [**AuthenticatedController**](#authenticatedcontroller)
+* [**Authenticated**](#authenticated)
 * [**AppProxyVerification**](#appproxyverification)
  * [Recommended Usage](#recommended-usage)
 * [**Troubleshooting**](#troubleshooting)
@@ -397,10 +397,12 @@ ShopifyApp::SessionRepository
 
 If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain` and `shopify_token`.
 
-AuthenticatedController
------------------------
+Authenticated
+-------------
 
-The engine includes a controller called `ShopifyApp::AuthenticatedController` which inherits from `ActionController::Base`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
+The engine provides a `ShopifyApp::Authenticated` concern which should be included in any controller that is intended to be behind Shopify OAuth. It adds `before_action`s to ensure that the user is authenticated and will redirect to the Shopify login page if not. It is best practice to include this concern in a base controller inheriting from your `ApplicationController`, from which all controllers that require Shopify authentication inherit.
+
+For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
 
 AppProxyVerification
 --------------------

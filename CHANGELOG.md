@@ -1,3 +1,9 @@
+8.6.0
+-----
+
+* Added an `Authenticated` concern to allow gem users to inherit from a custom `AuthenticatedController` instead of
+  `ShopifyApp::AuthenticatedController`
+
 8.5.1
 -----
 
