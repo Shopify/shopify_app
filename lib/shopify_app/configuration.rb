@@ -15,6 +15,7 @@ module ShopifyApp
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
     attr_accessor :session_repository
+    attr_accessor :api_version
 
     # customise urls
     attr_accessor :root_url
