@@ -25,11 +25,17 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "can set root_url which affects login_url" do
-    ShopifyApp.configure do |config|
-      config.root_url = "/nested"
-    end
+    begin
+      original_root = ShopifyApp.configuration.root_url
 
-    assert_equal "/nested/login", ShopifyApp.configuration.login_url
+      ShopifyApp.configure do |config|
+        config.root_url = "/nested"
+      end
+
+      assert_equal "/nested/login", ShopifyApp.configuration.login_url
+    ensure
+      ShopifyApp.configuration.root_url = original_root
+    end
   end
 
   test "defaults to myshopify_domain" do
