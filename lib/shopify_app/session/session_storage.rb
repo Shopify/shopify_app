@@ -3,7 +3,7 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      validates :shopify_domain, presence: true, uniqueness: true
+      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
       validates :shopify_token, presence: true
     end
 
