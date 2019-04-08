@@ -1,3 +1,4 @@
 # using the default shipit config
- hide:
-  - code-review/policial
+ci:
+  hide:
+    - code-review/policial
