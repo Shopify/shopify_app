@@ -1,3 +1,10 @@
+8.6.1
+-----
+
+* Locked `shopify_api` gem to version < 7.0.  7.0 will have breaking changes that are incompatable with `shopify_app`
+
+* Session storage validation for shopify_domain is now set to `case_sensitive: false`.
+
 8.6.0
 -----
 
