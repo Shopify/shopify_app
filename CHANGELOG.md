@@ -1,7 +1,7 @@
 9.0.0
 -----
 
-* Breaking change: Api version support added see [migration guide](README.md#upgrading-from-8.6-to-9.0.0)
+* Breaking change: Api version support added see [migration guide](README.md#upgrading-from-86-to-900)
 
 8.6.1
 -----
