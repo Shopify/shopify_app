@@ -1,3 +1,3 @@
 module ShopifyApp
-  VERSION = '8.6.1'.freeze
+  VERSION = '9.0.0'.freeze
 end

@@ -34,11 +34,11 @@ Table of Contents
 * [**Authenticated**](#authenticated)
 * [**AppProxyVerification**](#appproxyverification)
  * [Recommended Usage](#recommended-usage)
+* [**Upgrading from 8.6 to 9.0.0**](#upgrading-from-86-to-900)
 * [**Troubleshooting**](#troubleshooting)
  * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
 * [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
 * [**Questions or problems?**](#questions-or-problems)
-* [**Upgrading from 8.6 to 9.0.0**](#upgrading-from-8.6-to-9.0.0)
 
 
 Description
@@ -498,4 +498,4 @@ is changed to
 
 ### ShopifyAPI changes
 
-You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/shopify/shopify_apiREADME.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.
+You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/shopify/shopify_api/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.
