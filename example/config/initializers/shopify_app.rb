@@ -5,4 +5,5 @@ ShopifyApp.configure do |config|
   config.scope = 'read_customers, write_products'
   config.embedded_app = true
   config.session_repository = Shop
+  config.api_version = :unstable
 end

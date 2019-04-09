@@ -38,6 +38,7 @@ Table of Contents
  * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
 * [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
 * [**Questions or problems?**](#questions-or-problems)
+* [**Upgrading from 8.6 to 9.0.0**](#upgrading-from-8.6-to-9.0.0)
 
 
 Description
@@ -395,7 +396,7 @@ ShopifyApp::SessionRepository
 
 `ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `ShopifyApp::InMemorySessionStore` class or the `ShopifyApp::SessionStorage` concern for examples.
 
-If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain` and `shopify_token`.
+If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain`, `shopify_token` and `api_version`.
 
 Authenticated
 -------------
@@ -444,3 +445,57 @@ Questions or problems?
 
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
+
+
+Upgrading from 8.6 to 9.0.0
+---------------------------
+
+### Configuration change
+
+Add an api version configuration in `config/initializers/shopify_app.rb`
+Set this to the version you want to run against by default see [url] for what versions are currently availabe
+```ruby
+config.api_version = '2019-04'
+```
+
+### Session storage change
+
+You will need to add an `api_version` method to you session storage object.  The default implmentation for this is.
+```ruby
+def api_version
+  ShopifyApp.configuration.api_version
+end
+```
+
+### Generated file change
+
+`embedded_app.html.erb` the useage of `shop_session.url` needs to be changed to `shop_session.domain`
+```erb
+<script type="text/javascript">
+  ShopifyApp.init({
+    apiKey: "<%= ShopifyApp.configuration.api_key %>",
+
+    shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
+
+    debug: false,
+    forceRedirect: true
+  });
+</script>
+```
+is changed to
+```erb
+<script type="text/javascript">
+  ShopifyApp.init({
+    apiKey: "<%= ShopifyApp.configuration.api_key %>",
+
+    shopOrigin: "<%= "https://#{ @shop_session.domain }" if @shop_session %>",
+
+    debug: false,
+    forceRedirect: true
+  });
+</script>
+```
+
+### ShopifyAPI changes
+
+You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/shopify/shopify_apiREADME.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.

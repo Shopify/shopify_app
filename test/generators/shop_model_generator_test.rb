@@ -15,6 +15,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     assert_file "app/models/shop.rb" do |shop|
       assert_match "class Shop < ActiveRecord::Base", shop
       assert_match "include ShopifyApp::SessionStorage", shop
+      assert_match(/def api_version\n\s*ShopifyApp\.configuration\.api_version\n\s*end/, shop)
     end
   end
 
