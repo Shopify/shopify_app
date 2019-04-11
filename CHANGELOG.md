@@ -1,3 +1,10 @@
+9.0.1
+-----
+
+* Minor documentation corrections
+* Handle `Webhook.all` returning `nil` and raising on `index_by`
+
+
 9.0.0
 -----
 

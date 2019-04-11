@@ -1,6 +1,6 @@
 {
   "name": "shopify_app",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "repository": "git@github.com:Shopify/shopify_app.git",
   "author": "Shopify",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "babel-loader": "^8.0.2",
     "babel-preset-shopify": "^16.5.0",
     "chai": "^4.1.2",
-    "karma": "^3.0.0",
+    "karma": "^4.0.1",
     "karma-chai-sinon": "^0.1.5",
     "karma-chrome-launcher": "^2.2.0",
     "karma-cli": "^1.0.1",
