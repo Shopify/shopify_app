@@ -207,6 +207,19 @@ provider :shopify,
   callback_path: '/nested/auth/shopify/callback'
 ```
 
+You may also need to change your `config/routes.rb` to render a view for `/nested`, since this is what will be rendered in the Shopify Admin of any shops that have installed your app.  The engine itself doesn't have a view for this, so you'll need something like this:
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  root :to => 'something_else#index'
+  get "/nested", to: "home#index"
+  mount ShopifyApp::Engine, at: '/nested'
+end
+```
+
+Finally, note that if you do this, to add your app to a store, you must navigate to `/nested` in order to render the `Enter your shop domain to log in or install this app.` UI.
+
 ### Custom login URL
 
 While you can customize the login view by creating a `/app/views/shopify_app/sessions/new.html.erb` file, you may also want to customize the URL entirely. You can modify your `shopify_app.rb` initializer to provide a custom `login_url` e.g.:
