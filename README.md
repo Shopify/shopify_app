@@ -15,6 +15,7 @@ Table of Contents
 * [**Description**](#description)
 * [**Quickstart**](#quickstart)
 * [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
+* [**App Tunneling**](#app-tunneling)
 * [**Installation**](#installation)
   * [Rails Compatibility](#rails-compatibility)
 * [**Generators**](#generators)
@@ -30,13 +31,13 @@ Table of Contents
 * [**ScripttagsManager**](#scripttagsmanager)
 * [**AfterAuthenticate Job**](#afterauthenticate-job)
 * [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
-* [**AuthenticatedController**](#authenticatedcontroller)
+* [**Authenticated**](#authenticated)
 * [**AppProxyVerification**](#appproxyverification)
  * [Recommended Usage](#recommended-usage)
+* [**Upgrading from 8.6 to 9.0.0**](#upgrading-from-86-to-900)
 * [**Troubleshooting**](#troubleshooting)
  * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
 * [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
-* [**App Tunneling**](#app-tunneling)
 * [**Questions or problems?**](#questions-or-problems)
 
 
@@ -58,26 +59,22 @@ Check out this screencast on how to create and deploy a new Shopify App to Herok
 
 Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md)
 
+App Tunneling
+-------------
+
+Your local app needs to be accessible from the public Internet in order to install it on a shop, use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), [Hookbin](https://hookbin.com/), etc.
+
+For example with [ngrok](https://ngrok.com/), run this command to set up proxying to Rails' default port:
+
+```sh
+ngrok http 3000
+```
+
 Becoming a Shopify App Developer
 --------------------------------
 If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
 
-Once you have a Partner account create a new application to get an Api key and other Api credentials. To create a development application set the Application Callback URL to
-
-```
-http://localhost:3000/
-```
-
-and the `redirect_uri` to
-
-```
-http://localhost:3000/auth/shopify/callback
-```
-
-This way you'll be able to run the app on your local machine.
-
-Also note, ShopifyApp creates embedded apps by default, so remember to check `enabled` for the embedded settings.
-
+Once you have a Partner account create a new application to get an API key and other API credentials. To create a development application set the `App URL` to the URL provided by [your tunnel](#app-tunneling) or `http://localhost:3000/` if you are not embeddeding your app inside the admin or receiving webhooks and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. Ensure you are using `https://` URLs if you are using tunneling.
 
 Installation
 ------------
@@ -112,6 +109,7 @@ The default generator will run the `install`, `shop`, and `home_controller` gene
 $ rails generate shopify_app --api_key <your_api_key> --secret <your_app_secret>
 ```
 
+After running the generator, you will need to run `rake db:migrate` to add tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting localhost.
 
 ### Install Generator
 
@@ -124,9 +122,9 @@ $ rails generate shopify_app:install --api_key <your_api_key> --secret <your_app
 ```
 
 Other options include:
-* `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)  
-* `scope` - the Oauth access scope required for your app, eg **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space, and can be supplied with or without double-quotes  
-(e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)  
+* `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)
+* `scope` - the Oauth access scope required for your app, eg **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space, and can be supplied with or without double-quotes
+(e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)
 For more information, refer the [docs](http://docs.shopify.com/api/tutorials/oauth).
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
 
@@ -367,17 +365,45 @@ We've also provided a generator which creates a skeleton job and updates the ini
 bin/rails g shopify_app:add_after_authenticate_job
 ```
 
+RotateShopifyTokenJob
+---------------------
+
+If your Shopify secret key is leaked, you can use the RotateShopifyTokenJob to perform [API Credential Rotation](https://help.shopify.com/en/api/getting-started/authentication/oauth/api-credential-rotation).
+
+Before running the job, you'll need to generate a new secret key from your Shopify Partner dashboard, and update the `/config/initializers/shopify_app.rb` to hold your new and old secret keys:
+
+```ruby
+config.secret = Rails.application.secrets.shopify_secret
+config.old_secret = Rails.application.secrets.old_shopify_secret
+```
+
+We've provided a generator which creates the job and an example rake task:
+
+```sh
+bin/rails g shopify_app:rotate_shopify_token_job
+```
+
+The generated rake task will be found at `lib/tasks/shopify/rotate_shopify_token.rake` and is provided strictly for example purposes. It might not work with your application out of the box without some configuration.
+
+⚠️ Note: if you are updating `shopify_app` from a version prior to 8.4.2 (and do not wish to run the default/install generator again), you will need to add [the following line](https://github.com/Shopify/shopify_app/blob/4f7e6cca2a472d8f7af44b938bd0fcafe4d8e88a/lib/generators/shopify_app/install/templates/shopify_provider.rb#L18) to `config/intializers/omniauth.rb`:
+
+```ruby
+strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
+```
+
 ShopifyApp::SessionRepository
 -----------------------------
 
 `ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `ShopifyApp::InMemorySessionStore` class or the `ShopifyApp::SessionStorage` concern for examples.
 
-If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain` and `shopify_token`.
+If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain`, `shopify_token` and `api_version`.
 
-AuthenticatedController
------------------------
+Authenticated
+-------------
 
-The engine includes a controller called `ShopifyApp::AuthenticatedController` which inherits from `ActionController::Base`. It adds some before_filters which ensure the user is authenticated and will redirect to the login page if not. It is best practice to have all controllers that belong to the Shopify part of your app inherit from this controller. The HomeController that is generated already inherits from AuthenticatedController.
+The engine provides a `ShopifyApp::Authenticated` concern which should be included in any controller that is intended to be behind Shopify OAuth. It adds `before_action`s to ensure that the user is authenticated and will redirect to the Shopify login page if not. It is best practice to include this concern in a base controller inheriting from your `ApplicationController`, from which all controllers that require Shopify authentication inherit.
+
+For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
 
 AppProxyVerification
 --------------------
@@ -408,21 +434,68 @@ see [TROUBLESHOOTING.md](https://github.com/Shopify/shopify_app/blob/master/docs
 Testing an embedded app outside the Shopify admin
 -------------------------------------------------
 
-By default, loading your embedded app will redirect to the Shopify admin, with the app view loaded in an `iframe`. If you need to load your app outside of the Shopify admin (e.g., for performance testing), you can change `forceRedirect: false` to `true` in `ShopifyApp.init` block in the `embedded_app` view. To keep the redirect on in production but off in your `development` and `test` environments, you can use:
+By default, loading your embedded app will redirect to the Shopify admin, with the app view loaded in an `iframe`. If you need to load your app outside of the Shopify admin (e.g., for performance testing), you can change `forceRedirect: true` to `false` in `ShopifyApp.init` block in the `embedded_app` view. To keep the redirect on in production but off in your `development` and `test` environments, you can use:
 
 ```javascript
 forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
-
-App Tunneling
--------------
-
-For certain features like Application Proxy or Webhooks to receive requests from Shopify, your app needs to be on a publicly visible URL. This can be a hurdle during development or testing on a local machine. Fortunately, this can be overcome by employing a tunneling service like [Forward](https://forwardhq.com/), [RequestBin](https://requestb.in/), [ngrok](https://ngrok.com/) etc. These tools allow you to create a secure tunnel from the public Internet to your local machine.
-
-Tunneling is also useful for working the the embedded app sdk to solve mixed content issues since most tunnles provide ssl.
 
 Questions or problems?
 ----------------------
 
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
+
+
+Upgrading from 8.6 to 9.0.0
+---------------------------
+
+### Configuration change
+
+Add an api version configuration in `config/initializers/shopify_app.rb`
+Set this to the version you want to run against by default see [url] for what versions are currently availabe
+```ruby
+config.api_version = '2019-04'
+```
+
+### Session storage change
+
+You will need to add an `api_version` method to you session storage object.  The default implmentation for this is.
+```ruby
+def api_version
+  ShopifyApp.configuration.api_version
+end
+```
+
+### Generated file change
+
+`embedded_app.html.erb` the useage of `shop_session.url` needs to be changed to `shop_session.domain`
+```erb
+<script type="text/javascript">
+  ShopifyApp.init({
+    apiKey: "<%= ShopifyApp.configuration.api_key %>",
+
+    shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
+
+    debug: false,
+    forceRedirect: true
+  });
+</script>
+```
+is changed to
+```erb
+<script type="text/javascript">
+  ShopifyApp.init({
+    apiKey: "<%= ShopifyApp.configuration.api_key %>",
+
+    shopOrigin: "<%= "https://#{ @shop_session.domain }" if @shop_session %>",
+
+    debug: false,
+    forceRedirect: true
+  });
+</script>
+```
+
+### ShopifyAPI changes
+
+You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.

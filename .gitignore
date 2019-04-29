@@ -11,3 +11,6 @@ test/tmp/*
 .idea
 # ignore sprockets cache
 /test/dummy/tmp/*
+/node_modules/
+.byebug_history
+

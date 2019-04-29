@@ -17,36 +17,72 @@ module ShopifyApp
 
       I18n.locale = :en
 
-      session['shopify.cookies_persist'] = true
+      session['shopify.granted_storage_access'] = true
+
+      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
     end
 
-    test '#new redirects to the enable_cookies page if we can\'t set cookies' do
-      session.delete('shopify.cookies_persist')
+    test '#new redirects to the enable_cookies page if we can\'t set cookies and the user agent supports cookie partitioning' do
       shopify_domain = 'my-shop.myshopify.com'
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to_top_level(shopify_domain, '/enable_cookies?shop=my-shop.myshopify.com')
+    end
+
+    test '#new renders the request_storage_access layout if we do not have storage access' do
+      session.delete('shopify.granted_storage_access')
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'sessions/request_storage_access'
+    end
+
+    test '#new renders the redirect layout if user agent is not set' do
+      request.env['HTTP_USER_AGENT'] = nil
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
+    test '#new renders the redirect layout if user agent is Shopify Mobile (Android)' do
+      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/7.7.0 (debug) (Build 1 with API 24 on Google Android SDK built for x86) Mozilla/5.0 (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Safari/537.36'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
+    test '#new renders the redirect layout if user agent is Shopify Mobile (iOS)' do
+      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/iOS/7.7.0 (iPad5,4 Simulator/com.shopify.ShopifyInternal/11.4.0)'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
+    test '#new renders the redirect layout if user agent is Shopify POS (Android)' do
+      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC) POS - Debug 2.4.8 (f1d442c789)/3405 Mozilla/5.0 (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/64.0.3282.137 Safari/537.36'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
+    test '#new renders the redirect layout if user agent is Shopify POS (iOS)' do
+      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS/4.7 (iPad; iOS 11.0.1; Scale/2.00)'
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
     end
 
     test '#new redirects to the top-level login if a valid shop param exists' do
       shopify_domain = 'my-shop.myshopify.com'
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to_top_level(shopify_domain)
-      assert_equal true, session['shopify.top_level_oauth']
     end
 
-    test '#new sets the top_level_oauth cookie if a valid shop param exists' do
+    test '#new sets the top_level_oauth cookie if a valid shop param exists and user agent supports cookie partitioning' do
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :new, params: { shop: 'my-shop' }
       assert_equal true, session['shopify.top_level_oauth']
     end
 
     test '#new redirects to the auth page if top_level param' do
-      session.delete('shopify.cookies_persist')
       get :new, params: { shop: 'my-shop', top_level: true }
       assert_redirected_to '/auth/shopify'
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
-      session.delete('shopify.cookies_persist')
       ShopifyApp.configuration.embedded_app = false
       get :new, params: { shop: 'my-shop' }
       assert_redirected_to '/auth/shopify'
@@ -55,13 +91,16 @@ module ShopifyApp
 
     test '#new authenticates the shop if we\'ve just returned from top-level login flow' do
       session['shopify.top_level_oauth'] = true
-      get :new, params: { shop: 'my-shop' }
+      get :new, params: { shop: 'my-shop', top_level: true }
       assert_redirected_to '/auth/shopify'
       assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
     end
 
-    test '#new removes the top_level_oauth cookie if we\'ve just returned from top-level login flow' do
+    test '#new removes the top_level_oauth cookie if the user agent supports partitioning and we\'ve just returned from top-level login flow where the cookies_persist cookie was set' do
+      session.delete('shopify.granted_storage_access')
       session['shopify.top_level_oauth'] = true
+      session['shopify.cookies_persist'] = true
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :new, params: { shop: 'my-shop' }
       assert_nil session['shopify.top_level_oauth']
     end
@@ -69,6 +108,7 @@ module ShopifyApp
     test "#new should trust the shop param over the current session" do
       previously_logged_in_shop_id = 1
       session[:shopify] = previously_logged_in_shop_id
+      session['shopify.granted_storage_access'] = true
       new_shop_domain = "new-shop.myshopify.com"
       get :new, params: { shop: new_shop_domain }
       assert_redirected_to_top_level(new_shop_domain)
@@ -129,54 +169,33 @@ module ShopifyApp
       assert_equal I18n.t('invalid_shop_url'), flash[:error]
     end
 
-    test '#callback should flash error when omniauth is not present' do
-      get :callback, params: { shop: 'shop' }
-      assert_equal flash[:error], 'Could not log in to Shopify store'
+    test '#top_level_interaction renders the ccorrect template' do
+      get :top_level_interaction, params: { shop: 'shop' }
+      assert_template 'sessions/top_level_interaction'
     end
 
-    test '#callback should flash error in Spanish' do
-      I18n.locale = :es
-      get :callback, params: { shop: 'shop' }
-      assert_equal flash[:error], 'No se pudo iniciar sesión en tu tienda de Shopify'
+    test '#top_level_interaction displays an error if no shop is provided' do
+      get :top_level_interaction
+      assert_redirected_to ShopifyApp.configuration.root_url
+      assert_equal I18n.t('invalid_shop_url'), flash[:error]
     end
 
-    test "#callback should setup a shopify session" do
-      mock_shopify_omniauth
-
-      get :callback, params: { shop: 'shop' }
-      assert_not_nil session[:shopify]
-      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+    test '#granted_storage_access displays an error if no shop is provided' do
+      get :granted_storage_access
+      assert_redirected_to ShopifyApp.configuration.root_url
+      assert_equal I18n.t('invalid_shop_url'), flash[:error]
     end
 
-    test "#callback should setup a shopify session with a user for online mode" do
-      mock_shopify_user_omniauth
+    test '#granted_storage_access sets shopify.granted_storage_access' do
+      get :granted_storage_access, params: { shop: 'shop' }
 
-      get :callback, params: { shop: 'shop' }
-      assert_not_nil session[:shopify]
-      assert_equal 'shop.myshopify.com', session[:shopify_domain]
-      assert_equal 'user_object', session[:shopify_user]
+      assert_equal true, session['shopify.granted_storage_access']
     end
 
-    test "#callback should start the WebhooksManager if webhooks are configured" do
-      ShopifyApp.configure do |config|
-        config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks'}]
-      end
+    test '#granted_storage_access redirects to app root url with shop param' do
+      get :granted_storage_access, params: { shop: 'shop.myshopify.com' }
 
-      ShopifyApp::WebhooksManager.expects(:queue)
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test "#callback doesn't run the WebhooksManager if no webhooks are configured" do
-      ShopifyApp.configure do |config|
-        config.webhooks = []
-      end
-
-      ShopifyApp::WebhooksManager.expects(:queue).never
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      assert_redirected_to "#{ShopifyApp.configuration.root_url}?shop=shop.myshopify.com"
     end
 
     test "#destroy should clear shopify from session and redirect to login with notice" do
@@ -205,68 +224,7 @@ module ShopifyApp
       assert_equal 'Cerrar sesión', flash[:notice]
     end
 
-    test "#callback calls #perform_after_authenticate_job and performs inline when inline is true" do
-      ShopifyApp.configure do |config|
-        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
-      end
-
-      Shopify::AfterAuthenticateJob.expects(:perform_now)
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test "#callback calls #perform_after_authenticate_job and performs asynchronous when inline isn't true" do
-      ShopifyApp.configure do |config|
-        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
-      end
-
-      Shopify::AfterAuthenticateJob.expects(:perform_later)
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test "#callback doesn't call #perform_after_authenticate_job if job is nil" do
-      ShopifyApp.configure do |config|
-        config.after_authenticate_job = { job: nil, inline: false }
-      end
-
-      Shopify::AfterAuthenticateJob.expects(:perform_later).never
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test "#callback calls #perform_after_authenticate_job and performs async if inline isn't present" do
-      ShopifyApp.configure do |config|
-        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
-      end
-
-      Shopify::AfterAuthenticateJob.expects(:perform_later)
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
     private
-
-    def mock_shopify_omniauth
-      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: {token: '1234'})
-      request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
-    end
-
-    def mock_shopify_user_omniauth
-      OmniAuth.config.add_mock(:shopify,
-        provider: :shopify,
-        uid: 'shop.myshopify.com',
-        credentials: {token: '1234'},
-        extra: {associated_user: 'user_object'}
-      )
-      request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
-    end
 
     def assert_redirected_to_top_level(shop_domain, expected_url = nil)
       expected_url ||= "/login?shop=#{shop_domain}\\u0026top_level=true"

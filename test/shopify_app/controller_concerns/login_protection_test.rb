@@ -33,10 +33,13 @@ class LoginProtectionTest < ActionController::TestCase
 
   setup do
     ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
+
+    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   end
 
-  test '#index sets test cookie if embedded app' do
+  test '#index sets test cookie if embedded app and user agent can partition cookies' do
     with_application_test_routes do
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :index
       assert_equal true, session['shopify.cookies_persist']
     end
@@ -83,7 +86,7 @@ class LoginProtectionTest < ActionController::TestCase
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
       session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      sess = stub(url: 'https://foobar.myshopify.com')
+      sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
       get :second_login, params: { shop: 'other-shop' }
       assert_redirected_to '/login?shop=other-shop.myshopify.com'
@@ -97,7 +100,7 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
-      sess = stub(url: 'https://foobar.myshopify.com')
+      sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
 
       get :second_login, params: { shop: { id: 123, disabled: true } }
@@ -108,7 +111,7 @@ class LoginProtectionTest < ActionController::TestCase
   test '#shopify_session with Shopify session, clears top-level auth cookie' do
     with_application_test_routes do
       session['shopify.top_level_oauth'] = true
-      sess = stub(url: 'https://foobar.myshopify.com')
+      sess = stub(domain: 'https://foobar.myshopify.com')
       @controller.expects(:shop_session).returns(sess).at_least_once
       ShopifyAPI::Base.expects(:activate_session).with(sess)
 

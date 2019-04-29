@@ -12,7 +12,9 @@ module ShopifyApp
       def init_after_authenticate_config
         initializer = load_initializer
 
-       after_authenticate_job_config = "  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }\n"
+        after_authenticate_job_config =
+          "  config.after_authenticate_job = "\
+          "{ job: Shopify::AfterAuthenticateJob, inline: false }\n"
 
         inject_into_file(
           'config/initializers/shopify_app.rb',

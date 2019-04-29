@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
+require 'browser_sniffer'
+
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
+    include ShopifyApp::Itp
 
     class ShopifyDomainNotFound < StandardError; end
 
@@ -27,7 +32,7 @@ module ShopifyApp
     end
 
     def login_again_if_different_shop
-      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.url != params[:shop])
+      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
         clear_shop_session
         redirect_to_login
       end
@@ -123,17 +128,8 @@ module ShopifyApp
       end
     end
 
-    def set_test_cookie
-      return unless ShopifyApp.configuration.embedded_app?
-      session['shopify.cookies_persist'] = true
-    end
-
-    def clear_top_level_oauth_cookie
-      session.delete('shopify.top_level_oauth')
-    end
-
-    def set_top_level_oauth_cookie
-      session['shopify.top_level_oauth'] = true
+    def return_address
+      session.delete(:return_to) || ShopifyApp.configuration.root_url
     end
   end
 end

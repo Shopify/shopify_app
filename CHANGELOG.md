@@ -1,3 +1,60 @@
+9.0.1
+-----
+
+* Minor documentation corrections
+* Handle `Webhook.all` returning `nil` and raising on `index_by`
+
+
+9.0.0
+-----
+
+* Breaking change: Api version support added see [migration guide](README.md#upgrading-from-86-to-900)
+
+8.6.1
+-----
+
+* Locked `shopify_api` gem to version < 7.0.  7.0 will have breaking changes that are incompatable with `shopify_app`
+
+* Session storage validation for shopify_domain is now set to `case_sensitive: false`.
+
+8.6.0
+-----
+
+* Added an `Authenticated` concern to allow gem users to inherit from a custom `AuthenticatedController` instead of
+  `ShopifyApp::AuthenticatedController`
+
+8.5.1
+-----
+
+* Fixed a typo in RotateShopifyTokenJob
+
+8.5.0
+-----
+Added support for rotating Shopify access tokens:
+
+* Added a generator shopify_app:rotate_shopify_token_job for generating the job to perform token rotation
+* Extend Shopify app configuration to support a new and old secret token
+* Extended webhook validation code to support validating against new and old secret tokens
+* See the README for more details: https://github.com/Shopify/shopify_app#rotateshopifytokenjob
+
+8.4.2
+-----
+* Clear stale user session during auth callback
+
+8.4.1
+-----
+* Update README and Releasing.md
+* Allow user agent to not be set
+* Remove legacy EASDK examples
+* Add .ruby-version file
+* Clean up omniauth setup and fix examples
+* Fix infinite redirect loops if users have disabled 3rd party cookies in their browser
+
+8.4.0
+----
+* Fix embedded app session management in Safari 12.1
+* Shop names passed to OAuth are no longer case sensitive
+
 8.3.2
 ----
 * Removes `read_orders` from the default scopes provided upon app generation
@@ -13,7 +70,7 @@
 
 8.2.6
 ----
-* Sanitize the shop query param to include `.myshopify.com` if no domain was provided 
+* Sanitize the shop query param to include `.myshopify.com` if no domain was provided
 
 8.2.5
 ----
