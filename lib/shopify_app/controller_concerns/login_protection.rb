@@ -32,7 +32,7 @@ module ShopifyApp
     end
 
     def login_again_if_different_shop
-      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.url != params[:shop])
+      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
         clear_shop_session
         redirect_to_login
       end

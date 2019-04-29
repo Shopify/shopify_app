@@ -22,6 +22,16 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     @manager.create_webhooks
   end
 
+  test "#create_webhooks handles no webhooks present as nil" do
+    ShopifyAPI::Webhook.stubs(all: nil)
+
+    expect_webhook_creation('app/uninstalled', "https://example-app.com/webhooks/app_uninstalled")
+    expect_webhook_creation('orders/create', "https://example-app.com/webhooks/order_create")
+    expect_webhook_creation('orders/updated', "https://example-app.com/webhooks/order_updated")
+
+    @manager.create_webhooks
+  end
+
   test "#create_webhooks when creating a webhook fails, raises an error" do
     ShopifyAPI::Webhook.stubs(all: [])
     webhook = stub(persisted?: false, errors: stub(full_messages: ['topic already taken']))

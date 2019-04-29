@@ -1,7 +1,8 @@
 (function() {
   document.addEventListener("DOMContentLoaded", function() {
-    var storageAccessHelper = new StorageAccessHelper();
+    var redirectTargetElement = document.getElementById("redirection-target");
+    var targetInfo = JSON.parse(redirectTargetElement.dataset.target)
+    var storageAccessHelper = new StorageAccessHelper(targetInfo);
     storageAccessHelper.execute();
   });
 })();
-

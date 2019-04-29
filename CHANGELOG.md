@@ -1,3 +1,28 @@
+9.0.1
+-----
+
+* Minor documentation corrections
+* Handle `Webhook.all` returning `nil` and raising on `index_by`
+
+
+9.0.0
+-----
+
+* Breaking change: Api version support added see [migration guide](README.md#upgrading-from-86-to-900)
+
+8.6.1
+-----
+
+* Locked `shopify_api` gem to version < 7.0.  7.0 will have breaking changes that are incompatable with `shopify_app`
+
+* Session storage validation for shopify_domain is now set to `case_sensitive: false`.
+
+8.6.0
+-----
+
+* Added an `Authenticated` concern to allow gem users to inherit from a custom `AuthenticatedController` instead of
+  `ShopifyApp::AuthenticatedController`
+
 8.5.1
 -----
 

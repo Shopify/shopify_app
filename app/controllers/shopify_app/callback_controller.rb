@@ -50,7 +50,11 @@ module ShopifyApp
     end
 
     def set_shopify_session
-      session_store = ShopifyAPI::Session.new(shop_name, token)
+      session_store = ShopifyAPI::Session.new(
+        domain: shop_name,
+        token: token,
+        api_version: ShopifyApp.configuration.api_version
+      )
 
       session[:shopify] = ShopifyApp::SessionRepository.store(session_store)
       session[:shopify_domain] = shop_name

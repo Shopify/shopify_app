@@ -7,5 +7,6 @@ ShopifyApp.configure do |config|
                                  # https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes
   config.embedded_app = <%= embedded_app? %>
   config.after_authenticate_job = false
+  config.api_version = "<%= @api_version %>"
   config.session_repository = ShopifyApp::InMemorySessionStore
 end

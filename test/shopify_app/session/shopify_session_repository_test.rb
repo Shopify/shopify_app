@@ -31,7 +31,11 @@ class ShopifySessionRepositoryTest < ActiveSupport::TestCase
 
   setup do
     @session_store = TestSessionStore.new
-    @session = ShopifyAPI::Session.new('shop.myshopify.com', 'abracadabra')
+    @session = ShopifyAPI::Session.new(
+      domain: 'shop.myshopify.com',
+      token: 'abracadabra',
+      api_version: :unstable
+    )
     ShopifyApp::SessionRepository.storage = session_store
   end
 

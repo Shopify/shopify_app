@@ -12,6 +12,7 @@ module ShopifyApp
       class_option :old_secret, type: :string, default: '<old_secret>'
       class_option :scope, type: :array, default: ['read_products']
       class_option :embedded, type: :string, default: 'true'
+      class_option :api_version, type: :string, default: ShopifyAPI::ApiVersion.latest_stable_version.to_s
 
       def create_shopify_app_initializer
         @application_name = format_array_argument(options['application_name'])
@@ -19,6 +20,7 @@ module ShopifyApp
         @secret = options['secret']
         @old_secret = options['old_secret']
         @scope = format_array_argument(options['scope'])
+        @api_version = options['api_version']
 
         template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
       end

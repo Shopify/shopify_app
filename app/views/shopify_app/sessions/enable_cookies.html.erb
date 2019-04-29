@@ -21,6 +21,20 @@
   <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
+  <%=
+    content_tag(
+      :div, nil,
+      id: 'redirection-target',
+      data: {
+        target: {
+          myshopifyUrl: "https://#{current_shopify_domain}",
+          hasStorageAccessUrl: "#{has_storage_access_url}",
+          doesNotHaveStorageAccessUrl: "#{does_not_have_storage_access_url}",
+          appHomeUrl: "#{app_home_url}"
+        },
+      },
+    )
+  %>
   <main id="CookiePartitionPrompt">
     <div class="Polaris-Page">
       <div class="Polaris-Page__Content">
