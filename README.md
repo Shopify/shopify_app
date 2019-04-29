@@ -343,7 +343,7 @@ If `src` responds to `call` its return value will be used as the scripttag's sou
 AfterAuthenticate Job
 ---------------------
 
-If your app needs to perform specific actions after the shop is authenticated successfully (i.e every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
+If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
 
 ```ruby
 ShopifyApp.configure do |config|
@@ -365,7 +365,7 @@ We've also provided a generator which creates a skeleton job and updates the ini
 bin/rails g shopify_app:add_after_authenticate_job
 ```
 
-If you want to perform that action only once, e.g send a welcome email to the user when he installs the app, you should make sure that this action is idempotent, meaning that it won't have an impact if run multiple times.
+If you want to perform that action only once, e.g. send a welcome email to the user when they install the app, you should make sure that this action is idempotent, meaning that it won't have an impact if run multiple times.
 
 
 RotateShopifyTokenJob
