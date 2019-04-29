@@ -23,7 +23,7 @@ module ShopifyApp
         )
 
         unless initializer.include?(after_authenticate_job_config)
-          shell.say "Error adding after_authneticate_job to config. Add this line manually: #{after_authenticate_job_config}", :red
+          shell.say "Error adding after_authenticate_job to config. Add this line manually: #{after_authenticate_job_config}", :red
         end
       end
 
