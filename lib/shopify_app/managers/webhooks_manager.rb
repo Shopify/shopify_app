@@ -55,7 +55,7 @@ module ShopifyApp
     end
 
     def current_webhooks
-      @current_webhooks ||= ShopifyAPI::Webhook.all.index_by(&:topic)
+      @current_webhooks ||= ShopifyAPI::Webhook.all.to_a.index_by(&:topic)
     end
   end
 end

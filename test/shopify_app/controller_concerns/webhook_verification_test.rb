@@ -19,15 +19,34 @@ class WebhookVerificationTest < ActionController::TestCase
   setup do
     ShopifyApp.configure do |config|
       config.secret = 'secret'
+      config.old_secret = 'old_secret'
+    end
+  end
+
+  test "webhook verification doesn't blow up when old_secret is nil" do
+    ShopifyApp.configuration.old_secret = nil
+
+    with_application_test_routes do
+      @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = "invalid_hmac"
+      post :webhook_action, params: { foo: 'anything' }
+      assert_response :unauthorized
     end
   end
 
   test "authorized requests should be successful" do
     with_application_test_routes do
       params = { foo: 'anything' }
-      digest = OpenSSL::Digest.new('sha256')
-      secret = ShopifyApp.configuration.secret
-      valid_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, secret, params.to_query)).strip
+      valid_hmac = 'yCGX/RrK4fcuNtr3ztk5tQGsOBjcAzHpGLdMUrbV8yI=' # Valid hmac using the new secret
+      @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = valid_hmac
+      post :webhook_action, params: params
+      assert_response :ok
+    end
+  end
+
+  test "authorized request validated with old secret should be successful" do
+    with_application_test_routes do
+      params = { foo: 'anything' }
+      valid_hmac = 'XqRcjrSv57VACn6apEO9znyu/wkN1VC7QxdSPwK3Hzs=' # Valid hmac using the old secret
       @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = valid_hmac
       post :webhook_action, params: params
       assert_response :ok

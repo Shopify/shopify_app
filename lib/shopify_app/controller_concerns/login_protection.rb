@@ -1,23 +1,28 @@
+# frozen_string_literal: true
+
+require 'browser_sniffer'
+
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
+    include ShopifyApp::Itp
 
     class ShopifyDomainNotFound < StandardError; end
 
     included do
+      after_action :set_test_cookie
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
 
     def shopify_session
-      if shop_session
-        begin
-          ShopifyAPI::Base.activate_session(shop_session)
-          yield
-        ensure
-          ShopifyAPI::Base.clear_session
-        end
-      else
-        redirect_to_login
+      return redirect_to_login unless shop_session
+      clear_top_level_oauth_cookie
+
+      begin
+        ShopifyAPI::Base.activate_session(shop_session)
+        yield
+      ensure
+        ShopifyAPI::Base.clear_session
       end
     end
 
@@ -27,9 +32,8 @@ module ShopifyApp
     end
 
     def login_again_if_different_shop
-      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.url != params[:shop])
-        session[:shopify] = nil
-        session[:shopify_domain] = nil
+      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
+        clear_shop_session
         redirect_to_login
       end
     end
@@ -40,68 +44,53 @@ module ShopifyApp
       if request.xhr?
         head :unauthorized
       else
-        session[:return_to] = request.fullpath if request.get?
+        if request.get?
+          session[:return_to] = "#{request.path}?#{sanitized_params.to_query}"
+        end
         redirect_to login_url
       end
     end
 
     def close_session
-      session[:shopify] = nil
-      session[:shopify_domain] = nil
+      clear_shop_session
       redirect_to login_url
     end
 
-    def login_url
+    def clear_shop_session
+      session[:shopify] = nil
+      session[:shopify_domain] = nil
+      session[:shopify_user] = nil
+    end
+
+    def login_url(top_level: false)
       url = ShopifyApp.configuration.login_url
 
-      if params[:shop].present?
-        query = { shop: params[:shop] }.to_query
-        url = "#{url}?#{query}"
+      query_params = login_url_params(top_level: top_level)
+
+      url = "#{url}?#{query_params.to_query}" if query_params.present?
+      url
+    end
+
+    def login_url_params(top_level:)
+      query_params = {}
+      query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
+
+      has_referer_shop_name = referer_sanitized_shop_name.present?
+
+      if has_referer_shop_name
+        query_params[:shop] ||= referer_sanitized_shop_name
       end
 
-      url
+      query_params[:top_level] = true if top_level
+      query_params
     end
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render inline: redirection_javascript(url)
+        render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain }
       else
         redirect_to url
       end
-    end
-
-    def redirection_javascript(url)
-      %(
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <base target="_top">
-            <title>Redirecting…</title>
-            <script type="text/javascript">
-
-              // If the current window is the 'parent', change the URL by setting location.href
-              if (window.top == window.self) {
-                window.top.location.href = #{url.to_json};
-
-              // If the current window is the 'child', change the parent's URL with postMessage
-              } else {
-                normalizedLink = document.createElement('a');
-                normalizedLink.href = #{url.to_json};
-
-                data = JSON.stringify({
-                  message: 'Shopify.API.remoteRedirect',
-                  data: { location: normalizedLink.href }
-                });
-                window.parent.postMessage(data, "https://#{current_shopify_domain}");
-              }
-
-            </script>
-          </head>
-          <body>
-          </body>
-        </html>
-      )
     end
 
     def current_shopify_domain
@@ -115,9 +104,32 @@ module ShopifyApp
       @sanitized_shop_name ||= sanitize_shop_param(params)
     end
 
+    def referer_sanitized_shop_name
+      return unless request.referer.present?
+
+      @referer_sanitized_shop_name ||= begin
+        referer_uri = URI(request.referer)
+        query_params = Rack::Utils.parse_query(referer_uri.query)
+
+        sanitize_shop_param(query_params.with_indifferent_access)
+      end
+    end
+
     def sanitize_shop_param(params)
       return unless params[:shop].present?
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
+    end
+
+    def sanitized_params
+      request.query_parameters.clone.tap do |query_params|
+        if params[:shop].is_a?(String)
+          query_params[:shop] = sanitize_shop_param(params)
+        end
+      end
+    end
+
+    def return_address
+      session.delete(:return_to) || ShopifyApp.configuration.root_url
     end
   end
 end

@@ -12,7 +12,9 @@ module ShopifyApp
       def init_after_authenticate_config
         initializer = load_initializer
 
-       after_authenticate_job_config = "  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }\n"
+        after_authenticate_job_config =
+          "  config.after_authenticate_job = "\
+          "{ job: Shopify::AfterAuthenticateJob, inline: false }\n"
 
         inject_into_file(
           'config/initializers/shopify_app.rb',
@@ -21,7 +23,7 @@ module ShopifyApp
         )
 
         unless initializer.include?(after_authenticate_job_config)
-          shell.say "Error adding after_authneticate_job to config. Add this line manually: #{after_authenticate_job_config}", :red
+          shell.say("Error adding after_authenticate_job to config. Add this line manually: #{after_authenticate_job_config}", :red)
         end
       end
 

@@ -6,7 +6,8 @@ module ShopifyApp
     end
 
     def perform(shop_domain:, shop_token:, webhooks:)
-      ShopifyAPI::Session.temp(shop_domain, shop_token) do
+      api_version = ShopifyApp.configuration.api_version
+      ShopifyAPI::Session.temp(domain: shop_domain, token: shop_token, api_version: api_version) do
         manager = WebhooksManager.new(webhooks)
         manager.create_webhooks
       end

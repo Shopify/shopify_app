@@ -1,8 +1,10 @@
 require 'test_helper'
 require 'action_controller'
 require 'action_controller/base'
+require 'action_view/testing/resolvers'
 
 class LoginProtectionController < ActionController::Base
+  include ShopifyApp::EmbeddedApp
   include ShopifyApp::LoginProtection
   helper_method :shop_session
 
@@ -31,6 +33,25 @@ class LoginProtectionTest < ActionController::TestCase
 
   setup do
     ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
+
+    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+  end
+
+  test '#index sets test cookie if embedded app and user agent can partition cookies' do
+    with_application_test_routes do
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
+      get :index
+      assert_equal true, session['shopify.cookies_persist']
+    end
+  end
+
+  test '#index doesn\'t set test cookie if non embedded app' do
+    with_application_test_routes do
+      ShopifyApp.configuration.embedded_app = false
+
+      get :index
+      assert_nil session['shopify.cookies_persist']
+    end
   end
 
   test "#shop_session returns nil when session is nil" do
@@ -64,12 +85,14 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
-      sess = stub(url: 'https://foobar.myshopify.com')
+      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+      sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
-      get :second_login, params: { shop: 'other_shop' }
-      assert_redirected_to '/login?shop=other_shop'
+      get :second_login, params: { shop: 'other-shop' }
+      assert_redirected_to '/login?shop=other-shop.myshopify.com'
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
+      assert_nil session[:shopify_user]
     end
   end
 
@@ -77,7 +100,7 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session[:shopify] = "foobar"
       session[:shopify_domain] = "foobar"
-      sess = stub(url: 'https://foobar.myshopify.com')
+      sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
 
       get :second_login, params: { shop: { id: 123, disabled: true } }
@@ -85,17 +108,91 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#shopify_session with Shopify session, clears top-level auth cookie' do
+    with_application_test_routes do
+      session['shopify.top_level_oauth'] = true
+      sess = stub(domain: 'https://foobar.myshopify.com')
+      @controller.expects(:shop_session).returns(sess).at_least_once
+      ShopifyAPI::Base.expects(:activate_session).with(sess)
+
+      get :index, params: { shop: 'foobar' }
+      assert_nil session['shopify.top_level_oauth']
+    end
+  end
+
   test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
-      assert_redirected_to '/login?shop=foobar'
+      assert_redirected_to '/login?shop=foobar.myshopify.com'
+    end
+  end
+
+  test '#shopify_session with no Shopify session, redirects to a custom config login url' do
+    with_custom_login_url 'https://domain.com/custom/route/login' do
+      with_application_test_routes do
+        get :index, params: { shop: 'foobar' }
+        assert_redirected_to 'https://domain.com/custom/route/login?shop=foobar.myshopify.com'
+      end
+    end
+  end
+
+  test "#shopify_session with no Shopify session, redirects to login_url with \
+        shop param of referer" do
+    with_application_test_routes do
+      @controller.expects(:shop_session).returns(nil)
+      request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
+
+      get :index
+      assert_redirected_to '/login?shop=my-shop.myshopify.com'
+    end
+  end
+
+  test "#shopify_session with no Shopify session, redirects to a custom config login url with \
+        shop param of referer" do
+    with_custom_login_url 'https://domain.com/custom/route/login' do
+      with_application_test_routes do
+        @controller.expects(:shop_session).returns(nil)
+        request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
+
+        get :index
+        assert_redirected_to 'https://domain.com/custom/route/login?shop=my-shop.myshopify.com'
+      end
+    end
+  end
+
+  test '#shopify_session with no Shopify session, redirects to the login url \
+        with non-String shop param' do
+    with_application_test_routes do
+      params = { shop: { id: 123 } }
+      get :index, params: params
+      assert_redirected_to "/login?#{params.to_query}"
+    end
+  end
+
+  test '#shopify_session with no Shopify session, redirects to a custom config login url \
+        with non-String shop param' do
+    with_custom_login_url 'https://domain.com/custom/route/login' do
+      with_application_test_routes do
+        params = { shop: { id: 123 } }
+        get :index, params: params
+        assert_redirected_to "https://domain.com/custom/route/login?#{params.to_query}"
+      end
     end
   end
 
   test '#shopify_session with no Shopify session, sets session[:return_to]' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
-      assert_equal '/?shop=foobar', session[:return_to]
+      assert_equal '/?shop=foobar.myshopify.com', session[:return_to]
+    end
+  end
+
+  test '#shopify_session with no Shopify session, sets session[:return_to]\
+        with non-String shop param' do
+    with_application_test_routes do
+      params = { shop: { id: 123 } }
+      get :index, params: params
+      assert_equal "/?#{params.to_query}", session[:return_to]
     end
   end
 
@@ -109,7 +206,21 @@ class LoginProtectionTest < ActionController::TestCase
   test '#shopify_session when rescuing from unauthorized access, redirects to the login url' do
     with_application_test_routes do
       get :raise_unauthorized, params: { shop: 'foobar' }
-      assert_redirected_to '/login?shop=foobar'
+      assert_redirected_to '/login?shop=foobar.myshopify.com'
+    end
+  end
+
+  test '#shopify_session when rescuing from unauthorized access, clears shop session' do
+    with_application_test_routes do
+      session[:shopify] = 'foobar'
+      session[:shopify_domain] = 'foobar'
+      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+
+      get :raise_unauthorized, params: { shop: 'foobar' }
+
+      assert_nil session[:shopify]
+      assert_nil session[:shopify_domain]
+      assert_nil session[:shopify_user]
     end
   end
 
@@ -139,6 +250,15 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#fullpage_redirect_to skips rendering layout' do
+    with_application_test_routes do
+      example_shop = 'shop.myshopify.com'
+      get :redirect, params: { shop: example_shop }
+      rendered_templates = @_templates.keys
+      assert_equal(['shopify_app/shared/redirect'], rendered_templates)
+    end
+  end
+
   test '#fullpage_redirect_to, when not an embedded app, does a regular redirect' do
     ShopifyApp.configuration.embedded_app = false
 
@@ -151,18 +271,13 @@ class LoginProtectionTest < ActionController::TestCase
   private
 
   def assert_fullpage_redirected(shop_domain, response)
-    example_url = "https://example.com".to_json
-    target_origin = "https://#{shop_domain}".to_json
+    example_url = "https://example.com"
 
-    post_message_handle = "message: 'Shopify.API.remoteRedirect'"
-    post_message_link = "normalizedLink.href = #{example_url}"
-    post_message_data = "data: { location: normalizedLink.href }"
-    post_message_call = "window.parent.postMessage(data, #{target_origin});"
-
-    assert_includes response.body, post_message_handle
-    assert_includes response.body, post_message_link
-    assert_includes response.body, post_message_data
-    assert_includes response.body, post_message_call
+    assert_template 'shared/redirect'
+    assert_select '[id=redirection-target]', 1 do |elements|
+      assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
+        elements.first['data-target']
+    end
   end
 
   def with_application_test_routes
@@ -175,5 +290,14 @@ class LoginProtectionTest < ActionController::TestCase
       end
       yield
     end
+  end
+
+  def with_custom_login_url(url)
+    original_url = ShopifyApp.configuration.login_url.dup
+
+    ShopifyApp.configure { |config| config.login_url = url }
+    yield
+  ensure
+    ShopifyApp.configure { |config| config.login_url = original_url }
   end
 end

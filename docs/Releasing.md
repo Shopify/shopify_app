@@ -3,6 +3,7 @@ Releasing ShopifyApp
 1. Check the Semantic Versioning page for info on how to version the new release: http://semver.org
 2. Create a pull request with the following changes:
   * Update the version of ShopifyApp in lib/shopify_app/version.rb
+  * Update the version in package.json, then run `npm install` to make sure the lock file gets updated
   * Add a CHANGELOG entry for the new release with the date
   * Change the title of the PR to something like: "Packaging for release X.Y.Z"
 3. Merge your pull request
