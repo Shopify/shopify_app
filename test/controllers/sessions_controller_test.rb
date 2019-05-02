@@ -42,13 +42,13 @@ module ShopifyApp
     end
 
     test '#new renders the redirect layout if user agent is Shopify Mobile (Android)' do
-      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/7.7.0 (debug) (Build 1 with API 24 on Google Android SDK built for x86) Mozilla/5.0 (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Safari/537.36'
+      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/8.12.0 (Build 12005 with API 28 on Google Android SDK built for x86) MobileMiddlewareSupported Mozilla/5.0 (Linux; Android 9; Android SDK built for x86 Build/PSR1.180720.075; wv)  AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/69.0.3497.100 Mobile Safari/537.36'
       get :new, params: { shop: 'my-shop' }
       assert_template 'shared/redirect'
     end
 
     test '#new renders the redirect layout if user agent is Shopify Mobile (iOS)' do
-      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/iOS/7.7.0 (iPad5,4 Simulator/com.shopify.ShopifyInternal/11.4.0)'
+      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/ 604.1.21 (KHTML, like Gecko) Version/ 12.0 Mobile/17A6278a Safari/602.1.26 MobileMiddlewareSupported Shopify Mobile/iOS/8.12.0 (iPad4,7/com.shopify.ShopifyInternal/12.0.0)'
       get :new, params: { shop: 'my-shop' }
       assert_template 'shared/redirect'
     end
