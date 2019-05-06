@@ -1,3 +1,11 @@
+9.0.3
+-----
+
+* Add `meta viewport` tags to fix mobile responsive problems
+* Remove outdated, extraneous `yarn.lock` file (and rely on existing `package-lock.json` instead)
+* Move inline js to a js asset file
+* Minor documentation corrections
+
 9.0.2
 -----
 
