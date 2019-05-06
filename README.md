@@ -284,7 +284,7 @@ ShopifyApp.configure do |config|
 end
 ```
 
-If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks, example:
+If you'd rather implement your own controller then you'll want to use the WebhookVerification module to verify your webhooks, example:
 
 ```ruby
 class CustomWebhooksController < ApplicationController
@@ -453,7 +453,7 @@ Upgrading from 8.6 to 9.0.0
 ### Configuration change
 
 Add an api version configuration in `config/initializers/shopify_app.rb`
-Set this to the version you want to run against by default see [url] for what versions are currently availabe
+Set this to the version you want to run against by default. See [Shopify API docs](https://help.shopify.com/en/api/versioning) for versions available.
 ```ruby
 config.api_version = '2019-04'
 ```

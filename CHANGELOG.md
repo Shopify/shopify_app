@@ -1,3 +1,10 @@
+9.0.2
+-----
+
+* Update browser_sniffer to fix unnecessary ITP flows in Shopify Mobile
+* Add additional languages to translation.yml
+* Minor documentation corrections
+
 9.0.1
 -----
 
