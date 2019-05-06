@@ -284,7 +284,7 @@ ShopifyApp.configure do |config|
 end
 ```
 
-If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks, example:
+If you'd rather implement your own controller then you'll want to use the WebhookVerification module to verify your webhooks, example:
 
 ```ruby
 class CustomWebhooksController < ApplicationController
