@@ -347,9 +347,11 @@ If your app needs to perform specific actions after the user is authenticated su
 
 ```ruby
 ShopifyApp.configure do |config|
-  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
+  config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob" }
 end
 ```
+
+The job can be configured as either a class or a class name string.
 
 If you need the job to run synchronously add the `inline` flag:
 
