@@ -2,14 +2,14 @@ var eventName = typeof(Turbolinks) !== 'undefined' ? 'turbolinks:load' : 'DOMCon
 
 if (!document.documentElement.hasAttribute("data-turbolinks-preview")) {
   document.addEventListener(eventName, function flash() {
-    var flash = JSON.parse(document.getElementById('shopify-app-flash').dataset.flash);
+    var flashData = JSON.parse(document.getElementById('shopify-app-flash').dataset.flash);
 
-    if (flash.notice) {
-      ShopifyApp.flashNotice(flash.notice);
+    if (flashData.notice) {
+      ShopifyApp.flashNotice(flashData.notice);
     }
 
-    if (flash.error) {
-      ShopifyApp.flashError(flash.error);
+    if (flashData.error) {
+      ShopifyApp.flashError(flashData.error);
     }
 
     document.removeEventListener(eventName, flash)
