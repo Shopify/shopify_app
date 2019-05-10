@@ -11,8 +11,8 @@ de:
     Sie laufen nach 30 Tagen ab.
   enable_cookies_action: Cookies aktivieren
   top_level_interaction_heading: Ihr Browser muss %{app} authentifizieren
-  top_level_interaction_body: Ihr Browser verlangt, dass Apps von Drittanbietern wie
-    %{app} Sie um Zugriff auf Cookies bitten, bevor Shopify sie für Sie öffnen kann.
+  top_level_interaction_body: Ihr Browser verlangt, dass Apps wie %{app} Sie um Zugriff
+    auf Cookies bitten, bevor Shopify sie für Sie öffnen kann.
   top_level_interaction_action: Weiter
   request_storage_access_heading: "%{app} braucht Zugriff auf Cookies"
   request_storage_access_body: Damit kann die App Sie authentifizieren, indem Ihre
