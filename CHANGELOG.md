@@ -1,3 +1,8 @@
+9.0.4
+-----
+
+* Fix returning to a deep link after authentication [#746](https://github.com/Shopify/shopify_app/pull/746)
+
 9.0.3
 -----
 
