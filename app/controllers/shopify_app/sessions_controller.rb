@@ -39,7 +39,7 @@ module ShopifyApp
       session['shopify.granted_storage_access'] = true
 
       params = { shop: @shop }
-      redirect_to "#{ShopifyApp.configuration.root_url}?#{params.to_query}"
+      redirect_to("#{return_address}?#{params.to_query}")
     end
 
     def destroy
