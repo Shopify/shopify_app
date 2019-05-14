@@ -15,7 +15,7 @@ class AddAfterAuthenticateJobGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/initializers/shopify_app.rb" do |config|
-      assert_match 'config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }', config
+      assert_match 'config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }', config
     end
   end
 

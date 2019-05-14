@@ -124,6 +124,29 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
     end
 
+    test "#callback calls #perform_after_authenticate_job constantizes from a string to a class" do
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }
+      end
+
+      Shopify::AfterAuthenticateJob.expects(:perform_later)
+
+      mock_shopify_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
+    test "#callback calls #perform_after_authenticate_job raises if the string is not a valid job class" do
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: "InvalidJobClassThatDoesNotExist", inline: false }
+      end
+
+      mock_shopify_omniauth
+
+      assert_raise NameError do
+        get :callback, params: { shop: 'shop' }
+      end
+    end
+
     private
 
     def mock_shopify_omniauth

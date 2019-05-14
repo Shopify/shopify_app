@@ -1,3 +1,23 @@
+9.0.4
+-----
+
+* Fix returning to a deep link after authentication [#746](https://github.com/Shopify/shopify_app/pull/746)
+
+9.0.3
+-----
+
+* Add `meta viewport` tags to fix mobile responsive problems
+* Remove outdated, extraneous `yarn.lock` file (and rely on existing `package-lock.json` instead)
+* Move inline js to a js asset file
+* Minor documentation corrections
+
+9.0.2
+-----
+
+* Update browser_sniffer to fix unnecessary ITP flows in Shopify Mobile
+* Add additional languages to translation.yml
+* Minor documentation corrections
+
 9.0.1
 -----
 

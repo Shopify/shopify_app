@@ -1,19 +1,3 @@
 <% content_for :javascript do %>
-<script type="text/javascript">
-  var eventName = typeof(Turbolinks) !== 'undefined' ? 'turbolinks:load' : 'DOMContentLoaded';
-
-  if (!document.documentElement.hasAttribute("data-turbolinks-preview")) {
-    document.addEventListener(eventName, function flash() {
-      <% if flash[:notice] %>
-        ShopifyApp.flashNotice(<%== flash[:notice].to_json %>);
-      <% end %>
-
-      <% if flash[:error] %>
-        ShopifyApp.flashError(<%== flash[:error].to_json %>);
-      <% end %>
-                             
-      document.removeEventListener(eventName, flash)
-    });
-  }
-</script>
+  <%= content_tag(:div, nil, id: 'shopify-app-flash', data: { flash: { notice: flash[:notice], error: flash[:error] } }) %>
 <% end %>

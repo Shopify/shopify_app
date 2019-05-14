@@ -297,7 +297,7 @@ ShopifyApp.configure do |config|
 end
 ```
 
-If you'd rather implement your own controller then you'll want to use the WebhookVerfication module to verify your webhooks, example:
+If you'd rather implement your own controller then you'll want to use the WebhookVerification module to verify your webhooks, example:
 
 ```ruby
 class CustomWebhooksController < ApplicationController
@@ -356,13 +356,15 @@ If `src` responds to `call` its return value will be used as the scripttag's sou
 AfterAuthenticate Job
 ---------------------
 
-If your app needs to perform specific actions after it is installed ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
+If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
 
 ```ruby
 ShopifyApp.configure do |config|
-  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
+  config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob" }
 end
 ```
+
+The job can be configured as either a class or a class name string.
 
 If you need the job to run synchronously add the `inline` flag:
 
@@ -377,6 +379,9 @@ We've also provided a generator which creates a skeleton job and updates the ini
 ```
 bin/rails g shopify_app:add_after_authenticate_job
 ```
+
+If you want to perform that action only once, e.g. send a welcome email to the user when they install the app, you should make sure that this action is idempotent, meaning that it won't have an impact if run multiple times.
+
 
 RotateShopifyTokenJob
 ---------------------
@@ -466,7 +471,7 @@ Upgrading from 8.6 to 9.0.0
 ### Configuration change
 
 Add an api version configuration in `config/initializers/shopify_app.rb`
-Set this to the version you want to run against by default see [url] for what versions are currently availabe
+Set this to the version you want to run against by default. See [Shopify API docs](https://help.shopify.com/en/api/versioning) for versions available.
 ```ruby
 config.api_version = '2019-04'
 ```
