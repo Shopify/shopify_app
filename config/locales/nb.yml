@@ -1,0 +1,19 @@
+---
+nb:
+  logged_out: Logget ut
+  could_not_log_in: Kunne ikke logge på Shopify-butikken
+  invalid_shop_url: Ugyldig butikkdomene
+  enable_cookies_heading: Aktiver informasjonskapsler fra %{app}
+  enable_cookies_body: Du kan manuelt aktivere informasjonskapsler i denne nettleseren
+    for å kunne bruke %{app} i Shopify.
+  enable_cookies_footer: Informasjonskapsler lar appen autentisere deg ved å midlertidig
+    lagre innstillingene og personopplysningene dine. De går ut etter 30 dager.
+  enable_cookies_action: Aktiver informasjonskapsler
+  top_level_interaction_heading: Nettleseren din må autentisere %{app}
+  top_level_interaction_action: Fortsett
+  request_storage_access_heading: "%{app} må ha tilgang til informasjonskapsler"
+  request_storage_access_body: Informasjonskapsler lar appen autentisere deg ved å
+    midlertidig lagre personopplysningene dine. Klikk på Fortsett og gi informasjonskapsler
+    tillatelse til å bruke appen.
+  request_storage_access_footer: Informasjonskapslene går ut etter 30 dager.
+  request_storage_access_action: Fortsett
