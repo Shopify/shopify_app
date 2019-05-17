@@ -11,6 +11,8 @@ tr:
     süresi 30 gün sonra sonra sona erer.
   enable_cookies_action: Çerezleri etkinleştir
   top_level_interaction_heading: Tarayıcınızın %{app} kimliğini doğrulaması gerekiyor
+  top_level_interaction_body: Tarayıcınız, Shopify tarafından açılmadan önce %{app}
+    gibi uygulamaların sizden çerezlere erişim izni istemesini zorunlu tutuyor.
   top_level_interaction_action: Devam
   request_storage_access_heading: "%{app} uygulamasının çerezlere erişmesi gerekiyor"
   request_storage_access_body: Böylece uygulama, kişisel bilgilerinizi geçici olarak
