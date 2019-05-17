@@ -10,6 +10,8 @@ pl:
     tymczasowe przechowywanie preferencji i danych osobowych. Wygasają one po 30 dniach.
   enable_cookies_action: Włącz pliki cookie
   top_level_interaction_heading: Twoja przeglądarka wymaga uwierzytelnienia %{app}
+  top_level_interaction_body: Twoja przeglądarka wymaga takich aplikacji jak %{app},
+    aby poprosić o dostęp do plików cookie, zanim Shopify będzie mógł ją otworzyć.
   top_level_interaction_action: Kontynuuj
   request_storage_access_heading: "%{app} potrzebuje dostępu do plików cookie"
   request_storage_access_body: Dzięki temu aplikacja może Cię uwierzytelniać, tymczasowo,
