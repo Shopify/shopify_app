@@ -10,6 +10,8 @@ fi:
     asetuksesi ja henkilötietosi tilapäisesti. Ne vanhenevat 30 päivän kuluttua.
   enable_cookies_action: Ota evästeet käyttöön
   top_level_interaction_heading: Selaimesi täytyy todentaa %{app}
+  top_level_interaction_body: Selaimesi vaatii sovelluksia, kuten %{app}, pyytämään
+    sinulta luvan evästeiden käyttöön, ennen kuin Shopify voi avata sovelluksen.
   top_level_interaction_action: Jatka
   request_storage_access_heading: "%{app} edellyttää evästeiden käyttöä"
   request_storage_access_body: Näin sovellus voi todentaa sinut tallentamalla henkilötietosi
