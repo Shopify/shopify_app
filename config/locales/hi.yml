@@ -12,6 +12,8 @@ hi:
   enable_cookies_action: कुकीज़ को सक्षम करें
   top_level_interaction_heading: आपके ब्राउज़र को %{app} प्रमाणित करने की आवश्यकता
     है
+  top_level_interaction_body: आपके ब्राउज़र को %{app} जैसे ऐप की ज़रूरत होती है, जो
+    Shopify द्वारा आपके लिए उसे खोलने से पहले कुकीज़ पर पहुंचने करने की अनुमति मांगे.
   top_level_interaction_action: जारी रखें
   request_storage_access_heading: "%{app} को कुकीज़ पर पहुंच करने की आवश्यकता है"
   request_storage_access_body: यह आपकी व्यक्तिगत जानकारी अस्थायी रूप से स्टोर कर ऐप
