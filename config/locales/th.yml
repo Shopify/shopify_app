@@ -10,6 +10,8 @@ th:
     คุกกี้จะหมดอายุหลังจาก 30 วัน
   enable_cookies_action: เปิดใช้งานคุกกี้
   top_level_interaction_heading: เบราว์เซอร์ของคุณต้องรับรองความถูกต้องของ %{app}
+  top_level_interaction_body: เบราว์เซอร์ของคุณต้องการแอปอย่าง %{app} เพื่อขอให้คุณเข้าถึงคุกกี้ก่อนที่
+    Shopify จะสามารถเปิดมันให้คุณได้
   top_level_interaction_action: ดำเนินการต่อ
   request_storage_access_heading: "%{app} ต้องการสิทธิ์การเข้าถึงคุกกี้"
   request_storage_access_body: สิ่งนี้ช่วยให้แอปตรวจสอบความถูกต้องของคุณด้วยการจัดเก็บข้อมูลส่วนตัวของคุณชั่วคราว
