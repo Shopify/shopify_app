@@ -10,6 +10,8 @@ da:
     og personlige oplysninger midlertidigt. De udløber efter 30 dage.
   enable_cookies_action: Aktivér cookies
   top_level_interaction_heading: Din browser skal godkende %{app}
+  top_level_interaction_body: Din browser kræver, at apps som f.eks. %{app} spørger
+    dig om adgang til cookies, inden Shopify kan åbne den for dig.
   top_level_interaction_action: Fortsæt
   request_storage_access_heading: "%{app} skal have adgang til cookies"
   request_storage_access_body: Det lader appen godkende dig ved at gemme dine personlige
