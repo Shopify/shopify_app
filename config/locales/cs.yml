@@ -10,6 +10,9 @@ cs:
     uchování preferencí a osobních údajů. Jejich platnost vyprší po 30 dnech.
   enable_cookies_action: Povolit soubory cookie
   top_level_interaction_heading: Tvůj prohlížeč potřebuje ověřit aplikaci %{app}
+  top_level_interaction_body: Tvůj prohlížeč vyžaduje, aby si od tebe aplikace, jako
+    je %{app}, nejdřív vyžádaly přístup k souborům cookie, než je pro tebe Shopify
+    otevře.
   top_level_interaction_action: Pokračovat
   request_storage_access_heading: Aplikace %{app} potřebuje získat přístup k souborům
     cookie
