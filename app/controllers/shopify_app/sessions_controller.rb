@@ -54,6 +54,8 @@ module ShopifyApp
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
 
+      session[:return_to] = params[:return_to] if params[:return_to]
+
       if user_agent_can_partition_cookies
         authenticate_with_partitioning
       else
@@ -77,7 +79,7 @@ module ShopifyApp
         authenticate_in_context
       else
         set_top_level_oauth_cookie
-        fullpage_redirect_to enable_cookies_path(shop: sanitized_shop_name)
+        enable_cookie_access
       end
     end
 
@@ -94,6 +96,13 @@ module ShopifyApp
     def render_invalid_shop_error
       flash[:error] = I18n.t('invalid_shop_url')
       redirect_to return_address
+    end
+
+    def enable_cookie_access
+      fullpage_redirect_to(enable_cookies_path(
+        shop: sanitized_shop_name,
+        return_to: session[:return_to]
+      ))
     end
 
     def authenticate_in_context

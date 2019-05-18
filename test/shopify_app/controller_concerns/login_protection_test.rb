@@ -89,7 +89,7 @@ class LoginProtectionTest < ActionController::TestCase
       sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve).returns(sess).once
       get :second_login, params: { shop: 'other-shop' }
-      assert_redirected_to '/login?shop=other-shop.myshopify.com'
+      assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com&shop=other-shop.myshopify.com'
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
       assert_nil session[:shopify_user]

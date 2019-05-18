@@ -17,6 +17,7 @@
   <script>
     window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
     window.shopOrigin = "https://<%= @shop %>";
+    window.returnTo = "<%= params[:return_to] %>"
   </script>
 
   <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
