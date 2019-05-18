@@ -3,18 +3,11 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
+      validates :shopify_domain, presence: true, uniqueness: true
       validates :shopify_token, presence: true
       validates :api_version, presence: true
-    end
 
-    def with_shopify_session(&block)
-      ShopifyAPI::Session.temp(
-        domain: shopify_domain,
-        token: shopify_token,
-        api_version: api_version,
-        &block
-      )
+      before_validation :downcase_shopify_domain
     end
 
     class_methods do
@@ -36,6 +29,21 @@ module ShopifyApp
           )
         end
       end
+    end
+
+    def with_shopify_session(&block)
+      ShopifyAPI::Session.temp(
+        domain: shopify_domain,
+        token: shopify_token,
+        api_version: api_version,
+        &block
+      )
+    end
+
+    private
+
+    def downcase_shopify_domain
+      shopify_domain.present? && shopify_domain.downcase!
     end
   end
 end
