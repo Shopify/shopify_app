@@ -5,7 +5,7 @@ pl:
   invalid_shop_url: Nieprawidłowa domena sklepu
   enable_cookies_heading: Włącz korzystanie z plików cookie z %{app}
   enable_cookies_body: Aby móc korzystać z %{app} w Shopify, musisz ręcznie włączyć
-    obsługę plików cookie w tej przeglądarce.
+    korzystanie z plików cookie w tej przeglądarce.
   enable_cookies_footer: Pliki cookie umożliwiają uwierzytelnianie aplikacji przez
     tymczasowe przechowywanie preferencji i danych osobowych. Wygasają one po 30 dniach.
   enable_cookies_action: Włącz korzystanie z plików cookie
