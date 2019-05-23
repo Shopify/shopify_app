@@ -1,0 +1,22 @@
+---
+tr:
+  logged_out: Oturum başarıyla kapatıldı
+  could_not_log_in: Shopify mağazasında oturum açılamadı
+  invalid_shop_url: Geçersiz mağaza alan adı
+  enable_cookies_heading: "%{app} uygulamasından çerezleri etkinleştir"
+  enable_cookies_body: "%{app} uygulamasını Shopify içinde kullanabilmek için bu tarayıcıda
+    çerezleri manuel olarak etkinleştirmelisiniz."
+  enable_cookies_footer: Çerezler, tercihlerinizi ve kişisel bilgilerinizi geçici
+    olarak saklayıp uygulamanın kimliğinizi doğrulamasına imkan tanır. Çerezlerin
+    süresi 30 gün sonra sonra sona erer.
+  enable_cookies_action: Çerezleri etkinleştir
+  top_level_interaction_heading: Tarayıcınızın %{app} kimliğini doğrulaması gerekiyor
+  top_level_interaction_body: Tarayıcınız, Shopify tarafından açılmadan önce %{app}
+    gibi uygulamaların sizden çerezlere erişim izni istemesini zorunlu tutuyor.
+  top_level_interaction_action: Devam
+  request_storage_access_heading: "%{app} uygulamasının çerezlere erişmesi gerekiyor"
+  request_storage_access_body: Böylece uygulama, kişisel bilgilerinizi geçici olarak
+    saklayıp kimliğinizi doğrulayabilir. Devam et'e tıklayın ve çerezlerin uygulamayı
+    kullanmasına izin verin.
+  request_storage_access_footer: Çerezlerin süresi 30 gün sonra sonra sona erer.
+  request_storage_access_action: Devam
