@@ -5,15 +5,15 @@ ko:
   invalid_shop_url: 유효하지 않은 상점 도메인
   enable_cookies_heading: "%{app}에서 쿠키를 사용 가능"
   enable_cookies_body: Shopify 내에서 %{app} 을 사용하기 위해 이 브라우저에서 쿠키를 수동으로 사용할 수 있습니다.
-  enable_cookies_footer: 쿠키를 사용하면 개인의 선호나 정보를 임시로 저장하여 app에서 사용자를 인증할 수 있습니다. 쿠키는
-    30일 후에 만료됩니다.
+  enable_cookies_footer: 쿠키를 사용하면 개인의 선호나 정보를 임시로 저장하여 앱에서 사용자를 인증할 수 있습니다. 쿠키는 30일
+    후에 만료됩니다.
   enable_cookies_action: 쿠리 사용 가능
   top_level_interaction_heading: 브라우저에서 %{app} 을 인증해야 합니다.
-  top_level_interaction_body: Shopify를 열기 전 쿠키에 엑세스하려면 %{app} 과 같은 app 들이 브라우저에 설치되어야
+  top_level_interaction_body: Shopify를 열기 전 쿠키에 엑세스하려면 %{app} 과 같은 앱 들이 브라우저에 설치되어야
     합니다.
   top_level_interaction_action: 계속
   request_storage_access_heading: "%{app}에서 쿠키에 접근해야 합니다."
-  request_storage_access_body: 이를 통해 개인 정보를 임시로 저장하여 app에서 사용자를 인증할 수 있습니다. 계속 클릭하여
-    쿠키로 app을 사용하세요.
+  request_storage_access_body: 이를 통해 개인 정보를 임시로 저장하여 앱에서 사용자를 인증할 수 있습니다. 계속 클릭하여
+    쿠키로 앱을 사용하세요.
   request_storage_access_footer: 쿠키는 30일 후에 만료됩니다.
   request_storage_access_action: 계속
