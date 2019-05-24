@@ -3,7 +3,7 @@ ko:
   logged_out: 성공적으로 로그아웃 되었습니다.
   could_not_log_in: Shopify 스토어에 로그인할 수 없습니다.
   invalid_shop_url: 유효하지 않은 상점 도메인
-  enable_cookies_heading: "%{app} 에서 쿠키를 사용 가능"
+  enable_cookies_heading: "%{app}에서 쿠키를 사용 가능"
   enable_cookies_body: Shopify 내에서 %{app} 을 사용하기 위해 이 브라우저에서 쿠키를 수동으로 사용할 수 있습니다.
   enable_cookies_footer: 쿠키를 사용하면 개인의 선호나 정보를 임시로 저장하여 app에서 사용자를 인증할 수 있습니다. 쿠키는
     30일 후에 만료됩니다.
