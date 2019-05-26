@@ -6,15 +6,15 @@ nl:
   enable_cookies_heading: Schakel cookies in van %{app}
   enable_cookies_body: je moet cookies in deze browser handmatig inschakelen om %{app}
     binnen Shopify te gebruiken.
-  enable_cookies_footer: Met cookies kan de app je verifiëren door jouw voorkeuren
-    en persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
+  enable_cookies_footer: Met cookies kan de app je verifiëren door uw voorkeuren en
+    persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
   enable_cookies_action: Schakel cookies in
-  top_level_interaction_heading: Jouw browser moet %{app} verifiëren
-  top_level_interaction_body: Jouw browser heeft apps nodig zoals %{app} om je toegang
+  top_level_interaction_heading: Uw browser moet %{app} verifiëren
+  top_level_interaction_body: Uw browser heeft apps nodig zoals %{app} om je toegang
     te vragen tot cookies voordat Shopify het voor je kan openen.
   top_level_interaction_action: Doorgaan
   request_storage_access_heading: "%{app} heeft toegang tot cookies nodig"
-  request_storage_access_body: Hiermee kan de app je verifiëren door jouw persoonlijke
+  request_storage_access_body: Hiermee kan de app je verifiëren door uw persoonlijke
     gegevens tijdelijk op te slaan. Klik op Doorgaan en sta cookies toe om de app
     te gebruiken.
   request_storage_access_footer: Cookies verlopen na 30 dagen.
