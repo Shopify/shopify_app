@@ -47,13 +47,13 @@ module ShopifyApp
         if request.get?
           session[:return_to] = "#{request.path}?#{sanitized_params.to_query}"
         end
-        redirect_to login_url_with_optional_shop
+        redirect_to(login_url_with_optional_shop)
       end
     end
 
     def close_session
       clear_shop_session
-      redirect_to login_url_with_optional_shop
+      redirect_to(login_url_with_optional_shop)
     end
 
     def clear_shop_session
