@@ -1,0 +1,20 @@
+---
+fi:
+  logged_out: Olet kirjautunut ulos
+  could_not_log_in: Kirjautuminen Shopify-kauppaan ei onnistunut
+  invalid_shop_url: Virheellinen kaupan verkkotunnus
+  enable_cookies_heading: Ota käyttöön sovelluksen %{app} evästeet
+  enable_cookies_body: Sinun on otettava evästeet käyttöön manuaalisesti tässä selaimessa,
+    jotta voit käyttää sovellusta %{app} Shopifyssa.
+  enable_cookies_footer: Evästeiden avulla sovellus voi todentaa sinut tallentamalla
+    asetuksesi ja henkilötietosi tilapäisesti. Ne vanhenevat 30 päivän kuluttua.
+  enable_cookies_action: Ota evästeet käyttöön
+  top_level_interaction_heading: Selaimesi täytyy todentaa %{app}
+  top_level_interaction_body: Selaimesi vaatii sovelluksia, kuten %{app}, pyytämään
+    sinulta luvan evästeiden käyttöön, ennen kuin Shopify voi avata sovelluksen.
+  top_level_interaction_action: Jatka
+  request_storage_access_heading: "%{app} edellyttää evästeiden käyttöä"
+  request_storage_access_body: Näin sovellus voi todentaa sinut tallentamalla henkilötietosi
+    tilapäisesti. Napsauta Jatka ja salli evästeet sovelluksen käyttämiseksi.
+  request_storage_access_footer: Evästeet vanhenevat 30 päivän kuluttua.
+  request_storage_access_action: Jatka

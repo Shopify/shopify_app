@@ -10,8 +10,8 @@ nl:
     persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
   enable_cookies_action: Schakel cookies in
   top_level_interaction_heading: Uw browser moet %{app} verifiëren
-  top_level_interaction_body: Uw browser heeft apps van derden nodig zoals %{app}
-    om u toegang te vragen tot cookies voordat Shopify het voor u kan openen.
+  top_level_interaction_body: Uw browser heeft apps nodig zoals %{app} om u toegang
+    te vragen tot cookies voordat Shopify het voor u kan openen.
   top_level_interaction_action: Doorgaan
   request_storage_access_heading: "%{app} heeft toegang tot cookies nodig"
   request_storage_access_body: Hiermee kan de app u verifiëren door uw persoonlijke

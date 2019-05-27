@@ -75,6 +75,10 @@ module ShopifyApp
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
 
+      if session[:return_to] && return_to_param_required?
+        query_params[:return_to] = session[:return_to]
+      end
+
       has_referer_shop_name = referer_sanitized_shop_name.present?
 
       if has_referer_shop_name
@@ -83,6 +87,11 @@ module ShopifyApp
 
       query_params[:top_level] = true if top_level
       query_params
+    end
+
+    def return_to_param_required?
+      native_params = %i[shop hmac timestamp locale protocol return_to]
+      request.path != '/' || sanitized_params.except(*native_params).any?
     end
 
     def fullpage_redirect_to(url)

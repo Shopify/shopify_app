@@ -1,0 +1,22 @@
+---
+pt-PT:
+  logged_out: Terminou a sessão com sucesso
+  could_not_log_in: Não foi possível iniciar sessão na loja da Shopify
+  invalid_shop_url: Domínio de loja inválido
+  enable_cookies_heading: Ativar cookies de %{app}
+  enable_cookies_body: Tem de ativar manualmente os cookies neste navegador para utilizar
+    %{app} dentro da Shopify.
+  enable_cookies_footer: Os cookies permitem que a aplicação o autentique armazenando
+    temporariamente as suas preferências e informações pessoais. Expiram ao fim de
+    30 dias.
+  enable_cookies_action: Ativar cookies
+  top_level_interaction_heading: O seu navegador tem de autenticar %{app}
+  top_level_interaction_body: O seu navegador exige que aplicações como %{app} lhe
+    solicitem o acesso de cookies, antes que a Shopify as possa abrir.
+  top_level_interaction_action: Continuar
+  request_storage_access_heading: "%{app} tem de aceder a cookies"
+  request_storage_access_body: Isto permite que a aplicação o autentique armazenando
+    temporariamente as suas informações pessoais. Clique em continuar e permita os
+    cookies para utilizar a aplicação.
+  request_storage_access_footer: Os cookies expiram ao fim de 30 dias.
+  request_storage_access_action: Continuar

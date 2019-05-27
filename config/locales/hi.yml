@@ -1,0 +1,23 @@
+---
+hi:
+  logged_out: सफलतापूर्वक लॉग आउट कर दिया
+  could_not_log_in: Shopify स्टोर में लॉग इन नहीं किया जा सका
+  invalid_shop_url: अमान्य शॉप डोमेन
+  enable_cookies_heading: "%{app} के कुकीज़ सक्षम करें"
+  enable_cookies_body: आपको %{app} का उपयोग Shopify में करने के लिए इस ब्राउज़र में
+    कुकीज़ मैन्युअल रूप से सक्षम करने चाहिए.
+  enable_cookies_footer: कुकीज़ अस्थायी रूप से आपकी वरीयताएं और व्यक्तिगत जानकारी स्टोर
+    कर ऐप को आपको प्रमाणित करने देते हैं. इनकी समय-सीमा 30 दिनों बाद समाप्त हो जाती
+    है.
+  enable_cookies_action: कुकीज़ को सक्षम करें
+  top_level_interaction_heading: आपके ब्राउज़र को %{app} प्रमाणित करने की आवश्यकता
+    है
+  top_level_interaction_body: आपके ब्राउज़र को %{app} जैसे ऐप की ज़रूरत होती है, जो
+    Shopify द्वारा आपके लिए उसे खोलने से पहले कुकीज़ पर पहुंचने करने की अनुमति मांगे.
+  top_level_interaction_action: जारी रखें
+  request_storage_access_heading: "%{app} को कुकीज़ पर पहुंच करने की आवश्यकता है"
+  request_storage_access_body: यह आपकी व्यक्तिगत जानकारी अस्थायी रूप से स्टोर कर ऐप
+    को आपको प्रमाणित करने देता है. जारी रखें पर क्लिक करें और कुकीज़ को ऐप उपयोग करने
+    की अनुमति दें.
+  request_storage_access_footer: कुकीज़ की समय-सीमा 30 दिनों बाद समाप्त हो जाती है.
+  request_storage_access_action: जारी रखें

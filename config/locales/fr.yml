@@ -11,9 +11,9 @@ fr:
     expirent après 30 jours.
   enable_cookies_action: Activer les cookies
   top_level_interaction_heading: Votre navigateur doit s'authentifier %{app}
-  top_level_interaction_body: Votre navigateur nécessite des applications tierces
-    telles que %{app} pour vous demander l'accès aux cookies avant que Shopify ne
-    puisse l'ouvrir pour vous.
+  top_level_interaction_body: Votre navigateur nécessite des applications telles que
+    %{app} pour vous demander l'accès aux cookies avant que Shopify ne puisse l'ouvrir
+    pour vous.
   top_level_interaction_action: Continuer
   request_storage_access_heading: "%{app} a besoin d'accéder aux cookies"
   request_storage_access_body: Cela permet à l'application de vous authentifier en

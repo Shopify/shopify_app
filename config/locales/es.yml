@@ -11,8 +11,8 @@ es:
     de 30 días.
   enable_cookies_action: Habilitar cookies
   top_level_interaction_heading: Tu navegador necesita autenticar %{app}
-  top_level_interaction_body: Tu navegador requiere aplicaciones externas como %{app}
-    para solicitarte acceso a cookies antes de que Shopify pueda abrirlo por ti.
+  top_level_interaction_body: Tu navegador requiere aplicaciones como %{app} para
+    solicitarte acceso a cookies antes de que Shopify pueda abrirlo por ti.
   top_level_interaction_action: Continuar
   request_storage_access_heading: "%{app} necesita acceso a las cookies"
   request_storage_access_body: Esto permite que la aplicación te autentique almacenando
