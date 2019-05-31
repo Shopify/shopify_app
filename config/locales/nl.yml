@@ -1,10 +1,10 @@
 ---
 nl:
-  logged_out: U bent afgemeld
+  logged_out: u bent afgemeld
   could_not_log_in: Kon niet aanmelden bij Shopify-winkel
   invalid_shop_url: Ongeldig winkeldomein
   enable_cookies_heading: Schakel cookies in van %{app}
-  enable_cookies_body: U moet cookies in deze browser handmatig inschakelen om %{app}
+  enable_cookies_body: u moet cookies in deze browser handmatig inschakelen om %{app}
     binnen Shopify te gebruiken.
   enable_cookies_footer: Met cookies kan de app u verifiëren door uw voorkeuren en
     persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
