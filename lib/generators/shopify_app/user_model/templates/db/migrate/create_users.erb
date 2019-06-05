@@ -1,9 +1,9 @@
 class CreateUsers < ActiveRecord::Migration[<%= rails_migration_version %>]
   def self.up
     create_table :users  do |t|
+      t.bigint :shopify_user_id, null: false
       t.string :shopify_domain, null: false
       t.string :shopify_token, null: false
-      t.string :shopify_user_id, null: false
       t.timestamps
     end
 

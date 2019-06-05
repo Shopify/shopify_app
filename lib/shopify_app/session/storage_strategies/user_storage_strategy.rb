@@ -2,21 +2,21 @@ module ShopifyApp
   module SessionStorage
     class UserStorageStrategy
 
-      def self.store(session)
-        shop = find_or_initialize_by(shopify_domain: session.domain)
-        shop.shopify_token = session.token
-        shop.save!
-        shop.id
+      def self.store(session, user)
+        user = User.find_or_initialize_by(shopify_user_id: user[:id])
+        user.shopify_token = session.token
+        user.shopify_domain = session.domain
+        user.save!
+        user.id
       end
 
       def self.retrieve(id)
         return unless id
-
-        if shop = self.find_by(id: id)
+        if user = User.find_by(shopify_user_id: id)
           ShopifyAPI::Session.new(
-            domain: shop.shopify_domain,
-            token: shop.shopify_token,
-            api_version: shop.api_version
+            domain: user.shopify_domain,
+            token: user.shopify_token,
+            api_version: user.api_version
           )
         end
       end
