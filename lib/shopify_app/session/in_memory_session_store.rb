@@ -2,11 +2,11 @@ module ShopifyApp
   class InMemorySessionStore
     class EnvironmentError < StandardError; end
 
-    def self.retrieve(id)
+    def self.retrieve(id, online_access_token = nil)
       repo[id]
     end
 
-    def self.store(session)
+    def self.store(session, persist_token = true)
       id = SecureRandom.uuid
       repo[id] = session
       id

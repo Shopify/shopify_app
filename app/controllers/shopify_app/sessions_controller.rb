@@ -106,7 +106,7 @@ module ShopifyApp
     end
 
     def authenticate_in_context
-      redirect_to "#{main_app.root_path}auth/shopify"
+      redirect_to "#{main_app.root_path}#{online_access_required? ? 'online_auth' : 'auth'}/shopify"
     end
 
     def authenticate_at_top_level

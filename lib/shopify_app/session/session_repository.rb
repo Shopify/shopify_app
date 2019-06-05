@@ -11,12 +11,12 @@ module ShopifyApp
         end
       end
 
-      def retrieve(id)
-        storage.retrieve(id)
+      def retrieve(id, online_access_token = nil)
+        storage.retrieve(id, online_access_token)
       end
 
-      def store(session)
-        storage.store(session)
+      def store(session, persist_token = true)
+        storage.store(session, persist_token)
       end
 
       def storage

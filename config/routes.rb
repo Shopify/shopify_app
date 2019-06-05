@@ -14,6 +14,7 @@ ShopifyApp::Engine.routes.draw do
 
   controller :callback do
     get 'auth/shopify/callback' => :callback
+    get 'online_auth/shopify/callback' => :callback
   end
 
   namespace :webhooks do

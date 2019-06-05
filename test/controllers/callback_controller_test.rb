@@ -55,7 +55,7 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
       assert_not_nil session[:shopify]
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
-      assert_equal 'user_object', session[:shopify_user]
+      assert_equal(OmniAuth::AuthHash.new({token: '1234'}), session[:shopify_user])
     end
 
     test '#callback starts the WebhooksManager if webhooks are configured' do
@@ -161,7 +161,7 @@ module ShopifyApp
         provider: :shopify,
         uid: 'shop.myshopify.com',
         credentials: { token: '1234' },
-        extra: { associated_user: 'user_object' }
+        extra: { associated_user: { } }
       )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request

@@ -18,20 +18,20 @@ module ShopifyApp
     end
 
     class_methods do
-      def store(session)
+      def store(session, persist_token = true)
         shop = find_or_initialize_by(shopify_domain: session.domain)
-        shop.shopify_token = session.token
+        shop.shopify_token = session.token if persist_token
         shop.save!
         shop.id
       end
 
-      def retrieve(id)
+      def retrieve(id, online_access_token = nil)
         return unless id
 
         if shop = self.find_by(id: id)
           ShopifyAPI::Session.new(
             domain: shop.shopify_domain,
-            token: shop.shopify_token,
+            token: online_access_token || shop.shopify_token,
             api_version: shop.api_version
           )
         end

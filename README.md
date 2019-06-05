@@ -238,13 +238,25 @@ To enable per user authentication you need to update the `omniauth.rb` initializ
 provider :shopify,
   ShopifyApp.configuration.api_key,
   ShopifyApp.configuration.secret,
+  scope: ShopifyApp.configuration.scope
+
+provider :shopify,
+  ShopifyApp.configuration.api_key,
+  ShopifyApp.configuration.secret,
   scope: ShopifyApp.configuration.scope,
-  per_user_permissions: true
+  per_user_permissions: true,
+  path_prefix: "/online_auth"
+```
+
+You also need to add an additional URL to your whitelisted redirection URLs in the Shopify partner dashboard.
+
+```
+/online_auth/shopify/callback
 ```
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 
-This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
+Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note this will cause the login process to take slightly longer due to the additional authentication.
 
 Managing Api Keys
 -----------------

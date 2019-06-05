@@ -7,11 +7,11 @@ class TestSessionStore
     @storage = []
   end
 
-  def retrieve(id)
+  def retrieve(id, online_access_token = nil)
     storage[id]
   end
 
-  def store(session)
+  def store(session, persist_token = true)
     id = storage.length
     storage[id] = session
     id
@@ -19,10 +19,10 @@ class TestSessionStore
 end
 
 class TestSessionStoreClass
-  def self.store(session)
+  def self.store(session, persist_token = true)
   end
 
-  def self.retrieve(id)
+  def self.retrieve(id, online_access_token = nil)
   end
 end
 

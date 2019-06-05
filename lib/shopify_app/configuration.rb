@@ -16,6 +16,8 @@ module ShopifyApp
     attr_accessor :after_authenticate_job
     attr_accessor :session_repository
     attr_accessor :api_version
+    attr_accessor :online_access
+    alias_method  :online_access?, :online_access
 
     # customise urls
     attr_accessor :root_url
