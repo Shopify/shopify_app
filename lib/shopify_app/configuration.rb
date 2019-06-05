@@ -15,6 +15,8 @@ module ShopifyApp
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
     attr_accessor :session_repository
+    attr_accessor :per_user_tokens
+    attr_accessor :scope
     attr_accessor :api_version
 
     # customise urls
@@ -36,6 +38,7 @@ module ShopifyApp
       @myshopify_domain = 'myshopify.com'
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
+      @per_user_tokens = false
     end
 
     def login_url
@@ -59,6 +62,7 @@ module ShopifyApp
     def has_scripttags?
       scripttags.present?
     end
+
   end
 
   def self.configuration
