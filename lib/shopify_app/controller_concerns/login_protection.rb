@@ -28,9 +28,11 @@ module ShopifyApp
 
     def shop_session
       if ShopifyApp.configuration.per_user_tokens
-        user_session
+        return unless session[:shopify_user]
+        @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify_user]['id'])
       else
-        _shop_session
+        return unless session[:shopify]
+        @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
       end
     end
 
@@ -39,16 +41,6 @@ module ShopifyApp
         clear_shop_session
         redirect_to_login
       end
-    end
-
-    def _shop_session
-      return unless session[:shopify]
-      @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
-    end
-
-    def user_session
-      return unless session[:shopify_user]
-      @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify_user]['id'])
     end
 
     protected
