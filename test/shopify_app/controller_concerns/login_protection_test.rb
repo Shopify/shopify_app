@@ -62,6 +62,21 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test "#shop_session retrieves using shopify_user_id when per-user tokens" do
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "foobar"
+        session[:shopify_user] = { 'id' => 99, 'email' => 'foo@example.com' }
+        get :index
+        ShopifyApp::SessionRepository.expects(:retrieve).with(session[:shopify_user]['id']).returns(session).once
+        assert @controller.shop_session
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
+
   test "#shop_session retreives the session from storage" do
     with_application_test_routes do
       session[:shopify] = "foobar"
