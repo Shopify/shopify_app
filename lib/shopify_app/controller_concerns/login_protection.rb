@@ -46,15 +46,26 @@ module ShopifyApp
         head :unauthorized
       else
         if request.get?
-          session[:return_to] = "#{request.path}?#{sanitized_params.to_query}"
+          path = request.path
+          query = sanitized_params.to_query
+        else
+          referer = URI(request.referer || "/")
+          path = referer.path
+          query = "#{referer.query}&#{sanitized_params.to_query}"
         end
+        session[:return_to] = "#{path}?#{query}"
         redirect_to login_url
       end
     end
 
     def close_session
+      redirect_with_return_to = ShopifyApp.configuration.online_access? && session[:shopify_user]
       clear_shop_session
-      redirect_to login_url
+      if redirect_with_return_to
+        redirect_to_login
+      else
+        redirect_to login_url
+      end
     end
 
     def clear_shop_session
@@ -87,6 +98,7 @@ module ShopifyApp
       end
 
       query_params[:top_level] = true if top_level
+
       query_params
     end
 

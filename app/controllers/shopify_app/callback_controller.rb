@@ -8,7 +8,7 @@ module ShopifyApp
     def callback
       if auth_hash
         login_shop
-        unless online_access_required?
+        if !ShopifyApp.configuration.online_access? || (ShopifyApp.configuration.online_access? && !associated_user)
           install_webhooks
           install_scripttags
           perform_after_authenticate_job
