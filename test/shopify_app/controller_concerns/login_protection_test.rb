@@ -196,6 +196,14 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#shopify_session with no Shopify session, when the request is a POST, sets session[:return_to]' do
+    with_application_test_routes do
+      request.headers['Referer'] = 'https://example.com/?id=123'
+      post :index, params: { id: '123', shop: 'foobar' }
+      assert_equal '/?id=123&shop=foobar.myshopify.com', session[:return_to]
+    end
+  end
+
   test '#shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }, xhr: true
