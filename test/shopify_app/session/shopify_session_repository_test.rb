@@ -26,6 +26,11 @@ class TestSessionStoreClass
   end
 end
 
+class MockSessionStore < ActiveRecord::Base
+  include ShopifyApp::SessionStorage
+end
+
+
 class ShopifySessionRepositoryTest < ActiveSupport::TestCase
   attr_reader :session_store, :session
 
@@ -72,6 +77,24 @@ class ShopifySessionRepositoryTest < ActiveSupport::TestCase
   test "accepts a string and constantizes it" do
     ShopifyApp::SessionRepository.storage = 'TestSessionStoreClass'
     assert_equal TestSessionStoreClass, ShopifyApp::SessionRepository.storage
+  end
+
+  test "session store picks correct session strategy for per-store tokens" do
+    begin
+      ShopifyApp.configuration.per_user_tokens = false
+      assert_equal MockSessionStore.strategy_klass, ShopifyApp::SessionStorage::ShopStorageStrategy
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
+
+  test "session store picks correct session strategy for per-users tokens" do
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      assert_equal MockSessionStore.strategy_klass, ShopifyApp::SessionStorage::UserStorageStrategy
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
   end
 
 end
