@@ -6,7 +6,7 @@ nl:
   enable_cookies_heading: Schakel cookies in van %{app}
   enable_cookies_body: u moet cookies in deze browser handmatig inschakelen om %{app}
     binnen Shopify te gebruiken.
-  enable_cookies_footer: Met cookies kan de app u verifiëren door uw voorkeuren en
+  enable_cookies_footer: Met cookies kan de app je verifiëren door je voorkeuren en
     persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
   enable_cookies_action: Schakel cookies in
   top_level_interaction_heading: Uw browser moet %{app} verifiëren
