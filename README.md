@@ -45,8 +45,6 @@ Description
 -----------
 This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
 
-The [example](https://github.com/Shopify/shopify_app/tree/master/example) directory contains an app that was generated with this gem. It also contains sample code demonstrating the usage of the embedded app sdk.
-
 *Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete some of your files.*
 
 
