@@ -59,6 +59,7 @@ module ShopifyApp
       session[:shopify] = ShopifyApp::SessionRepository.store(session_store)
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user
+      session[:shopify_user]['token'] = session_store.token
     end
 
     def install_webhooks
