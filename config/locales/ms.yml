@@ -4,7 +4,7 @@ ms:
   could_not_log_in: Tidak dapat log masuk ke kedai Shopify
   invalid_shop_url: Domain kedai tidak sah
   enable_cookies_heading: Dayakan kuki dari %{app}
-  enable_cookies_body: Anda mesti mengaktifkan kuki secara manual dalam browser ini
+  enable_cookies_body: Anda mesti mengaktifkan kuki secara manual dalam pelayar ini
     untuk %{app} digunakan dalam Shopify.
   enable_cookies_footer: Kuki membenarkan app mengesahkan anda dengan menyimpan keutamaan
     dan maklumat peribadi anda buat sementara waktu. Ia tamat tempoh selepas 30 hari.
