@@ -9,8 +9,8 @@ ms:
   enable_cookies_footer: Kuki membenarkan app mengesahkan anda dengan menyimpan keutamaan
     dan maklumat peribadi anda buat sementara waktu. Ia tamat tempoh selepas 30 hari.
   enable_cookies_action: Dayakan kuki
-  top_level_interaction_heading: Browser anda perlu mengesahkan %{app}
-  top_level_interaction_body: Browser anda memerlukan app seperti %{app} untuk meminta
+  top_level_interaction_heading: Pelayar anda perlu mengesahkan %{app}
+  top_level_interaction_body: Pelayar anda memerlukan app seperti %{app} untuk meminta
     anda akses kepada kuki sebelum Shopify boleh membukanya untuk anda.
   top_level_interaction_action: Teruskan
   request_storage_access_heading: "%{app} memerlukan akses kepada kuki"
