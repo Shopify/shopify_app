@@ -1,3 +1,13 @@
+10.0.0
+-----
+
+* Bump required Rails version to `> 5.2.1` to ensure `5.2.1.1` or greater is used. This ensures two things:
+  * Apps are not vulnerable to [CVE-2018-16476](https://nvd.nist.gov/vuln/detail/CVE-2018-16476)
+  * Webhook payloads, from Shopify for API version 2019-07, which are processed in ActiveJob background jobs (the
+    default behaviour of shopify_app's WebhooksController) are compatible, due to how ActiveJob versions prior to
+    5.2.1.1 process GlobalIDs encoded as string in job parameters. This prevents the
+    [exceptions reported previously](https://github.com/Shopify/shopify_app/issues/600).
+
 9.0.4
 -----
 
