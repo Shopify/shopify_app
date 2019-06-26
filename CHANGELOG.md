@@ -1,6 +1,10 @@
 10.0.0
 -----
 
+* Make sure OAuth-related redirects return user to originally requested URL once authenticated
+* Add/update translations
+* Update README to clarify nested routes
+* Remove example app. Users should instead use the generators to scaffold an example app.
 * Bump required Rails version to `> 5.2.1` to ensure `5.2.1.1` or greater is used. This ensures two things:
   * Apps are not vulnerable to [CVE-2018-16476](https://nvd.nist.gov/vuln/detail/CVE-2018-16476)
   * Webhook payloads, from Shopify for API version 2019-07, which are processed in ActiveJob background jobs (the
