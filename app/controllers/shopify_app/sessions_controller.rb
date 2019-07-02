@@ -22,14 +22,14 @@ module ShopifyApp
         does_not_have_storage_access_url: top_level_interaction_path(
           shop: sanitized_shop_name
         ),
-        has_storage_access_url: login_url(top_level: true),
+        has_storage_access_url: login_url_with_optional_shop(top_level: true),
         app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
         current_shopify_domain: current_shopify_domain,
       })
     end
 
     def top_level_interaction
-      @url = login_url(top_level: true)
+      @url = login_url_with_optional_shop(top_level: true)
       validate_shop
     end
 
@@ -45,7 +45,7 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t('.logged_out')
-      redirect_to login_url
+      redirect_to(login_url_with_optional_shop)
     end
 
     private
@@ -110,7 +110,7 @@ module ShopifyApp
     end
 
     def authenticate_at_top_level
-      fullpage_redirect_to login_url(top_level: true)
+      fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
     end
 
     def authenticate_in_context?
@@ -128,14 +128,18 @@ module ShopifyApp
     end
 
     def redirect_to_request_storage_access
-      render :request_storage_access, layout: false, locals: {
-        does_not_have_storage_access_url: top_level_interaction_path(
-          shop: sanitized_shop_name
-        ),
-        has_storage_access_url: login_url(top_level: true),
-        app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
-        current_shopify_domain: current_shopify_domain
-      }
+      render(
+        :request_storage_access,
+        layout: false,
+        locals: {
+          does_not_have_storage_access_url: top_level_interaction_path(
+            shop: sanitized_shop_name
+          ),
+          has_storage_access_url: login_url_with_optional_shop(top_level: true),
+          app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
+          current_shopify_domain: current_shopify_domain,
+        }
+      )
     end
   end
 end
