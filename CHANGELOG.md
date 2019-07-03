@@ -1,3 +1,9 @@
+11.0.0
+-----
+
+* Rename `login_url` method to `login_url_with_optional_shop` to avoid ambiguity with Rails' route helper method of the
+  same name (see [#585](https://github.com/Shopify/shopify_app/pull/585)).
+
 10.0.0
 -----
 
