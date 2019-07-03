@@ -26,7 +26,6 @@ Table of Contents
  * [App Proxy Controller Generator](#app-proxy-controller-generator)
  * [Controllers, Routes and Views](#controllers-routes-and-views)
 * [**Mounting the Engine**](#mounting-the-engine)
-* [**Managing Api Keys**](#managing-api-keys)
 * [**WebhooksManager**](#webhooksmanager)
 * [**ScripttagsManager**](#scripttagsmanager)
 * [**AfterAuthenticate Job**](#afterauthenticate-job)
@@ -104,10 +103,21 @@ Generators
 The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start your app.
 
 ```sh
-$ rails generate shopify_app --api_key <your_api_key> --secret <your_app_secret>
+$ rails generate shopify_app
 ```
 
 After running the generator, you will need to run `rake db:migrate` to add tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting localhost.
+
+### API Keys
+
+The default and install generators have been updated to source Shopify API key and secret from a `.env` file, which you will need to create with the following format:
+
+```
+SHOPIFY_API_KEY=your api key
+SHOPIFY_API_SECRET=your api secret
+```
+
+These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard].
 
 ### Install Generator
 
@@ -116,7 +126,7 @@ $ rails generate shopify_app:install
 
 # or optionally with arguments:
 
-$ rails generate shopify_app:install --api_key <your_api_key> --secret <your_app_secret>
+$ rails generate shopify_app:install
 ```
 
 Other options include:
@@ -243,21 +253,6 @@ provider :shopify,
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 
 This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
-
-Managing Api Keys
------------------
-
-The `install` generator places your Api credentials directly into the shopify_app initializer which is convenient and fine for development but once your app goes into production **your api credentials should not be in source control**. When we develop apps we keep our keys in environment variables so a production shopify_app initializer would look like this:
-
-```ruby
-ShopifyApp.configure do |config|
-  config.application_name = 'Your app name' # Optional
-  config.api_key = ENV['SHOPIFY_CLIENT_API_KEY']
-  config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
-  config.scope = 'read_customers, write_products'
-  config.embedded_app = true
-end
-```
 
 
 WebhooksManager
@@ -439,7 +434,7 @@ class ReviewsController < ApplicationController
 end
 ```
 
-Create your app proxy url in the [Shopify Partners' Dashboard](https://app.shopify.com/services/partners/api_clients), making sure to point it to `https://your_app_website.com/app_proxy`.
+Create your app proxy url in the [Shopify Partners' Dashboard][dashboard], making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
 
 Troubleshooting
@@ -515,3 +510,5 @@ is changed to
 ### ShopifyAPI changes
 
 You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.
+
+[dashboard]:https://partners.shopify.com

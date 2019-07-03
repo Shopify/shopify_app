@@ -1,6 +1,10 @@
 module GeneratorTestHelpers
   TEMPLATE_PATH = File.expand_path("../../app_templates", __FILE__)
 
+  def provide_existing_gemfile
+    copy_to_generator_root('', 'Gemfile')
+  end
+
   def provide_existing_application_controller
     copy_to_generator_root("app/controllers", "application_controller.rb")
   end
