@@ -1,3 +1,8 @@
+11.0.1
+-----
+
+* Add dotenv-rails gem to install generator, so apps fetch credentials from `.env` by default: [#776](https://github.com/Shopify/shopify_app/pull/776)
+
 11.0.0
 -----
 
