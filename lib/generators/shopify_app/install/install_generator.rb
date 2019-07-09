@@ -49,6 +49,10 @@ module ShopifyApp
         end
       end
 
+      def create_user_agent_initializer
+        template 'user_agent.rb', 'config/initializers/user_agent.rb'
+      end
+
       def mount_engine
         route "mount ShopifyApp::Engine, at: '/'"
       end
