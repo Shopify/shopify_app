@@ -1,3 +1,10 @@
+11.0.2
+-----
+
+* Lock shopify_api gem dependency to `~> 7.0` from `>= 7.0.0`.
+* Remove flakey JS Tests
+* bump sqlite3 development dependency to `~>1.4` from `~> 1.3.6`. [#789](https://github.com/Shopify/shopify_app/pull/789)
+
 11.0.1
 -----
 

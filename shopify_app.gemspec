@@ -12,12 +12,12 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('browser_sniffer', '~> 1.1.2')
   s.add_runtime_dependency('rails', '> 5.2.1')
-  s.add_runtime_dependency('shopify_api', '>= 7.0.0')
+  s.add_runtime_dependency('shopify_api', '~> 7.0')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 2.1.0')
 
   s.add_development_dependency('rake')
   s.add_development_dependency('byebug')
-  s.add_development_dependency('sqlite3', '~> 1.3.6')
+  s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('minitest')
   s.add_development_dependency('mocha')
 
