@@ -10,3 +10,6 @@ ShopifyApp.configure do |config|
   config.api_version = "<%= @api_version %>"
   config.session_repository = ShopifyApp::InMemorySessionStore
 end
+
+# ShopifyApp::Utils.fetch_known_api_versions                        # Uncomment to fetch known api versions from shopify servers on boot
+# ShopifyAPI::ApiVersion.version_lookup_mode = :raise_on_unknown    # Uncomment to raise an error if attempting to use an api version that was not previously known

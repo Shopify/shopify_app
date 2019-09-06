@@ -14,13 +14,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   teardown do
-    ShopifyAPI::ApiVersion.clear_defined_versions
-    ShopifyAPI::ApiVersion.define_known_versions
+    ShopifyAPI::ApiVersion.clear_known_versions
   end
 
   test "creates the ShopifyApp initializer" do
-    latest_stable_version = ShopifyAPI::ApiVersion.latest_stable_version
-
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "My Shopify App"', shopify_app
@@ -28,8 +25,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
-      assert_match "config.api_version = \"#{latest_stable_version}\"", shopify_app
+      assert_match 'config.api_version = "2019-10"', shopify_app
       assert_match "config.after_authenticate_job = false", shopify_app
+      assert_match "# ShopifyApp::Utils.fetch_known_api_versions", shopify_app
+      assert_match "# ShopifyAPI::ApiVersion.version_lookup_mode = :raise_on_unknown ", shopify_app
     end
   end
 
