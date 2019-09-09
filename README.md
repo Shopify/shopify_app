@@ -471,7 +471,7 @@ config.api_version = '2019-04'
 
 ### Session storage change
 
-You will need to add an `api_version` method to you session storage object.  The default implmentation for this is.
+You will need to add an `api_version` method to you session storage object.  The default implementation for this is.
 ```ruby
 def api_version
   ShopifyApp.configuration.api_version
@@ -480,7 +480,7 @@ end
 
 ### Generated file change
 
-`embedded_app.html.erb` the useage of `shop_session.url` needs to be changed to `shop_session.domain`
+`embedded_app.html.erb` the usage of `shop_session.url` needs to be changed to `shop_session.domain`
 ```erb
 <script type="text/javascript">
   ShopifyApp.init({

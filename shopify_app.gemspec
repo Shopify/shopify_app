@@ -12,14 +12,16 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('browser_sniffer', '~> 1.1.2')
   s.add_runtime_dependency('rails', '> 5.2.1')
-  s.add_runtime_dependency('shopify_api', '~> 7.0')
+  s.add_runtime_dependency('shopify_api', '~> 8.0')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 2.1.0')
 
   s.add_development_dependency('rake')
   s.add_development_dependency('byebug')
+  s.add_development_dependency('pry')
   s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('minitest')
   s.add_development_dependency('mocha')
+  s.add_development_dependency('webmock')
 
   s.files         = `git ls-files`.split("\n").reject { |f| f.match(%r{^(test|example)/}) }
   s.test_files    = `git ls-files -- {test}/*`.split("\n")
