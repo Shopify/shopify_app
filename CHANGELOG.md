@@ -1,3 +1,10 @@
+11.1.0
+-----
+
+* Add Webmock and Pry as development dependencies
+* Update install generator to leverage updates to ShopifyAPI::ApiVersion add in v8.0.0 of the shopify_api gem [#790](https://github.com/Shopify/shopify_app/pull/790)
+
+
 11.0.2
 -----
 
