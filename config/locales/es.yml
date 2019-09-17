@@ -1,7 +1,7 @@
 ---
 es:
   logged_out: Cerrar sesión
-  could_not_log_in: No se pudo iniciar sesión en tu tienda de Shopify
+  could_not_log_in: No se pudo iniciar sesión en tu tienda Shopify
   invalid_shop_url: Dominio de tienda inválido
   enable_cookies_heading: Habilitar cookies de %{app}
   enable_cookies_body: Debes habilitar manualmente las cookies en este navegador para

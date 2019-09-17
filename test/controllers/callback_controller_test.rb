@@ -29,7 +29,7 @@ module ShopifyApp
     test '#callback flashes error in Spanish' do
       I18n.locale = :es
       get :callback, params: { shop: 'shop' }
-      assert_equal flash[:error], 'No se pudo iniciar sesión en tu tienda de Shopify'
+      assert_match 'sesión', flash[:error]
     end
 
     test '#callback sets up a shopify session' do
