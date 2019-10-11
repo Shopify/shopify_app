@@ -26,6 +26,7 @@ module.exports = function(config) {
     preprocessors: {
       'test/javascripts/**/*test.js': ['webpack'],
     },
+    webpack: {},
     reporters: karmaReporters,
     port: 9876,
     colors: true,

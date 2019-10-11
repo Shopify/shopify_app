@@ -101,7 +101,7 @@ suite('StorageAccessHelper', () => {
       storageAccessHelperSandbox.stub(storageAccessHelper, 'handleGetStorageAccess');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'handleHasStorageAccess');
 
-      storageAccessHelper.manageStorageAccess().then(() => { 
+      storageAccessHelper.manageStorageAccess().then(() => {
         sinon.assert.called(storageAccessHelper.handleGetStorageAccess);
         sinon.assert.notCalled(storageAccessHelper.handleHasStorageAccess);
       });
@@ -192,13 +192,6 @@ suite('StorageAccessHelper', () => {
     });
   });
 
-  suite('redirectToAppHome', () => {
-    test('sets "shopify.granted_storage_access" in sessionStorage', () => {
-      storageAccessHelper.redirectToAppHome();
-      sinon.assert.match(sessionStorage.getItem('shopify.granted_storage_access'), 'true');
-    });
-  });
-
   suite('setNormalizedLink', () => {
     test('returns redirectData.hasStorageAccessUrl if storage access is granted', () => {
       const link = storageAccessHelper.setNormalizedLink('storage_access_granted');
@@ -220,7 +213,7 @@ suite('StorageAccessHelper', () => {
       const button = document.createElement('button');
       button.type = 'button';
       button.id = 'AcceptCookies';
-      
+
       node.appendChild(button);
       document.body.appendChild(node);
 
@@ -239,7 +232,7 @@ suite('StorageAccessHelper', () => {
       const button = document.createElement('button');
       button.type = 'button';
       button.id = 'AcceptCookies';
-      
+
       node.appendChild(button);
       document.body.appendChild(node);
 
@@ -253,7 +246,7 @@ suite('StorageAccessHelper', () => {
       document.body.removeChild(node);
     });
   });
-  
+
   suite('setCookieAndRedirect', () => {
     test('sets the shopify.cookies_persist cookie', () => {
       storageAccessHelper.setCookieAndRedirect();
@@ -265,7 +258,7 @@ suite('StorageAccessHelper', () => {
     test('passes the correct redirectUrl to the ITPHelper constructor', () => {
       window.shopOrigin = 'https://test-shop.myshopify.io';
       window.apiKey = '123';
-      
+
       const itpHelper = storageAccessHelper.setUpHelper();
       sinon.assert.match(itpHelper.redirectUrl, 'https://test-shop.myshopify.io/admin/apps/123');
     })

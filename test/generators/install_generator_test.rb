@@ -7,29 +7,28 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   setup do
     prepare_destination
+    provide_existing_gemfile
     provide_existing_application_file
     provide_existing_routes_file
     provide_existing_application_controller
   end
 
   teardown do
-    ShopifyAPI::ApiVersion.clear_defined_versions
-    ShopifyAPI::ApiVersion.define_known_versions
+    ShopifyAPI::ApiVersion.clear_known_versions
   end
 
   test "creates the ShopifyApp initializer" do
-    latest_stable_version = ShopifyAPI::ApiVersion.latest_stable_version
-
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "My Shopify App"', shopify_app
-      assert_match 'config.api_key = "<api_key>"', shopify_app
-      assert_match 'config.secret = "<secret>"', shopify_app
-      assert_match 'config.old_secret = "<old_secret>"', shopify_app
+      assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
+      assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
-      assert_match "config.api_version = \"#{latest_stable_version}\"", shopify_app
+      assert_match 'config.api_version = "2019-10"', shopify_app
       assert_match "config.after_authenticate_job = false", shopify_app
+      assert_match "# ShopifyApp::Utils.fetch_known_api_versions", shopify_app
+      assert_match "# ShopifyAPI::ApiVersion.version_lookup_mode = :raise_on_unknown ", shopify_app
     end
   end
 
@@ -37,8 +36,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator %w(--application_name Test Name --api_key key --secret shhhhh --api_version unstable --scope read_orders, write_products)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
-      assert_match 'config.api_key = "key"', shopify_app
-      assert_match 'config.secret = "shhhhh"', shopify_app
+      assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
+      assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
@@ -50,8 +49,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator %w(--application_name "Test Name" --api_key key --secret shhhhh --scope "read_orders, write_products")
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
-      assert_match 'config.api_key = "key"', shopify_app
-      assert_match 'config.secret = "shhhhh"', shopify_app
+      assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
+      assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
@@ -82,6 +81,13 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/routes.rb" do |routes|
       assert_match "mount ShopifyApp::Engine, at: '/'", routes
+    end
+  end
+
+  test "adds dotenv gem to Gemfile" do
+    run_generator
+    assert_file "Gemfile" do |gemfile|
+      assert_match "gem 'dotenv-rails', group: [:test, :development]", gemfile
     end
   end
 end

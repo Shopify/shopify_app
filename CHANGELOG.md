@@ -1,3 +1,42 @@
+11.1.0
+-----
+
+* Add Webmock and Pry as development dependencies
+* Update install generator to leverage updates to ShopifyAPI::ApiVersion add in v8.0.0 of the shopify_api gem [#790](https://github.com/Shopify/shopify_app/pull/790)
+
+
+11.0.2
+-----
+
+* Lock shopify_api gem dependency to `~> 7.0` from `>= 7.0.0`.
+* Remove flakey JS Tests
+* bump sqlite3 development dependency to `~>1.4` from `~> 1.3.6`. [#789](https://github.com/Shopify/shopify_app/pull/789)
+
+11.0.1
+-----
+
+* Add dotenv-rails gem to install generator, so apps fetch credentials from `.env` by default: [#776](https://github.com/Shopify/shopify_app/pull/776)
+
+11.0.0
+-----
+
+* Rename `login_url` method to `login_url_with_optional_shop` to avoid ambiguity with Rails' route helper method of the
+  same name (see [#585](https://github.com/Shopify/shopify_app/pull/585)).
+
+10.0.0
+-----
+
+* Make sure OAuth-related redirects return user to originally requested URL once authenticated
+* Add/update translations
+* Update README to clarify nested routes
+* Remove example app. Users should instead use the generators to scaffold an example app.
+* Bump required Rails version to `> 5.2.1` to ensure `5.2.1.1` or greater is used. This ensures two things:
+  * Apps are not vulnerable to [CVE-2018-16476](https://nvd.nist.gov/vuln/detail/CVE-2018-16476)
+  * Webhook payloads, from Shopify for API version 2019-07, which are processed in ActiveJob background jobs (the
+    default behaviour of shopify_app's WebhooksController) are compatible, due to how ActiveJob versions prior to
+    5.2.1.1 process GlobalIDs encoded as string in job parameters. This prevents the
+    [exceptions reported previously](https://github.com/Shopify/shopify_app/issues/600).
+
 9.0.4
 -----
 
