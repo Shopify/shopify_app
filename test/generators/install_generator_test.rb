@@ -11,6 +11,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     provide_existing_application_file
     provide_existing_routes_file
     provide_existing_application_controller
+    provide_development_config_file
   end
 
   teardown do
@@ -88,6 +89,13 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "Gemfile" do |gemfile|
       assert_match "gem 'dotenv-rails', group: [:test, :development]", gemfile
+    end
+  end
+
+  test "adds host config to development.rb" do
+    run_generator
+    assert_file "config/environments/development.rb" do |config|
+      assert_match "config.hosts << /\\h+.ngrok.io/", config
     end
   end
 end

@@ -57,6 +57,14 @@ module ShopifyApp
         route "mount ShopifyApp::Engine, at: '/'"
       end
 
+      def insert_hosts_into_development_config
+        inject_into_file(
+          'config/environments/development.rb',
+          "  config.hosts << /\\h+.ngrok.io/\n",
+          after: "Rails.application.configure do\n"
+        )
+      end
+
       private
 
       def embedded_app?
