@@ -37,7 +37,18 @@ module ShopifyApp
     end
 
     def login_again_if_different_shop
-      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
+      if ShopifyApp.configuration.per_user_tokens
+        invalid_session_data = session[:user_session].nil? || params[:session].nil? # session data was not sent/stored correctly
+        sessions_do_not_match = session[:user_session] != params[:session] # current user is different from stored user
+
+        if invalid_session_data || sessions_do_not_match
+          clear_session = true   
+        end
+      elsif shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
+        clear_session = true
+      end
+
+      if clear_session
         clear_shop_session
         redirect_to_login
       end
