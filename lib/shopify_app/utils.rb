@@ -12,5 +12,12 @@ module ShopifyApp
       nil
     end
 
+    def self.fetch_known_api_versions
+      Rails.logger.info("[ShopifyAPI::ApiVersion] Fetching known Admin API Versions from Shopify...")
+      ShopifyAPI::ApiVersion.fetch_known_versions
+      Rails.logger.info("[ShopifyAPI::ApiVersion] Known API Versions: #{ShopifyAPI::ApiVersion.versions.keys}")
+      rescue ActiveResource::ConnectionError
+        logger.error( "[ShopifyAPI::ApiVersion] Unable to fetch api_versions from Shopify")
+    end
   end
 end
