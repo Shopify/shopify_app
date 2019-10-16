@@ -78,6 +78,7 @@ module ShopifyApp
       session[:shopify] = nil
       session[:shopify_domain] = nil
       session[:shopify_user] = nil
+      session[:user_session] = nil
     end
 
     def login_url_with_optional_shop(top_level: false)

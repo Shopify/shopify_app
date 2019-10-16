@@ -111,6 +111,47 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test "#login_again_if_different_shop removes current session if the user changes when in per-user-token mode" do
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "1"
+        session[:shopify_domain] = "foobar"
+        session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+        session[:user_session] = 'old-user-session'
+        params = { shop: 'foobar', session: 'new-user-session' }
+        get :second_login, params: params
+        assert_nil session[:shopify]
+        assert_nil session[:shopify_domain]
+        assert_nil session[:shopify_user]
+        assert_nil session[:user_session]
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
+
+  test "#login_again_if_different_shop retains current session if the users session doesn't change" do
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "1"
+        session[:shopify_domain] = "foobar"
+        session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+        session[:user_session] = 'old-user-session'
+        params = { shop: 'foobar', session: 'old-user-session' }
+        get :second_login, params: params
+        assert session[:shopify], "1"
+        assert session[:shopify_domain], "foobar"
+        assert session[:shopify_user], { 'id' => 1, 'email' => 'foo@example.com' }
+        assert session[:user_session], 'old-user-session'
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
+
+
   test "#login_again_if_different_shop removes current session and redirects to login url" do
     with_application_test_routes do
       session[:shopify] = "foobar"
