@@ -25,6 +25,10 @@ module GeneratorTestHelpers
     copy_to_generator_root("config/initializers", "shopify_app_with_webhooks.rb", rename: 'shopify_app.rb')
   end
 
+  def provide_development_config_file
+    copy_to_generator_root("config/environments", "development.rb")
+  end
+
   private
 
   def copy_to_generator_root(destination, template, rename: nil)
