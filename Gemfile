@@ -4,5 +4,3 @@ source "https://rubygems.org"
 gemspec
 
 gem 'rails-controller-testing', group: :test
-gem 'rb-readline'
-gem 'pry-nav'
