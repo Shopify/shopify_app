@@ -44,7 +44,9 @@ module ShopifyApp
         if invalid_session_data || sessions_do_not_match
           clear_session = true   
         end
-      elsif shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
+      end
+
+      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
         clear_session = true
       end
 
