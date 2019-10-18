@@ -405,7 +405,7 @@ strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
 ShopifyApp::SessionRepository
 -----------------------------
 
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `ShopifyApp::InMemorySessionStore` class or the `ShopifyApp::SessionStorage` concern for examples.
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `ShopifyApp::InMemorySessionStore` class or the `ShopifyApp::SessionStorage` concern for examples.
 
 If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain`, `shopify_token` and `api_version`.
 

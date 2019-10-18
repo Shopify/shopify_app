@@ -2,10 +2,10 @@ module ShopifyApp
   module SessionStorage
     class UserStorageStrategy
 
-      def self.store(session, user)
+      def self.store(auth_session, user)
         user = User.find_or_initialize_by(shopify_user_id: user[:id])
-        user.shopify_token = session.token
-        user.shopify_domain = session.domain
+        user.shopify_token = auth_session.token
+        user.shopify_domain = auth_session.domain
         user.save!
         user.id
       end

@@ -2,9 +2,9 @@ module ShopifyApp
   module SessionStorage
     class ShopStorageStrategy
 
-      def self.store(session, *args)
-        shop = Shop.find_or_initialize_by(shopify_domain: session.domain)
-        shop.shopify_token = session.token
+      def self.store(auth_session, *args)
+        shop = Shop.find_or_initialize_by(shopify_domain: auth_session.domain)
+        shop.shopify_token = auth_session.token
         shop.save!
         shop.id
       end

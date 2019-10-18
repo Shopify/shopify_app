@@ -9,7 +9,7 @@ module ShopifyApp
       validates :api_version, presence: true
     end
 
-    def with_shopify_session(&block)
+    def with_shopify_auth_session(&block)
       ShopifyAPI::Session.temp(
         domain: shopify_domain,
         token: shopify_token,
@@ -24,8 +24,8 @@ module ShopifyApp
         ShopifyApp.configuration.per_user_tokens ? ShopifyApp::SessionStorage::UserStorageStrategy : ShopifyApp::SessionStorage::ShopStorageStrategy
       end
 
-      def store(session, user:nil)
-        strategy_klass.store(session, user)
+      def store(auth_session, user:nil)
+        strategy_klass.store(auth_session, user)
       end
 
       def retrieve(id)
