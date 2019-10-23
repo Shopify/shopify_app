@@ -2,6 +2,11 @@
 -----
 * Adds ngrok whitelist in development [#802](https://github.com/Shopify/shopify_app/pull/802)
 
+11.2.0
+-----
+
+* Bump omniauth-shopify-oauth2 gem to v2.2.0
+
 11.1.0
 -----
 
