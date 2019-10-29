@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
-  <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
+  <% if ShopifyApp.rails6? %>
+    <%= javascript_pack_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
+  <% else %>
+    <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
+  <% end %>
 </head>
 <body>
   <%=

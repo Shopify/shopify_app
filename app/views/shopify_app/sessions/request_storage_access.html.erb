@@ -63,6 +63,10 @@
     </div>
   </div>
 </main>
-<%= javascript_include_tag('shopify_app/request_storage_access', crossorigin: 'anonymous', integrity: true) %>
+<% if ShopifyApp.rails6? %>
+  <%= javascript_pack_tag('shopify_app/request_storage_access', crossorigin: 'anonymous', integrity: true) %>
+<% else %>
+  <%= javascript_include_tag('shopify_app/request_storage_access', crossorigin: 'anonymous', integrity: true) %>
+<% end %>
 </body>
 </html>

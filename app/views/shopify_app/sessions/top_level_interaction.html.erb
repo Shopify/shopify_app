@@ -21,7 +21,11 @@
     window.redirectUrl = "<%= @url %>";
   </script>
 
-  <%= javascript_include_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
+  <% if ShopifyApp.rails6? %>
+    <%= javascript_pack_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
+  <% else %>
+    <%= javascript_include_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
+  <% end %>
 </head>
 <body>
   <main id="TopLevelInteractionContent">
