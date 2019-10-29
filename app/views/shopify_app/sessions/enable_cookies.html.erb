@@ -20,7 +20,11 @@
     window.returnTo = "<%= params[:return_to] %>"
   </script>
 
-  <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
+  <% if ShopifyApp.rails6? %>
+    <%= javascript_pack_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
+  <% else %>
+    <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
+  <% end %>
 </head>
 <body>
   <%=
