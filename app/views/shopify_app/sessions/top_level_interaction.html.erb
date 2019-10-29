@@ -22,7 +22,7 @@
   </script>
 
   <% if ShopifyApp.rails6? %>
-    <%= javascript_pack_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
+    <%= javascript_pack_tag('shopify_app_top_level', crossorigin: 'anonymous', integrity: true) %>
   <% else %>
     <%= javascript_include_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
   <% end %>
