@@ -44,8 +44,16 @@ module ShopifyApp
           copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
           copy_file('shopify_app.js', 'app/assets/javascripts/shopify_app.js')
           copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
-          copy_file('flash_messages.js',
-            'app/assets/javascripts/flash_messages.js')
+          copy_file('flash_messages.js', 'app/assets/javascripts/flash_messages.js')
+
+          if ShopifyApp.rails6?
+            append_to_file('app/javascript/packs/application.js') do
+              <<~'APPJS'
+              require("../../assets/javascripts/shopify_app")
+              require("../../assets/javascripts/flash_messages")
+              APPJS
+            end
+          end
         end
       end
 
