@@ -14,7 +14,7 @@ module ShopifyApp
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
 
-    def shopify_session
+    def manage_shopify_session
       return redirect_to_login unless shop_session
       clear_top_level_oauth_cookie
 
@@ -36,7 +36,7 @@ module ShopifyApp
       end
     end
 
-    def login_again_if_different_shop
+    def login_again_if_different_user_or_shop
       if ShopifyApp.configuration.per_user_tokens
         invalid_session_data = session[:user_session].nil? || params[:session].nil? # session data was not sent/stored correctly
         sessions_do_not_match = session[:user_session] != params[:session] # current user is different from stored user
