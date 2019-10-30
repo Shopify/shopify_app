@@ -41,37 +41,17 @@ module ShopifyApp
 
       def create_embedded_app_layout
         return unless embedded_app?
-        if ShopifyApp.rails6?
-          copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
-          copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
 
+        copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+        copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
+
+        if ShopifyApp.use_webpacker?
           copy_file('shopify_app.js', 'app/javascript/shopify_app/shopify_app.js')
           copy_file('flash_messages.js', 'app/javascript/shopify_app/flash_messages.js')
           copy_file('shopify_app_index.js', 'app/javascript/shopify_app/index.js')
-
-          %w(
-            itp_helper
-            partition_cookies
-            redirect
-            storage_access
-            storage_access_redirect
-            top_level_interaction
-          ).each do |filename|
-            copy_file(
-              "../../../../../app/assets/javascripts/shopify_app/#{filename}.js",
-              "app/javascript/shopify_app/#{filename}.js",
-            )
-          end
-
-          copy_file('redirect.js', 'app/javascript/packs/shopify_app_redirect.js')
-          copy_file('enable_cookies.js', 'app/javascript/packs/shopify_app_enable_cookies.js')
-          copy_file('request_storage_access.js', 'app/javascript/packs/shopify_app_request_storage_access.js')
-          copy_file('top_level.js', 'app/javascript/packs/shopify_app_top_level.js')
           append_to_file('app/javascript/packs/application.js', 'require("shopify_app")')
         else
-          copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
           copy_file('shopify_app.js', 'app/assets/javascripts/shopify_app.js')
-          copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
           copy_file('flash_messages.js', 'app/assets/javascripts/flash_messages.js')
         end
       end

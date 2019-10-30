@@ -9,6 +9,12 @@ module ShopifyApp
     Rails::VERSION::MAJOR >= 6
   end
 
+  def self.use_webpacker?
+    rails6? &&
+      defined?(Webpacker) == 'constant' &&
+      !configuration.disable_webpacker
+  end
+
   # config
   require 'shopify_app/configuration'
 
