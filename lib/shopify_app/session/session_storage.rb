@@ -24,7 +24,7 @@ module ShopifyApp
         ShopifyApp.configuration.per_user_tokens ? ShopifyApp::SessionStorage::UserStorageStrategy : ShopifyApp::SessionStorage::ShopStorageStrategy
       end
 
-      def store(auth_session, user:nil)
+      def store(auth_session, user: nil)
         strategy_klass.store(auth_session, user)
       end
 
