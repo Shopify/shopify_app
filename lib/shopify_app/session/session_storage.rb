@@ -9,7 +9,7 @@ module ShopifyApp
       validates :api_version, presence: true
     end
 
-    def with_shopify_auth_session(&block)
+    def with_shopify_session(&block)
       ShopifyAPI::Session.temp(
         domain: shopify_domain,
         token: shopify_token,
