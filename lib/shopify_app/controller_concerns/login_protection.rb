@@ -14,7 +14,7 @@ module ShopifyApp
       rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
     end
 
-    def manage_shopify_session
+    def shopify_session
       return redirect_to_login unless shop_session
       clear_top_level_oauth_cookie
 

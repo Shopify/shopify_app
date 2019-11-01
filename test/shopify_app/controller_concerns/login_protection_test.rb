@@ -8,7 +8,7 @@ class LoginProtectionController < ActionController::Base
   include ShopifyApp::LoginProtection
   helper_method :shop_session
 
-  around_action :manage_shopify_session, only: [:index]
+  around_action :shopify_session, only: [:index]
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
 
   def index
@@ -179,7 +179,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test '#manage_shopify_session with Shopify session, clears top-level auth cookie' do
+  test '#shopify_session with Shopify session, clears top-level auth cookie' do
     with_application_test_routes do
       session['shopify.top_level_oauth'] = true
       sess = stub(domain: 'https://foobar.myshopify.com')
@@ -191,14 +191,14 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, redirects to the login url' do
+  test '#shopify_session with no Shopify session, redirects to the login url' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
       assert_redirected_to '/login?shop=foobar.myshopify.com'
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, redirects to a custom config login url' do
+  test '#shopify_session with no Shopify session, redirects to a custom config login url' do
     with_custom_login_url 'https://domain.com/custom/route/login' do
       with_application_test_routes do
         get :index, params: { shop: 'foobar' }
@@ -207,7 +207,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "#manage_shopify_session with no Shopify session, redirects to login_url with \
+  test "#shopify_session with no Shopify session, redirects to login_url with \
         shop param of referer" do
     with_application_test_routes do
       @controller.expects(:shop_session).returns(nil)
@@ -218,7 +218,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "#manage_shopify_session with no Shopify session, redirects to a custom config login url with \
+  test "#shopify_session with no Shopify session, redirects to a custom config login url with \
         shop param of referer" do
     with_custom_login_url 'https://domain.com/custom/route/login' do
       with_application_test_routes do
@@ -231,7 +231,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, redirects to the login url \
+  test '#shopify_session with no Shopify session, redirects to the login url \
         with non-String shop param' do
     with_application_test_routes do
       params = { shop: { id: 123 } }
@@ -240,7 +240,7 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, redirects to a custom config login url \
+  test '#shopify_session with no Shopify session, redirects to a custom config login url \
         with non-String shop param' do
     with_custom_login_url 'https://domain.com/custom/route/login' do
       with_application_test_routes do
@@ -251,14 +251,14 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, sets session[:return_to]' do
+  test '#shopify_session with no Shopify session, sets session[:return_to]' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
       assert_equal '/?shop=foobar.myshopify.com', session[:return_to]
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, sets session[:return_to]\
+  test '#shopify_session with no Shopify session, sets session[:return_to]\
         with non-String shop param' do
     with_application_test_routes do
       params = { shop: { id: 123 } }
@@ -267,21 +267,21 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test '#manage_shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401' do
+  test '#shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }, xhr: true
       assert_equal 401, response.status
     end
   end
 
-  test '#manage_shopify_session when rescuing from unauthorized access, redirects to the login url' do
+  test '#shopify_session when rescuing from unauthorized access, redirects to the login url' do
     with_application_test_routes do
       get :raise_unauthorized, params: { shop: 'foobar' }
       assert_redirected_to '/login?shop=foobar.myshopify.com'
     end
   end
 
-  test '#manage_shopify_session when rescuing from unauthorized access, clears shop session' do
+  test '#shopify_session when rescuing from unauthorized access, clears shop session' do
     with_application_test_routes do
       session[:shopify] = 'foobar'
       session[:shopify_domain] = 'foobar'
