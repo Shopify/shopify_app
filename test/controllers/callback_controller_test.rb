@@ -167,7 +167,7 @@ module ShopifyApp
         :shopify,
         provider: :shopify,
         uid: 'shop.myshopify.com',
-        credentials: {token: '1234' },
+        credentials: { token: '1234' },
         extra: { 
           associated_user: 'user_object',
           associated_user_scope: "read_products",
