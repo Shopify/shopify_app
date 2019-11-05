@@ -1,15 +1,9 @@
 require 'test_helper'
-# require 'lib/generators/shopify_app/shop_model/templates/shop.rb'
-
-
-class MockSessionStore < ActiveRecord::Base
-  include ShopifyApp::SessionStorage
-end
 
 
 module ShopifyApp
   class ShopStorageStrategyTest < ActiveSupport::TestCase
-
+  
     test "tests that ShopStorageStrategy is used for session storage" do
       begin
         ShopifyApp.configuration.per_user_tokens = false
@@ -20,5 +14,32 @@ module ShopifyApp
       end
     end
 
+    test "tests that session store can retrieve shop session records" do
+      TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
+      TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
+
+      MockShopClass = mock()
+      mmm = MockShopInstance.new(
+        shopify_domain:TEST_SHOPIFY_DOMAIN,
+        shopify_token:TEST_SHOPIFY_TOKEN
+      )
+
+      MockShopClass.stubs(:find_by).returns(mmm)
+      ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", MockShopClass)
+
+      begin
+        ShopifyApp.configuration.per_user_tokens = false
+        session = MockSessionStore.retrieve(id=1)
+
+        assert_equal session.domain, TEST_SHOPIFY_DOMAIN
+        assert_equal session.token, TEST_SHOPIFY_TOKEN
+      ensure
+        ShopifyApp.configuration.per_user_tokens = false
+      end
+    end
+
+    test "tests that session store can store shop session records" do
+      assert false
+    end
   end
 end
