@@ -3,10 +3,14 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false },
-        unless: Proc.new {|_| ShopifyApp.configuration.per_user_tokens }
       validates :shopify_token, presence: true
       validates :api_version, presence: true
+
+      if ShopifyApp.configuration.per_user_tokens
+        validates :shopify_domain, presence: true
+      else
+        validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
+      end
     end
 
     def with_shopify_session(&block)
