@@ -61,10 +61,10 @@ module ShopifyApp
         mock_auth_hash.stubs(:token).returns("a-new-user_token!")
 
         associated_user = {
-          id: 100
+          id: 100,
         }
-
-        saved_id = MockSessionStore.store(mock_auth_hash, associated_user)
+        
+        saved_id = MockSessionStore.store(mock_auth_hash, user:associated_user)
 
         assert_equal "a-new-user_token!", mock_user_instance.shopify_token
         assert_equal mock_user_instance.id, saved_id
