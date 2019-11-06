@@ -7,7 +7,7 @@ de:
   enable_cookies_body: Sie müssen Cookies in diesem Browser manuell aktivieren, um
     %{app} in Shopify verwenden zu können.
   enable_cookies_footer: Mithilfe von Cookies kann die App Sie authentifizieren, indem
-    Ihre Einstellungen und persönlichen Informationen vorübergehend gespeichert werden.
+    Ihre Einstellungen und personenbezogenen Daten vorübergehend gespeichert werden.
     Sie laufen nach 30 Tagen ab.
   enable_cookies_action: Cookies aktivieren
   top_level_interaction_heading: Ihr Browser muss %{app} authentifizieren
@@ -16,7 +16,7 @@ de:
   top_level_interaction_action: Weiter
   request_storage_access_heading: "%{app} braucht Zugriff auf Cookies"
   request_storage_access_body: Damit kann die App Sie authentifizieren, indem Ihre
-    Einstellungen und persönlichen Informationen vorübergehend gespeichert werden.
-    Klicken Sie auf "Weiter" und erlauben Sie den Cookies, die App zu verwenden.
+    Einstellungen und personenbezogenen Daten vorübergehend gespeichert werden. Klicken
+    Sie auf "Weiter" und erlauben Sie den Cookies, die App zu verwenden.
   request_storage_access_footer: Cookies laufen nach 30 Tagen ab.
   request_storage_access_action: Weiter
