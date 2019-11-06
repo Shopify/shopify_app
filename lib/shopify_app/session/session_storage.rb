@@ -5,12 +5,10 @@ module ShopifyApp
     included do
       validates :shopify_token, presence: true
       validates :api_version, presence: true
-
-      if ShopifyApp.configuration.per_user_tokens
-        validates :shopify_domain, presence: true
-      else
-        validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
-      end
+      validates :shopify_domain, presence: true,
+        if: Proc.new {|_| ShopifyApp.configuration.per_user_tokens }
+      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false },
+        if: Proc.new {|_| !ShopifyApp.configuration.per_user_tokens }
     end
 
     def with_shopify_session(&block)
