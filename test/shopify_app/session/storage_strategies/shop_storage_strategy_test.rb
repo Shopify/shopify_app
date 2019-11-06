@@ -3,12 +3,12 @@ require 'test_helper'
 
 module ShopifyApp
   class ShopStorageStrategyTest < ActiveSupport::TestCase
-  
+
     test "tests that ShopStorageStrategy is used for session storage" do
       begin
         ShopifyApp.configuration.per_user_tokens = false
 
-        assert_equal MockSessionStore.strategy_klass, ShopifyApp::SessionStorage::ShopStorageStrategy
+        assert_equal ShopifyApp::SessionStorage::ShopStorageStrategy, MockSessionStore.strategy_klass
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
@@ -19,27 +19,47 @@ module ShopifyApp
       TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
 
       MockShopClass = mock()
-      mmm = MockShopInstance.new(
+
+      MockShopClass.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain:TEST_SHOPIFY_DOMAIN,
         shopify_token:TEST_SHOPIFY_TOKEN
-      )
-
-      MockShopClass.stubs(:find_by).returns(mmm)
+      ))
       ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", MockShopClass)
 
       begin
         ShopifyApp.configuration.per_user_tokens = false
         session = MockSessionStore.retrieve(id=1)
 
-        assert_equal session.domain, TEST_SHOPIFY_DOMAIN
-        assert_equal session.token, TEST_SHOPIFY_TOKEN
+        assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+        assert_equal TEST_SHOPIFY_TOKEN, session.token
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
     end
 
     test "tests that session store can store shop session records" do
-      assert false
+      mock_shop_instance = MockShopInstance.new(id:12345)
+      mock_shop_instance.stubs(:save!).returns(true)
+
+      MockShopClass = mock()
+      MockShopClass.stubs(:find_or_initialize_by).returns(mock_shop_instance)
+    
+      ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", MockShopClass)
+
+      begin
+        ShopifyApp.configuration.per_user_tokens = false
+        
+        mock_auth_hash = mock()
+        mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
+        mock_auth_hash.stubs(:token).returns("a-new-token!")
+        saved_id = MockSessionStore.store(mock_auth_hash)
+
+        assert_equal "a-new-token!", mock_shop_instance.shopify_token
+        assert_equal mock_shop_instance.id, saved_id
+
+      ensure
+        ShopifyApp.configuration.per_user_tokens = false
+      end
     end
   end
 end
