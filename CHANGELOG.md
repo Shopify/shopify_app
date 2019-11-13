@@ -1,3 +1,7 @@
+11.3.0
+-----
+* Update assets to be compatible with Rails 6 [#808](https://github.com/Shopify/shopify_app/pull/808)
+
 11.2.1
 -----
 * Adds ngrok whitelist in development [#802](https://github.com/Shopify/shopify_app/pull/802)

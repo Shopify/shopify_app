@@ -457,6 +457,23 @@ Questions or problems?
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
 
+Rails 6 Compatibility
+---------------------------
+
+### Disable Webpacker
+If you are using sprockets in rails 6 or want to generate a shopify_app without webpacker run the install task by running
+
+```
+SHOPIFY_APP_DISABLE_WEBPACKER=1 rails generate shopify_app
+```
+
+and then in your ShopifyApp configuration block, add
+
+```
+ShopifyApp.configure do |config|
+  config.disable_webpacker = true
+end
+```
 
 Upgrading from 8.6 to 9.0.0
 ---------------------------
