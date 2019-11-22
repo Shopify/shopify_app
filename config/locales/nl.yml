@@ -14,7 +14,7 @@ nl:
     te vragen tot cookies voordat Shopify het voor u kan openen.
   top_level_interaction_action: Doorgaan
   request_storage_access_heading: "%{app} heeft toegang tot cookies nodig"
-  request_storage_access_body: Hiermee kan de app je verifiëren door je persoonlijke
+  request_storage_access_body: Hiermee kan de app u verifiëren door u persoonlijke
     gegevens tijdelijk op te slaan. Klik op Doorgaan en sta cookies toe om de app
     te gebruiken.
   request_storage_access_footer: Cookies verlopen na 30 dagen.
