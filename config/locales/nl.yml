@@ -4,13 +4,13 @@ nl:
   could_not_log_in: Kon niet aanmelden bij Shopify-winkel
   invalid_shop_url: Ongeldig winkeldomein
   enable_cookies_heading: Schakel cookies in van %{app}
-  enable_cookies_body: Je moet cookies in deze browser handmatig inschakelen om %{app}
+  enable_cookies_body: U moet cookies in deze browser handmatig inschakelen om %{app}
     binnen Shopify te gebruiken.
   enable_cookies_footer: Met cookies kan de app u verifiëren door uw voorkeuren en
     persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
   enable_cookies_action: Schakel cookies in
-  top_level_interaction_heading: Je browser moet %{app} verifiëren
-  top_level_interaction_body: Je browser heeft apps nodig zoals %{app} om u toegang
+  top_level_interaction_heading: Uw browser moet %{app} verifiëren
+  top_level_interaction_body: Uw browser heeft apps nodig zoals %{app} om u toegang
     te vragen tot cookies voordat Shopify het voor u kan openen.
   top_level_interaction_action: Doorgaan
   request_storage_access_heading: "%{app} heeft toegang tot cookies nodig"
