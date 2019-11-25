@@ -21,7 +21,7 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "configure object defaults to shop tokens" do
-    assert_equal false, ShopifyApp.configuration.per_user_tokens
+    assert_equal false, ShopifyApp.configuration.per_user_tokens?
   end
 
   test "configure object can set per-user tokens" do
@@ -30,7 +30,7 @@ class ConfigurationTest < ActiveSupport::TestCase
         config.per_user_tokens = true
       end
 
-      assert_equal true, ShopifyApp.configuration.per_user_tokens
+      assert_equal true, ShopifyApp.configuration.per_user_tokens?
     ensure
       ShopifyApp.configuration.per_user_tokens = false
     end

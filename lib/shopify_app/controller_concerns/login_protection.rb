@@ -27,7 +27,7 @@ module ShopifyApp
     end
 
     def shop_session
-      if ShopifyApp.configuration.per_user_tokens
+      if ShopifyApp.configuration.per_user_tokens?
         return unless session[:shopify_user]
         @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify_user]['id'])
       else
@@ -37,7 +37,7 @@ module ShopifyApp
     end
 
     def login_again_if_different_user_or_shop
-      if ShopifyApp.configuration.per_user_tokens
+      if ShopifyApp.configuration.per_user_tokens?
         invalid_session_data = session[:user_session].nil? || params[:session].nil? # session data was not sent/stored correctly
         sessions_do_not_match = session[:user_session] != params[:session] # current user is different from stored user
 

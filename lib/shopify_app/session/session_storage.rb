@@ -6,9 +6,9 @@ module ShopifyApp
       validates :shopify_token, presence: true
       validates :api_version, presence: true
       validates :shopify_domain, presence: true,
-        if: Proc.new {|_| ShopifyApp.configuration.per_user_tokens }
+        if: Proc.new {|_| ShopifyApp.configuration.per_user_tokens? }
       validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false },
-        if: Proc.new {|_| !ShopifyApp.configuration.per_user_tokens }
+        if: Proc.new {|_| !ShopifyApp.configuration.per_user_tokens? }
     end
 
     def with_shopify_session(&block)
@@ -23,7 +23,7 @@ module ShopifyApp
     class_methods do
 
       def strategy_klass
-        ShopifyApp.configuration.per_user_tokens ? ShopifyApp::SessionStorage::UserStorageStrategy : ShopifyApp::SessionStorage::ShopStorageStrategy
+        ShopifyApp.configuration.per_user_tokens? ? ShopifyApp::SessionStorage::UserStorageStrategy : ShopifyApp::SessionStorage::ShopStorageStrategy
       end
 
       def store(auth_session, user: nil)
