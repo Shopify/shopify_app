@@ -4,16 +4,6 @@ require 'test_helper'
 module ShopifyApp
   class ShopStorageStrategyTest < ActiveSupport::TestCase
 
-    test "tests that ShopStorageStrategy is used for session storage" do
-      begin
-        ShopifyApp.configuration.per_user_tokens = false
-
-        assert_equal ShopifyApp::SessionStorage::ShopStorageStrategy, MockSessionStore.strategy_klass
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
-    end
-
     test "tests that session store can retrieve shop session records" do
       TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
       TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
