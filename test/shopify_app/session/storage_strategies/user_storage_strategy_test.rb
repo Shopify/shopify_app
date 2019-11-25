@@ -24,14 +24,14 @@ module ShopifyApp
       TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
       TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
 
-      MockUserClass = mock()
+      mock_user_class = Object.new
 
-      MockUserClass.stubs(:find_by).returns(MockUserInstance.new(
+      mock_user_class.stubs(:find_by).returns(MockUserInstance.new(
         shopify_user_id:TEST_SHOPIFY_USER_ID,
         shopify_domain:TEST_SHOPIFY_DOMAIN,
         shopify_token:TEST_SHOPIFY_USER_TOKEN
       ))
-      ShopifyApp::SessionStorage::UserStorageStrategy.const_set("User", MockUserClass)
+      ShopifyApp::SessionStorage::UserStorageStrategy.const_set("User", mock_user_class)
 
       begin
         ShopifyApp.configuration.per_user_tokens = true
@@ -42,16 +42,18 @@ module ShopifyApp
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
+
+      ShopifyApp::SessionStorage::UserStorageStrategy.send(:remove_const , "User")
     end
 
     test "tests that session store can store user session records" do
       mock_user_instance = MockUserInstance.new(shopify_user_id:100)
       mock_user_instance.stubs(:save!).returns(true)
 
-      MockUserClass = mock()
-      MockUserClass.stubs(:find_or_initialize_by).returns(mock_user_instance)
+      mock_user_class = Object.new
+      mock_user_class.stubs(:find_or_initialize_by).returns(mock_user_instance)
     
-      ShopifyApp::SessionStorage::UserStorageStrategy.const_set("User", MockUserClass)
+      ShopifyApp::SessionStorage::UserStorageStrategy.const_set("User", mock_user_class)
 
       begin
         ShopifyApp.configuration.per_user_tokens = true
@@ -72,6 +74,8 @@ module ShopifyApp
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
+
+      ShopifyApp::SessionStorage::UserStorageStrategy.send(:remove_const , "User")
     end
 
   end

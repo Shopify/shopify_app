@@ -18,13 +18,13 @@ module ShopifyApp
       TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
       TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
 
-      MockShopClass = mock()
+      mock_shop_class = Object.new
 
-      MockShopClass.stubs(:find_by).returns(MockShopInstance.new(
+      mock_shop_class.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain:TEST_SHOPIFY_DOMAIN,
         shopify_token:TEST_SHOPIFY_TOKEN
       ))
-      ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", MockShopClass)
+      ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", mock_shop_class)
 
       begin
         ShopifyApp.configuration.per_user_tokens = false
@@ -35,16 +35,18 @@ module ShopifyApp
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
+
+      ShopifyApp::SessionStorage::ShopStorageStrategy.send(:remove_const , "Shop")
     end
 
     test "tests that session store can store shop session records" do
       mock_shop_instance = MockShopInstance.new(id:12345)
       mock_shop_instance.stubs(:save!).returns(true)
 
-      MockShopClass = mock()
-      MockShopClass.stubs(:find_or_initialize_by).returns(mock_shop_instance)
+      mock_shop_class = Object.new
+      mock_shop_class.stubs(:find_or_initialize_by).returns(mock_shop_instance)
     
-      ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", MockShopClass)
+      ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", mock_shop_class)
 
       begin
         ShopifyApp.configuration.per_user_tokens = false
@@ -60,6 +62,8 @@ module ShopifyApp
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
+
+      ShopifyApp::SessionStorage::ShopStorageStrategy.send(:remove_const , "Shop")
     end
   end
 end
