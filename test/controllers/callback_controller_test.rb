@@ -50,19 +50,17 @@ module ShopifyApp
     end
 
     test '#callback sets up a shopify session with a user for online mode' do
-      begin
-        ShopifyApp.configuration.per_user_tokens = true
-    
-        mock_shopify_user_omniauth
-   
-        get :callback, params: { shop: 'shop' }
-        assert_not_nil session[:shopify]
-        assert_equal 'shop.myshopify.com', session[:shopify_domain]
-        assert_equal 'user_object', session[:shopify_user]
-        assert_equal 'this.is.a.user.session', session[:user_session]
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
+      ShopifyApp.configuration.per_user_tokens = true
+  
+      mock_shopify_user_omniauth
+  
+      get :callback, params: { shop: 'shop' }
+      assert_not_nil session[:shopify]
+      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+      assert_equal 'user_object', session[:shopify_user]
+      assert_equal 'this.is.a.user.session', session[:user_session]
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
     end
 
     test '#callback starts the WebhooksManager if webhooks are configured' do
