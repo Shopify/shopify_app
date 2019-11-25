@@ -1,3 +1,11 @@
+11.3.2
+-----
+* Fix hosts generator in Rails 5 [#823](https://github.com/Shopify/shopify_app/pull/823)
+
+11.3.1
+-----
+* Bump browser_sniffer version to 1.1.3 [#824](https://github.com/Shopify/shopify_app/pull/824)
+
 11.3.0
 -----
 * Update assets to be compatible with Rails 6 [#808](https://github.com/Shopify/shopify_app/pull/808)
