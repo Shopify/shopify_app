@@ -26,16 +26,13 @@ module ShopifyApp
       ))
       ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", mock_shop_class)
 
-      begin
-        ShopifyApp.configuration.per_user_tokens = false
-        session = MockSessionStore.retrieve(id=1)
+      ShopifyApp.configuration.per_user_tokens = false
+      session = MockSessionStore.retrieve(id=1)
 
-        assert_equal TEST_SHOPIFY_DOMAIN, session.domain
-        assert_equal TEST_SHOPIFY_TOKEN, session.token
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
-
+      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+      assert_equal TEST_SHOPIFY_TOKEN, session.token
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
       ShopifyApp::SessionStorage::ShopStorageStrategy.send(:remove_const , "Shop")
     end
 
@@ -48,21 +45,18 @@ module ShopifyApp
     
       ShopifyApp::SessionStorage::ShopStorageStrategy.const_set("Shop", mock_shop_class)
 
-      begin
-        ShopifyApp.configuration.per_user_tokens = false
-        
-        mock_auth_hash = mock()
-        mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
-        mock_auth_hash.stubs(:token).returns("a-new-token!")
-        saved_id = MockSessionStore.store(mock_auth_hash)
+      ShopifyApp.configuration.per_user_tokens = false
+      
+      mock_auth_hash = mock()
+      mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
+      mock_auth_hash.stubs(:token).returns("a-new-token!")
+      saved_id = MockSessionStore.store(mock_auth_hash)
 
-        assert_equal "a-new-token!", mock_shop_instance.shopify_token
-        assert_equal mock_shop_instance.id, saved_id
+      assert_equal "a-new-token!", mock_shop_instance.shopify_token
+      assert_equal mock_shop_instance.id, saved_id
 
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
-
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
       ShopifyApp::SessionStorage::ShopStorageStrategy.send(:remove_const , "Shop")
     end
   end
