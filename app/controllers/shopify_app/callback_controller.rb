@@ -62,7 +62,7 @@ module ShopifyApp
       if ShopifyApp.configuration.per_user_tokens
         # Adds the user_session to the session to determine if the logged in user has changed
         user_session = auth_hash&.extra&.session
-        raise Exception, "Missing user session signature" if user_session.nil?
+        raise IndexError, "Missing user session signature" if user_session.nil?
         session[:user_session] = user_session
       end
     end
