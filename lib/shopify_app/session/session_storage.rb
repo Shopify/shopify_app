@@ -23,7 +23,9 @@ module ShopifyApp
     class_methods do
 
       def strategy_klass
-        ShopifyApp.configuration.per_user_tokens? ? ShopifyApp::SessionStorage::UserStorageStrategy : ShopifyApp::SessionStorage::ShopStorageStrategy
+        ShopifyApp.configuration.per_user_tokens? ? 
+          ShopifyApp::SessionStorage::UserStorageStrategy : 
+          ShopifyApp::SessionStorage::ShopStorageStrategy
       end
 
       def store(auth_session, user: nil)
