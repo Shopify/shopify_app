@@ -1,3 +1,8 @@
+11.4.0
+-----
+* Modularizes durable session storage
+* Introduces per-user token support and user session management (beta)
+
 11.3.2
 -----
 * Fix hosts generator in Rails 5 [#823](https://github.com/Shopify/shopify_app/pull/823)
