@@ -63,29 +63,33 @@ class LoginProtectionTest < ActionController::TestCase
   end
 
   test "#shop_session retrieves using shopify_user_id when configured for per-user tokens" do
-    ShopifyApp.configuration.per_user_tokens = true
-    with_application_test_routes do
-      session[:shopify] = "foobar"
-      session[:shopify_user] = { 'id' => 'shopify_user_id', 'email' => 'foo@example.com' }
-      get :index
-      ShopifyApp::SessionRepository.expects(:retrieve).with(session[:shopify_user]['id']).returns(session).once
-      assert @controller.shop_session
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "foobar"
+        session[:shopify_user] = { 'id' => 'shopify_user_id', 'email' => 'foo@example.com' }
+        get :index
+        ShopifyApp::SessionRepository.expects(:retrieve).with(session[:shopify_user]['id']).returns(session).once
+        assert @controller.shop_session
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
     end
-  ensure
-    ShopifyApp.configuration.per_user_tokens = false
   end
 
   test "#shop_session retrieves using shop_id when configured for per-shop tokens" do
-    ShopifyApp.configuration.per_user_tokens = false
-    with_application_test_routes do
-      session[:shopify] = "shopify_id"
-      session[:shopify_user] = { 'id' => 'shopify_user_id', 'email' => 'foo@example.com' }
-      get :index
-      ShopifyApp::SessionRepository.expects(:retrieve).with(session[:shopify]).returns(session).once
-      assert @controller.shop_session
+    begin
+      ShopifyApp.configuration.per_user_tokens = false
+      with_application_test_routes do
+        session[:shopify] = "shopify_id"
+        session[:shopify_user] = { 'id' => 'shopify_user_id', 'email' => 'foo@example.com' }
+        get :index
+        ShopifyApp::SessionRepository.expects(:retrieve).with(session[:shopify]).returns(session).once
+        assert @controller.shop_session
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
     end
-  ensure
-    ShopifyApp.configuration.per_user_tokens = false
   end
 
   test "#shop_session retreives the session from storage" do
@@ -108,39 +112,43 @@ class LoginProtectionTest < ActionController::TestCase
   end
 
   test "#login_again_if_different_user_or_shop removes current session if the user changes when in per-user-token mode" do
-    ShopifyApp.configuration.per_user_tokens = true
-    with_application_test_routes do
-      session[:shopify] = "1"
-      session[:shopify_domain] = "foobar"
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      session[:user_session] = 'old-user-session'
-      params = { shop: 'foobar', session: 'new-user-session' }
-      get :second_login, params: params
-      assert_nil session[:shopify]
-      assert_nil session[:shopify_domain]
-      assert_nil session[:shopify_user]
-      assert_nil session[:user_session]
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "1"
+        session[:shopify_domain] = "foobar"
+        session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+        session[:user_session] = 'old-user-session'
+        params = { shop: 'foobar', session: 'new-user-session' }
+        get :second_login, params: params
+        assert_nil session[:shopify]
+        assert_nil session[:shopify_domain]
+        assert_nil session[:shopify_user]
+        assert_nil session[:user_session]
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
     end
-  ensure
-    ShopifyApp.configuration.per_user_tokens = false
   end
 
   test "#login_again_if_different_user_or_shop retains current session if the users session doesn't change" do
-    ShopifyApp.configuration.per_user_tokens = true
-    with_application_test_routes do
-      session[:shopify] = "1"
-      session[:shopify_domain] = "foobar"
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      session[:user_session] = 'old-user-session'
-      params = { shop: 'foobar', session: 'old-user-session' }
-      get :second_login, params: params
-      assert session[:shopify], "1"
-      assert session[:shopify_domain], "foobar"
-      assert session[:shopify_user], { 'id' => 1, 'email' => 'foo@example.com' }
-      assert session[:user_session], 'old-user-session'
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "1"
+        session[:shopify_domain] = "foobar"
+        session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+        session[:user_session] = 'old-user-session'
+        params = { shop: 'foobar', session: 'old-user-session' }
+        get :second_login, params: params
+        assert session[:shopify], "1"
+        assert session[:shopify_domain], "foobar"
+        assert session[:shopify_user], { 'id' => 1, 'email' => 'foo@example.com' }
+        assert session[:user_session], 'old-user-session'
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
     end
-  ensure
-    ShopifyApp.configuration.per_user_tokens = false
   end
 
 

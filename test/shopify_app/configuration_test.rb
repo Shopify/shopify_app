@@ -25,13 +25,15 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "configure object can set per-user tokens" do
-    ShopifyApp.configure do |config|
-      config.per_user_tokens = true
-    end
+    begin
+      ShopifyApp.configure do |config|
+        config.per_user_tokens = true
+      end
 
-    assert_equal true, ShopifyApp.configuration.per_user_tokens?
-  ensure
-    ShopifyApp.configuration.per_user_tokens = false
+      assert_equal true, ShopifyApp.configuration.per_user_tokens?
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
   end
 
   test "defaults login_url" do
