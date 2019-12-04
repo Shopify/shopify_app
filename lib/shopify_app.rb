@@ -25,6 +25,9 @@ require 'shopify_app/controller_concerns/app_proxy_verification'
 require 'shopify_app/jobs/webhooks_manager_job'
 require 'shopify_app/jobs/scripttags_manager_job'
 
+# controllers
+require 'shopify_app/controllers/extension_verification_controller'
+
 # managers
 require 'shopify_app/managers/webhooks_manager'
 require 'shopify_app/managers/scripttags_manager'
