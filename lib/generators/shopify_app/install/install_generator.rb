@@ -40,12 +40,19 @@ module ShopifyApp
       end
 
       def create_embedded_app_layout
-        if embedded_app?
-          copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+        return unless embedded_app?
+
+        copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
+        copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
+
+        if ShopifyApp.use_webpacker?
+          copy_file('shopify_app.js', 'app/javascript/shopify_app/shopify_app.js')
+          copy_file('flash_messages.js', 'app/javascript/shopify_app/flash_messages.js')
+          copy_file('shopify_app_index.js', 'app/javascript/shopify_app/index.js')
+          append_to_file('app/javascript/packs/application.js', 'require("shopify_app")')
+        else
           copy_file('shopify_app.js', 'app/assets/javascripts/shopify_app.js')
-          copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
-          copy_file('flash_messages.js',
-            'app/assets/javascripts/flash_messages.js')
+          copy_file('flash_messages.js', 'app/assets/javascripts/flash_messages.js')
         end
       end
 
@@ -60,7 +67,7 @@ module ShopifyApp
       def insert_hosts_into_development_config
         inject_into_file(
           'config/environments/development.rb',
-          "  config.hosts << /\\h+.ngrok.io/\n",
+          "  config.hosts = (config.hosts rescue []) << /\\h+.ngrok.io/\n",
           after: "Rails.application.configure do\n"
         )
       end

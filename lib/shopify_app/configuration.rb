@@ -28,6 +28,9 @@ module ShopifyApp
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
+    # ability to have webpacker installed but not used in this gem and the generators
+    attr_accessor :disable_webpacker
+
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
@@ -36,6 +39,7 @@ module ShopifyApp
       @myshopify_domain = 'myshopify.com'
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
+      @disable_webpacker = ENV['SHOPIFY_APP_DISABLE_WEBPACKER'].present?
     end
 
     def login_url
