@@ -1,3 +1,7 @@
+11.4.0
+-----
+* Remove `dotenv-rails` dependency. [#835](https://github.com/Shopify/shopify_app/pull/835)
+
 11.3.2
 -----
 * Fix hosts generator in Rails 5 [#823](https://github.com/Shopify/shopify_app/pull/823)
