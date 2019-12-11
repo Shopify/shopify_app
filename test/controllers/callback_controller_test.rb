@@ -152,7 +152,7 @@ module ShopifyApp
       assert_raise NameError do
         get :callback, params: { shop: 'shop' }
       end
-   end
+    end
 
     private
 
