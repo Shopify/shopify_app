@@ -24,6 +24,9 @@ module ShopifyApp
   # utils
   require 'shopify_app/utils'
 
+  # controllers
+  require 'shopify_app/controllers/extension_verification_controller'
+
   # controller concerns
   require 'shopify_app/controller_concerns/localization'
   require 'shopify_app/controller_concerns/itp'
