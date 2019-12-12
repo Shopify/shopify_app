@@ -11,10 +11,6 @@ module ShopifyApp
       class_option :embedded, type: :string, default: 'true'
       class_option :api_version, type: :string, default: nil
 
-      def add_dotenv_gem
-        gem('dotenv-rails', group: [:test, :development])
-      end
-
       def create_shopify_app_initializer
         @application_name = format_array_argument(options['application_name'])
         @scope = format_array_argument(options['scope'])
