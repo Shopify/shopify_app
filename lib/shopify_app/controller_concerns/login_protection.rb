@@ -38,11 +38,11 @@ module ShopifyApp
 
     def login_again_if_different_user_or_shop
       if ShopifyApp.configuration.per_user_tokens?
-        invalid_session_data = session[:user_session].nil? || params[:session].nil? # session data was not sent/stored correctly
+        valid_session_data = session[:user_session].present? && params[:session].present? # session data was sent/stored correctly
         sessions_do_not_match = session[:user_session] != params[:session] # current user is different from stored user
 
-        if invalid_session_data || sessions_do_not_match
-          clear_session = true   
+        if valid_session_data && sessions_do_not_match
+          clear_session = true
         end
       end
 
