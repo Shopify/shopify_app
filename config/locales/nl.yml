@@ -1,20 +1,20 @@
 ---
 nl:
-  logged_out: je bent afgemeld
+  logged_out: u bent afgemeld
   could_not_log_in: Kon niet aanmelden bij Shopify-winkel
   invalid_shop_url: Ongeldig winkeldomein
   enable_cookies_heading: Schakel cookies in van %{app}
-  enable_cookies_body: Je moet cookies in deze browser handmatig inschakelen om %{app}
+  enable_cookies_body: U moet cookies in deze browser handmatig inschakelen om %{app}
     binnen Shopify te gebruiken.
-  enable_cookies_footer: Met cookies kan de app je verifiëren door je voorkeuren en
+  enable_cookies_footer: Met cookies kan de app u verifiëren door uw voorkeuren en
     persoonlijke informatie tijdelijk op te slaan. Ze vervallen na 30 dagen.
   enable_cookies_action: Schakel cookies in
-  top_level_interaction_heading: Je browser moet %{app} verifiëren
-  top_level_interaction_body: Je browser heeft apps nodig zoals %{app} om je toegang
-    te vragen tot cookies voordat Shopify het voor je kan openen.
+  top_level_interaction_heading: Uw browser moet %{app} verifiëren
+  top_level_interaction_body: Uw browser heeft apps nodig zoals %{app} om u toegang
+    te vragen tot cookies voordat Shopify het voor u kan openen.
   top_level_interaction_action: Doorgaan
   request_storage_access_heading: "%{app} heeft toegang tot cookies nodig"
-  request_storage_access_body: Hiermee kan de app je verifiëren door je persoonlijke
+  request_storage_access_body: Hiermee kan de app u verifiëren door uw persoonlijke
     gegevens tijdelijk op te slaan. Klik op Doorgaan en sta cookies toe om de app
     te gebruiken.
   request_storage_access_footer: Cookies verlopen na 30 dagen.

@@ -95,7 +95,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "adds host config to development.rb" do
     run_generator
     assert_file "config/environments/development.rb" do |config|
-      assert_match "config.hosts << /\\h+.ngrok.io/", config
+      assert_match "config.hosts = (config.hosts rescue []) << /\\h+.ngrok.io/", config
     end
   end
 end
