@@ -234,6 +234,9 @@ After running the generator, ensure that configuration settings are successfully
 ```ruby
 # In the `omniauth.rb` initializer:
 provider :shopify,
+  ShopifyApp.configuration.api_key,
+  ShopifyApp.configuration.secret,
+  scope: ShopifyApp.configuration.scope,
   per_user_permissions: true
 
 # In the `shopify_app.rb` initializer:
