@@ -1,7 +1,7 @@
 11.5.0
 -----
 * Modularizes durable session storage
-* Introduces per-user token support and user session management (beta)
+* Introduces per-user token support and user session management
 
 11.4.0
 -----
