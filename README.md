@@ -228,7 +228,7 @@ The current Shopify user will be stored in the rails session at `session[:shopif
 
 This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
 
-*Note: For migrating from shop-based to user-based token strategy*
+#### Migrating from shop-based to user-based token strategy
 After running the generator, ensure that configuration settings are successfully changed:
 
 ```ruby
