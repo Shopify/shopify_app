@@ -8,6 +8,7 @@ before_script:
 language: ruby
 before_install:
   - gem update --system
+  - gem update bundler
 cache:
   bundler: true
   directories:
