@@ -6,6 +6,9 @@ before_script:
     - "sudo chown root /opt/google/chrome/chrome-sandbox"
     - "sudo chmod 4755 /opt/google/chrome/chrome-sandbox"
 language: ruby
+before_install:
+  - gem update --system
+  - gem update bundler
 cache:
   bundler: true
   directories:
