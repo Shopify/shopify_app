@@ -151,6 +151,24 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test "#login_again_if_different_user_or_shop retains current session if params not present" do
+    begin
+      ShopifyApp.configuration.per_user_tokens = true
+      with_application_test_routes do
+        session[:shopify] = "1"
+        session[:shopify_domain] = "foobar"
+        session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+        session[:user_session] = 'old-user-session'
+        get :second_login
+        assert session[:shopify], "1"
+        assert session[:shopify_domain], "foobar"
+        assert session[:shopify_user], { 'id' => 1, 'email' => 'foo@example.com' }
+        assert session[:user_session], 'old-user-session'
+      end
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
 
   test "#login_again_if_different_user_or_shop removes current session and redirects to login url" do
     with_application_test_routes do
