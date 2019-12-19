@@ -17,7 +17,6 @@ module ShopifyApp
     attr_accessor :session_repository
     attr_accessor :per_user_tokens
     alias_method :per_user_tokens?, :per_user_tokens
-    attr_accessor :scope
     attr_accessor :api_version
 
     # customise urls
