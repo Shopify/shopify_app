@@ -171,6 +171,13 @@ $ rails generate shopify_app:app_proxy_controller
 
 This optional generator, not included with the default generator, creates the app proxy controller to handle proxy requests to the app from your shop storefront, modifies 'config/routes.rb' with a namespace route, and an example view which displays current shop information using the LiquidAPI
 
+### Marketing Extension Generator
+
+```sh
+$ rails generate shopify_app:add_marketing_activity_extension
+```
+
+This will create a controller with the endpoints required to build a [marketing activities extension](https://help.shopify.com/en/api/embedded-apps/app-extensions/shopify-admin/marketing-activities). The extension will be generated with a base url at `/marketing_activities`, which should also be configured in partners.
 
 ### Controllers, Routes and Views
 
