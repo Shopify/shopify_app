@@ -14,7 +14,7 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
-    attr_accessor :session_repository
+    attr_reader :session_repository
     attr_accessor :per_user_tokens
     alias_method :per_user_tokens?, :per_user_tokens
     attr_accessor :api_version
