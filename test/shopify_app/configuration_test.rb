@@ -20,6 +20,22 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal false, ShopifyApp.configuration.after_authenticate_job
   end
 
+  test "configure object defaults to shop tokens" do
+    assert_equal false, ShopifyApp.configuration.per_user_tokens?
+  end
+
+  test "configure object can set per-user tokens" do
+    begin
+      ShopifyApp.configure do |config|
+        config.per_user_tokens = true
+      end
+
+      assert_equal true, ShopifyApp.configuration.per_user_tokens?
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
+
   test "defaults login_url" do
     assert_equal "/login", ShopifyApp.configuration.login_url
   end

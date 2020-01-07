@@ -6,7 +6,7 @@ module ShopifyApp
       repo[id]
     end
 
-    def self.store(session)
+    def self.store(session, *args)
       id = SecureRandom.uuid
       repo[id] = session
       id
