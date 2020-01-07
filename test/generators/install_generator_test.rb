@@ -85,13 +85,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "adds dotenv gem to Gemfile" do
-    run_generator
-    assert_file "Gemfile" do |gemfile|
-      assert_match "gem 'dotenv-rails', group: [:test, :development]", gemfile
-    end
-  end
-
   test "adds host config to development.rb" do
     run_generator
     assert_file "config/environments/development.rb" do |config|
