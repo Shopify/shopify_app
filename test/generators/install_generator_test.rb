@@ -42,7 +42,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
-      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
+      assert_match "config.session_repository = 'ShopifyApp::InMemorySessionStore'", shopify_app
     end
   end
 
@@ -54,7 +54,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
-      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
+      assert_match "config.session_repository = 'ShopifyApp::InMemorySessionStore'", shopify_app
     end
   end
 

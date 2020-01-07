@@ -50,13 +50,8 @@ module ShopifyApp
     end
 
     def session_repository=(klass)
-      if Rails.configuration.cache_classes
-        ShopifyApp::SessionRepository.storage = klass
-      else
-        ActiveSupport::Reloader.to_prepare do
-          ShopifyApp::SessionRepository.storage = klass
-        end
-      end
+      @session_repository = klass
+      ShopifyApp::SessionRepository.storage = klass
     end
 
     def has_webhooks?
