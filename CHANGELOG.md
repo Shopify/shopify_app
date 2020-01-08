@@ -1,8 +1,3 @@
-11.5.0
------
-* Modularizes durable session storage
-* Introduces per-user token support and user session management
-
 11.4.0
 -----
 * Remove `dotenv-rails` dependency. [#835](https://github.com/Shopify/shopify_app/pull/835)
