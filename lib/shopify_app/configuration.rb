@@ -14,7 +14,7 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
-    attr_accessor :session_repository
+    attr_reader :session_repository
     attr_accessor :per_user_tokens
     alias_method :per_user_tokens?, :per_user_tokens
     attr_accessor :api_version
@@ -50,13 +50,8 @@ module ShopifyApp
     end
 
     def session_repository=(klass)
-      if Rails.configuration.cache_classes
-        ShopifyApp::SessionRepository.storage = klass
-      else
-        ActiveSupport::Reloader.to_prepare do
-          ShopifyApp::SessionRepository.storage = klass
-        end
-      end
+      @session_repository = klass
+      ShopifyApp::SessionRepository.storage = klass
     end
 
     def has_webhooks?
