@@ -29,7 +29,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
   test "updates the shopify_app initializer" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|
-      assert_match "config.session_repository = Shop", file
+      assert_match "config.session_repository = 'Shop'", file
     end
   end
 

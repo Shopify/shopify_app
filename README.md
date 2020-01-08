@@ -247,7 +247,7 @@ provider :shopify,
   per_user_permissions: true
 
 # In the `shopify_app.rb` initializer:
-config.session_repository = User
+config.session_repository = 'User'
 config.per_user_tokens = true
 ```
 
