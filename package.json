@@ -23,5 +23,6 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"
-  }
+  },
+  "version": "11.5.1"
 }
