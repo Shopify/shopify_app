@@ -1,3 +1,7 @@
+11.5.1
+-----
+* Revert per-user token support temporarily
+
 11.5.0
 -----
 * Modularizes durable session storage
