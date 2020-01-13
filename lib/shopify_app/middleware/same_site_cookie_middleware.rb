@@ -10,7 +10,7 @@ module ShopifyApp
       user_agent = env['HTTP_USER_AGENT']
 
       if headers && headers['Set-Cookie'] && !SameSiteCookieMiddleware.same_site_none_incompatible?(user_agent) &&
-        ShopifyApp.configuration.embedded_app == true
+          ShopifyApp.configuration.enable_same_site_none
 
         cookies = headers['Set-Cookie'].split("\n").compact
 
