@@ -12,5 +12,9 @@ module ShopifyApp
         storage_access.svg
       ]
     end
+
+    initializer "shopify_app.middleware" do |app|
+      app.config.middleware.insert_before(ActionDispatch::Cookies, ShopifyApp::SameSiteCookieMiddleware)
+    end
   end
 end

@@ -43,6 +43,9 @@ module ShopifyApp
   require 'shopify_app/managers/webhooks_manager'
   require 'shopify_app/managers/scripttags_manager'
 
+  # middleware
+  require 'shopify_app/middleware/same_site_cookie_middleware'
+
   # session
   require 'shopify_app/session/session_storage'
   require 'shopify_app/session/session_repository'
