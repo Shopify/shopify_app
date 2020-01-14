@@ -1,3 +1,9 @@
+11.6.0
+-----
+* Enable SameSite=None; Secure by default on all cookies for embedded apps [#851](https://github.com/Shopify/shopify_app/pull/851)
+  * Ensures compatibility of embedded apps with upcoming Chrome version 80 changes to cookie behaviour
+  * Configurable via `ShopifyApp.configuration.enable_same_site_none` (default true for embedded apps)
+
 11.5.1
 -----
 * Revert per-user token support temporarily
