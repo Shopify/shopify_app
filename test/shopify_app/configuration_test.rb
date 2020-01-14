@@ -134,4 +134,38 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp.configuration.session_repository
     assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
   end
+
+  test "enable_same_site_none is true if embedded and enable_same_site_none is nil" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+    end
+
+    assert ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is false if embedded and enable_same_site_none is false" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+      config.enable_same_site_none = false
+    end
+
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is false if not embedded and enable_same_site_none is nil" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = false
+    end
+
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is true if not embedded and enable_same_site_none is true" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = false
+      config.enable_same_site_none = true
+    end
+
+    assert ShopifyApp.configuration.enable_same_site_none
+  end
 end
