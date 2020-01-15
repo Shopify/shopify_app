@@ -1,6 +1,7 @@
 11.7.0
 -----
 * Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
+* Add back per-user token support (added in 11.5.0, reverted in 11.5.1)
 
 11.6.0
 -----
