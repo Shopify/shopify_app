@@ -1,4 +1,4 @@
-11.6.1
+11.7.0
 -----
 * Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
 
