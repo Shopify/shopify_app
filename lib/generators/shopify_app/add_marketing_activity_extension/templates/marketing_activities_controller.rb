@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MarketingActivitiesController < ExtensionVerificationController
+class MarketingActivitiesController < ShopifyApp::ExtensionVerificationController
   def preload_form_data
     preload_data = {
       "form_data": {
