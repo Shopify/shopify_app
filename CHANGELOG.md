@@ -1,3 +1,7 @@
+11.6.1
+-----
+* Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
+
 11.6.0
 -----
 * Enable SameSite=None; Secure by default on all cookies for embedded apps [#851](https://github.com/Shopify/shopify_app/pull/851)
