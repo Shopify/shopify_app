@@ -457,6 +457,12 @@ Questions or problems?
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
 
+Upgrading to 11.7.0
+---------------------------
+
+### Session storage method signature breaking change
+If you override `def self.store(auth_session)` method in your session storage model (e.g. Shop), the method signature has changed to `def self.store(auth_session, *args)` in order to support user-based token storage. Please update your method signature to include the second argument.
+
 Rails 6 Compatibility
 ---------------------
 
