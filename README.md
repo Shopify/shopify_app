@@ -213,7 +213,7 @@ Authentication
 
 ### ShopifyApp::SessionRepository
 
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `ShopifyApp::InMemorySessionStore` class or the `ShopifyApp::SessionStorage` concern for details.
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. These methods are already implemented as part of the `ShopifyApp::SessionStorage` concern, but can be overridden for custom implementation.
 
 If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. For multi-server environments, implement one of the following token-storage strategies.
 
@@ -232,6 +232,8 @@ $ rails generate shopify_app:user_model
 This will generate a user model which will be the storage for the tokens necessary for authentication.
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
+
+In this mode, The `self.store(auth_session, *args)` will be invoked with a Shopify User object hash, which is then used to store the token as part of a user record, rather than a store record.
 
 This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
 
@@ -454,6 +456,12 @@ Questions or problems?
 
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
+
+Upgrading to 11.7.0
+---------------------------
+
+### Session storage method signature breaking change
+If you override `def self.store(auth_session)` method in your session storage model (e.g. Shop), the method signature has changed to `def self.store(auth_session, *args)` in order to support user-based token storage. Please update your method signature to include the second argument.
 
 Rails 6 Compatibility
 ---------------------
