@@ -73,6 +73,9 @@ $ heroku run rake db:migrate
 7. Install the App!
 -------------------
 1. Ensure you have a dev store created, if you don't already have one, [create one](https://help.shopify.com/en/api/getting-started/making-your-first-request#create-a-development-store).
+
+##### Important Note: Installing the app on a development store in the following step will convert the store to be [transfer-disabled](https://help.shopify.com/en/api/guides/store-transfers#transfer-disabled-stores). This is an irreversible change.
+
 2. Install the app using your Partners Dashboard in the Apps area.
 
 ![Installing an App on a dev store using partners dashboard](/docs/install-on-dev-shop.png)
