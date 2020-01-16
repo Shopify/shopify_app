@@ -2,6 +2,7 @@
 -----
 * Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
 * Add back per-user token support (added in 11.5.0, reverted in 11.5.1)
+  * If you have an override on the `self.store(auth_session)` method on your `SessionRepository` model, the method signature must be changed as according to this [change](https://github.com/Shopify/shopify_app/pull/856/files#diff-deaed2b262ec885f4e36de05621e41eaR18)
 
 11.6.0
 -----
