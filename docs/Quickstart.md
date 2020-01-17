@@ -17,7 +17,7 @@ $ git commit -m 'new rails app'
 2. Create a new Heroku app
 --------------------------
 
-The next step is to create a new heroku app. Pull up your heroku dashboard and make a new app!
+The next step is to create a new Heroku app. Pull up your Heroku dashboard and make a new app!
 
 cli:
 ```sh
@@ -25,7 +25,7 @@ $ heroku create name
 $ heroku git:remote -a name
 ```
 
-now we need to let git know where the remote server is so we'll be able to deploy later
+Now we need to let git know where the remote server is so we'll be able to deploy later
 
 web:
 ```sh
@@ -33,12 +33,13 @@ web:
 $ git remote add heroku git@heroku.com:appinfive.git
 ```
 
-3. Create a new App in the partners area
+3. Create a new App in the Shopify Partner dashboard
 -----------------------------------------
+* Create a Shopify app in the [Partners dashboard](https://partner.shopify.com). For this tutorial, you can choose either a public or custom app, but you can [learn about App Types here.](https://help.shopify.com/en/manual/apps/app-types)
 [https://app.shopify.com/services/partners/api_clients](https://app.shopify.com/services/partners/api_clients)
-* set the callback url to `https://<name>.herokuapp.com/`
-* choose an embedded app
-* set the redirect_uri to `https://<name>.herokuapp.com/auth/shopify/callback`
+* Set the callback url to `https://<name>.herokuapp.com/`
+* Choose an embedded app
+* Set the app's `redirect_uri` to `https://<name>.herokuapp.com/auth/shopify/callback`
 
 
 4. Add ShopifyApp to gemfile
@@ -48,7 +49,7 @@ $ echo "gem 'shopify_app'" >> Gemfile
 $ bundle install
 ```
 
-Note - its recommended to use the latest released version. Check the git tags to see the latest release and then add it to your Gemfile e.g `gem 'shopify_app', '~> 7.0.0'`
+Note - it's recommended to use the latest version of the Shopify Gem. Check the Git tags to see the latest release and then add it to your Gemfile e.g `gem 'shopify_app', '~> 7.0.0'`
 
 5. Run the ShopifyApp generator
 -------------------------------
@@ -63,7 +64,7 @@ If you forget to set your keys or redirect uri above, you will find them in the 
 
 We recommend adding a gem or utilizing ENV variables to handle your keys before releasing your app.
 
-6. Deploy
+6. Deploy your app
 ---------
 ```sh
 $ git push heroku
@@ -72,11 +73,11 @@ $ heroku run rake db:migrate
 
 7. Install the App!
 -------------------
- Ensure you have a development store created, if you don't already have one, [create one](https://help.shopify.com/en/api/getting-started/making-your-first-request#create-a-development-store).
+ Ensure you have created a development store on the Shopify Partner Dashboard. If you don't already have one, [create one by following these instructions](https://help.shopify.com/en/api/getting-started/making-your-first-request#create-a-development-store).
 
-##### Note: The following step will make your store become transfer-disabled. Read more about it [here](https://help.shopify.com/en/api/guides/store-transfers#transfer-disabled-stores). This is an irreversible change.
+##### Note: The following step will cause your store to become `transfer-disabled.` Read more about store transfer and why it's important [here](https://help.shopify.com/en/api/guides/store-transfers#transfer-disabled-stores). This is an irreversible change, so be sure you don't plan to transfer this store to a merchant.
 
-Install the app using your Partners Dashboard in the Apps area.
+Install the app using the Partner Dashboard in the Apps area.
 
 ![Installing an app on the partners dashboard dropdown](/docs/install-on-dev-shop.png)
 
