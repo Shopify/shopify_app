@@ -16,7 +16,7 @@ module ShopifyApp
 
         cookies.each do |cookie|
           unless cookie.include?("; SameSite")
-            headers['Set-Cookie'] = headers['Set-Cookie'].gsub("#{cookie}", "#{cookie}; secure; SameSite=None")
+            headers['Set-Cookie'] = headers['Set-Cookie'].gsub("#{cookie}", "#{cookie}; secure; SameSite=None\n")
           end
         end
       end
