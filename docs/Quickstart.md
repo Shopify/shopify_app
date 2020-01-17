@@ -80,7 +80,7 @@ Install the app using your Partners Dashboard in the Apps area.
 
 ![Installing an app on the partners dashboard dropdown](/docs/install-on-dev-shop.png)
 
-or
+### OR
 
 ![Installing an app on the partners dashboard card](/docs/test-your-app.png)
 
