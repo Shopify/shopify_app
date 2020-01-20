@@ -23,7 +23,7 @@ The next step is to create a new Heroku app to host your application. If you hav
 
 Head to the Heroku dashboard and create a new app, or run the following commands with the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) installed, substituting `name` for the name of your own app:
 
-cli:
+CLI:
 ```sh
 $ heroku create name
 $ heroku git:remote -a name
@@ -44,7 +44,6 @@ $ git remote add heroku git@heroku.com:appname.git
 * Set the callback url to `https://<appname>.herokuapp.com/`
 * Choose an embedded app
 * Set the app's `redirect_uri` to `https://<appname>.herokuapp.com/auth/shopify/callback`
-
 
 4. Add ShopifyApp to Gemfile
 ----------------------------
@@ -98,3 +97,7 @@ Install the app onto your new development store using the Partner Dashboard by h
 
 ![Installing an app on the partners dashboard card](/docs/test-your-app.png)
 
+8. Great work! 
+-------------------
+
+You're done creating your first app on Shopify. Keep going and learn more by [diving into our full documentation](https://help.shopify.com/en/api/getting-started), or join our [community of developers.](https://community.shopify.com/c/Shopify-Apps/bd-p/shopify-apps)
