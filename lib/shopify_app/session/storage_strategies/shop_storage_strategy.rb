@@ -3,7 +3,7 @@ module ShopifyApp
     class ShopStorageStrategy
 
       def self.store(auth_session, *args)
-        shop = Shop.find_or_initialize_by(shopify_domain: auth_session.domain)
+        shop = find_or_initialize_by(shopify_domain: auth_session.domain)
         shop.shopify_token = auth_session.token
         shop.save!
         shop.id
@@ -11,7 +11,7 @@ module ShopifyApp
 
       def self.retrieve(id)
         return unless id
-        if shop = Shop.find_by(id: id)
+        if shop = self.find_by(id: id)
           ShopifyAPI::Session.new(
             domain: shop.shopify_domain,
             token: shop.shopify_token,
