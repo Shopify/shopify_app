@@ -71,7 +71,7 @@ $ git commit -m 'generated shopify app'
 
 If you forget to set your keys or redirect uri above, you will find them in the shopify_app initializer at: `/config/initializers/shopify_app.rb`.
 
-We recommend adding a gem or utilizing environment variables (ENV) to handle your keys before releasing your app. [Learn more about using environment variables.](https://www.honeybadger.io/blog/ruby-guide-environment-variables/)
+We recommend adding a gem or utilizing environment variables (`.env`) to handle your keys before releasing your app. [Learn more about using environment variables.](https://www.honeybadger.io/blog/ruby-guide-environment-variables/)
 
 6. Deploy your app
 ---------
@@ -89,7 +89,7 @@ Ensure you have created a [development store](https://help.shopify.com/en/api/ge
 
 ##### Note: The following step will cause your store to become `transfer-disabled.` Read more about store transfer and why it's important [here](https://help.shopify.com/en/api/guides/store-transfers#transfer-disabled-stores). This is an irreversible change, so be sure you don't plan to transfer this store to a merchant.
 
-Install the app onto your new development store using the Partner Dashboard by heading to the apps page, clicking your app, and looking for the `Test your app` instructions where you can select a store to install your app on.
+Install the app onto your new development store using the Partner Dashboard. Log in to your account, visit the apps page, click the app you created earlier, and looking for the `Test your app` instructions where you can select a store to install your app on.
 
 ![Installing an app on the partners dashboard dropdown](/docs/install-on-dev-shop.png)
 
