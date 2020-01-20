@@ -13,7 +13,7 @@ Shopify Application Rails engine and generator
 Table of Contents
 -----------------
 - [Introduction](#introduction)
-- [Becoming a Shopify App Developer](#becoming-a-shopify-app-developer)
+- [Become a Shopify App Developer](#become-a-shopify-app-developer)
 - [Installation](#installation)
 - [Generators](#generators)
 - [Mounting the Engine](#mounting-the-engine)
@@ -31,25 +31,25 @@ Table of Contents
 
 Introduction
 -----------
-This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
+Get started with the [Shopify Admin API](https://help.shopify.com/en/api/getting-started) faster; This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
 
-*Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete some of your files.*
+*Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete your files.*
 
-Check out this screencast on how to create and deploy a new Shopify App to Heroku in 5 minutes:
+Learn how to create and deploy a new Shopify App to Heroku with our [quickstart guide](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md), or dive in in less than 5 minutes with this quickstart video:
 
 [https://www.youtube.com/watch?v=yGxeoAHlQOg](https://www.youtube.com/watch?v=yGxeoAHlQOg)
 
-Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md)
-
-Becoming a Shopify App Developer
+Become a Shopify App Developer
 --------------------------------
-If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
+To become a Shopify App Developer you'll need a [Shopify Partner account.](http://shopify.com/partners) If you don't have a Shopify Partner account, head to http://shopify.com/partners to create one before you start.
 
-Once you have a Partner account create a new application to get an API key and other API credentials. To create a development application set the `App URL` to the URL provided by [your tunnel](#app-tunneling) or `http://localhost:3000/` if you are not embeddeding your app inside the admin or receiving webhooks and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. Ensure you are using `https://` URLs if you are using tunneling.
+Once you have a Partner account, [create a new application in the Partner Dashboard](https://help.shopify.com/en/api/tools/partner-dashboard/your-apps) to get an API key and other API credentials. 
+
+To create an application for development set your new app's `App URL` to the URL provided by [your tunnel](#app-tunneling), ensuring that you use `https://`. If you are not planning to embed your app inside the Shopify admin or receive webhooks, set your redirect URL to `http://localhost:3000/` and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. 
 
 Installation
 ------------
-To get started add shopify_app to your Gemfile and bundle install
+To get started add `shopify_app` to your Gemfile and run `bundle install`:
 
 ``` sh
 # Create a new rails app
@@ -61,7 +61,7 @@ $ echo "gem 'shopify_app'" >> Gemfile
 $ bundle install
 ```
 
-Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
+Now we are ready to run any of the [generators](#generators) included with `shopify_app`. The following section explains the generators and what you can do with them.
 
 
 #### Rails Compatibility
@@ -74,24 +74,24 @@ Generators
 
 ### Default Generator
 
-The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start your app.
+The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start a new app from scratch:
 
 ```sh
 $ rails generate shopify_app
 ```
 
-After running the generator, you will need to run `rails db:migrate` to add tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting localhost.
+After running the generator, you will need to run `rails db:migrate` to add new tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting `http://localhost` in your web browser. 
 
 ### API Keys
 
-The default and install generators have been updated to source Shopify API key and secret from a `.env` file, which you will need to create with the following format:
+The default and install generators have been updated to source Shopify API key and secret from an Environment (`.env`) variables file, which you will need to create with the following format:
 
 ```
 SHOPIFY_API_KEY=your api key
 SHOPIFY_API_SECRET=your api secret
 ```
 
-These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard].
+These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code. 
 
 ### Install Generator
 
@@ -123,7 +123,7 @@ After running the `install` generator, you can start your app with `bundle exec 
 $ rails generate shopify_app:home_controller
 ```
 
-This generator creates an example home controller and view which fetches and displays products using the ShopifyAPI
+This generator creates an example home controller and view which fetches and displays products using the Shopify API
 
 
 ### App Proxy Controller Generator
@@ -408,9 +408,11 @@ strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
 App Tunneling
 -------------
 
-Your local app needs to be accessible from the public Internet in order to install it on a shop, use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), [Hookbin](https://hookbin.com/), etc.
+Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. 
 
-For example with [ngrok](https://ngrok.com/), run this command to set up proxying to Rails' default port:
+Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+
+For example with [ngrok](https://ngrok.com/), run this command to set up a tunnel proxy to Rails' default port:
 
 ```sh
 ngrok http 3000
