@@ -31,7 +31,7 @@ Table of Contents
 
 Introduction
 -----------
-Get started with the [Shopify API](https://help.shopify.com/en/api/getting-started) faster; This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
+Get started with the [Shopify Admin API](https://help.shopify.com/en/api/getting-started) faster; This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
 
 *Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete your files.*
 
@@ -410,7 +410,7 @@ App Tunneling
 
 Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. 
 
-Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
 
 For example with [ngrok](https://ngrok.com/), run this command to set up a tunnel proxy to Rails' default port:
 
