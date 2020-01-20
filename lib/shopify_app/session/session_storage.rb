@@ -3,6 +3,12 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
+      if ShopifyApp.configuration.per_user_tokens?
+        extend ShopifyApp::SessionStorage::UserStorageStrategy
+      else
+        extend ShopifyApp::SessionStorage::ShopStorageStrategy
+      end
+
       validates :shopify_token, presence: true
       validates :api_version, presence: true
       validates :shopify_domain, presence: true,
@@ -18,23 +24,6 @@ module ShopifyApp
         api_version: api_version,
         &block
       )
-    end
-
-    class_methods do
-
-      def strategy_klass
-        ShopifyApp.configuration.per_user_tokens? ? 
-          ShopifyApp::SessionStorage::UserStorageStrategy : 
-          ShopifyApp::SessionStorage::ShopStorageStrategy
-      end
-
-      def store(auth_session, user: nil)
-        strategy_klass.store(auth_session, user)
-      end
-
-      def retrieve(id)
-        strategy_klass.retrieve(id)
-      end
     end
   end
 end
