@@ -1,3 +1,7 @@
+11.7.1
+-----
+* Fix to allow SessionStorage to be flexible on what model names that the are used for storing shop and user data
+
 11.7.0
 -----
 * Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
