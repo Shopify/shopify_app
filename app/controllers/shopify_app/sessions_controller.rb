@@ -20,11 +20,12 @@ module ShopifyApp
 
       render(:enable_cookies, layout: false, locals: {
         does_not_have_storage_access_url: top_level_interaction_path(
-          shop: sanitized_shop_name
+          shop: sanitized_shop_name,
+          return_to: params[:return_to]
         ),
         has_storage_access_url: login_url_with_optional_shop(top_level: true),
-        app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
-        current_shopify_domain: current_shopify_domain,
+        app_target_url: params[:return_to] || granted_storage_access_path(shop: sanitized_shop_name),
+        current_shopify_domain: current_shopify_domain
       })
     end
 
@@ -133,11 +134,12 @@ module ShopifyApp
         layout: false,
         locals: {
           does_not_have_storage_access_url: top_level_interaction_path(
-            shop: sanitized_shop_name
+            shop: sanitized_shop_name,
+            return_to: session[:return_to]
           ),
           has_storage_access_url: login_url_with_optional_shop(top_level: true),
-          app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
-          current_shopify_domain: current_shopify_domain,
+          app_target_url: session[:return_to] || granted_storage_access_path(shop: sanitized_shop_name),
+          current_shopify_domain: current_shopify_domain
         }
       )
     end
