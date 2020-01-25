@@ -12,70 +12,44 @@ Shopify Application Rails engine and generator
 
 Table of Contents
 -----------------
-* [**Description**](#description)
-* [**Quickstart**](#quickstart)
-* [**Becoming a Shopify App Developer**](#becoming-a-shopify-app-developer)
-* [**App Tunneling**](#app-tunneling)
-* [**Installation**](#installation)
-  * [Rails Compatibility](#rails-compatibility)
-* [**Generators**](#generators)
- * [Default Generator](#default-generator)
- * [Install Generator](#install-generator)
- * [Shop Model Generator](#shop-model-generator)
- * [Home Controller Generator](#home-controller-generator)
- * [App Proxy Controller Generator](#app-proxy-controller-generator)
- * [Controllers, Routes and Views](#controllers-routes-and-views)
-* [**Mounting the Engine**](#mounting-the-engine)
-* [**WebhooksManager**](#webhooksmanager)
-* [**ScripttagsManager**](#scripttagsmanager)
-* [**AfterAuthenticate Job**](#afterauthenticate-job)
-* [**ShopifyApp::SessionRepository**](#shopifyappsessionrepository)
-* [**Authenticated**](#authenticated)
-* [**AppProxyVerification**](#appproxyverification)
- * [Recommended Usage](#recommended-usage)
-* [**Upgrading from 8.6 to 9.0.0**](#upgrading-from-86-to-900)
-* [**Troubleshooting**](#troubleshooting)
- * [Generator shopify_app:install hangs](#generator-shopify_appinstall-hangs)
-* [**Testing an embedded app outside the Shopify admin**](#testing-an-embedded-app-outside-the-shopify-admin)
-* [**Questions or problems?**](#questions-or-problems)
+- [Introduction](#introduction)
+- [Become a Shopify App Developer](#become-a-shopify-app-developer)
+- [Installation](#installation)
+- [Generators](#generators)
+- [Mounting the Engine](#mounting-the-engine)
+- [Authentication](#authentication)
+- [WebhooksManager](#webhooksmanager)
+- [ScripttagsManager](#scripttagsmanager)
+- [RotateShopifyTokenJob](#rotateshopifytokenjob)
+- [App Tunneling](#app-tunneling)
+- [AppProxyVerification](#appproxyverification)
+- [Troubleshooting](#troubleshooting)
+- [Testing an embedded app outside the Shopify admin](#testing-an-embedded-app-outside-the-shopify-admin)
+- [Questions or problems?](#questions-or-problems-)
+- [Rails 6 Compatibility](#rails-6-compatibility)
+- [Upgrading from 8.6 to 9.0.0](#upgrading-from-86-to-900)
 
-
-Description
+Introduction
 -----------
-This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
+Get started with the [Shopify Admin API](https://help.shopify.com/en/api/getting-started) faster; This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
 
-*Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete some of your files.*
+*Note: It's recommended to use this on a new Rails project, so that the generator won't overwrite/delete your files.*
 
-
-Quickstart
-----------
-
-Check out this screencast on how to create and deploy a new Shopify App to Heroku in 5 minutes:
+Learn how to create and deploy a new Shopify App to Heroku with our [quickstart guide](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md), or dive in in less than 5 minutes with this quickstart video:
 
 [https://www.youtube.com/watch?v=yGxeoAHlQOg](https://www.youtube.com/watch?v=yGxeoAHlQOg)
 
-Or if you prefer text instructions the steps in the video are written out [here](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md)
-
-App Tunneling
--------------
-
-Your local app needs to be accessible from the public Internet in order to install it on a shop, use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), [Hookbin](https://hookbin.com/), etc.
-
-For example with [ngrok](https://ngrok.com/), run this command to set up proxying to Rails' default port:
-
-```sh
-ngrok http 3000
-```
-
-Becoming a Shopify App Developer
+Become a Shopify App Developer
 --------------------------------
-If you don't have a Shopify Partner account yet head over to http://shopify.com/partners to create one, you'll need it before you can start developing apps.
+To become a Shopify App Developer you'll need a [Shopify Partner account.](http://shopify.com/partners) If you don't have a Shopify Partner account, head to http://shopify.com/partners to create one before you start.
 
-Once you have a Partner account create a new application to get an API key and other API credentials. To create a development application set the `App URL` to the URL provided by [your tunnel](#app-tunneling) or `http://localhost:3000/` if you are not embeddeding your app inside the admin or receiving webhooks and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. Ensure you are using `https://` URLs if you are using tunneling.
+Once you have a Partner account, [create a new application in the Partner Dashboard](https://help.shopify.com/en/api/tools/partner-dashboard/your-apps) to get an API key and other API credentials. 
+
+To create an application for development set your new app's `App URL` to the URL provided by [your tunnel](#app-tunneling), ensuring that you use `https://`. If you are not planning to embed your app inside the Shopify admin or receive webhooks, set your redirect URL to `http://localhost:3000/` and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. 
 
 Installation
 ------------
-To get started add shopify_app to your Gemfile and bundle install
+To get started add `shopify_app` to your Gemfile and run `bundle install`:
 
 ``` sh
 # Create a new rails app
@@ -87,7 +61,7 @@ $ echo "gem 'shopify_app'" >> Gemfile
 $ bundle install
 ```
 
-Now we are ready to run any of the shopify_app generators. The following section explains the generators and what they can do.
+Now we are ready to run any of the [generators](#generators) included with `shopify_app`. The following section explains the generators and what you can do with them.
 
 
 #### Rails Compatibility
@@ -100,24 +74,24 @@ Generators
 
 ### Default Generator
 
-The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start your app.
+The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start a new app from scratch:
 
 ```sh
 $ rails generate shopify_app
 ```
 
-After running the generator, you will need to run `rake db:migrate` to add tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting localhost.
+After running the generator, you will need to run `rails db:migrate` to add new tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting `http://localhost` in your web browser. 
 
 ### API Keys
 
-The default and install generators have been updated to source Shopify API key and secret from a `.env` file, which you will need to create with the following format:
+The default and install generators have been updated to source Shopify API key and secret from an Environment (`.env`) variables file, which you will need to create with the following format:
 
 ```
 SHOPIFY_API_KEY=your api key
 SHOPIFY_API_SECRET=your api secret
 ```
 
-These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard].
+These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code. 
 
 ### Install Generator
 
@@ -143,24 +117,13 @@ The generator adds ShopifyApp and the required initializers to the host Rails ap
 After running the `install` generator, you can start your app with `bundle exec rails server` and install your app by visiting localhost.
 
 
-### Shop Model Generator
-
-```sh
-$ rails generate shopify_app:shop_model
-```
-
-The `install` generator doesn't create any database tables or models for you. If you are starting a new app its quite likely that you will want a shops table and model to store the tokens when your app is installed (most of our internally developed apps do!). This generator creates a shop model and a migration. This model includes the `ShopifyApp::SessionStorage` concern which adds two methods to make it compatible as a `SessionRepository`. After running this generator you'll notice the `session_repository` in your `config/initializers/shopify_app.rb` will be set to the `Shop` model. This means that internally ShopifyApp will try and load tokens from this model.
-
-*Note that you will need to run rake db:migrate after this generator*
-
-
 ### Home Controller Generator
 
 ```sh
 $ rails generate shopify_app:home_controller
 ```
 
-This generator creates an example home controller and view which fetches and displays products using the ShopifyAPI
+This generator creates an example home controller and view which fetches and displays products using the Shopify API
 
 
 ### App Proxy Controller Generator
@@ -171,6 +134,13 @@ $ rails generate shopify_app:app_proxy_controller
 
 This optional generator, not included with the default generator, creates the app proxy controller to handle proxy requests to the app from your shop storefront, modifies 'config/routes.rb' with a namespace route, and an example view which displays current shop information using the LiquidAPI
 
+### Marketing Extension Generator
+
+```sh
+$ rails generate shopify_app:add_marketing_activity_extension
+```
+
+This will create a controller with the endpoints required to build a [marketing activities extension](https://help.shopify.com/en/api/embedded-apps/app-extensions/shopify-admin/marketing-activities). The extension will be generated with a base url at `/marketing_activities`, which should also be configured in partners.
 
 ### Controllers, Routes and Views
 
@@ -238,21 +208,84 @@ ShopifyApp.configure do |config|
 end
 ```
 
-Per User Authentication
------------------------
-To enable per user authentication you need to update the `omniauth.rb` initializer:
+Authentication
+--------------
+
+### ShopifyApp::SessionRepository
+
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. These methods are already implemented as part of the `ShopifyApp::SessionStorage` concern, but can be overridden for custom implementation.
+
+If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. For multi-server environments, implement one of the following token-storage strategies.
+
+#### Shop-based token storage
+Storing tokens on the store model means that any user login associated to the store will have equal access levels to whatever the original user granted the app.
+```sh
+$ rails generate shopify_app:shop_model
+```
+This will generate a shop model which will be the storage for the tokens necessary for authentication.
+
+#### User-based token storage
+A more granular control over level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed.
+```sh
+$ rails generate shopify_app:user_model
+```
+This will generate a user model which will be the storage for the tokens necessary for authentication.
+
+The current Shopify user will be stored in the rails session at `session[:shopify_user]`
+
+In this mode, The `self.store(auth_session, *args)` will be invoked with a Shopify User object hash, which is then used to store the token as part of a user record, rather than a store record.
+
+This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
+
+#### Migrating from shop-based to user-based token strategy
+After running the generator, ensure that configuration settings are successfully changed:
 
 ```ruby
+# In the `omniauth.rb` initializer:
 provider :shopify,
   ShopifyApp.configuration.api_key,
   ShopifyApp.configuration.secret,
   scope: ShopifyApp.configuration.scope,
   per_user_permissions: true
+
+# In the `shopify_app.rb` initializer:
+config.session_repository = 'User'
+config.per_user_tokens = true
 ```
 
-The current Shopify user will be stored in the rails session at `session[:shopify_user]`
+### Authenticated
 
-This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
+The engine provides a `ShopifyApp::Authenticated` concern which should be included in any controller that is intended to be behind Shopify OAuth. It adds `before_action`s to ensure that the user is authenticated and will redirect to the Shopify login page if not. It is best practice to include this concern in a base controller inheriting from your `ApplicationController`, from which all controllers that require Shopify authentication inherit.
+
+For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
+
+### AfterAuthenticate Job
+
+If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob" }
+end
+```
+
+The job can be configured as either a class or a class name string.
+
+If you need the job to run synchronously add the `inline` flag:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
+end
+```
+
+We've also provided a generator which creates a skeleton job and updates the initializer for you:
+
+```
+bin/rails g shopify_app:add_after_authenticate_job
+```
+
+If you want to perform that action only once, e.g. send a welcome email to the user when they install the app, you should make sure that this action is idempotent, meaning that it won't have an impact if run multiple times.
 
 
 WebhooksManager
@@ -346,36 +379,6 @@ Scripttags are created in the same way as the Webhooks, with a background job wh
 
 If `src` responds to `call` its return value will be used as the scripttag's source. It will be called on scripttag creation and deletion.
 
-AfterAuthenticate Job
----------------------
-
-If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job update your initializer as follows:
-
-```ruby
-ShopifyApp.configure do |config|
-  config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob" }
-end
-```
-
-The job can be configured as either a class or a class name string.
-
-If you need the job to run synchronously add the `inline` flag:
-
-```ruby
-ShopifyApp.configure do |config|
-  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
-end
-```
-
-We've also provided a generator which creates a skeleton job and updates the initializer for you:
-
-```
-bin/rails g shopify_app:add_after_authenticate_job
-```
-
-If you want to perform that action only once, e.g. send a welcome email to the user when they install the app, you should make sure that this action is idempotent, meaning that it won't have an impact if run multiple times.
-
-
 RotateShopifyTokenJob
 ---------------------
 
@@ -402,19 +405,18 @@ The generated rake task will be found at `lib/tasks/shopify/rotate_shopify_token
 strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
 ```
 
-ShopifyApp::SessionRepository
------------------------------
-
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are retrieved and stored for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(shopify_session)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. See either the `ShopifyApp::InMemorySessionStore` class or the `ShopifyApp::SessionStorage` concern for examples.
-
-If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. If you ran all the generators including the shop_model generator then the `Shop` model itself will be the `SessionRepository`. If you look at the implementation of the generated shop model you'll see that this gem provides a concern for the `SessionRepository`. You can use this concern on any model that responds to `shopify_domain`, `shopify_token` and `api_version`.
-
-Authenticated
+App Tunneling
 -------------
 
-The engine provides a `ShopifyApp::Authenticated` concern which should be included in any controller that is intended to be behind Shopify OAuth. It adds `before_action`s to ensure that the user is authenticated and will redirect to the Shopify login page if not. It is best practice to include this concern in a base controller inheriting from your `ApplicationController`, from which all controllers that require Shopify authentication inherit.
+Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. 
 
-For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
+Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+
+For example with [ngrok](https://ngrok.com/), run this command to set up a tunnel proxy to Rails' default port:
+
+```sh
+ngrok http 3000
+```
 
 AppProxyVerification
 --------------------
@@ -437,6 +439,11 @@ end
 Create your app proxy url in the [Shopify Partners' Dashboard][dashboard], making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
 
+App Bridge
+---
+
+A basic example of using [App Bridge][app-bridge] is included in the install generator. An app instance is automatically initialized in [shopify_app.js](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/shopify_app.js) and [flash_messages.js](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/flash_messages.js) converts Rails [flash messages](https://api.rubyonrails.org/classes/ActionDispatch/Flash.html) to App Bridge Toast actions automatically. By default, this library is included via [unpkg in the embedded_app layout](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/embedded_app.html.erb#L27). For more advanced uses it is recommended to [install App Bridge via npm or yarn](https://help.shopify.com/en/api/embedded-apps/app-bridge/getting-started#set-up-shopify-app-bridge-in-your-app).
+
 Troubleshooting
 ---------------
 
@@ -457,6 +464,29 @@ Questions or problems?
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
 
+Upgrading to 11.7.0
+---------------------------
+
+### Session storage method signature breaking change
+If you override `def self.store(auth_session)` method in your session storage model (e.g. Shop), the method signature has changed to `def self.store(auth_session, *args)` in order to support user-based token storage. Please update your method signature to include the second argument.
+
+Rails 6 Compatibility
+---------------------
+
+### Disable Webpacker
+If you are using sprockets in rails 6 or want to generate a shopify_app without webpacker run the install task by running
+
+```
+SHOPIFY_APP_DISABLE_WEBPACKER=1 rails generate shopify_app
+```
+
+and then in your ShopifyApp configuration block, add
+
+```
+ShopifyApp.configure do |config|
+  config.disable_webpacker = true
+end
+```
 
 Upgrading from 8.6 to 9.0.0
 ---------------------------
@@ -512,3 +542,4 @@ is changed to
 You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.
 
 [dashboard]:https://partners.shopify.com
+[app-bridge]:https://help.shopify.com/en/api/embedded-apps/app-bridge

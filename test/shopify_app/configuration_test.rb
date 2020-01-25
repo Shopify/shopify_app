@@ -20,6 +20,22 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal false, ShopifyApp.configuration.after_authenticate_job
   end
 
+  test "configure object defaults to shop tokens" do
+    assert_equal false, ShopifyApp.configuration.per_user_tokens?
+  end
+
+  test "configure object can set per-user tokens" do
+    begin
+      ShopifyApp.configure do |config|
+        config.per_user_tokens = true
+      end
+
+      assert_equal true, ShopifyApp.configuration.per_user_tokens?
+    ensure
+      ShopifyApp.configuration.per_user_tokens = false
+    end
+  end
+
   test "defaults login_url" do
     assert_equal "/login", ShopifyApp.configuration.login_url
   end
@@ -117,4 +133,55 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
   end
 
+  test "can set session_repository with a string" do
+    ShopifyApp.configure do |config|
+      config.session_repository = 'ShopifyApp::InMemorySessionStore'
+    end
+
+    assert_equal 'ShopifyApp::InMemorySessionStore', ShopifyApp.configuration.session_repository
+    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
+  end
+
+  test "can set session_repository with a class" do
+    ShopifyApp.configure do |config|
+      config.session_repository = ShopifyApp::InMemorySessionStore
+    end
+
+    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp.configuration.session_repository
+    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
+  end
+
+  test "enable_same_site_none is true if embedded and enable_same_site_none is nil" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+    end
+
+    assert ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is false if embedded and enable_same_site_none is false" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+      config.enable_same_site_none = false
+    end
+
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is false if not embedded and enable_same_site_none is nil" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = false
+    end
+
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is true if not embedded and enable_same_site_none is true" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = false
+      config.enable_same_site_none = true
+    end
+
+    assert ShopifyApp.configuration.enable_same_site_none
+  end
 end

@@ -27,12 +27,30 @@ module ShopifyApp
     end
 
     def shop_session
-      return unless session[:shopify]
-      @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
+      if ShopifyApp.configuration.per_user_tokens?
+        return unless session[:shopify_user]
+        @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify_user]['id'])
+      else
+        return unless session[:shopify]
+        @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
+      end
     end
 
-    def login_again_if_different_shop
+    def login_again_if_different_user_or_shop
+      if ShopifyApp.configuration.per_user_tokens?
+        valid_session_data = session[:user_session].present? && params[:session].present? # session data was sent/stored correctly
+        sessions_do_not_match = session[:user_session] != params[:session] # current user is different from stored user
+
+        if valid_session_data && sessions_do_not_match
+          clear_session = true
+        end
+      end
+
       if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
+        clear_session = true
+      end
+
+      if clear_session
         clear_shop_session
         redirect_to_login
       end
@@ -66,6 +84,7 @@ module ShopifyApp
       session[:shopify] = nil
       session[:shopify_domain] = nil
       session[:shopify_user] = nil
+      session[:user_session] = nil
     end
 
     def login_url_with_optional_shop(top_level: false)

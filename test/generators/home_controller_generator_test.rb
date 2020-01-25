@@ -21,19 +21,10 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     assert_file "app/controllers/home_controller.rb"
   end
 
-  test "creates the home index view with embedded options" do
-    run_generator
-    assert_file "app/views/home/index.html.erb" do |index|
-      assert_match "ShopifyApp.ready", index
-    end
-  end
-
   test "creates the home index view with embedded false" do
     ShopifyApp.configuration.embedded_app = false
     run_generator
-    assert_file "app/views/home/index.html.erb" do |index|
-      refute_match "ShopifyApp.ready", index
-    end
+    refute File.exist?('app/javascript/shopify_app/shopify_app.js')
   end
 
   test "adds home route to routes" do

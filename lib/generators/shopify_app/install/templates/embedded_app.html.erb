@@ -5,7 +5,11 @@
     <% application_name = ShopifyApp.configuration.application_name %>
     <title><%= application_name %></title>
     <%= stylesheet_link_tag 'application' %>
-    <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
+    <% if ShopifyApp.use_webpacker? %>
+      <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <% else %>
+      <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
+    <% end %>
     <%= csrf_meta_tags %>
   </head>
 
@@ -20,11 +24,11 @@
 
     <%= render 'layouts/flash_messages' %>
 
-    <script src="https://cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
+    <script src="https://unpkg.com/@shopify/app-bridge"></script>
 
     <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
       api_key: ShopifyApp.configuration.api_key,
-      shop_origin: ("https://#{ @shop_session.url }" if @shop_session),
+      shop_origin: (@shop_session.domain if @shop_session),
       debug: Rails.env.development?
     } ) %>
 

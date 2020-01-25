@@ -2,6 +2,6 @@ audience: partner
 classification: library
 org_line: App & Partner Platform
 owners:
-  - Shopify/app-partner-dev-tools-education
+  - Shopify/platform-dev-tools-education
 slack_channels:
   - dev-tools-education

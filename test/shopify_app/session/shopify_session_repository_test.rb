@@ -26,6 +26,11 @@ class TestSessionStoreClass
   end
 end
 
+class MockSessionStore < ActiveRecord::Base
+  include ShopifyApp::SessionStorage
+end
+
+
 class ShopifySessionRepositoryTest < ActiveSupport::TestCase
   attr_reader :session_store, :session
 
@@ -73,5 +78,4 @@ class ShopifySessionRepositoryTest < ActiveSupport::TestCase
     ShopifyApp::SessionRepository.storage = 'TestSessionStoreClass'
     assert_equal TestSessionStoreClass, ShopifyApp::SessionRepository.storage
   end
-
 end

@@ -11,6 +11,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     provide_existing_application_file
     provide_existing_routes_file
     provide_existing_application_controller
+    provide_development_config_file
   end
 
   teardown do
@@ -41,7 +42,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
-      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
+      assert_match "config.session_repository = 'ShopifyApp::InMemorySessionStore'", shopify_app
     end
   end
 
@@ -53,7 +54,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_orders, write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
-      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
+      assert_match "config.session_repository = 'ShopifyApp::InMemorySessionStore'", shopify_app
     end
   end
 
@@ -84,10 +85,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "adds dotenv gem to Gemfile" do
+  test "adds host config to development.rb" do
     run_generator
-    assert_file "Gemfile" do |gemfile|
-      assert_match "gem 'dotenv-rails', group: [:test, :development]", gemfile
+    assert_file "config/environments/development.rb" do |config|
+      assert_match "config.hosts = (config.hosts rescue []) << /\\h+.ngrok.io/", config
     end
   end
 end

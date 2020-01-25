@@ -3,9 +3,18 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
+      if ShopifyApp.configuration.per_user_tokens?
+        extend ShopifyApp::SessionStorage::UserStorageStrategy
+      else
+        extend ShopifyApp::SessionStorage::ShopStorageStrategy
+      end
+
       validates :shopify_token, presence: true
       validates :api_version, presence: true
+      validates :shopify_domain, presence: true,
+        if: Proc.new {|_| ShopifyApp.configuration.per_user_tokens? }
+      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false },
+        if: Proc.new {|_| !ShopifyApp.configuration.per_user_tokens? }
     end
 
     def with_shopify_session(&block)
@@ -15,27 +24,6 @@ module ShopifyApp
         api_version: api_version,
         &block
       )
-    end
-
-    class_methods do
-      def store(session)
-        shop = find_or_initialize_by(shopify_domain: session.domain)
-        shop.shopify_token = session.token
-        shop.save!
-        shop.id
-      end
-
-      def retrieve(id)
-        return unless id
-
-        if shop = self.find_by(id: id)
-          ShopifyAPI::Session.new(
-            domain: shop.shopify_domain,
-            token: shop.shopify_token,
-            api_version: shop.api_version
-          )
-        end
-      end
     end
   end
 end

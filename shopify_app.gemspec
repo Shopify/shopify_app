@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.3.1"
 
-  s.add_runtime_dependency('browser_sniffer', '~> 1.1.2')
+  s.add_runtime_dependency('browser_sniffer', '~> 1.1.3')
   s.add_runtime_dependency('rails', '> 5.2.1')
   s.add_runtime_dependency('shopify_api', '~> 8.0')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 2.2.0')
@@ -18,6 +18,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake')
   s.add_development_dependency('byebug')
   s.add_development_dependency('pry')
+  s.add_development_dependency('pry-nav')
+  s.add_development_dependency('pry-stack_explorer')
+  s.add_development_dependency('rb-readline')
   s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('minitest')
   s.add_development_dependency('mocha')

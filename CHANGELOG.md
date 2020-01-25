@@ -1,3 +1,53 @@
+11.7.1
+-----
+* Fix to allow SessionStorage to be flexible on what model names that the are used for storing shop and user data
+
+11.7.0
+-----
+* Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
+* Add back per-user token support (added in 11.5.0, reverted in 11.5.1)
+  * If you have an override on the `self.store(auth_session)` method on your `SessionRepository` model, the method signature must be changed as according to this [change](https://github.com/Shopify/shopify_app/pull/856/files#diff-deaed2b262ec885f4e36de05621e41eaR18)
+
+11.6.0
+-----
+* Enable SameSite=None; Secure by default on all cookies for embedded apps [#851](https://github.com/Shopify/shopify_app/pull/851)
+  * Ensures compatibility of embedded apps with upcoming Chrome version 80 changes to cookie behaviour
+  * Configurable via `ShopifyApp.configuration.enable_same_site_none` (default true for embedded apps)
+
+11.5.1
+-----
+* Revert per-user token support temporarily
+
+11.5.0
+-----
+* Modularizes durable session storage
+* Introduces per-user token support and user session management
+
+11.4.0
+-----
+* Remove `dotenv-rails` dependency. [#835](https://github.com/Shopify/shopify_app/pull/835)
+
+11.3.2
+-----
+* Fix hosts generator in Rails 5 [#823](https://github.com/Shopify/shopify_app/pull/823)
+
+11.3.1
+-----
+* Bump browser_sniffer version to 1.1.3 [#824](https://github.com/Shopify/shopify_app/pull/824)
+
+11.3.0
+-----
+* Update assets to be compatible with Rails 6 [#808](https://github.com/Shopify/shopify_app/pull/808)
+
+11.2.1
+-----
+* Adds ngrok whitelist in development [#802](https://github.com/Shopify/shopify_app/pull/802)
+
+11.2.0
+-----
+
+* Bump omniauth-shopify-oauth2 gem to v2.2.0
+
 11.1.0
 -----
 
