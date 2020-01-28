@@ -156,6 +156,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.embedded_app = true
     end
 
+    Rails.env.expects(:test?).returns(false)
     assert ShopifyApp.configuration.enable_same_site_none
   end
 
@@ -165,6 +166,8 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.enable_same_site_none = false
     end
 
+
+    Rails.env.expects(:test?).returns(false)
     refute ShopifyApp.configuration.enable_same_site_none
   end
 
@@ -173,6 +176,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.embedded_app = false
     end
 
+    Rails.env.expects(:test?).returns(false)
     refute ShopifyApp.configuration.enable_same_site_none
   end
 
@@ -182,6 +186,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.enable_same_site_none = true
     end
 
+    Rails.env.expects(:test?).returns(false)
     assert ShopifyApp.configuration.enable_same_site_none
   end
 end

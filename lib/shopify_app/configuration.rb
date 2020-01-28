@@ -66,7 +66,7 @@ module ShopifyApp
     end
 
     def enable_same_site_none
-      @enable_same_site_none.nil? ? embedded_app? : @enable_same_site_none
+      !Rails.env.test? && (@enable_same_site_none.nil? ? embedded_app? : @enable_same_site_none)
     end
   end
 
