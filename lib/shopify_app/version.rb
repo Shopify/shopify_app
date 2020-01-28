@@ -1,3 +1,3 @@
 module ShopifyApp
-  VERSION = '11.7.1'.freeze
+  VERSION = '12.0.0'.freeze
 end
