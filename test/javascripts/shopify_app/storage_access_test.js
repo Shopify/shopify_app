@@ -43,33 +43,33 @@ suite('StorageAccessHelper', () => {
       sinon.assert.called(storageAccessHelper.setUpCookiePartitioning);
     });
 
-    test('calls redirectToAppHome instead of manageStorageAccess or setUpCookiePartitioningStub if ITPHelper.userAgentIsAffected returns true', async () => {
+    test('calls redirectToAppTargetUrl instead of manageStorageAccess or setUpCookiePartitioningStub if ITPHelper.userAgentIsAffected returns true', async () => {
       storageAccessHelperSandbox.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
 
       storageAccessHelperSandbox.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
       sinon.assert.notCalled(storageAccessHelper.manageStorageAccess);
-      sinon.assert.called(storageAccessHelper.redirectToAppHome);
+      sinon.assert.called(storageAccessHelper.redirectToAppTargetUrl);
       sinon.assert.notCalled(storageAccessHelper.setUpCookiePartitioning);
     });
 
-    test('calls manageStorageAccess instead of redirectToAppHome if ITPHelper.userAgentIsAffected returns true', async () => {
+    test('calls manageStorageAccess instead of redirectToAppTargetUrl if ITPHelper.userAgentIsAffected returns true', async () => {
       storageAccessHelperSandbox.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
 
       storageAccessHelperSandbox.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
       sinon.assert.called(storageAccessHelper.manageStorageAccess);
-      sinon.assert.notCalled(storageAccessHelper.redirectToAppHome);
+      sinon.assert.notCalled(storageAccessHelper.redirectToAppTargetUrl);
       sinon.assert.notCalled(storageAccessHelper.setUpCookiePartitioning);
     });
   });
@@ -159,34 +159,34 @@ suite('StorageAccessHelper', () => {
   });
 
   suite('handleRequestStorageAccess', () => {
-    test('calls redirectToAppHome instead of redirectToAppsIndex when document.requestStorageAccess resolves', () => {
+    test('calls redirectToAppTargetUrl instead of redirectToAppsIndex when document.requestStorageAccess resolves', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve) => {
           resolve();
         });
       };
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.called(storageAccessHelper.redirectToAppHome);
+        sinon.assert.called(storageAccessHelper.redirectToAppTargetUrl);
         sinon.assert.notCalled(storageAccessHelper.redirectToAppsIndex);
       });
     });
 
-    test('calls redirectToAppsIndex with "storage_access_denied" instead of calling redirectToAppHome when document.requestStorageAccess fails', () => {
+    test('calls redirectToAppsIndex with "storage_access_denied" instead of calling redirectToAppTargetUrl when document.requestStorageAccess fails', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve, reject) => {
           reject();
         });
       };
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.notCalled(storageAccessHelper.redirectToAppHome);
+        sinon.assert.notCalled(storageAccessHelper.redirectToAppTargetUrl);
         sinon.assert.calledWith(storageAccessHelper.redirectToAppsIndex, 'storage_access_denied');
       });
     });
