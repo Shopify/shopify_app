@@ -1,3 +1,7 @@
+12.0.0
+-----
+* Updating shopify_api gem to 9.0.0
+
 11.7.1
 -----
 * Fix to allow SessionStorage to be flexible on what model names that the are used for storing shop and user data
