@@ -35,7 +35,8 @@
   StorageAccessHelper.prototype.grantedStorageAccess = function() {
     try {
       sessionStorage.setItem('shopify.granted_storage_access', true);
-      document.cookie = 'shopify.granted_storage_access=true';
+      alert('here')
+      document.cookie = 'shopify.granted_storage_access=true; SameSite=None';
       if (!document.cookie) {
         throw 'Cannot set third-party cookie.'
       }
