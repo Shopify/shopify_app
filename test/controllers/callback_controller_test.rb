@@ -2,6 +2,14 @@
 
 require 'test_helper'
 
+class MockShopStorage < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorage
+end
+
+class MockUserStorage < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorage
+end
+
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
     def perform; end
@@ -13,7 +21,7 @@ module ShopifyApp
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
-      ShopifyApp.configuration = nil
+      # ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
 
       I18n.locale = :en
@@ -50,19 +58,13 @@ module ShopifyApp
     end
 
     test '#callback sets up a shopify session with a user for online mode' do
-      begin
-        ShopifyApp.configuration.per_user_tokens = true
-    
-        mock_shopify_user_omniauth
-    
-        get :callback, params: { shop: 'shop' }
-        assert_not_nil session[:shopify]
-        assert_equal 'shop.myshopify.com', session[:shopify_domain]
-        assert_equal 'user_object', session[:shopify_user]
-        assert_equal 'this.is.a.user.session', session[:user_session]
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
+      mock_shopify_user_omniauth
+
+      get :callback, params: { shop: 'shop' }
+      assert_not_nil session[:shopify]
+      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+      assert_equal 'user_object', session[:shopify_user]
+      assert_equal 'this.is.a.user.session', session[:user_session]
     end
 
     test '#callback starts the WebhooksManager if webhooks are configured' do
@@ -168,7 +170,7 @@ module ShopifyApp
         provider: :shopify,
         uid: 'shop.myshopify.com',
         credentials: { token: '1234' },
-        extra: { 
+        extra: {
           associated_user: 'user_object',
           associated_user_scope: "read_products",
           scope: "read_products",

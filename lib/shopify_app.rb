@@ -44,9 +44,9 @@ module ShopifyApp
   require 'shopify_app/middleware/same_site_cookie_middleware'
 
   # session
-  require 'shopify_app/session/storage_strategies/shop_storage_strategy'
-  require 'shopify_app/session/storage_strategies/user_storage_strategy'
   require 'shopify_app/session/session_storage'
+  require 'shopify_app/session/shop_session_storage'
+  require 'shopify_app/session/user_session_storage'
   require 'shopify_app/session/session_repository'
   require 'shopify_app/session/in_memory_session_store'
 end

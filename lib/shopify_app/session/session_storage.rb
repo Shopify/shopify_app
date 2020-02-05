@@ -3,12 +3,6 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      if ShopifyApp.configuration.per_user_tokens?
-        extend ShopifyApp::SessionStorage::UserStorageStrategy
-      else
-        extend ShopifyApp::SessionStorage::ShopStorageStrategy
-      end
-
       validates :shopify_token, presence: true
       validates :api_version, presence: true
       validates :shopify_domain, presence: true,

@@ -198,4 +198,20 @@ class ConfigurationTest < ActiveSupport::TestCase
     Rails.env.expects(:test?).returns(false)
     assert ShopifyApp.configuration.enable_same_site_none
   end
+
+  test "user_token_repository set properly" do
+    class User < ActiveRecord::Base
+      include ShopifyApp::UserSessionStorage
+    end
+
+    assert_equal ShopifyApp.configuration.user_token_repository, User
+  end
+
+  test "shop_token_repository set properly" do
+    class Shop < ActiveRecord::Base
+      include ShopifyApp::ShopSessionStorage
+    end
+
+    assert_equal ShopifyApp.configuration.shop_token_repository, Shop
+  end
 end
