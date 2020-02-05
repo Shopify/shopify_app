@@ -3,6 +3,10 @@ module ShopifyApp
     extend ActiveSupport::Concern
     include ::ShopifyApp::SessionStorage
 
+    included do
+      validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
+    end
+
     class_methods do
       def store(auth_session, *args)
         shop = find_or_initialize_by(shopify_domain: auth_session.domain)

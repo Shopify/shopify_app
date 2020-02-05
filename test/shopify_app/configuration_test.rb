@@ -133,22 +133,40 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
   end
 
-  test "can set session_repository with a string" do
+  test "can set shop_session_repository with a string" do
     ShopifyApp.configure do |config|
-      config.shop_session_repository = 'ShopifyApp::InMemorySessionStore'
+      config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
     end
 
-    assert_equal 'ShopifyApp::InMemorySessionStore', ShopifyApp.configuration.session_repository
-    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
+    assert_equal 'ShopifyApp::InMemoryShopSessionStore', ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
   end
 
-  test "can set session_repository with a class" do
+  test "can set shop_session_repository with a class" do
     ShopifyApp.configure do |config|
-      config.shop_session_repository = ShopifyApp::InMemorySessionStore
+      config.shop_session_repository = ShopifyApp::InMemoryShopSessionStore
     end
 
-    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp.configuration.shop_session_repository
-    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
+  end
+
+  test "can set user_session_repository with a string" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
+    end
+
+    assert_equal 'ShopifyApp::InMemoryUserSessionStore', ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
+  end
+
+  test "can set user_session_repository with a class" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = ShopifyApp::InMemoryUserSessionStore
+    end
+
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
   end
 
   test "enable_same_site_none is false in tests" do

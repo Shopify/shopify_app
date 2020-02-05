@@ -70,7 +70,7 @@ module ShopifyApp
 
       WebhooksManager.queue(
         shop_name,
-        token,
+        ShopifyApp::SessionRepository.retrieve_shop_session(session[:shopify]).token,
         ShopifyApp.configuration.webhooks
       )
     end
