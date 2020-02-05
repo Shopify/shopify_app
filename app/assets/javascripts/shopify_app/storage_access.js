@@ -32,10 +32,39 @@
     window.location.href = this.redirectData.appTargetUrl;
   }
 
+  StorageAccessHelper.prototype.sameSiteNoneIncompatible = function(ua) {
+    return ua.includes("iPhone OS 12_") || ua.includes("iPad; CPU OS 12_") || //iOS 12
+    (ua.includes("UCBrowser/")
+        ? this.isOlderUcBrowser(ua) //UC Browser < 12.13.2
+        : (ua.includes("Chrome/5") || ua.includes("Chrome/6"))) ||
+    ua.includes("Chromium/5") || ua.includes("Chromium/6") ||
+    (ua.includes(" OS X 10_14_") &&
+        ((ua.includes("Version/") && ua.includes("Safari")) || //Safari on MacOS 10.14
+        ua.endsWith("(KHTML, like Gecko)"))); //Web view on MacOS 10.14
+  }
+
+  StorageAccessHelper.prototype.isOlderUcBrowser = function(ua) {
+    var match = ua.match(/UCBrowser\/(\d+)\.(\d+)\.(\d+)\./);
+    if (!match) return false;
+    var major = parseInt(match[1]);
+    var minor = parseInt(match[2]);
+    var build = parseInt(match[3]);
+    if (major != 12) return major < 12;
+    if (minor != 13) return minor < 13;
+    return build < 2;
+  }
+
+  StorageAccessHelper.prototype.setCookie = function(value) {
+    if(!this.sameSiteNoneIncompatible(navigator.userAgent)) {
+      value += '; secure; SameSite=None'
+    }
+    document.cookie = value;
+  }
+
   StorageAccessHelper.prototype.grantedStorageAccess = function() {
     try {
       sessionStorage.setItem('shopify.granted_storage_access', true);
-      document.cookie = 'shopify.granted_storage_access=true';
+      this.setCookie('shopify.granted_storage_access=true');
       if (!document.cookie) {
         throw 'Cannot set third-party cookie.'
       }
@@ -107,7 +136,7 @@
   }
 
   StorageAccessHelper.prototype.setCookieAndRedirect = function() {
-    document.cookie = "shopify.cookies_persist=true";
+    this.setCookie('shopify.cookies_persist=true');
     var helper = this.setUpHelper();
     helper.redirect();
   }
