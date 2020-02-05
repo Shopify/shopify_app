@@ -3,10 +3,6 @@ module ShopifyApp
     extend ActiveSupport::Concern
     include ::ShopifyApp::SessionStorage
 
-    included do
-      ShopifyApp.configuration.user_token_repository = self
-    end
-
     class_methods do
       def store(auth_session, user)
         user = find_or_initialize_by(shopify_user_id: user[:id])

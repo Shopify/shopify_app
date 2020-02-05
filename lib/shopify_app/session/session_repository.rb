@@ -3,31 +3,56 @@ module ShopifyApp
     class ConfigurationError < StandardError; end
 
     class << self
-      def storage=(storage)
-        @storage = storage
+      def shop_storage=(storage)
+        @shop_storage = storage
 
-        unless storage.nil? || self.storage.respond_to?(:store) && self.storage.respond_to?(:retrieve)
-          raise ArgumentError, "storage must respond to :store and :retrieve"
+        unless storage.nil? || self.shop_storage.respond_to?(:store) && self.shop_storage.respond_to?(:retrieve)
+          raise ArgumentError, "shop storage must respond to :store and :retrieve"
         end
       end
 
-      def retrieve(id)
-        storage.retrieve(id)
+      def user_storage=(storage)
+        @user_storage = storage
+
+        unless storage.nil? || self.user_storage.respond_to?(:store) && self.user_storage.respond_to?(:retrieve)
+          raise ArgumentError, "user storage must respond to :store and :retrieve"
+        end
       end
 
-      def store(session, *args)
-        storage.store(session, *args)
+      def retrieve_shop_session(id)
+        shop_storage.retrieve(id)
       end
 
-      def storage
-        load_storage || raise(ConfigurationError.new("ShopifySessionRepository.storage is not configured!"))
+      def retrieve_user_session(id)
+        user_storage.retrieve(id)
+      end
+
+      def store_shop_session(session)
+        shop_storage.store(session)
+      end
+
+      def store_user_session(session, user)
+        user_storage.store(session, user)
+      end
+
+      def shop_storage
+        load_shop_storage || raise(ConfigurationError.new("ShopifySessionRepository.shop_storage is not configured!"))
+      end
+
+      def user_storage
+        load_user_storage || raise(ConfigurationError.new("ShopifySessionRepository.user_storage is not configured!"))
       end
 
       private
 
-      def load_storage
-        return unless @storage
-        @storage.respond_to?(:safe_constantize) ? @storage.safe_constantize : @storage
+      def load_shop_storage
+        return unless @shop_storage
+        @shop_storage.respond_to?(:safe_constantize) ? @shop_storage.safe_constantize : @shop_storage
+      end
+
+      def load_user_storage
+        return unless @user_storage
+        @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
       end
     end
   end

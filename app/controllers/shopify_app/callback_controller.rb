@@ -55,21 +55,14 @@ module ShopifyApp
         token: token,
         api_version: ShopifyApp.configuration.api_version
       )
-      repository = if associated_user.present?
-        ShopifyApp.configuration.user_token_repository
+      if associated_user.present?
+        session[:shopify] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
       else
-        ShopifyApp.configuration.shop_token_repository
+        session[:shopify] = ShopifyApp::SessionRepository.store_shop_session(session_store)
       end
-      session[:shopify] = repository.store(session_store, user: associated_user)
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user
-
-      if ShopifyApp.configuration.per_user_tokens?
-        # Adds the user_session to the session to determine if the logged in user has changed
-        user_session = auth_hash&.extra&.session
-        raise IndexError, "Missing user session signature" if user_session.nil?
-        session[:user_session] = user_session
-      end
+      session[:user_session] = auth_hash&.extra&.session
     end
 
     def install_webhooks

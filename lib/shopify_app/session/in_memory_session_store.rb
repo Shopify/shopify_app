@@ -2,26 +2,30 @@ module ShopifyApp
   class InMemorySessionStore
     class EnvironmentError < StandardError; end
 
-    def self.retrieve(id)
+    def initialize
+      repo
+    end
+
+    def retrieve(id)
       repo[id]
     end
 
-    def self.store(session, *args)
+    def store(session, *args)
       id = SecureRandom.uuid
       repo[id] = session
       id
     end
 
-    def self.clear
-      @@repo = nil
+    def clear
+      @repo = nil
     end
 
-    def self.repo
+    def repo
       if Rails.env.production?
         raise EnvironmentError.new("Cannot use InMemorySessionStore in a Production environment. \
           Please initialize ShopifyApp with a model that can store and retrieve sessions")
       end
-      @@repo ||= {}
+      @repo ||= {}
     end
   end
 end

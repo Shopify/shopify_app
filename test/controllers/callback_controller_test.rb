@@ -2,14 +2,6 @@
 
 require 'test_helper'
 
-class MockShopStorage < ActiveRecord::Base
-  include ShopifyApp::ShopSessionStorage
-end
-
-class MockUserStorage < ActiveRecord::Base
-  include ShopifyApp::UserSessionStorage
-end
-
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
     def perform; end
@@ -20,8 +12,9 @@ module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
-      # ShopifyApp.configuration = nil
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemorySessionStore.new
+      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemorySessionStore.new
+      ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
 
       I18n.locale = :en
