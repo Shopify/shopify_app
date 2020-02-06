@@ -15,22 +15,22 @@ module ShopifyApp
     end
 
     def activate_shopify_session
-      return redirect_to_login unless shop_session
+      return redirect_to_login unless shopify_session
       clear_top_level_oauth_cookie
 
       begin
-        ShopifyAPI::Base.activate_session(shop_session)
+        ShopifyAPI::Base.activate_session(shopify_session)
         yield
       ensure
         ShopifyAPI::Base.clear_session
       end
     end
 
-    def shop_session
+    def shopify_session
       if session[:shopify_user].present?
-        @shop_session ||= ShopifyApp::SessionRepository.retrieve_user_session(session[:shopify_user]['id'])
+        @shopify_session ||= ShopifyApp::SessionRepository.retrieve_user_session(session[:shopify_user]['id'])
       elsif session[:shopify].present?
-        @shop_session ||= ShopifyApp::SessionRepository.retrieve_shop_session(session[:shopify])
+        @shopify_session ||= ShopifyApp::SessionRepository.retrieve_shop_session(session[:shopify])
       end
     end
 
@@ -40,14 +40,21 @@ module ShopifyApp
 
       end
 
-      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
+      if shopify_session && params[:shop] && params[:shop].is_a?(String) && (shopify_session.domain != params[:shop])
         clear_session = true
       end
 
       if clear_session
-        clear_shop_session
+        clear_shopify_session
         redirect_to_login
       end
+    end
+
+    def login_again_if_shop_token_invalid
+      current_shopify_domain
+
+      session[:user_tokens] = shop_token_valid?
+      redirect_to_login
     end
 
     protected
@@ -70,11 +77,11 @@ module ShopifyApp
     end
 
     def close_session
-      clear_shop_session
+      clear_shopify_session
       redirect_to(login_url_with_optional_shop)
     end
 
-    def clear_shop_session
+    def clear_shopify_session
       session[:shopify] = nil
       session[:shopify_domain] = nil
       session[:shopify_user] = nil
