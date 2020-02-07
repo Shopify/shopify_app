@@ -8,6 +8,7 @@ class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
       " Version/12.1.2 Safari/605.1.15",
     "Mozilla/5.0 (Linux; U; Android 7.0; en-US; SM-G935F Build/NRD90M) AppleWebKit/534.30 (KHTML, like Gecko) "\
       "Version/4.0 UCBrowser/11.3.8.976 U3/0.8.0 Mobile Safari/534.30",
+    nil,
   ]
 
   INCOMPATIBLE_USER_AGENTS.each do |user_agent|
@@ -22,10 +23,11 @@ class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:72.0) Gecko/20100101 Firefox/72.0",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4"\
       " Safari/605.1.15",
+    "Custom User Agent",
   ]
 
   COMPATIBLE_USER_AGENTS.each do |user_agent|
-    test "user agent #{user_agent} is correctly marked as incompatible" do
+    test "user agent #{user_agent} is correctly marked as compatible" do
       refute ShopifyApp::SameSiteCookieMiddleware.same_site_none_incompatible?(user_agent)
     end
   end
