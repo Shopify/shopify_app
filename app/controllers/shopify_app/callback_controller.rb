@@ -9,8 +9,8 @@ module ShopifyApp
       if auth_hash
         login_shop
 
-        if session[:shop_id].blank? && ShopifyApp::SessionRepository.user_storage.present?
-          redirect_to_login and return
+        if ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+          return redirect_to(login_url_with_optional_shop)
         end
 
         install_webhooks

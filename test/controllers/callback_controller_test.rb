@@ -12,7 +12,6 @@ module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
@@ -52,6 +51,7 @@ module ShopifyApp
     end
 
     test '#callback sets up a shopify session with a user for online mode' do
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
       mock_shopify_user_omniauth
 
       ShopifyApp::SessionRepository.expects(:store_user_session).returns('4321')

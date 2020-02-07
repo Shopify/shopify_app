@@ -40,7 +40,7 @@ module ShopifyApp
       end
 
       def user_storage
-        load_user_storage || raise(ConfigurationError.new("ShopifySessionRepository.user_storage is not configured!"))
+        load_user_storage
       end
 
       private
