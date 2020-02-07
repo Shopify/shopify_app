@@ -1,3 +1,11 @@
+12.0.1
+------
+* disable samesite cookie middleware in tests
+* middleware compatibility for ruby 2.3
+* samesite cookie fixes for javascript libraries
+* change generators to add AppBridge instead of EASDK
+* Fix for return_to in safari after enable_cookies/granted_storage_access
+
 12.0.0
 -----
 * Updating shopify_api gem to 9.0.0
