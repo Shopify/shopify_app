@@ -60,13 +60,14 @@ module ShopifyApp
         token: token,
         api_version: ShopifyApp.configuration.api_version
       )
-      if associated_user.present?
+
+      session[:shopify_user] = associated_user
+      if session[:shopify_user].present?
         session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
       else
         session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
       end
       session[:shopify_domain] = shop_name
-      session[:shopify_user] = associated_user
       session[:user_session] = auth_hash&.extra&.session
     end
 
