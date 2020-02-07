@@ -17,14 +17,10 @@ module ShopifyApp
         shopify_token:TEST_SHOPIFY_USER_TOKEN
       ))
 
-      begin
-        session = UserMockSessionStore.retrieve(shopify_user_id:TEST_SHOPIFY_USER_ID)
+      session = UserMockSessionStore.retrieve(shopify_user_id:TEST_SHOPIFY_USER_ID)
 
-        assert_equal TEST_SHOPIFY_DOMAIN, session.domain
-        assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
+      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+      assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
     end
 
     test "tests that session store can store user session records" do
@@ -33,25 +29,18 @@ module ShopifyApp
 
       UserMockSessionStore.stubs(:find_or_initialize_by).returns(mock_user_instance)
 
-      begin
-        ShopifyApp.configuration.per_user_tokens = true
+      mock_auth_hash = mock()
+      mock_auth_hash.stubs(:domain).returns(mock_user_instance.shopify_domain)
+      mock_auth_hash.stubs(:token).returns("a-new-user_token!")
 
-        mock_auth_hash = mock()
-        mock_auth_hash.stubs(:domain).returns(mock_user_instance.shopify_domain)
-        mock_auth_hash.stubs(:token).returns("a-new-user_token!")
+      associated_user = {
+        id: 100,
+      }
 
-        associated_user = {
-          id: 100,
-        }
+      saved_id = UserMockSessionStore.store(mock_auth_hash, user: associated_user)
 
-        saved_id = UserMockSessionStore.store(mock_auth_hash, user: associated_user)
-
-        assert_equal "a-new-user_token!", mock_user_instance.shopify_token
-        assert_equal mock_user_instance.id, saved_id
-
-      ensure
-        ShopifyApp.configuration.per_user_tokens = false
-      end
+      assert_equal "a-new-user_token!", mock_user_instance.shopify_token
+      assert_equal mock_user_instance.id, saved_id
     end
   end
 end
