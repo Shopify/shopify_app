@@ -4,7 +4,6 @@ provider :shopify,
   ShopifyApp.configuration.api_key,
   ShopifyApp.configuration.secret,
   scope: ShopifyApp.configuration.scope,
-  per_user_permissions: ShopifyApp.configuration.user_session_repository.present?,
   setup: lambda { |env|
     strategy = env['omniauth.strategy']
 
@@ -17,4 +16,5 @@ provider :shopify,
 
     strategy.options[:client_options][:site] = shop
     strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
+    strategy.options[:per_user_permissions] = strategy.session[:user_tokens]
   }

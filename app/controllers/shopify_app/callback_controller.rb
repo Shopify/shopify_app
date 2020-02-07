@@ -8,6 +8,11 @@ module ShopifyApp
     def callback
       if auth_hash
         login_shop
+
+        if session[:shop_id].blank? && ShopifyApp::SessionRepository.user_storage.present?
+          redirect_to_login and return
+        end
+
         install_webhooks
         install_scripttags
         perform_after_authenticate_job
@@ -56,9 +61,9 @@ module ShopifyApp
         api_version: ShopifyApp.configuration.api_version
       )
       if associated_user.present?
-        session[:shopify] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
+        session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
       else
-        session[:shopify] = ShopifyApp::SessionRepository.store_shop_session(session_store)
+        session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
       end
       session[:shopify_domain] = shop_name
       session[:shopify_user] = associated_user
@@ -70,7 +75,7 @@ module ShopifyApp
 
       WebhooksManager.queue(
         shop_name,
-        ShopifyApp::SessionRepository.retrieve_shop_session(session[:shopify]).token,
+        token,
         ShopifyApp.configuration.webhooks
       )
     end

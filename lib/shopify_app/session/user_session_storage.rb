@@ -18,7 +18,7 @@ module ShopifyApp
 
       def retrieve(id)
         return unless id
-        if user = find_by(shopify_user_id: id)
+        if user = find_by(id: id)
           ShopifyAPI::Session.new(
             domain: user.shopify_domain,
             token: user.shopify_token,

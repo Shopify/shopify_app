@@ -38,7 +38,7 @@ module ShopifyApp
 
       ShopifyApp::SessionRepository.expects(:store_shop_session).returns('1234')
       get :callback, params: { shop: 'shop' }
-      assert_equal '1234', session[:shopify]
+      assert_equal '1234', session[:shop_id]
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
     end
 
@@ -47,7 +47,7 @@ module ShopifyApp
       mock_shopify_omniauth
 
       get :callback, params: { shop: 'shop' }
-      assert_not_nil session[:shopify]
+      assert_not_nil session[:shop_id]
       assert_nil session[:shopify_user]
     end
 
@@ -56,7 +56,7 @@ module ShopifyApp
 
       ShopifyApp::SessionRepository.expects(:store_user_session).returns('4321')
       get :callback, params: { shop: 'shop' }
-      assert_equal '4321', session[:shopify]
+      assert_equal '4321', session[:user_id]
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
       assert_equal 'user_object', session[:shopify_user]
       assert_equal 'this.is.a.user.session', session[:user_session]
