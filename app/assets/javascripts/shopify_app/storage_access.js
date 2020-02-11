@@ -28,8 +28,8 @@
     window.parent.location.href = this.redirectData.myshopifyUrl + '/admin/apps';
   }
 
-  StorageAccessHelper.prototype.redirectToAppTargetUrl = function() {
-    window.location.href = this.redirectData.appTargetUrl;
+  StorageAccessHelper.prototype.redirectToAppHome = function() {
+    window.location.href = this.redirectData.appHomeUrl;
   }
 
   StorageAccessHelper.prototype.sameSiteNoneIncompatible = function(ua) {
@@ -68,7 +68,7 @@
       if (!document.cookie) {
         throw 'Cannot set third-party cookie.'
       }
-      this.redirectToAppTargetUrl();
+      this.redirectToAppHome();
     } catch (error) {
       console.warn('Third party cookies may be blocked.', error);
       this.redirectToAppTLD(ACCESS_DENIED_STATUS);
@@ -90,7 +90,7 @@
   StorageAccessHelper.prototype.handleHasStorageAccess = function() {
     if (sessionStorage.getItem('shopify.granted_storage_access')) {
       // If app was classified by ITP and used Storage Access API to acquire access
-      this.redirectToAppTargetUrl();
+      this.redirectToAppHome();
     } else {
       // If app has not been classified by ITP and still has storage access
       this.redirectToAppTLD(ACCESS_GRANTED_STATUS);

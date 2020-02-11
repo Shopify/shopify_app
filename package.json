@@ -1,5 +1,6 @@
 {
   "name": "shopify_app",
+  "version": "12.0.2",
   "repository": "git@github.com:Shopify/shopify_app.git",
   "author": "Shopify",
   "license": "MIT",
@@ -23,6 +24,5 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"
-  },
-  "version": "12.0.0"
+  }
 }
