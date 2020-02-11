@@ -76,7 +76,7 @@ module ShopifyApp
 
       WebhooksManager.queue(
         shop_name,
-        token,
+        shop_session&.token || user_session.token,
         ShopifyApp.configuration.webhooks
       )
     end
@@ -86,7 +86,7 @@ module ShopifyApp
 
       ScripttagsManager.queue(
         shop_name,
-        token,
+        shop_session&.token || user_session.token,
         ShopifyApp.configuration.scripttags
       )
     end

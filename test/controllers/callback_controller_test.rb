@@ -93,6 +93,48 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
     end
 
+    test '#install_webhooks uses the shop token for shop strategy' do
+      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(shop_session)
+      ShopifyApp.configure do |config|
+        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+      end
+
+      ShopifyApp::WebhooksManager.expects(:queue).with('shop.myshopify.com', '1234', ShopifyApp.configuration.webhooks)
+
+      mock_shopify_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
+    test '#install_webhooks still uses the shop token for user strategy' do
+      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(shop_session)
+      user_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
+      ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(user_session)
+      ShopifyApp.configure do |config|
+        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+      end
+
+      ShopifyApp::WebhooksManager.expects(:queue).with('shop.myshopify.com', '1234', ShopifyApp.configuration.webhooks)
+
+      session[:shop_id] = '135'
+      mock_shopify_user_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
+    test '#install_webhooks falls back to user token for user strategy if shop is not in session' do
+      user_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
+      ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(user_session).times(2)
+      ShopifyApp.configure do |config|
+        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+      end
+
+      ShopifyApp::WebhooksManager.expects(:queue).with('shop.myshopify.com', '4321', ShopifyApp.configuration.webhooks)
+
+      mock_shopify_user_omniauth
+      get :callback, params: { shop: 'shop' }
+    end
+
     test '#callback calls #perform_after_authenticate_job and performs inline when inline is true' do
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
