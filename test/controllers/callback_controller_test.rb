@@ -12,7 +12,6 @@ module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
 
@@ -32,12 +31,23 @@ module ShopifyApp
       assert_match 'sesión', flash[:error]
     end
 
-    test '#callback sets up a shopify session' do
+    test '#callback sets up a shop session for shop token setup' do
       mock_shopify_omniauth
 
       ShopifyApp::SessionRepository.expects(:store_shop_session).returns('1234')
       get :callback, params: { shop: 'shop' }
       assert_equal '1234', session[:shop_id]
+      assert_nil session[:user_id]
+      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+    end
+
+    test '#callback sets up a user session for user token setup' do
+      mock_shopify_user_omniauth
+
+      ShopifyApp::SessionRepository.expects(:store_user_session).returns('435')
+      get :callback, params: { shop: 'shop' }
+      assert_nil session[:shop_id]
+      assert_equal '435', session[:user_id]
       assert_equal 'shop.myshopify.com', session[:shopify_domain]
     end
 
@@ -51,7 +61,6 @@ module ShopifyApp
     end
 
     test '#callback sets up a shopify session with a user for online mode' do
-      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
       mock_shopify_user_omniauth
 
       ShopifyApp::SessionRepository.expects(:store_user_session).returns('4321')
@@ -154,12 +163,16 @@ module ShopifyApp
     private
 
     def mock_shopify_omniauth
+      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.user_storage = nil
       OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: { token: '1234' })
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
     end
 
     def mock_shopify_user_omniauth
+      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryShopSessionStore
       OmniAuth.config.add_mock(
         :shopify,
         provider: :shopify,
