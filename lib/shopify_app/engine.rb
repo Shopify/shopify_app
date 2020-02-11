@@ -14,7 +14,7 @@ module ShopifyApp
     end
 
     initializer "shopify_app.middleware" do |app|
-      app.config.middleware.insert_before(ActionDispatch::Cookies, ShopifyApp::SameSiteCookieMiddleware)
+      app.config.middleware.insert_after(ActionDispatch::Static, ShopifyApp::SameSiteCookieMiddleware)
     end
   end
 end
