@@ -1,3 +1,7 @@
+12.0.2
+------
+* Reverts "Fix for return_to in safari after enable_cookies/granted_storage_access" introduced in 12.0.1
+
 12.0.1
 ------
 * disable samesite cookie middleware in tests
