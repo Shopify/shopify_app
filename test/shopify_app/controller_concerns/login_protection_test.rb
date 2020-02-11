@@ -6,7 +6,7 @@ require 'action_view/testing/resolvers'
 class LoginProtectionController < ActionController::Base
   include ShopifyApp::EmbeddedApp
   include ShopifyApp::LoginProtection
-  helper_method :shopify_session
+  helper_method :current_shopify_session
 
   around_action :activate_shopify_session, only: [:index]
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
@@ -55,47 +55,47 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
-  test "#shopify_session returns nil when session is nil" do
+  test "#current_shopify_session returns nil when session is nil" do
     with_application_test_routes do
       session[:shop_id] = nil
       get :index
-      assert_nil @controller.shopify_session
+      assert_nil @controller.current_shopify_session
     end
   end
 
-  test "#shopify_session retrieves using session user_id" do
+  test "#current_shopify_session retrieves using session user_id" do
     with_application_test_routes do
       session[:user_id] = '145'
       get :index
       ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(session).once
-      assert @controller.shopify_session
+      assert @controller.current_shopify_session
     end
   end
 
-  test "#shopify_session retrieves using shop_id when shopify_user not present" do
+  test "#current_shopify_session retrieves using shop_id when shopify_user not present" do
     with_application_test_routes do
       session[:shop_id] = "shopify_id"
       get :index
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session).with(session[:shop_id]).returns(session).once
-      assert @controller.shopify_session
+      assert @controller.current_shopify_session
     end
   end
 
-  test "#shopify_session retreives the session from storage" do
+  test "#current_shopify_session retreives the session from storage" do
     with_application_test_routes do
       session[:shop_id] = "foobar"
       get :index
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
-      assert @controller.shopify_session
+      assert @controller.current_shopify_session
     end
   end
 
-  test "#shopify_session is memoized and does not retreive session twice" do
+  test "#current_shopify_session is memoized and does not retreive session twice" do
     with_application_test_routes do
       session[:shop_id] = "foobar"
       get :index
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
-      assert @controller.shopify_session
+      assert @controller.current_shopify_session
     end
   end
 
@@ -175,7 +175,7 @@ class LoginProtectionTest < ActionController::TestCase
     with_application_test_routes do
       session['shopify.top_level_oauth'] = true
       sess = stub(domain: 'https://foobar.myshopify.com')
-      @controller.expects(:shopify_session).returns(sess).at_least_once
+      @controller.expects(:current_shopify_session).returns(sess).at_least_once
       ShopifyAPI::Base.expects(:activate_session).with(sess)
 
       get :index, params: { shop: 'foobar' }
@@ -202,7 +202,7 @@ class LoginProtectionTest < ActionController::TestCase
   test "#activate_shopify_session with no Shopify session, redirects to login_url with \
         shop param of referer" do
     with_application_test_routes do
-      @controller.expects(:shopify_session).returns(nil)
+      @controller.expects(:current_shopify_session).returns(nil)
       request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
 
       get :index
@@ -214,7 +214,7 @@ class LoginProtectionTest < ActionController::TestCase
         shop param of referer" do
     with_custom_login_url 'https://domain.com/custom/route/login' do
       with_application_test_routes do
-        @controller.expects(:shopify_session).returns(nil)
+        @controller.expects(:current_shopify_session).returns(nil)
         request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
 
         get :index

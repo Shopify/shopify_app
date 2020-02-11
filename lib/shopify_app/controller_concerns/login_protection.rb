@@ -15,22 +15,22 @@ module ShopifyApp
     end
 
     def activate_shopify_session
-      return redirect_to_login if shopify_session.blank?
+      return redirect_to_login if current_shopify_session.blank?
       clear_top_level_oauth_cookie
 
       begin
-        ShopifyAPI::Base.activate_session(shopify_session)
+        ShopifyAPI::Base.activate_session(current_shopify_session)
         yield
       ensure
         ShopifyAPI::Base.clear_session
       end
     end
 
-    def shopify_session
-      if ShopifyApp::SessionRepository.user_storage.present?
-        @shopify_session ||= user_session
+    def current_shopify_session
+      if session[:user_id].present?
+        @current_shopify_session ||= user_session
       else
-        @shopify_session ||= shop_session
+        @current_shopify_session ||= shop_session
       end
     end
 
@@ -50,7 +50,7 @@ module ShopifyApp
 
       end
 
-      if shopify_session && params[:shop] && params[:shop].is_a?(String) && (shopify_session.domain != params[:shop])
+      if current_shopify_session && params[:shop] && params[:shop].is_a?(String) && (current_shopify_session.domain != params[:shop])
         clear_session = true
       end
 
