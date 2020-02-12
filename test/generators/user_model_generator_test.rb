@@ -14,7 +14,7 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "app/models/user.rb" do |user|
       assert_match "class User < ActiveRecord::Base", user
-      assert_match "include ShopifyApp::SessionStorage", user
+      assert_match "include ShopifyApp::UserSessionStorage", user
       assert_match(/def api_version\n\s*ShopifyApp\.configuration\.api_version\n\s*end/, user)
     end
   end
@@ -29,7 +29,7 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
   test "updates the shopify_app initializer to use User to store session" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|
-      assert_match "config.session_repository = 'User'", file
+      assert_match "config.user_session_repository = 'User'", file
     end
   end
 

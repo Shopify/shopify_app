@@ -14,7 +14,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "app/models/shop.rb" do |shop|
       assert_match "class Shop < ActiveRecord::Base", shop
-      assert_match "include ShopifyApp::SessionStorage", shop
+      assert_match "include ShopifyApp::ShopSessionStorage", shop
       assert_match(/def api_version\n\s*ShopifyApp\.configuration\.api_version\n\s*end/, shop)
     end
   end
@@ -29,7 +29,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
   test "updates the shopify_app initializer" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|
-      assert_match "config.session_repository = 'Shop'", file
+      assert_match "config.shop_session_repository = 'Shop'", file
     end
   end
 
