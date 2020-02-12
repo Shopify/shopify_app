@@ -43,9 +43,9 @@ Become a Shopify App Developer
 --------------------------------
 To become a Shopify App Developer you'll need a [Shopify Partner account.](http://shopify.com/partners) If you don't have a Shopify Partner account, head to http://shopify.com/partners to create one before you start.
 
-Once you have a Partner account, [create a new application in the Partner Dashboard](https://help.shopify.com/en/api/tools/partner-dashboard/your-apps) to get an API key and other API credentials. 
+Once you have a Partner account, [create a new application in the Partner Dashboard](https://help.shopify.com/en/api/tools/partner-dashboard/your-apps) to get an API key and other API credentials.
 
-To create an application for development set your new app's `App URL` to the URL provided by [your tunnel](#app-tunneling), ensuring that you use `https://`. If you are not planning to embed your app inside the Shopify admin or receive webhooks, set your redirect URL to `http://localhost:3000/` and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`. 
+To create an application for development set your new app's `App URL` to the URL provided by [your tunnel](#app-tunneling), ensuring that you use `https://`. If you are not planning to embed your app inside the Shopify admin or receive webhooks, set your redirect URL to `http://localhost:3000/` and the `Whitelisted redirection URL(s)` to contain `<App URL>/auth/shopify/callback`.
 
 Installation
 ------------
@@ -80,7 +80,7 @@ The default generator will run the `install`, `shop`, and `home_controller` gene
 $ rails generate shopify_app
 ```
 
-After running the generator, you will need to run `rails db:migrate` to add new tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting `http://localhost` in your web browser. 
+After running the generator, you will need to run `rails db:migrate` to add new tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting `http://localhost` in your web browser.
 
 ### API Keys
 
@@ -91,7 +91,7 @@ SHOPIFY_API_KEY=your api key
 SHOPIFY_API_SECRET=your api secret
 ```
 
-These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code. 
+These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
 
 ### Install Generator
 
@@ -215,8 +215,6 @@ Authentication
 
 `ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. These methods are already implemented as part of the `ShopifyApp::SessionStorage` concern, but can be overridden for custom implementation.
 
-If you only run the install generator then by default you will have an in memory store but it **won't work** on multi-server environments including Heroku. For multi-server environments, implement one of the following token-storage strategies.
-
 #### Shop-based token storage
 Storing tokens on the store model means that any user login associated to the store will have equal access levels to whatever the original user granted the app.
 ```sh
@@ -225,32 +223,35 @@ $ rails generate shopify_app:shop_model
 This will generate a shop model which will be the storage for the tokens necessary for authentication.
 
 #### User-based token storage
-A more granular control over level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed.
+A more granular control over level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained so that background jobs can make use of them when necessary.
 ```sh
+$ rails generate shopify_app:shop_model
 $ rails generate shopify_app:user_model
 ```
-This will generate a user model which will be the storage for the tokens necessary for authentication.
+This will generate a shop model and user model which will be the storage for the tokens necessary for authentication.
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 
-In this mode, The `self.store(auth_session, *args)` will be invoked with a Shopify User object hash, which is then used to store the token as part of a user record, rather than a store record.
-
-This will change the type of token that Shopify returns and it will only be valid for a short time. Read more about `Online access` [here](https://help.shopify.com/api/getting-started/authentication/oauth). Note that this means you won't be able to use this token to respond to Webhooks.
+Read more about Online vs. Offline access [here](https://help.shopify.com/api/getting-started/authentication/oauth).
 
 #### Migrating from shop-based to user-based token strategy
-After running the generator, ensure that configuration settings are successfully changed:
-
+1. Run the `user_model` generator as mentioned above.
+2. Ensure that both your `Shop` model and `User` model includes the necessary concerns `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage`.
+3. Make changes to 2 initializer files as shown below:
 ```ruby
 # In the `omniauth.rb` initializer:
 provider :shopify,
-  ShopifyApp.configuration.api_key,
-  ShopifyApp.configuration.secret,
-  scope: ShopifyApp.configuration.scope,
-  per_user_permissions: true
+  ...
+  setup: lambda { |env|
+    ...
+    # Add this line
+    strategy.options[:per_user_permissions] = strategy.session[:user_tokens]
+    ...
+  }
 
 # In the `shopify_app.rb` initializer:
-config.session_repository = 'User'
-config.per_user_tokens = true
+config.shop_session_repository = {YOUR_SHOP_MODEL_CLASS}
+config.user_session_repository = {YOUR_USER_MODEL_CLASS}
 ```
 
 ### Authenticated
@@ -408,7 +409,7 @@ strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
 App Tunneling
 -------------
 
-Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks. 
+Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks.
 
 Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
 
