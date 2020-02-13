@@ -1,5 +1,7 @@
 module ShopifyApp
   class SameSiteCookieMiddleware
+    COOKIE_SEPARATOR = "\n"
+
     def initialize(app)
       @app = app
     end
@@ -8,17 +10,22 @@ module ShopifyApp
       status, headers, body = @app.call(env)
       user_agent = env['HTTP_USER_AGENT']
 
-      if headers && headers['Set-Cookie'] && !SameSiteCookieMiddleware.same_site_none_incompatible?(user_agent) &&
+      if headers && headers['Set-Cookie'] &&
+          !SameSiteCookieMiddleware.same_site_none_incompatible?(user_agent) &&
           ShopifyApp.configuration.enable_same_site_none
 
-        cookies = headers['Set-Cookie'].split("\n").compact
-
-        cookies.each do |cookie|
-          unless cookie.include?("; SameSite")
-            headers['Set-Cookie'] = headers['Set-Cookie'].gsub(cookie, "#{cookie}; Secure; SameSite=None")
+        set_cookies = headers['Set-Cookie']
+          .split(COOKIE_SEPARATOR)
+          .compact
+          .map do |cookie|
+            cookie << '; Secure' if not cookie =~ /;\s*secure/i
+            cookie << '; SameSite=None' unless cookie =~ /;\s*samesite=/i
+            cookie
           end
-        end
+
+        headers['Set-Cookie'] = set_cookies.join(COOKIE_SEPARATOR)
       end
+
       [status, headers, body]
     end
 
