@@ -22,6 +22,16 @@ module ShopifyApp
           )
         end
       end
+
+      def retrieve_by_domain(domain)
+        if shop = @storage_class.find_by(shopify_domain: domain)
+          ShopifyAPI::Session.new(
+            domain: shop.shopify_domain,
+            token: shop.shopify_token,
+            api_version: shop.api_version
+          )
+        end
+      end
     end
   end
 end
