@@ -1,3 +1,7 @@
+12.0.4
+------
+* Reverts reverted PR (#895) #897
+
 12.0.3
 ------
 * Moves samesite middleware higher in the stack #898
