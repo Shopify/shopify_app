@@ -100,8 +100,10 @@ module ShopifyApp
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
 
-      if session[:return_to] && return_to_param_required?
-        query_params[:return_to] = session[:return_to]
+      return_to = session[:return_to] || params[:return_to]
+
+      if return_to.present? && return_to_param_required?
+        query_params[:return_to] = return_to
       end
 
       has_referer_shop_name = referer_sanitized_shop_name.present?
@@ -164,6 +166,16 @@ module ShopifyApp
 
     def return_address
       session.delete(:return_to) || ShopifyApp.configuration.root_url
+    end
+
+    def return_address_with_params(params)
+      uri = URI(return_address)
+      uri.query = CGI.parse(uri.query.to_s)
+        .symbolize_keys
+        .transform_values { |v| v.one? ? v.first : v }
+        .merge(params)
+        .to_query
+      uri.to_s
     end
   end
 end
