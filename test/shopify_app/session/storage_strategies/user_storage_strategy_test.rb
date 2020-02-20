@@ -8,11 +8,11 @@ end
 
 module ShopifyApp
   class UserStorageStrategyTest < ActiveSupport::TestCase
-    test "tests that session store can retrieve user session records" do
-      TEST_SHOPIFY_USER_ID = 42
-      TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
-      TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
+    TEST_SHOPIFY_USER_ID = 42
+    TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
+    TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
 
+    test "tests that session store can retrieve user session records" do
       MockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(MockUserInstance.new(
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
@@ -55,6 +55,24 @@ module ShopifyApp
         assert_equal "a-new-user_token!", mock_user_instance.shopify_token
         assert_equal mock_user_instance.id, saved_id
 
+      ensure
+        MockSessionStore.storage_strategy = nil
+      end
+    end
+
+    test "#retrieve_by_jwt retrieves shop session records by user id" do
+      MockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(MockUserInstance.new(
+        shopify_user_id: TEST_SHOPIFY_USER_ID,
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_USER_TOKEN,
+        ))
+
+      begin
+        MockSessionStore.storage_strategy = ShopifyApp::SessionStorage::UserStorageStrategy.new(MockSessionStore)
+        session = MockSessionStore.retrieve_by_jwt(TEST_SHOPIFY_USER_ID)
+
+        assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+        assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
       ensure
         MockSessionStore.storage_strategy = nil
       end

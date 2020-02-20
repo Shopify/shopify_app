@@ -44,7 +44,7 @@ module ShopifyApp
       end
     end
 
-    test "#retrieve_by_domain retrieves shop session records by domain" do
+    test "#retrieve_by_jwt retrieves shop session records by domain" do
       session_instance = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
@@ -61,7 +61,7 @@ module ShopifyApp
 
       begin
         ShopifyApp.configuration.per_user_tokens = false
-        session = MockSessionStore.retrieve_by_domain(TEST_SHOPIFY_DOMAIN)
+        session = MockSessionStore.retrieve_by_jwt(TEST_SHOPIFY_DOMAIN)
         assert_equal expected_session.domain, session.domain
         assert_equal expected_session.token, session.token
         assert_equal expected_session.api_version, session.api_version

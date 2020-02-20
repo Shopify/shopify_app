@@ -16,6 +16,13 @@ module ShopifyApp
       assert_equal 'something', InMemorySessionStore.retrieve('abra')
     end
 
+    test "retrieve_by_jwt should retrieve a session" do
+      jwt_id = 'jwt_key'
+      jwt_value = 'jwt_value'
+      InMemorySessionStore.repo[jwt_id] = jwt_value
+      assert_equal jwt_value, InMemorySessionStore.retrieve_by_jwt(jwt_id)
+    end
+
     test "clearing the store" do
       uuid = InMemorySessionStore.store('data')
       assert_equal 'data', InMemorySessionStore.retrieve(uuid)

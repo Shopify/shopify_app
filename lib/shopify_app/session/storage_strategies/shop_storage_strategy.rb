@@ -23,8 +23,8 @@ module ShopifyApp
         end
       end
 
-      def retrieve_by_domain(domain)
-        if shop = @storage_class.find_by(shopify_domain: domain)
+      def retrieve_by_jwt(id)
+        if shop = @storage_class.find_by(shopify_domain: id)
           ShopifyAPI::Session.new(
             domain: shop.shopify_domain,
             token: shop.shopify_token,

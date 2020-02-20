@@ -15,6 +15,10 @@ module ShopifyApp
         storage.retrieve(id)
       end
 
+      def retrieve_by_jwt(jwt)
+        storage.retrieve_by_jwt(jwt)
+      end
+
       def store(session, *args)
         storage.store(session, *args)
       end

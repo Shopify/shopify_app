@@ -23,6 +23,10 @@ module ShopifyApp
           )
         end
       end
+
+      def retrieve_by_jwt(id)
+        retrieve(id)
+      end
     end
   end
 end

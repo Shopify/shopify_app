@@ -6,6 +6,10 @@ module ShopifyApp
       repo[id]
     end
 
+    def self.retrieve_by_jwt(id)
+      self.retrieve(id)
+    end
+
     def self.store(session, *args)
       id = SecureRandom.uuid
       repo[id] = session

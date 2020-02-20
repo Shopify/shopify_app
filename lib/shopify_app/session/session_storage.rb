@@ -17,7 +17,7 @@ module ShopifyApp
         end
       end
 
-      delegate :store, :retrieve, :retrieve_by_domain, to: :storage_strategy
+      delegate :store, :retrieve, :retrieve_by_jwt, to: :storage_strategy
     end
 
     included do

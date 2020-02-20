@@ -11,6 +11,10 @@ class TestSessionStore
     storage[id]
   end
 
+  def retrieve_by_jwt(id)
+    retrieve(id)
+  end
+
   def store(session)
     id = storage.length
     storage[id] = session
@@ -56,6 +60,11 @@ class ShopifySessionRepositoryTest < ActiveSupport::TestCase
   test "retrieving a session from the repository" do
     session_store.storage[9] = session
     assert_equal session, ShopifyApp::SessionRepository.retrieve(9)
+  end
+
+  test"retrieve_by_jwt from the repository" do
+    session_store.storage[9] = session
+    assert_equal session, ShopifyApp::SessionRepository.retrieve_by_jwt(9)
   end
 
   test "retrieving a session for an id that does not exist" do
