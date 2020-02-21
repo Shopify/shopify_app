@@ -21,11 +21,15 @@ module ShopifyApp
 
       render(:enable_cookies, layout: false, locals: {
         does_not_have_storage_access_url: top_level_interaction_path(
-          shop: sanitized_shop_name
+          shop: sanitized_shop_name,
+          return_to: params[:return_to]
         ),
         has_storage_access_url: login_url_with_optional_shop(top_level: true),
-        app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
-        current_shopify_domain: current_shopify_domain,
+        app_target_url: granted_storage_access_path(
+          shop: sanitized_shop_name,
+          return_to: params[:return_to]
+        ),
+        current_shopify_domain: current_shopify_domain
       })
     end
 
@@ -39,8 +43,9 @@ module ShopifyApp
 
       session['shopify.granted_storage_access'] = true
 
-      params = { shop: @shop }
-      redirect_to("#{return_address}?#{params.to_query}")
+      copy_return_to_param_to_session
+
+      redirect_to(return_address_with_params({ shop: @shop }))
     end
 
     def destroy
@@ -55,7 +60,7 @@ module ShopifyApp
       return render_invalid_shop_error unless sanitized_shop_name.present?
       session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
 
-      session[:return_to] = params[:return_to] if params[:return_to]
+      copy_return_to_param_to_session
 
       set_user_tokens_option
 
@@ -116,6 +121,10 @@ module ShopifyApp
       true
     end
 
+    def copy_return_to_param_to_session
+      session[:return_to] = params[:return_to] if params[:return_to]
+    end
+
     def render_invalid_shop_error
       flash[:error] = I18n.t('invalid_shop_url')
       redirect_to return_address
@@ -156,11 +165,15 @@ module ShopifyApp
         layout: false,
         locals: {
           does_not_have_storage_access_url: top_level_interaction_path(
-            shop: sanitized_shop_name
+            shop: sanitized_shop_name,
+            return_to: session[:return_to]
           ),
           has_storage_access_url: login_url_with_optional_shop(top_level: true),
-          app_home_url: granted_storage_access_path(shop: sanitized_shop_name),
-          current_shopify_domain: current_shopify_domain,
+          app_target_url: granted_storage_access_path(
+            shop: sanitized_shop_name,
+            return_to: session[:return_to]
+          ),
+          current_shopify_domain: current_shopify_domain
         }
       )
     end

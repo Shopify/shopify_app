@@ -1,3 +1,12 @@
+12.0.4
+------
+* Reverts reverted PR (#895) #897
+
+12.0.3
+------
+* Moves samesite middleware higher in the stack #898
+* Fix issue where not redirecting user to granted storage page casues infinite loop #900
+
 12.0.2
 ------
 * Reverts "Fix for return_to in safari after enable_cookies/granted_storage_access" introduced in 12.0.1

@@ -288,6 +288,14 @@ bin/rails g shopify_app:add_after_authenticate_job
 
 If you want to perform that action only once, e.g. send a welcome email to the user when they install the app, you should make sure that this action is idempotent, meaning that it won't have an impact if run multiple times.
 
+API Versioning
+--------------
+
+Shopify's API is versioned, and you can [read about that process in the Shopify Developers documentation page](https://shopify.dev/concepts/about-apis/versioning).
+
+Since shopify_app gem version 1.11.0, the included shopify_api gem has also been updated to allow you to easily set and switch what version of the Shopify API you want your app or service to use, as well as surface warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).
+
+See the [shopify_api gem README](https://github.com/Shopify/shopify_api/) for more details.
 
 WebhooksManager
 ---------------
