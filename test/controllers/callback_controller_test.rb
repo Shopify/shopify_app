@@ -66,15 +66,15 @@ module ShopifyApp
     end
 
     test '#callback sets up a shopify session with a user for online mode' do
-      begin
-        ShopifyApp.configuration.per_user_tokens = true
-        ShopifyApp::SessionRepository.storage = ShopifyApp::SessionStorage::UserStorageStrategy.new(MockSessionStore)
-        MockSessionStore.stubs(:find_or_initialize_by).with(shopify_user_id: TEST_ASSOCIATED_USER[:id]).returns(MockUserInstance.new(
-          shopify_user_id: TEST_ASSOCIATED_USER[:id],
-          shopify_domain: TEST_SHOP_DOMAIN,
-          shopify_token: TEST_CREDENTIALS,
-          ))
+      ShopifyApp.configuration.per_user_tokens = true
+      ShopifyApp::SessionRepository.storage = ShopifyApp::SessionStorage::UserStorageStrategy.new(MockSessionStore)
+      MockSessionStore.stubs(:find_or_initialize_by).with(shopify_user_id: TEST_ASSOCIATED_USER[:id]).returns(MockUserInstance.new(
+        shopify_user_id: TEST_ASSOCIATED_USER[:id],
+        shopify_domain: TEST_SHOP_DOMAIN,
+        shopify_token: TEST_CREDENTIALS,
+        ))
 
+      begin
         mock_shopify_user_omniauth
 
         get :callback, params: { shop: 'shop' }
