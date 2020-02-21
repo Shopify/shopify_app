@@ -2,6 +2,10 @@
 
 require 'test_helper'
 
+class MockSessionStore < ActiveRecord::Base
+  include ShopifyApp::SessionStorage
+end
+
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
     def perform; end
@@ -10,6 +14,12 @@ end
 
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
+    TEST_SHOP_DOMAIN = 'shop.myshopify.com'
+    TEST_ASSOCIATED_USER = { id: '515132' }
+    TEST_CREDENTIALS = { token: '121455' }
+    TEST_SCOPES = 'read_products'
+    TEST_SESSION = 'this.is.a.user.session'
+
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
@@ -33,11 +43,17 @@ module ShopifyApp
     end
 
     test '#callback sets up a shopify session' do
+      ShopifyApp::SessionRepository.storage = ShopifyApp::SessionStorage::ShopStorageStrategy.new(MockSessionStore)
+      MockSessionStore.stubs(:find_or_initialize_by).with(shopify_domain: TEST_SHOP_DOMAIN).returns(MockShopInstance.new(
+        shopify_domain:TEST_SHOP_DOMAIN,
+        shopify_token:TEST_CREDENTIALS
+      ))
+
       mock_shopify_omniauth
 
       get :callback, params: { shop: 'shop' }
       assert_not_nil session[:shopify]
-      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+      assert_equal TEST_SHOP_DOMAIN, session[:shopify_domain]
     end
 
     test '#callback clears a stale shopify_user session if none is provided in latest callback' do
@@ -52,14 +68,20 @@ module ShopifyApp
     test '#callback sets up a shopify session with a user for online mode' do
       begin
         ShopifyApp.configuration.per_user_tokens = true
-    
+        ShopifyApp::SessionRepository.storage = ShopifyApp::SessionStorage::UserStorageStrategy.new(MockSessionStore)
+        MockSessionStore.stubs(:find_or_initialize_by).with(shopify_user_id: TEST_ASSOCIATED_USER[:id]).returns(MockUserInstance.new(
+          shopify_user_id: TEST_ASSOCIATED_USER[:id],
+          shopify_domain: TEST_SHOP_DOMAIN,
+          shopify_token: TEST_CREDENTIALS,
+          ))
+
         mock_shopify_user_omniauth
-    
+
         get :callback, params: { shop: 'shop' }
         assert_not_nil session[:shopify]
-        assert_equal 'shop.myshopify.com', session[:shopify_domain]
-        assert_equal 'user_object', session[:shopify_user]
-        assert_equal 'this.is.a.user.session', session[:user_session]
+        assert_equal TEST_SHOP_DOMAIN, session[:shopify_domain]
+        assert_equal TEST_ASSOCIATED_USER[:id], session[:shopify_user][:id]
+        assert_equal TEST_SESSION, session[:user_session]
       ensure
         ShopifyApp.configuration.per_user_tokens = false
       end
@@ -157,26 +179,26 @@ module ShopifyApp
     private
 
     def mock_shopify_omniauth
-      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: { token: '1234' })
+      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: TEST_SHOP_DOMAIN, credentials: TEST_CREDENTIALS)
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
+      request.env['omniauth.params'] = { shop: TEST_SHOP_DOMAIN } if request
     end
 
     def mock_shopify_user_omniauth
       OmniAuth.config.add_mock(
         :shopify,
         provider: :shopify,
-        uid: 'shop.myshopify.com',
-        credentials: { token: '1234' },
-        extra: { 
-          associated_user: 'user_object',
-          associated_user_scope: "read_products",
-          scope: "read_products",
-          session: "this.is.a.user.session"
+        uid: TEST_SHOP_DOMAIN,
+        credentials: TEST_CREDENTIALS,
+        extra: {
+          associated_user: TEST_ASSOCIATED_USER,
+          associated_user_scope: TEST_SCOPES,
+          scope: TEST_SCOPES,
+          session: TEST_SESSION
         }
       )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
+      request.env['omniauth.params'] = { shop: TEST_SHOP_DOMAIN } if request
     end
   end
 end

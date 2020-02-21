@@ -6,19 +6,19 @@ module ShopifyApp
       end
 
       def store(auth_session, *args)
-        shop = @storage_class.find_or_initialize_by(shopify_domain: auth_session.domain)
-        shop.shopify_token = auth_session.token
-        shop.save!
-        shop.id
+        shop_session = @storage_class.find_or_initialize_by(shopify_domain: auth_session.domain)
+        shop_session.shopify_token = auth_session.token
+        shop_session.save!
+        shop_session.id
       end
 
       def retrieve(id)
         return unless id
-        if shop = @storage_class.find_by(id: id)
+        if shop_session = @storage_class.find_by(id: id)
           ShopifyAPI::Session.new(
-            domain: shop.shopify_domain,
-            token: shop.shopify_token,
-            api_version: shop.api_version
+            domain: shop_session.shopify_domain,
+            token: shop_session.shopify_token,
+            api_version: shop_session.api_version
           )
         end
       end

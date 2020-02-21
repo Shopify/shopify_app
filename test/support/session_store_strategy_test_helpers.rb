@@ -3,17 +3,21 @@ module SessionStoreStrategyTestHelpers
   class MockSessionStore < ActiveRecord::Base
     include ShopifyApp::SessionStorage
   end
-    
+
 
   class MockShopInstance
     attr_reader :id, :shopify_domain, :shopify_token, :api_version
     attr_writer :shopify_token
-      
+
     def initialize(id:1, shopify_domain:'example.myshopify.com', shopify_token:'abcd-shop-token', api_version:'unstable')
       @id = id
       @shopify_domain = shopify_domain
       @shopify_token = shopify_token
       @api_version = api_version
+    end
+
+    def save!
+      true
     end
   end
 
@@ -27,6 +31,10 @@ module SessionStoreStrategyTestHelpers
       @shopify_domain = shopify_domain
       @shopify_token = shopify_token
       @api_version = api_version
+    end
+
+    def save!
+      true
     end
   end
 end

@@ -8,11 +8,11 @@ end
 
 module ShopifyApp
   class UserStorageStrategyTest < ActiveSupport::TestCase
-    test "tests that session store can retrieve user session records" do
-      TEST_SHOPIFY_USER_ID = 42
-      TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
-      TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
+    TEST_SHOPIFY_USER_ID = 42
+    TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
+    TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
 
+    test "tests that session store can retrieve user session records" do
       MockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(MockUserInstance.new(
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
@@ -50,7 +50,7 @@ module ShopifyApp
           id: 100,
         }
 
-        saved_id = MockSessionStore.store(mock_auth_hash, associated_user)
+        saved_id = MockSessionStore.store(mock_auth_hash, user: associated_user)
 
         assert_equal "a-new-user_token!", mock_user_instance.shopify_token
         assert_equal mock_user_instance.id, saved_id
