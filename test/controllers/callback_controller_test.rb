@@ -2,10 +2,6 @@
 
 require 'test_helper'
 
-class MockSessionStore < ActiveRecord::Base
-  include ShopifyApp::SessionStorage
-end
-
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
     def perform; end
@@ -14,6 +10,11 @@ end
 
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
+
+    class MockSessionStore < ActiveRecord::Base
+      include ShopifyApp::SessionStorage
+    end
+
     TEST_SHOP_DOMAIN = 'shop.myshopify.com'
     TEST_ASSOCIATED_USER = { id: '515132' }
     TEST_CREDENTIALS = { token: '121455' }
@@ -45,8 +46,8 @@ module ShopifyApp
     test '#callback sets up a shopify session' do
       ShopifyApp::SessionRepository.storage = ShopifyApp::SessionStorage::ShopStorageStrategy.new(MockSessionStore)
       MockSessionStore.stubs(:find_or_initialize_by).with(shopify_domain: TEST_SHOP_DOMAIN).returns(MockShopInstance.new(
-        shopify_domain:TEST_SHOP_DOMAIN,
-        shopify_token:TEST_CREDENTIALS
+        shopify_domain: TEST_SHOP_DOMAIN,
+        shopify_token: TEST_CREDENTIALS
       ))
 
       mock_shopify_omniauth
@@ -68,10 +69,12 @@ module ShopifyApp
     test '#callback sets up a shopify session with a user for online mode' do
       ShopifyApp.configuration.per_user_tokens = true
       ShopifyApp::SessionRepository.storage = ShopifyApp::SessionStorage::UserStorageStrategy.new(MockSessionStore)
-      MockSessionStore.stubs(:find_or_initialize_by).with(shopify_user_id: TEST_ASSOCIATED_USER[:id]).returns(MockUserInstance.new(
-        shopify_user_id: TEST_ASSOCIATED_USER[:id],
-        shopify_domain: TEST_SHOP_DOMAIN,
-        shopify_token: TEST_CREDENTIALS,
+      MockSessionStore.stubs(:find_or_initialize_by)
+        .with(shopify_user_id: TEST_ASSOCIATED_USER[:id])
+        .returns(MockUserInstance.new(
+          shopify_user_id: TEST_ASSOCIATED_USER[:id],
+          shopify_domain: TEST_SHOP_DOMAIN,
+          shopify_token: TEST_CREDENTIALS
         ))
 
       begin
