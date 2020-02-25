@@ -27,11 +27,7 @@ module ShopifyApp
     end
 
     def current_shopify_session
-      if session[:user_id].present?
-        @current_shopify_session ||= user_session
-      else
-        @current_shopify_session ||= shop_session
-      end
+      @current_shopify_session ||= user_session || shop_session
     end
 
     def user_session
