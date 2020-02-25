@@ -27,6 +27,14 @@ module ShopifyApp
         user_storage.retrieve(id)
       end
 
+      def retrieve_shop_session_by_jwt(payload)
+        shop_storage.retrieve_by_jwt(payload)
+      end
+
+      def retrieve_user_session_by_jwt(payload)
+        user_storage.retrieve_by_jwt(payload)
+      end
+
       def store_shop_session(session)
         shop_storage.store(session)
       end
