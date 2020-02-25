@@ -31,13 +31,25 @@ module ShopifyApp
     end
 
     def user_session
-      return if session[:user_id].blank?
-      ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
+      if jwt_payload
+        shopify_session = ShopifyApp::SessionRepository.retrieve_user_session_by_jwt(jwt_payload)
+        return shopify_session if shopify_session
+      end
+
+      if session[:user_id].present?
+        ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
+      end
     end
 
     def shop_session
-      return if session[:shop_id].blank?
-      ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
+      if jwt_payload
+        shopify_session = ShopifyApp::SessionRepository.retrieve_shop_session_by_jwt(jwt_payload)
+        return shopify_session if shopify_session
+      end
+
+      if session[:shop_id].present?
+        ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
+      end
     end
 
     def login_again_if_different_user_or_shop
@@ -57,6 +69,25 @@ module ShopifyApp
     end
 
     protected
+
+    def jwt_payload
+      @jwt_payload ||= validate_jwt_payload(parse_jwt_payload)
+    end
+
+    def parse_jwt_payload
+      authenticate_with_http_token do |token|
+        JWT.decode(token, nil, false)&.first
+      end
+    end
+
+    def validate_jwt_payload(payload)
+      return unless payload
+      return unless payload['aud'] == ShopifyApp.configuration.api_key
+      return unless payload['exp'].to_i >= Time.now.to_i
+      return unless payload['nbf'].to_i <= Time.now.to_i
+
+      payload
+    end
 
     def redirect_to_login
       if request.xhr?
