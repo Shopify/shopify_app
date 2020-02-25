@@ -31,25 +31,31 @@ module ShopifyApp
     end
 
     def user_session
-      if jwt_payload
-        shopify_session = ShopifyApp::SessionRepository.retrieve_user_session_by_jwt(jwt_payload)
-        return shopify_session if shopify_session
-      end
+      user_session_by_jwt || user_session_by_cookie
+    end
 
-      if session[:user_id].present?
-        ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
-      end
+    def user_session_by_jwt
+      return unless jwt_payload
+      ShopifyApp::SessionRepository.retrieve_user_session_by_jwt(jwt_payload)
+    end
+
+    def user_session_by_cookie
+      return unless session[:user_id].present?
+      ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
     end
 
     def shop_session
-      if jwt_payload
-        shopify_session = ShopifyApp::SessionRepository.retrieve_shop_session_by_jwt(jwt_payload)
-        return shopify_session if shopify_session
-      end
+      shop_session_by_jwt || shop_session_by_cookie
+    end
 
-      if session[:shop_id].present?
-        ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
-      end
+    def shop_session_by_jwt
+      return unless jwt_payload
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_jwt(jwt_payload)
+    end
+
+    def shop_session_by_cookie
+      return unless session[:shop_id].present?
+      ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
     end
 
     def login_again_if_different_user_or_shop
