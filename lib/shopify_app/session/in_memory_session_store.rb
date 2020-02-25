@@ -12,6 +12,10 @@ module ShopifyApp
       id
     end
 
+    def self.retrieve_by_jwt(payload)
+      raise NotImplementedError
+    end
+
     def self.clear
       @@repo = nil
     end
