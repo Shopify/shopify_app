@@ -27,11 +27,9 @@ module ShopifyApp
     end
 
     def current_shopify_session
-      @current_shopify_session ||= user_session || shop_session
-    end
-
-    def user_session
-      user_session_by_jwt || user_session_by_cookie
+      @current_shopify_session ||= begin
+        user_session_by_jwt || user_session_by_cookie || shop_session_by_jwt || shop_session_by_cookie
+      end
     end
 
     def user_session_by_jwt
@@ -42,10 +40,6 @@ module ShopifyApp
     def user_session_by_cookie
       return unless session[:user_id].present?
       ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
-    end
-
-    def shop_session
-      shop_session_by_jwt || shop_session_by_cookie
     end
 
     def shop_session_by_jwt
