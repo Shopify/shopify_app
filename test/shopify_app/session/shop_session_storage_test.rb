@@ -6,10 +6,10 @@ end
 
 module ShopifyApp
   class ShopSessionStorageTest < ActiveSupport::TestCase
-    test "tests that session store can retrieve shop session records" do
-      TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
-      TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
+    TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
+    TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
 
+    test "tests that session store can retrieve shop session records by ID" do
       ShopMockSessionStore.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain:TEST_SHOPIFY_DOMAIN,
         shopify_token:TEST_SHOPIFY_TOKEN
@@ -18,6 +18,27 @@ module ShopifyApp
       session = ShopMockSessionStore.retrieve(id=1)
       assert_equal TEST_SHOPIFY_DOMAIN, session.domain
       assert_equal TEST_SHOPIFY_TOKEN, session.token
+    end
+
+    test "tests that session store can retrieve shop session records by JWT" do
+      instance = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        api_version: '2020-01',
+      )
+      ShopMockSessionStore.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
+
+      expected_session = ShopifyAPI::Session.new(
+        domain: instance.shopify_domain,
+        token: instance.shopify_token,
+        api_version: instance.api_version,
+      )
+
+      payload = { 'dest' => TEST_SHOPIFY_DOMAIN }
+      session = ShopMockSessionStore.retrieve_by_jwt(payload)
+      assert_equal expected_session.domain, session.domain
+      assert_equal expected_session.token, session.token
+      assert_equal expected_session.api_version, session.api_version
     end
 
     test "tests that session store can store shop session records" do
