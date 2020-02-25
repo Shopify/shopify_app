@@ -54,7 +54,10 @@ module ShopifyApp
 
     def session_repository=(klass)
       @session_repository = klass
-      ShopifyApp::SessionRepository.storage = klass
+    end
+
+    def session_repository
+      @session_repository.respond_to?(:constantize) ? @session_repository.constantize : @session_repository
     end
 
     def has_webhooks?
