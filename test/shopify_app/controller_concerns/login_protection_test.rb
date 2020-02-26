@@ -69,17 +69,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
     payload = {
-      'iss' => "#{domain}/admin",
-      'dest' => domain,
-      'aud' => 'api_key',
-      'sub' => 'user_id',
-      'exp' => 1.day.from_now.to_i,
-      'nbf' => 1.day.ago.to_i,
-      'iat' => 1.day.ago.to_i,
-      'jti' => 'abc',
+      'data' => 'good',
     }
 
-    jwt = JWT.encode(payload, nil, 'none')
+    jwt_mock = Struct.new(:payload).new(payload)
+    ShopifyApp::JWT.stubs(:new).with([payload, { 'alg' => 'none' }]).returns(jwt_mock)
 
     expected_session = ShopifyAPI::Session.new(
       domain: domain,
@@ -93,6 +87,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
+      jwt = JWT.encode(payload, nil, 'none')
       request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
       get :index
 
@@ -104,17 +99,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
     payload = {
-      'iss' => "#{domain}/admin",
-      'dest' => domain,
-      'aud' => 'api_key',
-      'sub' => nil,
-      'exp' => 1.day.from_now.to_i,
-      'nbf' => 1.day.ago.to_i,
-      'iat' => 1.day.ago.to_i,
-      'jti' => 'abc',
+      'data' => 'good',
     }
 
-    jwt = JWT.encode(payload, nil, 'none')
+    jwt_mock = Struct.new(:payload).new(payload)
+    ShopifyApp::JWT.stubs(:new).with([payload, { 'alg' => 'none' }]).returns(jwt_mock)
 
     expected_session = ShopifyAPI::Session.new(
       domain: domain,
@@ -128,110 +117,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
+      jwt = JWT.encode(payload, nil, 'none')
       request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
       get :index
 
       assert_equal expected_session, @controller.current_shopify_session
-    end
-  end
-
-  test "#current_shopify_session ignores jwt if 'aud' claim doesn't match api_key" do
-    session[:user_id] = '145'
-    domain = 'https://test.myshopify.io'
-    ShopifyApp.configuration.api_key = 'other_key'
-
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: 'abc',
-      api_version: '2020-01',
-    )
-
-    payload = {
-      'iss' => "#{domain}/admin",
-      'dest' => domain,
-      'aud' => 'api_key',
-      'sub' => 'user_id',
-      'exp' => 1.day.from_now.to_i,
-      'nbf' => 1.day.ago.to_i,
-      'iat' => 1.day.ago.to_i,
-      'jti' => 'abc',
-    }
-
-    jwt = JWT.encode(payload, nil, 'none')
-
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_jwt).never
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(expected_session)
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_jwt).never
-
-    with_application_test_routes do
-      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
-      get :index
-    end
-  end
-
-  test "#current_shopify_session ignores jwt if 'exp' claim is in the past" do
-    session[:user_id] = '145'
-    domain = 'https://test.myshopify.io'
-
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: 'abc',
-      api_version: '2020-01',
-    )
-
-    payload = {
-      'iss' => "#{domain}/admin",
-      'dest' => domain,
-      'aud' => 'api_key',
-      'sub' => 'user_id',
-      'exp' => 1.day.ago.to_i,
-      'nbf' => 1.day.ago.to_i,
-      'iat' => 1.day.ago.to_i,
-      'jti' => 'abc',
-    }
-
-    jwt = JWT.encode(payload, nil, 'none')
-
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_jwt).never
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(expected_session)
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_jwt).never
-
-    with_application_test_routes do
-      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
-      get :index
-    end
-  end
-
-  test "#current_shopify_session ignores jwt if 'nbf' claim is in the future" do
-    session[:user_id] = '145'
-    domain = 'https://test.myshopify.io'
-
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: 'abc',
-      api_version: '2020-01',
-    )
-
-    payload = {
-      'iss' => "#{domain}/admin",
-      'dest' => domain,
-      'aud' => 'api_key',
-      'sub' => 'user_id',
-      'exp' => 1.day.from_now.to_i,
-      'nbf' => 1.day.from_now.to_i,
-      'iat' => 1.day.from_now.to_i,
-      'jti' => 'abc',
-    }
-
-    jwt = JWT.encode(payload, nil, 'none')
-
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_jwt).never
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(expected_session)
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_jwt).never
-
-    with_application_test_routes do
-      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
-      get :index
     end
   end
 
