@@ -4,6 +4,7 @@ module ShopifyApp
   class JWTTest < ActiveSupport::TestCase
     setup do
       ShopifyApp.configuration.api_key = 'api_key'
+      ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
     end
 
     test "#payload returns the jwt payload" do
@@ -40,6 +41,22 @@ module ShopifyApp
       assert_nil jwt.payload
     end
 
+    test "#payload returns nil if `dest` is not a valid shopify domain" do
+      p = payload(dest: 'https://example.com')
+      token = ::JWT.encode(p, nil, 'none')
+      jwt = JWT.new(token)
+
+      assert_nil jwt.payload
+    end
+
+    test "#payload returns nil if `iss` host doesn't match `dest` host" do
+      p = payload(dest: 'https://other.myshopify.io')
+      token = ::JWT.encode(p, nil, 'none')
+      jwt = JWT.new(token)
+
+      assert_nil jwt.payload
+    end
+
     private
 
     def header
@@ -50,13 +67,14 @@ module ShopifyApp
 
     def payload(
       api_key: 'api_key',
-      domain: 'https://test.myshopify.io',
+      iss_host: 'https://test.myshopify.io',
+      dest: iss_host,
       exp: 1.day.from_now,
       nbf: 1.day.ago
     )
       {
-        'iss' => "#{domain}/admin",
-        'dest' => domain,
+        'iss' => "#{iss_host}/admin",
+        'dest' => dest,
         'aud' => api_key,
         'sub' => 'user_id',
         'exp' => exp.to_i,
