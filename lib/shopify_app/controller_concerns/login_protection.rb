@@ -71,13 +71,11 @@ module ShopifyApp
     protected
 
     def jwt_payload
-      @jwt_payload ||= JWT.new(jwt_header).payload if jwt_header
+      @jwt_payload ||= JWT.new(jwt).payload if jwt
     end
 
-    def jwt_header
-      authenticate_with_http_token do |token|
-        ::JWT.decode(token, nil, false)
-      end
+    def jwt
+      @jwt ||= authenticate_with_http_token { |token| token }
     end
 
     def redirect_to_login

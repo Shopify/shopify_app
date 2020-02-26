@@ -72,8 +72,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
       'data' => 'good',
     }
 
+    jwt = JWT.encode(payload, nil, 'none')
     jwt_mock = Struct.new(:payload).new(payload)
-    ShopifyApp::JWT.stubs(:new).with([payload, { 'alg' => 'none' }]).returns(jwt_mock)
+    ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
 
     expected_session = ShopifyAPI::Session.new(
       domain: domain,
@@ -87,7 +88,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
-      jwt = JWT.encode(payload, nil, 'none')
       request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
       get :index
 
@@ -102,8 +102,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
       'data' => 'good',
     }
 
+    jwt = JWT.encode(payload, nil, 'none')
     jwt_mock = Struct.new(:payload).new(payload)
-    ShopifyApp::JWT.stubs(:new).with([payload, { 'alg' => 'none' }]).returns(jwt_mock)
+    ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
 
     expected_session = ShopifyAPI::Session.new(
       domain: domain,
@@ -117,7 +118,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
-      jwt = JWT.encode(payload, nil, 'none')
       request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
       get :index
 
