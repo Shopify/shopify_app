@@ -5,12 +5,21 @@ module ShopifyApp
     setup do
       ShopifyApp.configuration.api_key = 'api_key'
       ShopifyApp.configuration.secret = 'secret'
+      ShopifyApp.configuration.old_secret = 'old_secret'
       ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
     end
 
     test "#payload returns the jwt payload" do
       p = payload
       jwt = JWT.new(token(p))
+
+      assert_equal p, jwt.payload
+    end
+
+    test "#payload returns the jwt payload using the old secret" do
+      p = payload
+      t = ::JWT.encode(p, ShopifyApp.configuration.old_secret, 'HS256')
+      jwt = JWT.new(t)
 
       assert_equal p, jwt.payload
     end
