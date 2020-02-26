@@ -4,60 +4,81 @@ module ShopifyApp
   class JWTTest < ActiveSupport::TestCase
     setup do
       ShopifyApp.configuration.api_key = 'api_key'
+      ShopifyApp.configuration.secret = 'secret'
       ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
     end
 
     test "#payload returns the jwt payload" do
       p = payload
-      token = ::JWT.encode(p, nil, 'none')
-      jwt = JWT.new(token)
+      jwt = JWT.new(token(p))
 
       assert_equal p, jwt.payload
+    end
+
+    test "#payload returns nil if the jwt is invalid" do
+      jwt = JWT.new('token')
+
+      assert_nil jwt.payload
+    end
+
+    test "#payload returns nil if the jwt is unsigned" do
+      p = payload
+      t = ::JWT.encode(payload, nil, 'none')
+      jwt = JWT.new(t)
+
+      assert_nil jwt.payload
+    end
+
+    test "#payload returns nil if the signature is bad" do
+      p = payload
+      t = ::JWT.encode(payload, 'bad', 'HS256')
+      jwt = JWT.new(t)
+
+      assert_nil jwt.payload
     end
 
     test "#payload returns nil if 'aud' claim doesn't match api_key" do
       ShopifyApp.configuration.api_key = 'other_key'
 
       p = payload
-      token = ::JWT.encode(p, nil, 'none')
-      jwt = JWT.new(token)
+      jwt = JWT.new(token(p))
 
       assert_nil jwt.payload
     end
 
     test "#payload returns nil if 'exp' claim is in the past" do
       p = payload(exp: 1.day.ago)
-      token = ::JWT.encode(p, nil, 'none')
-      jwt = JWT.new(token)
+      jwt = JWT.new(token(p))
 
       assert_nil jwt.payload
     end
 
     test "#payload returns nil if 'nbf' claim is in the future" do
       p = payload(nbf: 1.day.from_now)
-      token = ::JWT.encode(p, nil, 'none')
-      jwt = JWT.new(token)
+      jwt = JWT.new(token(p))
 
       assert_nil jwt.payload
     end
 
     test "#payload returns nil if `dest` is not a valid shopify domain" do
       p = payload(dest: 'https://example.com')
-      token = ::JWT.encode(p, nil, 'none')
-      jwt = JWT.new(token)
+      jwt = JWT.new(token(p))
 
       assert_nil jwt.payload
     end
 
     test "#payload returns nil if `iss` host doesn't match `dest` host" do
       p = payload(dest: 'https://other.myshopify.io')
-      token = ::JWT.encode(p, nil, 'none')
-      jwt = JWT.new(token)
+      jwt = JWT.new(token(p))
 
       assert_nil jwt.payload
     end
 
     private
+
+    def token(payload)
+      ::JWT.encode(payload, ShopifyApp.configuration.secret, 'HS256')
+    end
 
     def header
       {

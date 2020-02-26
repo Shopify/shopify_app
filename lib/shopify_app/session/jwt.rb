@@ -10,8 +10,6 @@ module ShopifyApp
       return unless dest_host
       return unless dest_host == iss_host
       return unless @payload['aud'] == ShopifyApp.configuration.api_key
-      return unless @payload['exp'].to_i >= Time.now.to_i
-      return unless @payload['nbf'].to_i <= Time.now.to_i
 
       @payload
     end
@@ -19,7 +17,9 @@ module ShopifyApp
     private
 
     def parse_token_data
-      @payload, @header = ::JWT.decode(@token, nil, false)
+      @payload, _ = ::JWT.decode(@token, ShopifyApp.configuration.secret, true, { algorithm: 'HS256' })
+    rescue ::JWT::DecodeError, ::JWT::VerificationError, ::JWT::ExpiredSignature, ::JWT::ImmatureSignature
+      @payload = nil
     end
 
     def dest_host
