@@ -2,7 +2,7 @@ module ShopifyApp
   class JWT
     def initialize(token)
       @token = token
-      parse_token_data
+      set_payload
     end
 
     def payload
@@ -16,8 +16,13 @@ module ShopifyApp
 
     private
 
-    def parse_token_data
-      @payload, _ = ::JWT.decode(@token, ShopifyApp.configuration.secret, true, { algorithm: 'HS256' })
+    def set_payload
+      parse_token_data(ShopifyApp.configuration.secret)
+      parse_token_data(ShopifyApp.configuration.old_secret) if !@payload && ShopifyApp.configuration.old_secret
+    end
+
+    def parse_token_data(secret)
+      @payload, _ = ::JWT.decode(@token, secret, true, { algorithm: 'HS256' })
     rescue ::JWT::DecodeError, ::JWT::VerificationError, ::JWT::ExpiredSignature, ::JWT::ImmatureSignature
       @payload = nil
     end
