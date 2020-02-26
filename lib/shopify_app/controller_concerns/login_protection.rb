@@ -71,22 +71,13 @@ module ShopifyApp
     protected
 
     def jwt_payload
-      @jwt_payload ||= validate_jwt_payload(parse_jwt_payload)
+      @jwt_payload ||= JWT.new(jwt_header).payload if jwt_header
     end
 
-    def parse_jwt_payload
+    def jwt_header
       authenticate_with_http_token do |token|
-        JWT.decode(token, nil, false)&.first
+        ::JWT.decode(token, nil, false)
       end
-    end
-
-    def validate_jwt_payload(payload)
-      return unless payload
-      return unless payload['aud'] == ShopifyApp.configuration.api_key
-      return unless payload['exp'].to_i >= Time.now.to_i
-      return unless payload['nbf'].to_i <= Time.now.to_i
-
-      payload
     end
 
     def redirect_to_login
