@@ -223,7 +223,7 @@ $ rails generate shopify_app:shop_model
 This will generate a shop model which will be the storage for the tokens necessary for authentication.
 
 #### User-based token storage
-A more granular control over level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained so that background jobs can make use of them when necessary.
+A more granular control over level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained if you are running background jobs so that you can make use of them when necessary.
 ```sh
 $ rails generate shopify_app:shop_model
 $ rails generate shopify_app:user_model
