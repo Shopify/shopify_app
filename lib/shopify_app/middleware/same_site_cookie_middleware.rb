@@ -10,7 +10,7 @@ module ShopifyApp
       status, headers, body = @app.call(env)
       user_agent = env['HTTP_USER_AGENT']
 
-      @request = Rack::Request.new(env)
+      @request = Rack::Request.new(env) 
       is_https = @request.env['HTTPS'] == 'on' || @request.env['HTTP_X_SSL_REQUEST'] == 'on'
 
       if headers && headers['Set-Cookie'] &&
