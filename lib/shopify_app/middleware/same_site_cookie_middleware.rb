@@ -10,13 +10,10 @@ module ShopifyApp
       status, headers, body = @app.call(env)
       user_agent = env['HTTP_USER_AGENT']
 
-      @request = Rack::Request.new(env) 
-      is_https = @request.env['HTTPS'] == 'on' || @request.env['HTTP_X_SSL_REQUEST'] == 'on'
-
       if headers && headers['Set-Cookie'] &&
           !SameSiteCookieMiddleware.same_site_none_incompatible?(user_agent) &&
           ShopifyApp.configuration.enable_same_site_none &&
-          is_https
+          Rack::Request.new(env).ssl?
 
         set_cookies = headers['Set-Cookie']
           .split(COOKIE_SEPARATOR)
