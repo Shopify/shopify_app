@@ -5,7 +5,7 @@ module ShopifyApp
     # for the app in your Shopify Partners page. Change your settings in
     # `config/initializers/shopify_app.rb`
     attr_accessor :application_name
-    attr_writer   :api_key
+    attr_reader   :api_key
     attr_accessor :secret
     attr_accessor :old_secret
     attr_accessor :scope
@@ -65,9 +65,10 @@ module ShopifyApp
       scripttags.present?
     end
 
-    def api_key
-      raise 'API Key is required and is being returned nil. Are you loading your enviroment variables?' if @api_key.nil?
-      @api_key
+    def api_key=(key)
+      raise 'API Key is required and is being returned nil. \
+      This may indicate that your enviroment variables have not been loaded.' if key.nil?
+      @api_key = key
     end
 
     def enable_same_site_none
