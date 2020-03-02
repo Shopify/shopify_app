@@ -93,6 +93,8 @@ SHOPIFY_API_SECRET=your api secret
 
 These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
 
+**You will need to load the ENV variables into your enviroment, you can do this with the [dot-env](https://github.com/bkeepers/dotenv) gem or any other method you wish to.**
+
 ### Install Generator
 
 ```sh

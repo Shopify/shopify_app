@@ -14,6 +14,7 @@ module ShopifyApp
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
+      ShopifyApp.configuration.api_key = 'abc123'
 
       I18n.locale = :en
 
