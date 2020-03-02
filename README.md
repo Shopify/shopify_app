@@ -215,7 +215,7 @@ Authentication
 
 ### Callback
 
-Upon completing the authentication flow Shopify calls the app at the `callback_path` mentioned before. If the app needs to do some extra work it can define and configure the route to a custom callback controller, inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods. The default callback controller provides already the following behaviour:
+Upon completing the authentication flow Shopify calls the app at the `callback_path` mentioned before. If the app needs to do some extra work it can define and configure the route to a custom callback controller, inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods. The default callback controller already provides the following behaviour:
 * Logging into the shop and resetting the session
 * [Installing Webhooks](https://github.com/Shopify/shopify_app#webhooksmanager)
 * [Set Scripttags](https://github.com/Shopify/shopify_app#scripttagsmanager)
