@@ -213,6 +213,17 @@ end
 Authentication
 --------------
 
+### Callback
+
+Upon completing the authentication flow Shopify calls the app at the `callback_path` mentioned before. If the app needs to do some extra work it can define and configure the route to a custom callback controller, inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods. The default callback controller already provides the following behaviour:
+* Logging into the shop and resetting the session
+* [Installing Webhooks](https://github.com/Shopify/shopify_app#webhooksmanager)
+* [Setting Scripttags](https://github.com/Shopify/shopify_app#scripttagsmanager)
+* [Performing the AfterAuthenticate Job](https://github.com/Shopify/shopify_app#afterauthenticatejob)
+* Redirecting to the return address
+
+**Note that starting with version 8.4.0, we have extracted the callback logic in its own controller. If you are upgrading from a version older than 8.4.0 the callback action and related helper methods were defined in `ShopifyApp::SessionsController` ==> you will have to extend `ShopifyApp::CallbackController` instead and port your logic to the new controller.**
+
 ### ShopifyApp::SessionRepository
 
 `ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. These methods are already implemented as part of the `ShopifyApp::SessionStorage` concern, but can be overridden for custom implementation.
@@ -473,6 +484,7 @@ Questions or problems?
 
 - [Ask questions!](https://ecommerce.shopify.com/c/shopify-apis-and-technology)
 - [Read the docs!](https://help.shopify.com/api/guides)
+- And don't forget to check the [Changelog](https://github.com/Shopify/shopify_app/blob/master/CHANGELOG.md) too!
 
 Upgrading to 11.7.0
 ---------------------------
