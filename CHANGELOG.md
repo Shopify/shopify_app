@@ -1,3 +1,7 @@
+12.0.7
+------
+* Remove check for API_KEY in config that was throwing errors during install #919
+
 12.0.6
 ------
 * Adds changelog information and README updates for 8.4.0 #916
