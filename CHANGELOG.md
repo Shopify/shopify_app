@@ -1,3 +1,7 @@
+12.0.5
+-----
+* Updating shopify_api gem to 9.0.1
+
 12.0.4
 ------
 * Reverts reverted PR (#895) #897
