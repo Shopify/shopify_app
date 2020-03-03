@@ -1,5 +1,9 @@
+12.0.6
+------
+* Adds changelog information and README updates for 8.4.0 #916
+
 12.0.5
------
+------
 * Updating shopify_api gem to 9.0.1
 
 12.0.4
