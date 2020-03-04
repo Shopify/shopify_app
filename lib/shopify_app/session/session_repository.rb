@@ -2,6 +2,8 @@ module ShopifyApp
   class SessionRepository
     class ConfigurationError < StandardError; end
 
+    EXPECTED_METHODS = [:store, :retrieve, :retrieve_by_jwt].freeze
+
     class << self
       def shop_storage=(storage)
         @shop_storage = storage
@@ -53,6 +55,10 @@ module ShopifyApp
       def load_user_storage
         return NullUserSessionStore unless @user_storage
         @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
+      end
+
+      def expected_interface?(storage)
+        EXPECTED_METHODS.all? { |method| storage.respond_to?(method) }
       end
     end
   end
