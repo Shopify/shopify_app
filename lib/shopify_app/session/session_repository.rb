@@ -51,7 +51,7 @@ module ShopifyApp
       end
 
       def load_user_storage
-        return unless @user_storage
+        return NullUserSessionStore unless @user_storage
         @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
       end
     end
