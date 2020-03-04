@@ -1,5 +1,13 @@
+12.0.7
+------
+* Remove check for API_KEY in config that was throwing errors during install #919
+
+12.0.6
+------
+* Adds changelog information and README updates for 8.4.0 #916
+
 12.0.5
------
+------
 * Updating shopify_api gem to 9.0.1
 
 12.0.4
@@ -191,6 +199,7 @@ Added support for rotating Shopify access tokens:
 8.4.0
 ----
 * Fix embedded app session management in Safari 12.1
+  * Note that with this change we have extracted the callback action in its own controller. If you are relying on it, see the README for more details: https://github.com/Shopify/shopify_app#callback
 * Shop names passed to OAuth are no longer case sensitive
 
 8.3.2
