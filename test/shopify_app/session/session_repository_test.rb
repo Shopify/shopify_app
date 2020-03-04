@@ -100,7 +100,7 @@ module ShopifyApp
       SessionRepository.user_storage = InMemoryUserSessionStore
 
       payload = { 'sub' => 'abra', 'dest' => 'abra-shop' }
-      SessionRepository.user_storage.expects(:retrieve_by_jwt).with(payload)
+      InMemoryUserSessionStore.expects(:retrieve_by_jwt).with(payload)
 
       SessionRepository.retrieve_user_session_by_jwt(payload)
     end
@@ -109,7 +109,7 @@ module ShopifyApp
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
       payload = { 'dest' => 'abra-shop' }
-      SessionRepository.shop_storage.expects(:retrieve_by_jwt).with(payload)
+      InMemoryShopSessionStore.expects(:retrieve_by_jwt).with(payload)
 
       SessionRepository.retrieve_shop_session_by_jwt(payload)
     end
@@ -118,7 +118,7 @@ module ShopifyApp
       SessionRepository.user_storage = InMemoryUserSessionStore
 
       user_id = 'abra'
-      SessionRepository.user_storage.expects(:retrieve).with(user_id)
+      InMemoryUserSessionStore.expects(:retrieve).with(user_id)
 
       SessionRepository.retrieve_user_session(user_id)
     end
@@ -127,7 +127,7 @@ module ShopifyApp
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
       shop_id = 'abra-shop'
-      SessionRepository.shop_storage.expects(:retrieve).with(shop_id)
+      InMemoryShopSessionStore.expects(:retrieve).with(shop_id)
 
       SessionRepository.retrieve_shop_session(shop_id)
     end
@@ -140,13 +140,13 @@ module ShopifyApp
         token: 'abracadabra',
         api_version: :unstable
       )
-      SessionRepository.shop_storage.expects(:store).with(session)
+      InMemoryShopSessionStore.expects(:store).with(session)
 
       SessionRepository.store_shop_session(session)
     end
 
     test '.store_user_session stores a user session' do
-      SessionRepository.user_storage = InMemoryShopSessionStore
+      SessionRepository.user_storage = InMemoryUserSessionStore
 
       session = ShopifyAPI::Session.new(
         domain: 'shop.myshopify.com',
@@ -154,7 +154,7 @@ module ShopifyApp
         api_version: :unstable
       )
       user = { 'id' => 'abra' }
-      SessionRepository.user_storage.expects(:store).with(session, user)
+      InMemoryUserSessionStore.expects(:store).with(session, user)
 
       SessionRepository.store_user_session(session, user)
     end
