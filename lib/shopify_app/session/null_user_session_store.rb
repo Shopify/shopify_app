@@ -12,6 +12,10 @@ module ShopifyApp
       def retrieve_by_jwt(_)
         nil
       end
+
+      def blank?
+        true
+      end
     end
   end
 end
