@@ -16,6 +16,10 @@ class TestSessionStore
     storage[id] = session
     id
   end
+
+  def retrieve_by_jwt(payload)
+    retrieve(payload)
+  end
 end
 
 class TestSessionStoreClass
@@ -23,6 +27,9 @@ class TestSessionStoreClass
   end
 
   def self.retrieve(id)
+  end
+
+  def self.retrieve_by_jwt(_)
   end
 end
 

@@ -2,21 +2,21 @@ module ShopifyApp
   class SessionRepository
     class ConfigurationError < StandardError; end
 
+    EXPECTED_METHODS = [:store, :retrieve, :retrieve_by_jwt].freeze
+
     class << self
       def shop_storage=(storage)
         @shop_storage = storage
+        return unless storage
 
-        unless storage.nil? || self.shop_storage.respond_to?(:store) && self.shop_storage.respond_to?(:retrieve)
-          raise ArgumentError, "shop storage must respond to :store and :retrieve"
-        end
+        raise ArgumentError, "shop storage does not have expected interface" unless expected_interface?(shop_storage)
       end
 
       def user_storage=(storage)
         @user_storage = storage
+        return unless storage
 
-        unless storage.nil? || self.user_storage.respond_to?(:store) && self.user_storage.respond_to?(:retrieve)
-          raise ArgumentError, "user storage must respond to :store and :retrieve"
-        end
+        raise ArgumentError, "user storage does not have expected interface" unless expected_interface?(user_storage)
       end
 
       def retrieve_shop_session(id)
@@ -61,6 +61,10 @@ module ShopifyApp
       def load_user_storage
         return NullUserSessionStore unless @user_storage
         @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
+      end
+
+      def expected_interface?(storage)
+        EXPECTED_METHODS.all? { |method| storage.respond_to?(method) }
       end
     end
   end

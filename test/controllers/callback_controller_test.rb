@@ -214,7 +214,7 @@ module ShopifyApp
 
     def mock_shopify_user_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
       OmniAuth.config.add_mock(
         :shopify,
         provider: :shopify,

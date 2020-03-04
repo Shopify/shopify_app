@@ -64,5 +64,21 @@ module ShopifyApp
       assert_equal "a-new-user_token!", mock_user_instance.shopify_token
       assert_equal mock_user_instance.id, saved_id
     end
+
+    test '.retrieve returns nil for non-existent user' do
+      user_id = 'non-existent-user'
+      UserMockSessionStore.stubs(:find_by).with(id: user_id).returns(nil)
+
+      refute UserMockSessionStore.retrieve(user_id)
+    end
+
+    test '.retrieve_by_jwt returns nil for non-existent user' do
+      user_id = 'non-existent-user'
+      UserMockSessionStore.stubs(:find_by).with(shopify_user_id: user_id).returns(nil)
+
+      payload = { 'sub' => user_id }
+
+      refute UserMockSessionStore.retrieve_by_jwt(payload)
+    end
   end
 end
