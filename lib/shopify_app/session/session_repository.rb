@@ -44,7 +44,7 @@ module ShopifyApp
       end
 
       def shop_storage
-        load_shop_storage || raise(ConfigurationError.new("ShopifySessionRepository.shop_storage is not configured!"))
+        load_shop_storage
       end
 
       def user_storage
@@ -54,7 +54,7 @@ module ShopifyApp
       private
 
       def load_shop_storage
-        return unless @shop_storage
+        return NullShopSessionStore unless @shop_storage
         @shop_storage.respond_to?(:safe_constantize) ? @shop_storage.safe_constantize : @shop_storage
       end
 

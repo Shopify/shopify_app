@@ -88,7 +88,7 @@ module ShopifyApp
       assert_not_nil SessionRepository.shop_storage
 
       SessionRepository.shop_storage = nil
-      assert_raises(SessionRepository::ConfigurationError) { SessionRepository.shop_storage }
+      assert_kind_of NullShopSessionStore.class, SessionRepository.shop_storage
     end
 
     test '.shop_storage accepts a String as argument' do
