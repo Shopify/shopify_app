@@ -6,14 +6,14 @@ module ShopifyApp
 
     class << self
       def shop_storage=(storage)
-        @shop_storage = storage
+        @shop_storage = load_shop_storage(storage)
         return unless storage
 
         raise ArgumentError, "shop storage does not have expected interface" unless expected_interface?(shop_storage)
       end
 
       def user_storage=(storage)
-        @user_storage = storage
+        @user_storage = load_user_storage(storage)
         return unless storage
 
         raise ArgumentError, "user storage does not have expected interface" unless expected_interface?(user_storage)
@@ -44,23 +44,23 @@ module ShopifyApp
       end
 
       def shop_storage
-        load_shop_storage
+        @shop_storage
       end
 
       def user_storage
-        load_user_storage
+        @user_storage
       end
 
       private
 
-      def load_shop_storage
-        return NullShopSessionStore unless @shop_storage
-        @shop_storage.respond_to?(:safe_constantize) ? @shop_storage.safe_constantize : @shop_storage
+      def load_shop_storage(storage)
+        return NullShopSessionStore unless storage
+        storage.respond_to?(:safe_constantize) ? storage.safe_constantize : storage
       end
 
-      def load_user_storage
-        return NullUserSessionStore unless @user_storage
-        @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
+      def load_user_storage(storage)
+        return NullUserSessionStore unless storage
+        storage.respond_to?(:safe_constantize) ? storage.safe_constantize : storage
       end
 
       def expected_interface?(storage)
