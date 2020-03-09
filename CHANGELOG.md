@@ -1,6 +1,6 @@
 13.0.0
 ------
-+ Added concurrent user and shop session support (online/offline)
++ #887 Added concurrent user and shop session support (online/offline)
   BREAKING, please see README for migration notes.
 
 12.0.7
