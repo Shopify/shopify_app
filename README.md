@@ -25,6 +25,7 @@ Table of Contents
 - [AppProxyVerification](#appproxyverification)
 - [Troubleshooting](#troubleshooting)
 - [Testing an embedded app outside the Shopify admin](#testing-an-embedded-app-outside-the-shopify-admin)
+- [Migration to 13.0.0](#migrating-to-13)
 - [Questions or problems?](#questions-or-problems-)
 - [Rails 6 Compatibility](#rails-6-compatibility)
 - [Upgrading from 8.6 to 9.0.0](#upgrading-from-86-to-900)
@@ -479,6 +480,29 @@ By default, loading your embedded app will redirect to the Shopify admin, with t
 ```javascript
 forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
+
+Migrating to 13.0.0
+-------------------
+
+Version 13.0.0 adds the ability to use both user and shop sessions, concurrently. This however involved a large
+change to how session stores work. Here are the steps to migrate to 13.x
+
+### Changes to `config/initializers/shopify_app.rb`
+- *REMOVE* `config.per_user_tokens = [true|false]` this is no longer needed
+- *CHANGE* `config.session_repository = 'Shop'` To  `config.shop_session_repository = 'Shop'`
+- *ADD (optional)*  User Session Storage `config.user_session_repository = 'User'`
+
+### Shop Model Changes (normally `app/models/shop.rb`)
+-  *CHANGE* `include ShopifyApp::SessionStorage` to `include ShopifyApp::ShopSessionStorage`
+
+### Changes to `ShopifyApp::LoginProtection`
+`ShopifyApp::LoginProtection`
+
+if you are using `ShopifyApp::LoginProtection#shop_session` in your code, it will need to be
+changed to `ShopifyApp::LoginProtection#activate_shopify_session`
+
+### Notes
+You do not need a user model, a shop session is fine for most applications.
 
 Questions or problems?
 ----------------------

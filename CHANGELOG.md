@@ -1,3 +1,8 @@
+13.0.0
+------
++ Added concurrent user and shop session support (online/offline)
+  BREAKING, please see README for migration notes.
+
 12.0.7
 ------
 * Remove check for API_KEY in config that was throwing errors during install #919
