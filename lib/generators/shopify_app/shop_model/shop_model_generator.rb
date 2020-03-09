@@ -16,7 +16,7 @@ module ShopifyApp
       end
 
       def update_shopify_app_initializer
-        gsub_file 'config/initializers/shopify_app.rb', 'ShopifyApp::InMemorySessionStore', 'Shop'
+        gsub_file 'config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryShopSessionStore', 'Shop'
       end
 
       def create_shop_fixtures

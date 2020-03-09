@@ -8,7 +8,7 @@ ShopifyApp.configure do |config|
   config.embedded_app = <%= embedded_app? %>
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
-  config.session_repository = 'ShopifyApp::InMemorySessionStore'
+  config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
 end
 
 # ShopifyApp::Utils.fetch_known_api_versions                        # Uncomment to fetch known api versions from shopify servers on boot

@@ -8,6 +8,11 @@ module ShopifyApp
     def callback
       if auth_hash
         login_shop
+
+        if ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+          return redirect_to(login_url_with_optional_shop)
+        end
+
         install_webhooks
         install_scripttags
         perform_after_authenticate_job
@@ -55,16 +60,15 @@ module ShopifyApp
         token: token,
         api_version: ShopifyApp.configuration.api_version
       )
-      session[:shopify] = ShopifyApp::SessionRepository.store(session_store, user: associated_user)
-      session[:shopify_domain] = shop_name
-      session[:shopify_user] = associated_user
 
-      if ShopifyApp.configuration.per_user_tokens?
-        # Adds the user_session to the session to determine if the logged in user has changed
-        user_session = auth_hash&.extra&.session
-        raise IndexError, "Missing user session signature" if user_session.nil?
-        session[:user_session] = user_session
+      session[:shopify_user] = associated_user
+      if session[:shopify_user].present?
+        session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
+      else
+        session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
       end
+      session[:shopify_domain] = shop_name
+      session[:user_session] = auth_hash&.extra&.session
     end
 
     def install_webhooks
@@ -72,7 +76,7 @@ module ShopifyApp
 
       WebhooksManager.queue(
         shop_name,
-        token,
+        shop_session&.token || user_session.token,
         ShopifyApp.configuration.webhooks
       )
     end
@@ -82,7 +86,7 @@ module ShopifyApp
 
       ScripttagsManager.queue(
         shop_name,
-        token,
+        shop_session&.token || user_session.token,
         ShopifyApp.configuration.scripttags
       )
     end

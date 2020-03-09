@@ -4,5 +4,6 @@ ShopifyApp.configure do |config|
   config.secret = ENV['SHOPIFY_API_SECRET']
   config.scope = 'read_orders, read_products'
   config.embedded_app = true
-  config.session_repository = 'ShopifyApp::InMemorySessionStore'
+  config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
+  config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
 end

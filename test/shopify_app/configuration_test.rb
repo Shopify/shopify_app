@@ -20,22 +20,6 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal false, ShopifyApp.configuration.after_authenticate_job
   end
 
-  test "configure object defaults to shop tokens" do
-    assert_equal false, ShopifyApp.configuration.per_user_tokens?
-  end
-
-  test "configure object can set per-user tokens" do
-    begin
-      ShopifyApp.configure do |config|
-        config.per_user_tokens = true
-      end
-
-      assert_equal true, ShopifyApp.configuration.per_user_tokens?
-    ensure
-      ShopifyApp.configuration.per_user_tokens = false
-    end
-  end
-
   test "defaults login_url" do
     assert_equal "/login", ShopifyApp.configuration.login_url
   end
@@ -133,22 +117,40 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
   end
 
-  test "can set session_repository with a string" do
+  test "can set shop_session_repository with a string" do
     ShopifyApp.configure do |config|
-      config.session_repository = 'ShopifyApp::InMemorySessionStore'
+      config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
     end
 
-    assert_equal 'ShopifyApp::InMemorySessionStore', ShopifyApp.configuration.session_repository
-    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
+    assert_equal 'ShopifyApp::InMemoryShopSessionStore', ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
   end
 
-  test "can set session_repository with a class" do
+  test "can set shop_session_repository with a class" do
     ShopifyApp.configure do |config|
-      config.session_repository = ShopifyApp::InMemorySessionStore
+      config.shop_session_repository = ShopifyApp::InMemoryShopSessionStore
     end
 
-    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp.configuration.session_repository
-    assert_equal ShopifyApp::InMemorySessionStore, ShopifyApp::SessionRepository.storage
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
+  end
+
+  test "can set user_session_repository with a string" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
+    end
+
+    assert_equal 'ShopifyApp::InMemoryUserSessionStore', ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
+  end
+
+  test "can set user_session_repository with a class" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = ShopifyApp::InMemoryUserSessionStore
+    end
+
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
   end
 
   test "enable_same_site_none is false in tests" do
