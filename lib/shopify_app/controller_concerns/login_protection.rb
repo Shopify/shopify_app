@@ -66,17 +66,21 @@ module ShopifyApp
       if request.xhr?
         head :unauthorized
       else
-        if request.get?
-          path = request.path
-          query = sanitized_params.to_query
-        else
-          referer = URI(request.referer || "/")
-          path = referer.path
-          query = "#{referer.query}&#{sanitized_params.to_query}"
-        end
-        session[:return_to] = "#{path}?#{query}"
+        set_session_return_to_current_path
         redirect_to(login_url_with_optional_shop)
       end
+    end
+
+    def set_session_return_to_current_path
+      if request.get?
+        path = request.path
+        query = sanitized_params.to_query
+      else
+        referer = URI(request.referer || "/")
+        path = referer.path
+        query = "#{referer.query}&#{sanitized_params.to_query}"
+      end
+      session[:return_to] = "#{path}?#{query}"
     end
 
     def close_session
