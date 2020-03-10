@@ -243,6 +243,15 @@ class LoginProtectionTest < ActionController::TestCase
     end
   end
 
+  test '#set_session_return_to_current_path sets session correctly for get request' do
+    with_application_test_routes do
+      request.path = 'go_back_to_this_path'
+      @controller.params = { shop: 'foobar' }
+      @controller.send(:set_session_return_to_current_path)
+      assert_equal 'go_back_to_this_path?shop=foobar.myshopify.com', session[:return_to]
+    end
+  end
+
   test '#activate_shopify_session with no Shopify session, sets session[:return_to]' do
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }
