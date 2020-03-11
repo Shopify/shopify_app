@@ -26,14 +26,6 @@ module ShopifyApp
 
     private
 
-    def user_session
-      user_session_by_jwt || user_session_by_cookie
-    end
-
-    def shop_session
-      shop_session_by_jwt || shop_session_by_cookie
-    end
-
     def login_shop
       reset_session_options
       set_shopify_session
