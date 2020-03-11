@@ -9,8 +9,8 @@ module ShopifyApp
     test "retrieving a session by JWT" do
       InMemoryShopSessionStore.repo['abra'] = 'something'
 
-      payload = { 'dest' => 'abra' }
-      assert_equal 'something', InMemoryShopSessionStore.retrieve_by_jwt(payload)
+      shopify_domain = 'abra'
+      assert_equal 'something', InMemoryShopSessionStore.retrieve_by_shopify_domain(shopify_domain)
     end
   end
 end

@@ -69,11 +69,12 @@ class LoginProtectionControllerTest < ActionController::TestCase
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
     payload = {
-      'data' => 'good',
+      'dest' => 'shopify_domain',
+      'sub' => 'shopify_user'
     }
 
     jwt = JWT.encode(payload, nil, 'none')
-    jwt_mock = Struct.new(:payload).new(payload)
+    jwt_mock = Struct.new(:shopify_user_id).new(payload['sub'])
     ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
 
     expected_session = ShopifyAPI::Session.new(
@@ -82,9 +83,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
       api_version: '2020-01',
     )
 
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_jwt).with(payload).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).with(payload['sub']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_jwt).never
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
@@ -99,11 +100,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
     payload = {
-      'data' => 'good',
+      'dest' => 'test.shopify.com',
     }
 
     jwt = JWT.encode(payload, nil, 'none')
-    jwt_mock = Struct.new(:payload).new(payload)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(payload['dest'], nil)
     ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
 
     expected_session = ShopifyAPI::Session.new(
@@ -112,9 +113,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
       api_version: '2020-01',
     )
 
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_jwt).returns(nil)
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_jwt).with(payload).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).with(payload['dest']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do

@@ -9,7 +9,7 @@ module ShopifyApp
         raise(SessionRepository::ConfigurationError.new('user_storage is not configured'))
       end
 
-      def retrieve_by_jwt(_)
+      def retrieve_by_shopify_user_id(_)
         nil
       end
 

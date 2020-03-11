@@ -2,6 +2,11 @@ require 'test_helper'
 
 module ShopifyApp
   class JWTTest < ActiveSupport::TestCase
+
+    TEST_SHOPIFY_DOMAIN = 'https://test.myshopify.io'
+    TEST_SANITIZED_SHOPIFY_DOMAIN = 'test.myshopify.io'
+    TEST_USER_ID = 'test-user'
+
     setup do
       ShopifyApp.configuration.api_key = 'api_key'
       ShopifyApp.configuration.secret = 'secret'
@@ -13,7 +18,8 @@ module ShopifyApp
       p = payload
       jwt = JWT.new(token(p))
 
-      assert_equal p, jwt.payload
+      assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
+      assert_equal TEST_USER_ID, jwt.shopify_user_id
     end
 
     test "#payload returns the jwt payload using the old secret" do
@@ -21,13 +27,15 @@ module ShopifyApp
       t = ::JWT.encode(p, ShopifyApp.configuration.old_secret, 'HS256')
       jwt = JWT.new(t)
 
-      assert_equal p, jwt.payload
+      assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
+      assert_equal TEST_USER_ID, jwt.shopify_user_id
     end
 
     test "#payload returns nil if the jwt is invalid" do
       jwt = JWT.new('token')
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if the jwt is unsigned" do
@@ -35,7 +43,8 @@ module ShopifyApp
       t = ::JWT.encode(payload, nil, 'none')
       jwt = JWT.new(t)
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if the signature is bad" do
@@ -43,7 +52,8 @@ module ShopifyApp
       t = ::JWT.encode(payload, 'bad', 'HS256')
       jwt = JWT.new(t)
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if 'aud' claim doesn't match api_key" do
@@ -52,35 +62,48 @@ module ShopifyApp
       p = payload
       jwt = JWT.new(token(p))
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if 'exp' claim is in the past" do
       p = payload(exp: 1.day.ago)
       jwt = JWT.new(token(p))
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if 'nbf' claim is in the future" do
       p = payload(nbf: 1.day.from_now)
       jwt = JWT.new(token(p))
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if `dest` is not a valid shopify domain" do
       p = payload(dest: 'https://example.com')
       jwt = JWT.new(token(p))
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
     end
 
     test "#payload returns nil if `iss` host doesn't match `dest` host" do
       p = payload(dest: 'https://other.myshopify.io')
       jwt = JWT.new(token(p))
 
-      assert_nil jwt.payload
+      assert_nil jwt.shopify_domain
+      assert_nil jwt.shopify_user_id
+    end
+
+    test "#shopify_user_id returns nil if `sub` does not exist" do
+      p = payload(sub: nil)
+      jwt = JWT.new(token(p))
+
+      assert_nil jwt.shopify_user_id
+      assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
     end
 
     private
@@ -97,16 +120,17 @@ module ShopifyApp
 
     def payload(
       api_key: 'api_key',
-      iss_host: 'https://test.myshopify.io',
+      iss_host: TEST_SHOPIFY_DOMAIN,
       dest: iss_host,
       exp: 1.day.from_now,
-      nbf: 1.day.ago
+      nbf: 1.day.ago,
+      sub: TEST_USER_ID
     )
       {
         'iss' => "#{iss_host}/admin",
         'dest' => dest,
         'aud' => api_key,
-        'sub' => 'user_id',
+        'sub' => sub,
         'exp' => exp.to_i,
         'nbf' => nbf.to_i,
         'iat' => 1.day.ago.to_i,

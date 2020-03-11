@@ -20,7 +20,7 @@ module ShopifyApp
       assert_equal TEST_SHOPIFY_TOKEN, session.token
     end
 
-    test ".retrieve_by_jwt can retrieve shop session records by JWT" do
+    test ".retrieve_by_shopify_domain can retrieve shop session records by JWT" do
       instance = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
@@ -34,8 +34,8 @@ module ShopifyApp
         api_version: instance.api_version,
       )
 
-      payload = { 'dest' => TEST_SHOPIFY_DOMAIN }
-      session = ShopMockSessionStore.retrieve_by_jwt(payload)
+      shopify_domain =  TEST_SHOPIFY_DOMAIN
+      session = ShopMockSessionStore.retrieve_by_shopify_domain(shopify_domain)
       assert_equal expected_session.domain, session.domain
       assert_equal expected_session.token, session.token
       assert_equal expected_session.api_version, session.api_version
@@ -63,13 +63,12 @@ module ShopifyApp
       refute ShopMockSessionStore.retrieve(shop_id)
     end
 
-    test '.retrieve_by_jwt returns nil for non-existent shop' do
-      shop_id = 'non-existent-id'
-      payload = { 'dest' => shop_id }
+    test '.retrieve_by_shopify_domain returns nil for non-existent shop' do
+      shop_domain = 'non-existent-id'
 
-      ShopMockSessionStore.stubs(:find_by).with(shopify_domain: payload['dest']).returns(nil)
+      ShopMockSessionStore.stubs(:find_by).with(shopify_domain: shop_domain).returns(nil)
 
-      refute ShopMockSessionStore.retrieve_by_jwt(payload)
+      refute ShopMockSessionStore.retrieve_by_shopify_domain(shop_domain)
     end
   end
 end

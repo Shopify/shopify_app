@@ -21,8 +21,8 @@ module ShopifyApp
         construct_session(user)
       end
 
-      def retrieve_by_jwt(payload)
-        user = find_by(shopify_user_id: payload['sub'])
+      def retrieve_by_shopify_user_id(user_id)
+        user = find_by(shopify_user_id: user_id)
         construct_session(user)
       end
 

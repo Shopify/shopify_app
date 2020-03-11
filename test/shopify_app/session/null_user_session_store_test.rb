@@ -13,7 +13,7 @@ module ShopifyApp
     end
 
     test '.retrieve_by_jwt returns nil' do
-      assert_nil NullUserSessionStore.retrieve_by_jwt('jwt_payload')
+      assert_nil NullUserSessionStore.retrieve_by_shopify_user_id('jwt_payload')
     end
   end
 end

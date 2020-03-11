@@ -33,8 +33,8 @@ module ShopifyApp
     end
 
     def user_session_by_jwt
-      return unless jwt_payload
-      ShopifyApp::SessionRepository.retrieve_user_session_by_jwt(jwt_payload)
+      return unless jwt_shopify_user_id
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
     end
 
     def user_session_by_cookie
@@ -43,8 +43,8 @@ module ShopifyApp
     end
 
     def shop_session_by_jwt
-      return unless jwt_payload
-      ShopifyApp::SessionRepository.retrieve_shop_session_by_jwt(jwt_payload)
+      return unless jwt_shopify_domain
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(jwt_shopify_domain)
     end
 
     def shop_session_by_cookie
@@ -70,8 +70,12 @@ module ShopifyApp
 
     protected
 
-    def jwt_payload
-      @jwt_payload ||= JWT.new(jwt).payload if jwt
+    def jwt_shopify_domain
+      @jwt_shopify_domain ||= JWT.new(jwt).shopify_domain if jwt
+    end
+
+    def jwt_shopify_user_id
+      @jwt_user_id ||= JWT.new(jwt).shopify_user_id if jwt
     end
 
     def jwt

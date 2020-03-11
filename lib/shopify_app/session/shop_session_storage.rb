@@ -20,8 +20,8 @@ module ShopifyApp
         construct_session(shop)
       end
 
-      def retrieve_by_jwt(payload)
-        shop = find_by(shopify_domain: payload['dest'])
+      def retrieve_by_shopify_domain(domain)
+        shop = find_by(shopify_domain: domain)
         construct_session(shop)
       end
 

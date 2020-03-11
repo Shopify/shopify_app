@@ -5,6 +5,16 @@ module ShopifyApp
       set_payload
     end
 
+    def shopify_domain
+      payload && dest_host
+    end
+
+    def shopify_user_id
+      payload && payload['sub']
+    end
+
+    private
+
     def payload
       return unless @payload
       return unless dest_host
@@ -13,8 +23,6 @@ module ShopifyApp
 
       @payload
     end
-
-    private
 
     def set_payload
       parse_token_data(ShopifyApp.configuration.secret)

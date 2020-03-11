@@ -38,8 +38,8 @@ module ShopifyApp
         api_version: instance.api_version,
       )
 
-      payload = { 'sub' => TEST_SHOPIFY_USER_ID }
-      session = UserMockSessionStore.retrieve_by_jwt(payload)
+      user_id = TEST_SHOPIFY_USER_ID
+      session = UserMockSessionStore.retrieve_by_shopify_user_id(user_id)
       assert_equal expected_session.domain, session.domain
       assert_equal expected_session.token, session.token
       assert_equal expected_session.api_version, session.api_version
@@ -72,13 +72,11 @@ module ShopifyApp
       refute UserMockSessionStore.retrieve(user_id)
     end
 
-    test '.retrieve_by_jwt returns nil for non-existent user' do
+    test '.retrieve_by_user_id returns nil for non-existent user' do
       user_id = 'non-existent-user'
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: user_id).returns(nil)
 
-      payload = { 'sub' => user_id }
-
-      refute UserMockSessionStore.retrieve_by_jwt(payload)
+      refute UserMockSessionStore.retrieve_by_shopify_user_id(user_id)
     end
   end
 end

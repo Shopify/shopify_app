@@ -11,7 +11,7 @@ module ShopifyApp
     test ".user_storage= raises ArgumentError if the object is missing .store" do
       storage = Class.new do
         def retrieve; end
-        def retrieve_by_jwt; end
+        def retrieve_by_user_id; end
       end
 
       assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
@@ -20,13 +20,13 @@ module ShopifyApp
     test ".user_storage= raises ArgumentError if the object is missing .retrieve" do
       storage = Class.new do
         def store; end
-        def retrieve_by_jwt; end
+        def retrieve_by_user_id; end
       end
 
       assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
     end
 
-    test ".user_storage= raises ArgumentError if the object is missing .retrieve_by_jwt" do
+    test ".user_storage= raises ArgumentError if the object is missing .retrieve_by_user_id" do
       storage = Class.new do
         def store; end
         def retrieve; end
@@ -55,7 +55,7 @@ module ShopifyApp
     test ".shop_storage= raises ArgumentError if the object is missing .store" do
       storage = Class.new do
         def retrieve; end
-        def retrieve_by_jwt; end
+        def retrieve_by_shopify_domain; end
       end
 
       assert_raises(ArgumentError) { SessionRepository.shop_storage = storage.new }
@@ -64,13 +64,13 @@ module ShopifyApp
     test ".shop_storage= raises ArgumentError if the object is missing .retrieve" do
       storage = Class.new do
         def store; end
-        def retrieve_by_jwt; end
+        def retrieve_by_shopify_domain; end
       end
 
       assert_raises(ArgumentError) { SessionRepository.shop_storage = storage.new }
     end
 
-    test ".shop_storage= raises ArgumentError if the object is missing .retrieve_by_jwt" do
+    test ".shop_storage= raises ArgumentError if the object is missing .retrieve_by_shopify_domain" do
       storage = Class.new do
         def retrieve; end
         def store; end
@@ -99,19 +99,19 @@ module ShopifyApp
     test '.retrieve_user_session_by_jwt retrieves a user session by JWT' do
       SessionRepository.user_storage = InMemoryUserSessionStore
 
-      payload = { 'sub' => 'abra', 'dest' => 'abra-shop' }
-      InMemoryUserSessionStore.expects(:retrieve_by_jwt).with(payload)
+      user_id = 'abra'
+      InMemoryUserSessionStore.expects(:retrieve_by_shopify_user_id).with(user_id)
 
-      SessionRepository.retrieve_user_session_by_jwt(payload)
+      SessionRepository.retrieve_user_session_by_shopify_user_id(user_id)
     end
 
-    test '.retrieve_shop_session_by_jwt retrieves a shop session by JWT' do
+    test '.retrieve_by_shopify_domain retrieves a shop session by JWT' do
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
-      payload = { 'dest' => 'abra-shop' }
-      InMemoryShopSessionStore.expects(:retrieve_by_jwt).with(payload)
+      shopify_domain = 'abra-shop'
+      InMemoryShopSessionStore.expects(:retrieve_by_shopify_domain).with(shopify_domain)
 
-      SessionRepository.retrieve_shop_session_by_jwt(payload)
+      SessionRepository.retrieve_shop_session_by_shopify_domain(shopify_domain)
     end
 
     test '.retrieve_user_session retrieves a user session' do
