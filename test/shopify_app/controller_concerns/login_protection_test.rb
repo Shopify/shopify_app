@@ -66,6 +66,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session retrieves user session using jwt" do
+    ShopifyApp.configuration.allow_jwt_authentication = true
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
     payload = {
@@ -97,6 +98,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session retrieves shop session using jwt" do
+    ShopifyApp.configuration.allow_jwt_authentication = true
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
     payload = {

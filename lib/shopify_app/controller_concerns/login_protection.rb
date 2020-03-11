@@ -37,7 +37,7 @@ module ShopifyApp
     end
 
     def user_session_by_jwt
-      return unless jwt_shopify_user_id
+      return unless ShopifyApp.configuration.allow_jwt_authentication && jwt_shopify_user_id
       ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
     end
 
@@ -51,7 +51,7 @@ module ShopifyApp
     end
 
     def shop_session_by_jwt
-      return unless jwt_shopify_domain
+      return unless ShopifyApp.configuration.allow_jwt_authentication && jwt_shopify_domain
       ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(jwt_shopify_domain)
     end
 
