@@ -25,14 +25,14 @@ module ShopifyApp
     end
 
     def set_payload
-      parse_token_data(ShopifyApp.configuration.secret)
-      parse_token_data(ShopifyApp.configuration.old_secret) if !@payload && ShopifyApp.configuration.old_secret
+      @payload, _ = parse_token_data(ShopifyApp.configuration.secret)
+      @payload, _ = parse_token_data(ShopifyApp.configuration.old_secret) if !@payload && ShopifyApp.configuration.old_secret
     end
 
     def parse_token_data(secret)
-      @payload, _ = ::JWT.decode(@token, secret, true, { algorithm: 'HS256' })
+      ::JWT.decode(@token, secret, true, { algorithm: 'HS256' })
     rescue ::JWT::DecodeError, ::JWT::VerificationError, ::JWT::ExpiredSignature, ::JWT::ImmatureSignature
-      @payload = nil
+      nil
     end
 
     def dest_host

@@ -10,7 +10,7 @@ module ShopifyApp
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
 
-    test "tests that session store can retrieve user session records by ID" do
+    test ".retrieve returns user session by id" do
       UserMockSessionStore.stubs(:find_by).returns(MockUserInstance.new(
         shopify_user_id:TEST_SHOPIFY_USER_ID,
         shopify_domain:TEST_SHOPIFY_DOMAIN,
@@ -23,7 +23,7 @@ module ShopifyApp
       assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
     end
 
-    test "tests that session store can retrieve user session records by JWT" do
+    test ".retrieve_by_shopify_user_id returns user session by shopify_user_id" do
       instance = MockUserInstance.new(
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
@@ -45,7 +45,7 @@ module ShopifyApp
       assert_equal expected_session.api_version, session.api_version
     end
 
-    test "tests that session store can store user session records" do
+    test ".store can store user session record" do
       mock_user_instance = MockUserInstance.new(shopify_user_id:100)
       mock_user_instance.stubs(:save!).returns(true)
 

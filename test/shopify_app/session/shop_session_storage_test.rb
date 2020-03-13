@@ -33,8 +33,8 @@ module ShopifyApp
         token: instance.shopify_token,
         api_version: instance.api_version,
       )
-
-      shopify_domain =  TEST_SHOPIFY_DOMAIN
+      shopify_domain = TEST_SHOPIFY_DOMAIN
+      
       session = ShopMockSessionStore.retrieve_by_shopify_domain(shopify_domain)
       assert_equal expected_session.domain, session.domain
       assert_equal expected_session.token, session.token

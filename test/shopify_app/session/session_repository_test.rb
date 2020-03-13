@@ -2,7 +2,6 @@ require 'test_helper'
 
 module ShopifyApp
   class SessionRepositoryTest < ActiveSupport::TestCase
-
     teardown do
       SessionRepository.shop_storage = nil
       SessionRepository.user_storage = nil
@@ -11,7 +10,7 @@ module ShopifyApp
     test ".user_storage= raises ArgumentError if the object is missing .store" do
       storage = Class.new do
         def retrieve; end
-        def retrieve_by_user_id; end
+        def retrieve_by_shopify_user_id; end
       end
 
       assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
@@ -20,7 +19,7 @@ module ShopifyApp
     test ".user_storage= raises ArgumentError if the object is missing .retrieve" do
       storage = Class.new do
         def store; end
-        def retrieve_by_user_id; end
+        def retrieve_by_shopify_user_id; end
       end
 
       assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
@@ -41,7 +40,7 @@ module ShopifyApp
 
     test ".user_storage= clears storage setting if input is nil" do
       SessionRepository.user_storage = InMemoryUserSessionStore
-      assert_not_nil SessionRepository.user_storage
+      assert_kind_of InMemoryUserSessionStore.class, SessionRepository.user_storage
 
       SessionRepository.user_storage = nil
       assert_kind_of NullUserSessionStore.class, SessionRepository.user_storage
@@ -85,7 +84,7 @@ module ShopifyApp
 
     test ".shop_storage= clears storage setting if input is nil" do
       SessionRepository.shop_storage = InMemoryShopSessionStore
-      assert_not_nil SessionRepository.shop_storage
+      assert_kind_of InMemoryShopSessionStore.class, SessionRepository.user_storage
 
       SessionRepository.shop_storage = nil
       assert_raises(SessionRepository::ConfigurationError) { SessionRepository.shop_storage }
@@ -96,7 +95,7 @@ module ShopifyApp
       assert_kind_of InMemoryShopSessionStore.class, SessionRepository.shop_storage
     end
 
-    test '.retrieve_user_session_by_jwt retrieves a user session by JWT' do
+    test '.retrieve_user_session_by_shopify_user_id retrieves a user session by JWT' do
       SessionRepository.user_storage = InMemoryUserSessionStore
 
       user_id = 'abra'
@@ -105,7 +104,7 @@ module ShopifyApp
       SessionRepository.retrieve_user_session_by_shopify_user_id(user_id)
     end
 
-    test '.retrieve_by_shopify_domain retrieves a shop session by JWT' do
+    test '.retrieve_shop_session_by_shopify_domain retrieves a shop session by JWT' do
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
       shopify_domain = 'abra-shop'

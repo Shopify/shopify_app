@@ -6,7 +6,7 @@ module ShopifyApp
       assert_nil NullUserSessionStore.retrieve('payload')
     end
 
-    test '.store returns nil' do
+    test '.store raises ConfigurationError' do
       assert_raises(SessionRepository::ConfigurationError) do
         NullUserSessionStore.store('session', 'user')
       end

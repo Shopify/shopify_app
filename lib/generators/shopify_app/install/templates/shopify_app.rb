@@ -9,7 +9,6 @@ ShopifyApp.configure do |config|
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
-  config.allow_jwt_authentication = false
 end
 
 # ShopifyApp::Utils.fetch_known_api_versions                        # Uncomment to fetch known api versions from shopify servers on boot

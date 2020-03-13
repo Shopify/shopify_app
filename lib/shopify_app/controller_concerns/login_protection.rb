@@ -28,7 +28,7 @@ module ShopifyApp
 
     def current_shopify_session
       @current_shopify_session ||= begin
-        user_session_by_jwt || user_session_by_cookie || shop_session_by_jwt || shop_session_by_cookie
+        user_session || shop_session
       end
     end
 
@@ -37,7 +37,8 @@ module ShopifyApp
     end
 
     def user_session_by_jwt
-      return unless ShopifyApp.configuration.allow_jwt_authentication && jwt_shopify_user_id
+      return unless ShopifyApp.configuration.allow_jwt_authentication
+      return unless jwt_shopify_user_id
       ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
     end
 
@@ -51,7 +52,8 @@ module ShopifyApp
     end
 
     def shop_session_by_jwt
-      return unless ShopifyApp.configuration.allow_jwt_authentication && jwt_shopify_domain
+      return unless ShopifyApp.configuration.allow_jwt_authentication
+      return unless jwt_shopify_domain
       ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(jwt_shopify_domain)
     end
 
@@ -79,11 +81,13 @@ module ShopifyApp
     protected
 
     def jwt_shopify_domain
-      @jwt_shopify_domain ||= JWT.new(jwt).shopify_domain if jwt
+      return unless jwt
+      @jwt_shopify_domain ||= JWT.new(jwt).shopify_domain
     end
 
     def jwt_shopify_user_id
-      @jwt_user_id ||= JWT.new(jwt).shopify_user_id if jwt
+      return unless jwt
+      @jwt_user_id ||= JWT.new(jwt).shopify_user_id
     end
 
     def jwt

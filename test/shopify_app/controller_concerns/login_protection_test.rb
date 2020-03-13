@@ -40,6 +40,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
     request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   end
 
+  teardown do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+  end
+
   test '#index sets test cookie if embedded app and user agent can partition cookies' do
     with_application_test_routes do
       request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
@@ -83,7 +87,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
       token: token,
       api_version: '2020-01',
     )
-
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).with(payload['sub']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
