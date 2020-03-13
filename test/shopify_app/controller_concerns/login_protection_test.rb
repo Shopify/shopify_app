@@ -41,7 +41,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   teardown do
-    ShopifyApp.configuration.allow_jwt_authentication = true
+    ShopifyApp.configuration.allow_jwt_authentication = false
   end
 
   test '#index sets test cookie if embedded app and user agent can partition cookies' do
