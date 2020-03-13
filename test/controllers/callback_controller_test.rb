@@ -10,6 +10,10 @@ end
 
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
+    TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
+    TEST_ASSOCIATED_USER = { "shopify_user_id" => 'test-shopify-user' }
+    TEST_SESSION = "this.is.a.user.session"
+
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp.configuration = nil
@@ -38,7 +42,7 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
       assert_equal '1234', session[:shop_id]
       assert_nil session[:user_id]
-      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+      assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
     end
 
     test '#callback sets up a user session for user token setup' do
@@ -48,7 +52,7 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
       assert_nil session[:shop_id]
       assert_equal '435', session[:user_id]
-      assert_equal 'shop.myshopify.com', session[:shopify_domain]
+      assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
     end
 
     test '#callback clears a stale shopify_user session if none is provided in latest callback' do
@@ -66,9 +70,9 @@ module ShopifyApp
       ShopifyApp::SessionRepository.expects(:store_user_session).returns('4321')
       get :callback, params: { shop: 'shop' }
       assert_equal '4321', session[:user_id]
-      assert_equal 'shop.myshopify.com', session[:shopify_domain]
-      assert_equal 'user_object', session[:shopify_user]
-      assert_equal 'this.is.a.user.session', session[:user_session]
+      assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
+      assert_equal TEST_ASSOCIATED_USER, session[:shopify_user]
+      assert_equal TEST_SESSION, session[:user_session]
     end
 
     test '#callback starts the WebhooksManager if webhooks are configured' do
@@ -100,7 +104,7 @@ module ShopifyApp
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with('shop.myshopify.com', '1234', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '1234', ShopifyApp.configuration.webhooks)
 
       mock_shopify_omniauth
       get :callback, params: { shop: 'shop' }
@@ -115,7 +119,7 @@ module ShopifyApp
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with('shop.myshopify.com', '1234', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '1234', ShopifyApp.configuration.webhooks)
 
       session[:shop_id] = '135'
       mock_shopify_user_omniauth
@@ -129,7 +133,7 @@ module ShopifyApp
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with('shop.myshopify.com', '4321', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321', ShopifyApp.configuration.webhooks)
 
       mock_shopify_user_omniauth
       get :callback, params: { shop: 'shop' }
@@ -207,9 +211,9 @@ module ShopifyApp
     def mock_shopify_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
-      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: 'shop.myshopify.com', credentials: { token: '1234' })
+      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: TEST_SHOPIFY_DOMAIN, credentials: { token: '1234' })
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
+      request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
     end
 
     def mock_shopify_user_omniauth
@@ -218,17 +222,17 @@ module ShopifyApp
       OmniAuth.config.add_mock(
         :shopify,
         provider: :shopify,
-        uid: 'shop.myshopify.com',
+        uid: TEST_SHOPIFY_DOMAIN,
         credentials: { token: '1234' },
         extra: {
-          associated_user: 'user_object',
+          associated_user: TEST_ASSOCIATED_USER,
           associated_user_scope: "read_products",
           scope: "read_products",
-          session: "this.is.a.user.session"
+          session: TEST_SESSION
         }
       )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: 'shop.myshopify.com' } if request
+      request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
     end
   end
 end
