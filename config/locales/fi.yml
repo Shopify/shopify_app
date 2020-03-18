@@ -15,6 +15,6 @@ fi:
   top_level_interaction_action: Jatka
   request_storage_access_heading: "%{app} edellyttää evästeiden käyttöä"
   request_storage_access_body: Näin sovellus voi todentaa sinut tallentamalla henkilötietosi
-    tilapäisesti. Napsauta Jatka ja salli evästeet sovelluksen käyttämiseksi.
+    tilapäisesti. Klikkaa Jatka ja salli evästeet sovelluksen käyttämiseksi.
   request_storage_access_footer: Evästeet vanhenevat 30 päivän kuluttua.
   request_storage_access_action: Jatka
