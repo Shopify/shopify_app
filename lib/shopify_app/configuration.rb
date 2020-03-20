@@ -14,8 +14,6 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
-    attr_reader :shop_session_repository
-    attr_reader :user_session_repository
     attr_accessor :api_version
 
     # customise urls
@@ -51,13 +49,19 @@ module ShopifyApp
     end
 
     def user_session_repository=(klass)
-      @user_session_repository = klass
       ShopifyApp::SessionRepository.user_storage = klass
     end
 
+    def user_session_repository
+      ShopifyApp::SessionRepository.user_storage
+    end
+
     def shop_session_repository=(klass)
-      @shop_session_repository = klass
       ShopifyApp::SessionRepository.shop_storage = klass
+    end
+
+    def shop_session_repository
+      ShopifyApp::SessionRepository.shop_storage
     end
 
     def has_webhooks?

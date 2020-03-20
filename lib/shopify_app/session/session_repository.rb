@@ -5,18 +5,10 @@ module ShopifyApp
     class << self
       def shop_storage=(storage)
         @shop_storage = storage
-
-        unless storage.nil? || self.shop_storage.respond_to?(:store) && self.shop_storage.respond_to?(:retrieve)
-          raise ArgumentError, "shop storage must respond to :store and :retrieve"
-        end
       end
 
       def user_storage=(storage)
         @user_storage = storage
-
-        unless storage.nil? || self.user_storage.respond_to?(:store) && self.user_storage.respond_to?(:retrieve)
-          raise ArgumentError, "user storage must respond to :store and :retrieve"
-        end
       end
 
       def retrieve_shop_session(id)

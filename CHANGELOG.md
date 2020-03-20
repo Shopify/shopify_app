@@ -1,3 +1,7 @@
+13.0.1
+------
+* fix for deprecation warning while loading session storage at startup
+
 13.0.0
 ------
 + #887 Added concurrent user and shop session support (online/offline)

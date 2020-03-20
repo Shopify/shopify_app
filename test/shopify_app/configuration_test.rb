@@ -122,7 +122,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
     end
 
-    assert_equal 'ShopifyApp::InMemoryShopSessionStore', ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp.configuration.shop_session_repository
     assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
   end
 
@@ -140,7 +140,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
     end
 
-    assert_equal 'ShopifyApp::InMemoryUserSessionStore', ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp.configuration.user_session_repository
     assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
   end
 
