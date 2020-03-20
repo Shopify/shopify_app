@@ -1,3 +1,4 @@
+# typed: true
 module ShopifyApp
   class InMemorySessionStore
     class EnvironmentError < StandardError; end

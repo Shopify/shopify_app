@@ -27,6 +27,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency('minitest')
   s.add_development_dependency('mocha')
   s.add_development_dependency('webmock')
+  s.add_development_dependency('sorbet')
+  s.add_development_dependency('sorbet-runtime')
 
   s.files         = `git ls-files`.split("\n").reject { |f| f.match(%r{^(test|example)/}) }
   s.test_files    = `git ls-files -- {test}/*`.split("\n")

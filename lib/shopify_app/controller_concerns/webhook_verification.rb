@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   module WebhookVerification
     extend ActiveSupport::Concern

@@ -1,3 +1,4 @@
+# typed: false
 require 'test_helper'
 require 'generators/shopify_app/app_proxy_controller/app_proxy_controller_generator'
 

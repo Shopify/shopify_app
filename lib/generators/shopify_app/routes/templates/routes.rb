@@ -1,3 +1,4 @@
+# typed: false
 
   controller :sessions do
     get 'login' => :new, :as => :login

@@ -1,3 +1,4 @@
+# typed: false
 require 'test_helper'
 require 'generators/shopify_app/add_after_authenticate_job/add_after_authenticate_job_generator'
 

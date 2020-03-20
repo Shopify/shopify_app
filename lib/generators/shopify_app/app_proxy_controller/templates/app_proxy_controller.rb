@@ -1,3 +1,4 @@
+# typed: true
 class AppProxyController < ApplicationController
    include ShopifyApp::AppProxyVerification
 

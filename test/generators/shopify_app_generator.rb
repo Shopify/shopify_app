@@ -1,3 +1,4 @@
+# typed: false
 require 'test_helper'
 require 'generators/shopify_app/shopify_app_generator'
 

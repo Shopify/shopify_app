@@ -14,3 +14,5 @@ test/tmp/*
 /node_modules/
 .byebug_history
 
+# Sorbet errors file
+/sorbet/rbi/hidden-definitions/errors.txt

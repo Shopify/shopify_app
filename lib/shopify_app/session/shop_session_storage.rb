@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   module ShopSessionStorage
     extend ActiveSupport::Concern

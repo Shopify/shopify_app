@@ -1,3 +1,4 @@
+# typed: ignore
 module ShopifyApp
   class Configuration
 

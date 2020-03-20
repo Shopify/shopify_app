@@ -1,3 +1,4 @@
+# typed: ignore
 class HomeController < ApplicationController
 
   def index

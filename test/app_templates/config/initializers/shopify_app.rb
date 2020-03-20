@@ -1,3 +1,4 @@
+# typed: strict
 ShopifyApp.configure do |config|
   config.application_name = "name"
   config.api_key = ENV['SHOPIFY_API_KEY']

@@ -1,3 +1,4 @@
+# typed: false
 
   namespace :app_proxy do
     root action: 'index'

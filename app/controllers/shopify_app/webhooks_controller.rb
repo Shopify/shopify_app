@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   class WebhooksController < ActionController::Base
     include ShopifyApp::WebhookVerification

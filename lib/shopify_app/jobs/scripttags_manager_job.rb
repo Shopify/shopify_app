@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   class ScripttagsManagerJob < ActiveJob::Base
 

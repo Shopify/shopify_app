@@ -1,3 +1,4 @@
+# typed: strong
 module ShopifyApp
   class AuthenticatedController < ActionController::Base
     include ShopifyApp::Authenticated

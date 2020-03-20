@@ -1,3 +1,4 @@
+# typed: false
 require 'rails/generators/base'
 
 module ShopifyApp

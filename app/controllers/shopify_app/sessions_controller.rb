@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   class SessionsController < ActionController::Base # rubocop:disable Metrics/ClassLength
     include ShopifyApp::LoginProtection

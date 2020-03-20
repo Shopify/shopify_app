@@ -1,3 +1,4 @@
+# typed: true
 module SessionStoreStrategyTestHelpers
   class MockShopInstance
     attr_reader :id, :shopify_domain, :shopify_token, :api_version

@@ -1,3 +1,4 @@
+# typed: true
 module ShopifyApp
   class SessionRepository
     class ConfigurationError < StandardError; end

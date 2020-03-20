@@ -1,3 +1,4 @@
+# typed: ignore
 ShopifyApp.configure do |config|
   config.application_name = "<%= @application_name %>"
   config.api_key = ENV['SHOPIFY_API_KEY']

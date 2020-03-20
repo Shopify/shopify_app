@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   class ScripttagsManager
     class CreationFailed < StandardError; end

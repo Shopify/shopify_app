@@ -1,3 +1,4 @@
+# typed: false
 module ShopifyApp
   module Generators
     class ShopifyAppGenerator < Rails::Generators::Base

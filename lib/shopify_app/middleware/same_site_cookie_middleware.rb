@@ -1,3 +1,4 @@
+# typed: true
 module ShopifyApp
   class SameSiteCookieMiddleware
     COOKIE_SEPARATOR = "\n"

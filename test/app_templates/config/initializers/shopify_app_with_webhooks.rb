@@ -1,3 +1,4 @@
+# typed: strict
 ShopifyApp.configure do |config|
   config.api_key = "key"
   config.secret = "secret"

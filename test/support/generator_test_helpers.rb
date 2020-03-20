@@ -1,3 +1,4 @@
+# typed: false
 module GeneratorTestHelpers
   TEMPLATE_PATH = File.expand_path("../../app_templates", __FILE__)
 

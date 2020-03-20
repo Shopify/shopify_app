@@ -1,3 +1,4 @@
+# typed: true
 class User < ActiveRecord::Base
   include ShopifyApp::UserSessionStorage
 

@@ -1,3 +1,4 @@
+# typed: false
 require 'test_helper'
 require 'generators/shopify_app/add_marketing_activity_extension/add_marketing_activity_extension_generator'
 

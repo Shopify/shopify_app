@@ -1,3 +1,4 @@
+# typed: true
 require 'shopify_app/version'
 
 # deps
