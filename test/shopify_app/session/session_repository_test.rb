@@ -7,33 +7,6 @@ module ShopifyApp
       SessionRepository.user_storage = nil
     end
 
-    test ".user_storage= raises ArgumentError if the object is missing .store" do
-      storage = Class.new do
-        def retrieve; end
-        def retrieve_by_shopify_user_id; end
-      end
-
-      assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
-    end
-
-    test ".user_storage= raises ArgumentError if the object is missing .retrieve" do
-      storage = Class.new do
-        def store; end
-        def retrieve_by_shopify_user_id; end
-      end
-
-      assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
-    end
-
-    test ".user_storage= raises ArgumentError if the object is missing .retrieve_by_user_id" do
-      storage = Class.new do
-        def store; end
-        def retrieve; end
-      end
-
-      assert_raises(ArgumentError) { SessionRepository.user_storage = storage.new }
-    end
-
     test ".user_storage= does not raise ArgumentError if input is nil" do
       assert_nothing_raised { SessionRepository.user_storage = nil }
     end
@@ -49,33 +22,6 @@ module ShopifyApp
     test '.user_storage accepts a String as argument' do
       SessionRepository.user_storage = 'ShopifyApp::InMemoryUserSessionStore'
       assert_kind_of InMemoryUserSessionStore.class, SessionRepository.user_storage
-    end
-
-    test ".shop_storage= raises ArgumentError if the object is missing .store" do
-      storage = Class.new do
-        def retrieve; end
-        def retrieve_by_shopify_domain; end
-      end
-
-      assert_raises(ArgumentError) { SessionRepository.shop_storage = storage.new }
-    end
-
-    test ".shop_storage= raises ArgumentError if the object is missing .retrieve" do
-      storage = Class.new do
-        def store; end
-        def retrieve_by_shopify_domain; end
-      end
-
-      assert_raises(ArgumentError) { SessionRepository.shop_storage = storage.new }
-    end
-
-    test ".shop_storage= raises ArgumentError if the object is missing .retrieve_by_shopify_domain" do
-      storage = Class.new do
-        def retrieve; end
-        def store; end
-      end
-
-      assert_raises(ArgumentError) { SessionRepository.shop_storage = storage.new }
     end
 
     test ".shop_storage= does not raise ArgumentError if input is nil" do
