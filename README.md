@@ -495,6 +495,9 @@ change to how session stores work. Here are the steps to migrate to 13.x
 ### Shop Model Changes (normally `app/models/shop.rb`)
 -  *CHANGE* `include ShopifyApp::SessionStorage` to `include ShopifyApp::ShopSessionStorage`
 
+### Changes to the @shop_session instance variable (normally in `app/controllers/*.rb`)
+- *CHANGE* if you are using shop sessions, `@shop_session` will need to be changed to `@current_shopify_session`
+
 ### Changes to `ShopifyApp::LoginProtection`
 `ShopifyApp::LoginProtection`
 
