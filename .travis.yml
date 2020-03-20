@@ -25,3 +25,4 @@ install:
 script:
   - yarn test
   - bundle exec rake test
+  - bundle exec srb tc
