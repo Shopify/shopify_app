@@ -36,6 +36,9 @@ module ShopifyApp
     # allow enabling of same site none on cookies
     attr_accessor :enable_same_site_none
 
+    # allow enabling jwt headers for authentication
+    attr_accessor :allow_jwt_authentication
+
     def initialize
       @root_url = '/'
       @myshopify_domain = 'myshopify.com'
