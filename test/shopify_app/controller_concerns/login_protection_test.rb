@@ -28,14 +28,20 @@ class LoginProtectionController < ActionController::Base
   end
 end
 
-class LoginProtectionTest < ActionController::TestCase
+class LoginProtectionControllerTest < ActionController::TestCase
   tests LoginProtectionController
 
   setup do
     ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
+    ShopifyApp.configuration.api_key = 'api_key'
+
     request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+  end
+
+  teardown do
+    ShopifyApp.configuration.allow_jwt_authentication = false
   end
 
   test '#index sets test cookie if embedded app and user agent can partition cookies' do
@@ -60,6 +66,68 @@ class LoginProtectionTest < ActionController::TestCase
       session[:shop_id] = nil
       get :index
       assert_nil @controller.current_shopify_session
+    end
+  end
+
+  test "#current_shopify_session retrieves user session using jwt" do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    domain = 'https://test.myshopify.io'
+    token = 'admin_api_token'
+    payload = {
+      'dest' => 'shopify_domain',
+      'sub' => 'shopify_user'
+    }
+
+    jwt = JWT.encode(payload, nil, 'none')
+    jwt_mock = Struct.new(:shopify_user_id).new(payload['sub'])
+    ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
+
+    expected_session = ShopifyAPI::Session.new(
+      domain: domain,
+      token: token,
+      api_version: '2020-01',
+    )
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).with(payload['sub']).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
+
+    with_application_test_routes do
+      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
+      get :index
+
+      assert_equal expected_session, @controller.current_shopify_session
+    end
+  end
+
+  test "#current_shopify_session retrieves shop session using jwt" do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    domain = 'https://test.myshopify.io'
+    token = 'admin_api_token'
+    payload = {
+      'dest' => 'test.shopify.com',
+    }
+
+    jwt = JWT.encode(payload, nil, 'none')
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(payload['dest'], nil)
+    ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
+
+    expected_session = ShopifyAPI::Session.new(
+      domain: domain,
+      token: token,
+      api_version: '2020-01',
+    )
+
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).with(payload['dest']).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
+
+    with_application_test_routes do
+      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
+      get :index
+
+      assert_equal expected_session, @controller.current_shopify_session
     end
   end
 

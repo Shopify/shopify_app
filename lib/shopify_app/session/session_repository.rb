@@ -19,6 +19,14 @@ module ShopifyApp
         user_storage.retrieve(id)
       end
 
+      def retrieve_shop_session_by_shopify_domain(shopify_domain)
+        shop_storage.retrieve_by_shopify_domain(shopify_domain)
+      end
+
+      def retrieve_user_session_by_shopify_user_id(user_id)
+        user_storage.retrieve_by_shopify_user_id(user_id)
+      end
+
       def store_shop_session(session)
         shop_storage.store(session)
       end
@@ -43,7 +51,7 @@ module ShopifyApp
       end
 
       def load_user_storage
-        return unless @user_storage
+        return NullUserSessionStore unless @user_storage
         @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
       end
     end

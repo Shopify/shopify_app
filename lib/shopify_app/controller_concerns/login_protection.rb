@@ -27,20 +27,38 @@ module ShopifyApp
     end
 
     def current_shopify_session
-      if session[:user_id].present?
-        @current_shopify_session ||= user_session
-      else
-        @current_shopify_session ||= shop_session
+      @current_shopify_session ||= begin
+        user_session || shop_session
       end
     end
 
     def user_session
-      return if session[:user_id].blank?
+      user_session_by_jwt || user_session_by_cookie
+    end
+
+    def user_session_by_jwt
+      return unless ShopifyApp.configuration.allow_jwt_authentication
+      return unless jwt_shopify_user_id
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
+    end
+
+    def user_session_by_cookie
+      return unless session[:user_id].present?
       ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
     end
 
     def shop_session
-      return if session[:shop_id].blank?
+      shop_session_by_jwt || shop_session_by_cookie
+    end
+
+    def shop_session_by_jwt
+      return unless ShopifyApp.configuration.allow_jwt_authentication
+      return unless jwt_shopify_domain
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(jwt_shopify_domain)
+    end
+
+    def shop_session_by_cookie
+      return unless session[:shop_id].present?
       ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
     end
 
@@ -61,6 +79,20 @@ module ShopifyApp
     end
 
     protected
+
+    def jwt_shopify_domain
+      return unless jwt
+      @jwt_shopify_domain ||= JWT.new(jwt).shopify_domain
+    end
+
+    def jwt_shopify_user_id
+      return unless jwt
+      @jwt_user_id ||= JWT.new(jwt).shopify_user_id
+    end
+
+    def jwt
+      @jwt ||= authenticate_with_http_token { |token| token }
+    end
 
     def redirect_to_login
       if request.xhr?

@@ -17,14 +17,24 @@ module ShopifyApp
       end
 
       def retrieve(id)
-        return unless id
-        if user = find_by(id: id)
-          ShopifyAPI::Session.new(
-            domain: user.shopify_domain,
-            token: user.shopify_token,
-            api_version: user.api_version
-          )
-        end
+        user = find_by(id: id)
+        construct_session(user)
+      end
+
+      def retrieve_by_shopify_user_id(user_id)
+        user = find_by(shopify_user_id: user_id)
+        construct_session(user)
+      end
+
+      private
+
+      def construct_session(user)
+        return unless user
+        ShopifyAPI::Session.new(
+          domain: user.shopify_domain,
+          token: user.shopify_token,
+          api_version: user.api_version,
+        )
       end
     end
   end
