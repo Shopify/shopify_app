@@ -25,7 +25,7 @@ Table of Contents
 - [AppProxyVerification](#appproxyverification)
 - [Troubleshooting](#troubleshooting)
 - [Testing an embedded app outside the Shopify admin](#testing-an-embedded-app-outside-the-shopify-admin)
-- [Migration to 13.0.0](#migrating-to-13)
+- [Migration to 13.0.0](#migrating-to-1300)
 - [Questions or problems?](#questions-or-problems-)
 - [Rails 6 Compatibility](#rails-6-compatibility)
 - [Upgrading from 8.6 to 9.0.0](#upgrading-from-86-to-900)
