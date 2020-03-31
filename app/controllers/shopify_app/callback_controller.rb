@@ -8,7 +8,6 @@ module ShopifyApp
     def callback
       if auth_hash
         login_shop
-
         if ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
           return redirect_to(login_url_with_optional_shop)
         end

@@ -30,7 +30,7 @@ module.exports = function(config) {
     reporters: karmaReporters,
     port: 9876,
     colors: true,
-    logLevel: config.LOG_WARN,
+    logLevel: config.LOG_INFO,
     autoWatch: false,
     browsers: ['ChromeHeadless'],
     singleRun: true,

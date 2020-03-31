@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base target="_top">
+  <title>Session Token</title>
+  <script src="https://unpkg.com/@shopify/app-bridge@^1"></script>
+  <script src="https://unpkg.com/browse/jwt-decode@2.2.0"></script>
+  <script>
+    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
+    window.shopOrigin = "https://<%= current_shopify_domain %>";
+  </script>
+  <%= javascript_include_tag('shopify_app/session_token', crossorigin: 'anonymous', integrity: true) %>
+</head>
+<body>
+</body>
+</html>

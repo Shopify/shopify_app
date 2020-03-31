@@ -9,6 +9,7 @@ module ShopifyApp
         shopify_app/top_level.js
         shopify_app/enable_cookies.js
         shopify_app/request_storage_access.js
+        shopify_app/session_token.js
         storage_access.svg
       ]
     end
