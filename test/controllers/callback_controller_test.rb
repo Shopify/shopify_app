@@ -99,7 +99,7 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
     end
 
-    test '#jwt_callback sets up a user session' do
+    test '#jwt_callback persists the user token' do
       mock_shopify_user_omniauth
       session = mock_user_session
       jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
@@ -115,11 +115,36 @@ module ShopifyApp
       assert_response :ok
     end
 
-    test '#jwt_callback returns unauthorized if no omniauth data'
+    test '#jwt_callback returns unauthorized if no omniauth data' do
+      get :jwt_callback
+      assert_response :unauthorized
+    end
 
-    test '#jwt_callback returns unauthorized if the jwt shop does not match omniauth shop'
+    test '#jwt_callback returns unauthorized if the jwt user does not match omniauth user' do
+      mock_shopify_user_omniauth
+      jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
+        TEST_SHOPIFY_DOMAIN,
+        'another-user-id'
+      )
+      ShopifyApp::JWT.stubs(:new).returns(jwt_mock)
 
-    test '#jwt_callback returns unauthorized if the jwt user does not match omniauth user'
+      request.env['HTTP_AUTHORIZATION'] = "Bearer 123"
+      get :jwt_callback
+      assert_response :unauthorized
+    end
+
+    test '#jwt_callback returns unauthorized if the jwt shop does not match omniauth shop' do
+      mock_shopify_user_omniauth
+      jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
+        'some-other-shopify-domain.myshopify.io',
+        TEST_ASSOCIATED_USER['id']
+      )
+      ShopifyApp::JWT.stubs(:new).returns(jwt_mock)
+
+      request.env['HTTP_AUTHORIZATION'] = "Bearer 123"
+      get :jwt_callback
+      assert_response :unauthorized
+    end
 
     test '#install_webhooks uses the shop token for shop strategy' do
       shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
@@ -253,7 +278,7 @@ module ShopifyApp
       ShopifyAPI::Session.new(
         token: '1234',
         domain: TEST_SHOPIFY_DOMAIN,
-        api_version: nil,
+        api_version: ShopifyApp.configuration.api_version,
       )
     end
 
