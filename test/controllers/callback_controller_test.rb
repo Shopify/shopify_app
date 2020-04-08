@@ -99,6 +99,28 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
     end
 
+    test '#jwt_callback sets up a user session' do
+      mock_shopify_user_omniauth
+      session = mock_user_session
+      jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
+        TEST_SHOPIFY_DOMAIN,
+        TEST_ASSOCIATED_USER['id']
+      )
+
+      ShopifyApp::JWT.stubs(:new).returns(jwt_mock)
+      ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER)
+
+      request.env['HTTP_AUTHORIZATION'] = "Bearer 123"
+      get :jwt_callback
+      assert_response :ok
+    end
+
+    test '#jwt_callback returns unauthorized if no omniauth data'
+
+    test '#jwt_callback returns unauthorized if the jwt shop does not match omniauth shop'
+
+    test '#jwt_callback returns unauthorized if the jwt user does not match omniauth user'
+
     test '#install_webhooks uses the shop token for shop strategy' do
       shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(shop_session)
@@ -226,6 +248,14 @@ module ShopifyApp
     end
 
     private
+
+    def mock_user_session
+      ShopifyAPI::Session.new(
+        token: '1234',
+        domain: TEST_SHOPIFY_DOMAIN,
+        api_version: nil,
+      )
+    end
 
     def mock_shopify_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
