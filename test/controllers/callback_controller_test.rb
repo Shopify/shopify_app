@@ -11,7 +11,7 @@ end
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
-    TEST_ASSOCIATED_USER = { "shopify_user_id" => 'test-shopify-user' }
+    TEST_ASSOCIATED_USER = { 'id' => 'test-shopify-user' }
     TEST_SESSION = "this.is.a.user.session"
 
     setup do
