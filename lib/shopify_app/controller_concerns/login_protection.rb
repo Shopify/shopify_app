@@ -68,7 +68,9 @@ module ShopifyApp
 
       end
 
-      if current_shopify_session && params[:shop] && params[:shop].is_a?(String) && (current_shopify_session.domain != params[:shop])
+      if current_shopify_session &&
+        params[:shop] && params[:shop].is_a?(String) &&
+        (current_shopify_session.domain != params[:shop])
         clear_session = true
       end
 
@@ -160,7 +162,8 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render('shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain })
+        render('shopify_app/shared/redirect', layout: false,
+               locals: { url: url, current_shopify_domain: current_shopify_domain })
       else
         redirect_to(url)
       end

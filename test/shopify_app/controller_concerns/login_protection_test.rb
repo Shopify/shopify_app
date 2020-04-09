@@ -38,7 +38,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
     ShopifyApp.configuration.api_key = 'api_key'
 
-    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) '\
+                                     'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   end
 
   teardown do
@@ -88,7 +89,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
       token: token,
       api_version: '2020-01',
     )
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).with(payload['sub']).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
+      .with(payload['sub']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
@@ -121,7 +123,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).with(payload['dest']).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
+      .with(payload['dest']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
@@ -221,7 +224,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
       sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(sess).once
       get :second_login, params: { shop: 'other-shop' }
-      assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com&shop=other-shop.myshopify.com'
+      assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com'\
+                           '&shop=other-shop.myshopify.com'
       assert_nil session[:shop_id]
       assert_nil session[:shopify_domain]
       assert_nil session[:shopify_user]

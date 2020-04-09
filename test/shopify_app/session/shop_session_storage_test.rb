@@ -16,7 +16,7 @@ module ShopifyApp
         shopify_token: TEST_SHOPIFY_TOKEN
       ))
 
-      session = ShopMockSessionStore.retrieve(id = 1)
+      session = ShopMockSessionStore.retrieve(1)
       assert_equal TEST_SHOPIFY_DOMAIN, session.domain
       assert_equal TEST_SHOPIFY_TOKEN, session.token
     end

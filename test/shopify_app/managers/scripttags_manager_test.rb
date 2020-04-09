@@ -86,7 +86,8 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   end
 
   test "#destroy_scripttags does not destroy scripttags that do not have a matching address" do
-    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: 'http://something-or-the-other.com/badscript.js', id: 7214109)])
+    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: 'http://something-or-the-other.com/badscript.js',
+                                                    id: 7214109)])
     ShopifyAPI::ScriptTag.expects(:delete).never
 
     @manager.destroy_scripttags

@@ -21,7 +21,9 @@ module ShopifyApp
 
       I18n.locale = :en
 
-      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'\
+                                       'AppleWebKit/537.36 (KHTML, like Gecko)'\
+                                       'Chrome/69.0.3497.100 Safari/537.36'
     end
 
     test '#callback flashes error when omniauth is not present' do

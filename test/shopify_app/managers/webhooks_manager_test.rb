@@ -72,7 +72,8 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   end
 
   test "#destroy_webhooks does not destroy webhooks that do not have a matching address" do
-    ShopifyAPI::Webhook.stubs(:all).returns([stub(address: 'http://something-or-the-other.com/webhooks/product_update', id: 7214109)])
+    ShopifyAPI::Webhook.stubs(:all).returns([stub(address: 'http://something-or-the-other.com/webhooks/product_update',
+                                                  id: 7214109)])
     ShopifyAPI::Webhook.expects(:delete).never
 
     @manager.destroy_webhooks

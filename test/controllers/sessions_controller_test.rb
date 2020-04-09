@@ -19,7 +19,8 @@ module ShopifyApp
 
       session['shopify.granted_storage_access'] = true
 
-      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML,
+                 like Gecko) Chrome/69.0.3497.100 Safari/537.36'
     end
 
     test '#new redirects to the enable_cookies page if we can\'t set cookies and the user agent supports cookie partitioning' do
@@ -42,19 +43,30 @@ module ShopifyApp
     end
 
     test '#new renders the redirect layout if user agent is Shopify Mobile (Android)' do
-      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/8.12.0 (Build 12005 with API 28 on Google Android SDK built for x86) MobileMiddlewareSupported Mozilla/5.0 (Linux; Android 9; Android SDK built for x86 Build/PSR1.180720.075; wv)  AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/69.0.3497.100 Mobile Safari/537.36'
+      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/8.12.0 (Build 12005 with API 28 on Google
+                                        Android SDK built for x86) MobileMiddlewareSupported Mozilla/5.0
+                                        (Linux; Android 9; Android SDK built for x86 Build/PSR1.180720.075; wv)
+                                        AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/69.0.3497.100
+                                        Mobile Safari/537.36'
       get :new, params: { shop: 'my-shop' }
       assert_template 'shared/redirect'
     end
 
     test '#new renders the redirect layout if user agent is Shopify Mobile (iOS)' do
-      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/ 604.1.21 (KHTML, like Gecko) Version/ 12.0 Mobile/17A6278a Safari/602.1.26 MobileMiddlewareSupported Shopify Mobile/iOS/8.12.0 (iPad4,7/com.shopify.ShopifyInternal/12.0.0)'
+      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X)
+                                        AppleWebKit/ 604.1.21 (KHTML, like Gecko) Version/ 12.0 Mobile/17A6278a
+                                        Safari/602.1.26 MobileMiddlewareSupported
+                                        Shopify Mobile/iOS/8.12.0 (iPad4,7/com.shopify.ShopifyInternal/12.0.0)'
       get :new, params: { shop: 'my-shop' }
       assert_template 'shared/redirect'
     end
 
     test '#new renders the redirect layout if user agent is Shopify POS (Android)' do
-      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC) POS - Debug 2.4.8 (f1d442c789)/3405 Mozilla/5.0 (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/64.0.3282.137 Safari/537.36'
+      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS Dalvik/2.1.0
+                  (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
+                  POS - Debug 2.4.8 (f1d442c789)/3405 Mozilla/5.0
+                  (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv)
+                  AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 Chrome/64.0.3282.137 Safari/537.36'
       get :new, params: { shop: 'my-shop' }
       assert_template 'shared/redirect'
     end
@@ -127,7 +139,8 @@ module ShopifyApp
       assert_match /Shopify App — Installation/, response.body
     end
 
-    ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
+    ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com',
+     'http://my-shop.myshopify.com'].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url})" do
         shopify_domain = 'my-shop.myshopify.com'
         post :create, params: { shop: good_url }
@@ -135,7 +148,8 @@ module ShopifyApp
       end
     end
 
-    ['my-shop', 'my-shop.myshopify.io', 'https://my-shop.myshopify.io', 'http://my-shop.myshopify.io'].each do |good_url|
+    ['my-shop', 'my-shop.myshopify.io', 'https://my-shop.myshopify.io',
+     'http://my-shop.myshopify.io'].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain" do
         ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
         shopify_domain = 'my-shop.myshopify.io'
@@ -144,7 +158,8 @@ module ShopifyApp
       end
     end
 
-    ['myshop.com', 'myshopify.com', 'shopify.com', 'two words', 'store.myshopify.com.evil.com', '/foo/bar'].each do |bad_url|
+    ['myshop.com', 'myshopify.com', 'shopify.com', 'two words',
+     'store.myshopify.com.evil.com', '/foo/bar'].each do |bad_url|
       test "#create should return an error for a non-myshopify URL (#{bad_url})" do
         post :create, params: { shop: bad_url }
         assert_response :redirect
