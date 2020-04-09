@@ -1,13 +1,2 @@
 inherit_gem:
     rubocop-shopify: rubocop.yml
-
-# inherit_from:
-#   - https://shopify.github.io/ruby-style-guide/rubocop.yml
-
-# LineLength:
-#   Exclude:
-#     - test/**/*
-
-# Metrics/ClassLength:
-#   Exclude:
-#     - test/**/*
