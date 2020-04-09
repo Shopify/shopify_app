@@ -17,7 +17,7 @@ module ShopifyApp
         install_scripttags
         perform_after_authenticate_job
 
-        redirect_to return_address
+        redirect_to(return_address)
       else
         flash[:error] = I18n.t('could_not_log_in')
         redirect_to(login_url_with_optional_shop)

@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 module ShopifyApp
-  class SessionsController < ActionController::Base # rubocop:disable Metrics/ClassLength
+  class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
 
     layout false, only: :new
@@ -29,7 +30,7 @@ module ShopifyApp
           shop: sanitized_shop_name,
           return_to: params[:return_to]
         ),
-        current_shopify_domain: current_shopify_domain
+        current_shopify_domain: current_shopify_domain,
       })
     end
 
@@ -127,7 +128,7 @@ module ShopifyApp
 
     def render_invalid_shop_error
       flash[:error] = I18n.t('invalid_shop_url')
-      redirect_to return_address
+      redirect_to(return_address)
     end
 
     def enable_cookie_access
@@ -138,7 +139,7 @@ module ShopifyApp
     end
 
     def authenticate_in_context
-      redirect_to "#{main_app.root_path}auth/shopify"
+      redirect_to("#{main_app.root_path}auth/shopify")
     end
 
     def authenticate_at_top_level
@@ -173,7 +174,7 @@ module ShopifyApp
             shop: sanitized_shop_name,
             return_to: session[:return_to]
           ),
-          current_shopify_domain: current_shopify_domain
+          current_shopify_domain: current_shopify_domain,
         }
       )
     end

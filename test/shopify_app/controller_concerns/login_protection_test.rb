@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'action_controller'
 require 'action_controller/base'
@@ -12,11 +13,11 @@ class LoginProtectionController < ActionController::Base
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
 
   def index
-    render plain: "OK"
+    render(plain: "OK")
   end
 
   def second_login
-    render plain: "OK"
+    render(plain: "OK")
   end
 
   def redirect
@@ -24,7 +25,7 @@ class LoginProtectionController < ActionController::Base
   end
 
   def raise_unauthorized
-    raise ActiveResource::UnauthorizedAccess.new('unauthorized')
+    raise ActiveResource::UnauthorizedAccess, 'unauthorized'
   end
 end
 
@@ -75,7 +76,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     token = 'admin_api_token'
     payload = {
       'dest' => 'shopify_domain',
-      'sub' => 'shopify_user'
+      'sub' => 'shopify_user',
     }
 
     jwt = JWT.encode(payload, nil, 'none')
@@ -409,10 +410,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   private
 
-  def assert_fullpage_redirected(shop_domain, response)
+  def assert_fullpage_redirected(shop_domain, _response)
     example_url = "https://example.com"
 
-    assert_template 'shared/redirect'
+    assert_template('shared/redirect')
     assert_select '[id=redirection-target]', 1 do |elements|
       assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
         elements.first['data-target']

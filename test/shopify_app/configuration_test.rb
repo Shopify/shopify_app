@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class ConfigurationTest < ActiveSupport::TestCase
-
   setup do
     ShopifyApp.configuration = nil
   end
@@ -25,17 +25,15 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "can set root_url which affects login_url" do
-    begin
-      original_root = ShopifyApp.configuration.root_url
+    original_root = ShopifyApp.configuration.root_url
 
-      ShopifyApp.configure do |config|
-        config.root_url = "/nested"
-      end
-
-      assert_equal "/nested/login", ShopifyApp.configuration.login_url
-    ensure
-      ShopifyApp.configuration.root_url = original_root
+    ShopifyApp.configure do |config|
+      config.root_url = "/nested"
     end
+
+    assert_equal("/nested/login", ShopifyApp.configuration.login_url)
+  ensure
+    ShopifyApp.configuration.root_url = original_root
   end
 
   test "defaults to myshopify_domain" do
@@ -51,7 +49,7 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "can configure webhooks for creation" do
-    webhook = {topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}
+    webhook = { topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json' }
 
     ShopifyApp.configure do |config|
       config.webhooks = [webhook]
@@ -64,7 +62,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     refute ShopifyApp.configuration.has_webhooks?
 
     ShopifyApp.configure do |config|
-      config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}]
+      config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json' }]
     end
 
     assert ShopifyApp.configuration.has_webhooks?
@@ -176,7 +174,6 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.embedded_app = true
       config.enable_same_site_none = false
     end
-
 
     Rails.env.expects(:test?).returns(false)
     refute ShopifyApp.configuration.enable_same_site_none

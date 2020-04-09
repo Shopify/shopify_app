@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class ScripttagsManager
     class CreationFailed < StandardError; end
@@ -56,7 +57,7 @@ module ShopifyApp
     end
 
     def is_required_scripttag?(scripttags, tag)
-      scripttags.map{ |w| w[:src] }.include? tag.src
+      scripttags.map { |w| w[:src] }.include?(tag.src)
     end
 
     def create_scripttag(attributes)

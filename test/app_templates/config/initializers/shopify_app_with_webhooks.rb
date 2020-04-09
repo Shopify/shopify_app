@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ShopifyApp.configure do |config|
   config.api_key = "key"
   config.secret = "secret"

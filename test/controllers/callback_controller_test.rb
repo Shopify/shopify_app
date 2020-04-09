@@ -228,7 +228,7 @@ module ShopifyApp
           associated_user: TEST_ASSOCIATED_USER,
           associated_user_scope: "read_products",
           scope: "read_products",
-          session: TEST_SESSION
+          session: TEST_SESSION,
         }
       )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request

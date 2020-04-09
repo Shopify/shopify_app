@@ -1,9 +1,9 @@
+# frozen_string_literal: true
 module ShopifyApp
   module Utils
-
     def self.sanitize_shop_domain(shop_domain)
       name = shop_domain.to_s.downcase.strip
-      name += ".#{ShopifyApp.configuration.myshopify_domain}" if !name.include?("#{ShopifyApp.configuration.myshopify_domain}") && !name.include?(".")
+      name += ".#{ShopifyApp.configuration.myshopify_domain}" if !name.include?(ShopifyApp.configuration.myshopify_domain.to_s) && !name.include?(".")
       name.sub!(%r|https?://|, '')
 
       u = URI("http://#{name}")
@@ -16,8 +16,8 @@ module ShopifyApp
       Rails.logger.info("[ShopifyAPI::ApiVersion] Fetching known Admin API Versions from Shopify...")
       ShopifyAPI::ApiVersion.fetch_known_versions
       Rails.logger.info("[ShopifyAPI::ApiVersion] Known API Versions: #{ShopifyAPI::ApiVersion.versions.keys}")
-      rescue ActiveResource::ConnectionError
-        logger.error( "[ShopifyAPI::ApiVersion] Unable to fetch api_versions from Shopify")
+    rescue ActiveResource::ConnectionError
+      logger.error("[ShopifyAPI::ApiVersion] Unable to fetch api_versions from Shopify")
     end
   end
 end

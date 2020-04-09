@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
@@ -40,7 +41,7 @@ module ShopifyApp
     private
 
     def is_required_webhook?(webhook)
-      required_webhooks.map{ |w| w[:address] }.include? webhook.address
+      required_webhooks.map { |w| w[:address] }.include?(webhook.address)
     end
 
     def create_webhook(attributes)

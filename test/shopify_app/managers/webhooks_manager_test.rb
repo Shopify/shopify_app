@@ -1,12 +1,12 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
-
   setup do
     @webhooks = [
-      {topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled"},
-      {topic: 'orders/create', address: "https://example-app.com/webhooks/order_create"},
-      {topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated"},
+      { topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled" },
+      { topic: 'orders/create', address: "https://example-app.com/webhooks/order_create" },
+      { topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated" },
     ]
 
     @manager = ShopifyApp::WebhooksManager.new(@webhooks)

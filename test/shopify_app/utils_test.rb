@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class UtilsTest < ActiveSupport::TestCase
-
   setup do
     ShopifyApp.configuration = nil
   end

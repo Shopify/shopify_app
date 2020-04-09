@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 module Shopify
@@ -8,7 +9,6 @@ end
 
 module ShopifyApp
   class SessionsControllerTest < ActionController::TestCase
-
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
@@ -117,14 +117,14 @@ module ShopifyApp
     test "#new should render a full-page if the shop param doesn't exist" do
       get :new
       assert_response :ok
-      assert_match %r{Shopify App — Installation}, response.body
+      assert_match /Shopify App — Installation/, response.body
     end
 
     test "#new should render a full-page if the shop param value is not a shop" do
       non_shop_address = "example.com"
       get :new, params: { shop: non_shop_address }
       assert_response :ok
-      assert_match %r{Shopify App — Installation}, response.body
+      assert_match /Shopify App — Installation/, response.body
     end
 
     ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com', 'http://my-shop.myshopify.com'].each do |good_url|
@@ -229,7 +229,7 @@ module ShopifyApp
     def assert_redirected_to_top_level(shop_domain, expected_url = nil)
       expected_url ||= "/login?shop=#{shop_domain}\\u0026top_level=true"
 
-      assert_template 'shared/redirect'
+      assert_template('shared/redirect')
       assert_select '[id=redirection-target]', 1 do |elements|
         assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{expected_url}\"}",
           elements.first['data-target']

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   module ShopSessionStorage
     extend ActiveSupport::Concern
@@ -8,7 +9,7 @@ module ShopifyApp
     end
 
     class_methods do
-      def store(auth_session, *args)
+      def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.domain)
         shop.shopify_token = auth_session.token
         shop.save!

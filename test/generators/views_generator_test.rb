@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'generators/shopify_app/views/views_generator'
 
@@ -11,5 +12,4 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_directory "app/views"
     assert_file "app/views/shopify_app/sessions/new.html.erb"
   end
-
 end

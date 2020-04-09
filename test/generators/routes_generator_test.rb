@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'generators/shopify_app/routes/routes_generator'
 
@@ -21,5 +22,4 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
       refute_match "mount ShopifyApp::Engine, at: '/'", routes
     end
   end
-
 end

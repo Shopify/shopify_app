@@ -1,11 +1,11 @@
+# frozen_string_literal: true
 module ShopifyApp
   class Configuration
-
     # Shopify App settings. These values should match the configuration
     # for the app in your Shopify Partners page. Change your settings in
     # `config/initializers/shopify_app.rb`
     attr_accessor :application_name
-    attr_accessor  :api_key
+    attr_accessor :api_key
     attr_accessor :secret
     attr_accessor :old_secret
     attr_accessor :scope
