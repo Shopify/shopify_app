@@ -129,14 +129,14 @@ module ShopifyApp
     test "#new should render a full-page if the shop param doesn't exist" do
       get :new
       assert_response :ok
-      assert_match /Shopify App — Installation/, response.body
+      assert_match(/Shopify App — Installation/, response.body)
     end
 
     test "#new should render a full-page if the shop param value is not a shop" do
       non_shop_address = "example.com"
       get :new, params: { shop: non_shop_address }
       assert_response :ok
-      assert_match /Shopify App — Installation/, response.body
+      assert_match(/Shopify App — Installation/, response.body)
     end
 
     ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com',
