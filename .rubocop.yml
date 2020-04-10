@@ -2,6 +2,7 @@ inherit_gem:
     rubocop-shopify: rubocop.yml
 
 AllCops:
+  TargetRubyVersion: 2.4
   Exclude:
     - 'lib/generators/**/*'
     - 'test/tmp/**/*'
