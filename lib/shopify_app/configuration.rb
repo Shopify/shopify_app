@@ -18,7 +18,7 @@ module ShopifyApp
 
     # customise urls
     attr_accessor :root_url
-    attr_accessor :login_url
+    attr_writer :login_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -34,7 +34,7 @@ module ShopifyApp
     attr_accessor :webhook_jobs_namespace
 
     # allow enabling of same site none on cookies
-    attr_accessor :enable_same_site_none
+    attr_writer :enable_same_site_none
 
     # allow enabling jwt headers for authentication
     attr_accessor :allow_jwt_authentication

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 module ShopifyApp
+  class MissingWebhookJobError < StandardError; end
+
   class WebhooksController < ActionController::Base
     include ShopifyApp::WebhookVerification
-
-    class ShopifyApp::MissingWebhookJobError < StandardError; end
 
     def receive
       params.permit!

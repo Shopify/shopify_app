@@ -4,4 +4,13 @@ inherit_gem:
 AllCops:
   Exclude:
     - 'lib/generators/**/*'
+    - 'test/tmp/**/*'
+
+Style/MethodCallWithArgsParentheses:
+  Exclude:
+    - '**/Gemfile'
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'test/**/*'
 
