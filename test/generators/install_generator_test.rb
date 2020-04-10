@@ -36,7 +36,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "creates the ShopifyApp initializer with args" do
     run_generator %w(--application_name Test Name --api_key key --secret shhhhh
-      --api_version unstable --scope read_orders write_products)
+                     --api_version unstable --scope read_orders write_products)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
