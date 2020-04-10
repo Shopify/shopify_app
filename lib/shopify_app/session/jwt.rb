@@ -45,4 +45,4 @@ module ShopifyApp
       @payload && ShopifyApp::Utils.sanitize_shop_domain(@payload['iss'])
     end
   end
-endgi
+end
