@@ -3,8 +3,8 @@ require 'test_helper'
 
 class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
   def app
-    app = Rack::Lint.new(lambda { |env|
-      req = Rack::Request.new(env)
+    Rack::Lint.new(lambda { |env|
+      Rack::Request.new(env)
 
       response = Rack::Response.new("", 200, "Content-Type" => "text/yaml")
 
@@ -29,7 +29,7 @@ class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
   test 'SameSite cookie attributes should be added on SSL' do
     env = env_for_url("https://test.com/")
 
-    status, headers, body = middleware.call(env)
+    _status, headers, _body = middleware.call(env)
 
     assert_includes headers['Set-Cookie'], 'SameSite'
   end
@@ -37,7 +37,7 @@ class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
   test 'SameSite cookie attributes should not be added on non SSL requests' do
     env = env_for_url("http://test.com/")
 
-    status, headers, body = middleware.call(env)
+    _status, headers, _body = middleware.call(env)
 
     assert_not_includes headers['Set-Cookie'], 'SameSite'
   end
