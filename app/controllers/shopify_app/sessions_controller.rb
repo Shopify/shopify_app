@@ -110,6 +110,7 @@ module ShopifyApp
     rescue ActiveResource::UnauthorizedAccess
       session[:user_tokens] = false
     rescue StandardError
+      raise StandardError
     end
 
     def validate_shop_presence
