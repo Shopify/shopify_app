@@ -92,6 +92,7 @@ module ShopifyApp
       end
     end
 
+    # rubocop:disable Lint/SuppressedException
     def set_user_tokens_option
       if shop_session.blank?
         session[:user_tokens] = false
@@ -110,8 +111,8 @@ module ShopifyApp
     rescue ActiveResource::UnauthorizedAccess
       session[:user_tokens] = false
     rescue StandardError
-      raise StandardError
     end
+    # rubocop:enable Lint/SuppressedException
 
     def validate_shop_presence
       @shop = sanitized_shop_name
