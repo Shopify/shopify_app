@@ -475,7 +475,7 @@ see [TROUBLESHOOTING.md](https://github.com/Shopify/shopify_app/blob/master/docs
 Using Test Helpers inside your Application
 -----------------------------------------
 
-A test helper is added that will allow you to test `ShopifyApp::WebhookVerification` in the controller from your app, to use this test, you can `require` it directly in side you app `test/controllers/webhook_verification_test.rb`.
+A test helper that will allow you to test `ShopifyApp::WebhookVerification` in the controller from your app, to use this test, you need to `require` it directly in side you app `test/controllers/webhook_verification_test.rb`.
 
 ```ruby
     require 'test_helper'
@@ -494,8 +494,7 @@ or you can require in your `test/test_helper.rb`
   require 'shopify_app/test_helpers/all'
 ```
 
-With `lib/shopify_app/test_helpers/all'`
-`
+With `lib/shopify_app/test_helpers/all'` more tests can be added and will only need to be required in once in your library.
 
 
 Testing an embedded app outside the Shopify admin
