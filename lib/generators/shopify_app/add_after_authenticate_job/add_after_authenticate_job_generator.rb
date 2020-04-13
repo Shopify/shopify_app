@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails/generators/base'
 
 module ShopifyApp
@@ -6,7 +7,7 @@ module ShopifyApp
       source_root File.expand_path('../templates', __FILE__)
 
       hook_for :test_framework, as: :job, in: :rails do |instance, generator|
-        instance.invoke generator, [ instance.send(:job_file_name) ]
+        instance.invoke(generator, [instance.send(:job_file_name)])
       end
 
       def init_after_authenticate_config
@@ -23,12 +24,13 @@ module ShopifyApp
         )
 
         unless initializer.include?(after_authenticate_job_config)
-          shell.say("Error adding after_authenticate_job to config. Add this line manually: #{after_authenticate_job_config}", :red)
+          shell.say("Error adding after_authenticate_job to config. Add this line manually: "\
+                    "#{after_authenticate_job_config}", :red)
         end
       end
 
       def add_after_authenticate_job
-        template 'after_authenticate_job.rb', "app/jobs/#{job_file_name}_job.rb"
+        template('after_authenticate_job.rb', "app/jobs/#{job_file_name}_job.rb")
       end
 
       private

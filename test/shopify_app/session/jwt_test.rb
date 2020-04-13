@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 module ShopifyApp
@@ -39,7 +40,7 @@ module ShopifyApp
 
     test "#shopify_domain and #shopify_user_id are nil if the jwt is unsigned" do
       p = payload
-      t = ::JWT.encode(payload, nil, 'none')
+      t = ::JWT.encode(p, nil, 'none')
       jwt = JWT.new(t)
 
       assert_nil jwt.shopify_domain
@@ -48,7 +49,7 @@ module ShopifyApp
 
     test "#shopify_domain and #shopify_user_id are nil if the signature is bad" do
       p = payload
-      t = ::JWT.encode(payload, 'bad', 'HS256')
+      t = ::JWT.encode(p, 'bad', 'HS256')
       jwt = JWT.new(t)
 
       assert_nil jwt.shopify_domain

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class JWT
     def initialize(token)
@@ -26,7 +27,8 @@ module ShopifyApp
 
     def set_payload
       @payload, _ = parse_token_data(ShopifyApp.configuration.secret)
-      @payload, _ = parse_token_data(ShopifyApp.configuration.old_secret) if !@payload && ShopifyApp.configuration.old_secret
+      configuration_old_secret = @payload && ShopifyApp.configuration
+      @payload, _ = parse_token_data(ShopifyApp.configuration.old_secret) unless configuration_old_secret
     end
 
     def parse_token_data(secret)

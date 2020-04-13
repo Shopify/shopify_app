@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class SameSiteCookieMiddleware
     COOKIE_SEPARATOR = "\n"
@@ -19,7 +20,7 @@ module ShopifyApp
           .split(COOKIE_SEPARATOR)
           .compact
           .map do |cookie|
-            cookie << '; Secure' if not cookie =~ /;\s*secure/i
+            cookie << '; Secure' unless cookie =~ /;\s*secure/i
             cookie << '; SameSite=None' unless cookie =~ /;\s*samesite=/i
             cookie
           end

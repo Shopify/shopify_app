@@ -1,10 +1,17 @@
-inherit_from:
-  - https://shopify.github.io/ruby-style-guide/rubocop.yml
+inherit_gem:
+    rubocop-shopify: rubocop.yml
 
-LineLength:
+AllCops:
+  TargetRubyVersion: 2.4
   Exclude:
-    - test/**/*
+    - 'lib/generators/**/*'
+    - 'test/tmp/**/*'
 
-Metrics/ClassLength:
+Style/MethodCallWithArgsParentheses:
   Exclude:
-    - test/**/*
+    - '**/Gemfile'
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'test/**/*'
+

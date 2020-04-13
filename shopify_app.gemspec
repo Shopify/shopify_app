@@ -1,4 +1,5 @@
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+$LOAD_PATH.push(File.expand_path('../lib', __FILE__))
 require "shopify_app/version"
 
 Gem::Specification.new do |s|
@@ -6,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = ShopifyApp::VERSION
   s.platform    = Gem::Platform::RUBY
   s.author      = "Shopify"
-  s.summary     = %q{This gem is used to get quickly started with the Shopify API}
+  s.summary     = 'This gem is used to get quickly started with the Shopify API'
 
   s.required_ruby_version = ">= 2.3.1"
 
@@ -29,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('mocha')
   s.add_development_dependency('webmock')
 
-  s.files         = `git ls-files`.split("\n").reject { |f| f.match(%r{^(test|example)/}) }
-  s.test_files    = `git ls-files -- {test}/*`.split("\n")
+  s.files         = %x(git ls-files).split("\n").reject { |f| f.match(%r{^(test|example)/}) }
+  s.test_files    = %x(git ls-files -- {test}/*).split("\n")
   s.require_paths = ["lib"]
 end

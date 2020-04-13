@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'action_controller'
 require 'action_controller/base'
@@ -8,7 +9,7 @@ class LocalizationController < ActionController::Base
   before_action :set_locale
 
   def index
-    head :ok
+    head(:ok)
   end
 end
 
