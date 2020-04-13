@@ -1,11 +1,11 @@
+# frozen_string_literal: true
 module ShopifyApp
   class Configuration
-
     # Shopify App settings. These values should match the configuration
     # for the app in your Shopify Partners page. Change your settings in
     # `config/initializers/shopify_app.rb`
     attr_accessor :application_name
-    attr_accessor  :api_key
+    attr_accessor :api_key
     attr_accessor :secret
     attr_accessor :old_secret
     attr_accessor :scope
@@ -18,7 +18,7 @@ module ShopifyApp
 
     # customise urls
     attr_accessor :root_url
-    attr_accessor :login_url
+    attr_writer :login_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -34,7 +34,7 @@ module ShopifyApp
     attr_accessor :webhook_jobs_namespace
 
     # allow enabling of same site none on cookies
-    attr_accessor :enable_same_site_none
+    attr_writer :enable_same_site_none
 
     # allow enabling jwt headers for authentication
     attr_accessor :allow_jwt_authentication

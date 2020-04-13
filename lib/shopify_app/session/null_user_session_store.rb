@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class NullUserSessionStore
     class << self
@@ -6,7 +7,7 @@ module ShopifyApp
       end
 
       def store(_, _)
-        raise(SessionRepository::ConfigurationError.new('user_storage is not configured'))
+        raise SessionRepository::ConfigurationError, 'user_storage is not configured'
       end
 
       def retrieve_by_shopify_user_id(_)
