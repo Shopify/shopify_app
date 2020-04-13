@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'generators/shopify_app/add_webhook/add_webhook_generator'
 
@@ -47,7 +48,7 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
   private
 
   def exisiting_webhook
-    "{topic: 'carts/update', address: 'https://example.com/webhooks/carts_update', format: 'json'}"
+    "{ topic: 'carts/update', address: 'https://example.com/webhooks/carts_update', format: 'json' },"
   end
 
   def new_webhook

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails/generators/base'
 require 'rails/generators/active_record'
 
@@ -8,19 +9,19 @@ module ShopifyApp
       source_root File.expand_path('../templates', __FILE__)
 
       def create_user_model
-        copy_file 'user.rb', 'app/models/user.rb'
+        copy_file('user.rb', 'app/models/user.rb')
       end
 
       def create_user_migration
-        migration_template 'db/migrate/create_users.erb', 'db/migrate/create_users.rb'
+        migration_template('db/migrate/create_users.erb', 'db/migrate/create_users.rb')
       end
 
       def update_shopify_app_initializer
-        gsub_file 'config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryUserSessionStore', 'User'
+        gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryUserSessionStore', 'User')
       end
 
       def create_user_fixtures
-        copy_file 'users.yml', 'test/fixtures/users.yml'
+        copy_file('users.yml', 'test/fixtures/users.yml')
       end
 
       private

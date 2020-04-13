@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'action_controller'
 require 'action_controller/base'
@@ -9,7 +10,7 @@ class WebhookVerificationController < ActionController::Base
   include ShopifyApp::WebhookVerification
 
   def webhook_action
-    head :ok
+    head(:ok)
   end
 end
 

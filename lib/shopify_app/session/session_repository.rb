@@ -1,15 +1,12 @@
+# frozen_string_literal: true
 module ShopifyApp
   class SessionRepository
     class ConfigurationError < StandardError; end
 
     class << self
-      def shop_storage=(storage)
-        @shop_storage = storage
-      end
+      attr_writer :shop_storage
 
-      def user_storage=(storage)
-        @user_storage = storage
-      end
+      attr_writer :user_storage
 
       def retrieve_shop_session(id)
         shop_storage.retrieve(id)
@@ -36,7 +33,7 @@ module ShopifyApp
       end
 
       def shop_storage
-        load_shop_storage || raise(ConfigurationError.new("ShopifySessionRepository.shop_storage is not configured!"))
+        load_shop_storage || raise(ConfigurationError, "ShopifySessionRepository.shop_storage is not configured!")
       end
 
       def user_storage
