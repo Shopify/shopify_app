@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'action_controller'
 require 'action_controller/base'
@@ -12,11 +13,11 @@ class LoginProtectionController < ActionController::Base
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
 
   def index
-    render plain: "OK"
+    render(plain: "OK")
   end
 
   def second_login
-    render plain: "OK"
+    render(plain: "OK")
   end
 
   def redirect
@@ -24,7 +25,7 @@ class LoginProtectionController < ActionController::Base
   end
 
   def raise_unauthorized
-    raise ActiveResource::UnauthorizedAccess.new('unauthorized')
+    raise ActiveResource::UnauthorizedAccess, 'unauthorized'
   end
 end
 
@@ -37,7 +38,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
     ShopifyApp.configuration.api_key = 'api_key'
 
-    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) '\
+                                     'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   end
 
   teardown do
@@ -75,7 +77,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     token = 'admin_api_token'
     payload = {
       'dest' => 'shopify_domain',
-      'sub' => 'shopify_user'
+      'sub' => 'shopify_user',
     }
 
     jwt = JWT.encode(payload, nil, 'none')
@@ -87,7 +89,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
       token: token,
       api_version: '2020-01',
     )
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).with(payload['sub']).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
+      .with(payload['sub']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
@@ -120,7 +123,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).with(payload['dest']).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
+      .with(payload['dest']).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
@@ -220,7 +224,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
       sess = stub(domain: 'https://foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(sess).once
       get :second_login, params: { shop: 'other-shop' }
-      assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com&shop=other-shop.myshopify.com'
+      assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com'\
+                           '&shop=other-shop.myshopify.com'
       assert_nil session[:shop_id]
       assert_nil session[:shopify_domain]
       assert_nil session[:shopify_user]
@@ -409,10 +414,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   private
 
-  def assert_fullpage_redirected(shop_domain, response)
+  def assert_fullpage_redirected(shop_domain, _response)
     example_url = "https://example.com"
 
-    assert_template 'shared/redirect'
+    assert_template('shared/redirect')
     assert_select '[id=redirection-target]', 1 do |elements|
       assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
         elements.first['data-target']

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class ShopMockSessionStore < ActiveRecord::Base
@@ -11,11 +12,11 @@ module ShopifyApp
 
     test ".retrieve can retrieve shop session records by ID" do
       ShopMockSessionStore.stubs(:find_by).returns(MockShopInstance.new(
-        shopify_domain:TEST_SHOPIFY_DOMAIN,
-        shopify_token:TEST_SHOPIFY_TOKEN
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN
       ))
 
-      session = ShopMockSessionStore.retrieve(id=1)
+      session = ShopMockSessionStore.retrieve(1)
       assert_equal TEST_SHOPIFY_DOMAIN, session.domain
       assert_equal TEST_SHOPIFY_TOKEN, session.token
     end
@@ -34,7 +35,7 @@ module ShopifyApp
         api_version: instance.api_version,
       )
       shopify_domain = TEST_SHOPIFY_DOMAIN
-      
+
       session = ShopMockSessionStore.retrieve_by_shopify_domain(shopify_domain)
       assert_equal expected_session.domain, session.domain
       assert_equal expected_session.token, session.token
@@ -42,12 +43,12 @@ module ShopifyApp
     end
 
     test ".store can store shop session records" do
-      mock_shop_instance = MockShopInstance.new(id:12345)
+      mock_shop_instance = MockShopInstance.new(id: 12345)
       mock_shop_instance.stubs(:save!).returns(true)
 
       ShopMockSessionStore.stubs(:find_or_initialize_by).returns(mock_shop_instance)
 
-      mock_auth_hash = mock()
+      mock_auth_hash = mock
       mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
       mock_auth_hash.stubs(:token).returns("a-new-token!")
       saved_id = ShopMockSessionStore.store(mock_auth_hash)

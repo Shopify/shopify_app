@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class ScripttagsManager
     class CreationFailed < StandardError; end
@@ -43,7 +44,7 @@ module ShopifyApp
     def destroy_scripttags
       scripttags = expanded_scripttags
       ShopifyAPI::ScriptTag.all.each do |tag|
-        ShopifyAPI::ScriptTag.delete(tag.id) if is_required_scripttag?(scripttags, tag)
+        ShopifyAPI::ScriptTag.delete(tag.id) if required_scripttag?(scripttags, tag)
       end
 
       @current_scripttags = nil
@@ -55,8 +56,8 @@ module ShopifyApp
       self.class.build_src(required_scripttags, shop_domain)
     end
 
-    def is_required_scripttag?(scripttags, tag)
-      scripttags.map{ |w| w[:src] }.include? tag.src
+    def required_scripttag?(scripttags, tag)
+      scripttags.map { |w| w[:src] }.include?(tag.src)
     end
 
     def create_scripttag(attributes)

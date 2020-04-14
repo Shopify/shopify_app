@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails/generators/base'
 
 module ShopifyApp
@@ -16,7 +17,7 @@ module ShopifyApp
         @scope = format_array_argument(options['scope'])
         @api_version = options['api_version'] || ShopifyAPI::Meta.admin_versions.find(&:latest_supported).handle
 
-        template 'shopify_app.rb', 'config/initializers/shopify_app.rb'
+        template('shopify_app.rb', 'config/initializers/shopify_app.rb')
       end
 
       def create_session_store_initializer
@@ -24,22 +25,22 @@ module ShopifyApp
       end
 
       def create_and_inject_into_omniauth_initializer
-        unless File.exist? "config/initializers/omniauth.rb"
-          copy_file 'omniauth.rb', 'config/initializers/omniauth.rb'
+        unless File.exist?("config/initializers/omniauth.rb")
+          copy_file('omniauth.rb', 'config/initializers/omniauth.rb')
         end
 
         inject_into_file(
           'config/initializers/omniauth.rb',
           File.read(File.expand_path(find_in_source_paths('shopify_provider.rb'))),
-          after: "Rails.application.config.middleware.use OmniAuth::Builder do\n"
+          after: "Rails.application.config.middleware.use(OmniAuth::Builder) do\n"
         )
       end
 
       def create_embedded_app_layout
         return unless embedded_app?
 
-        copy_file 'embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb'
-        copy_file '_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb'
+        copy_file('embedded_app.html.erb', 'app/views/layouts/embedded_app.html.erb')
+        copy_file('_flash_messages.html.erb', 'app/views/layouts/_flash_messages.html.erb')
 
         if ShopifyApp.use_webpacker?
           copy_file('shopify_app.js', 'app/javascript/shopify_app/shopify_app.js')
@@ -53,11 +54,11 @@ module ShopifyApp
       end
 
       def create_user_agent_initializer
-        template 'user_agent.rb', 'config/initializers/user_agent.rb'
+        template('user_agent.rb', 'config/initializers/user_agent.rb')
       end
 
       def mount_engine
-        route "mount ShopifyApp::Engine, at: '/'"
+        route("mount ShopifyApp::Engine, at: '/'")
       end
 
       def insert_hosts_into_development_config
