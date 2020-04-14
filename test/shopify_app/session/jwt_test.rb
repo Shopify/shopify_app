@@ -32,6 +32,8 @@ module ShopifyApp
     end
 
     test "shopify_domain and shopify_user_id are nil if the jwt is invalid" do
+      expect_jwt_error(::JWT::DecodeError, 'Not enough or too many segments')
+
       jwt = JWT.new('token')
 
       assert_nil jwt.shopify_domain
@@ -39,8 +41,10 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if the jwt is unsigned" do
-      p = payload
-      t = ::JWT.encode(p, nil, 'none')
+      # The library expects there to be a 3rd segment if we want to verify signature
+      expect_jwt_error(::JWT::DecodeError, 'Not enough or too many segments')
+
+      t = ::JWT.encode(payload, nil, 'none')
       jwt = JWT.new(t)
 
       assert_nil jwt.shopify_domain
@@ -48,8 +52,9 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if the signature is bad" do
-      p = payload
-      t = ::JWT.encode(p, 'bad', 'HS256')
+      expect_jwt_error(::JWT::VerificationError, 'Signature verification raised')
+
+      t = ::JWT.encode(payload, 'bad', 'HS256')
       jwt = JWT.new(t)
 
       assert_nil jwt.shopify_domain
@@ -57,6 +62,8 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if 'aud' claim doesn't match api_key" do
+      expect_jwt_error(JWT::InvalidAudienceError, "'aud' claim does not match api_key")
+
       ShopifyApp.configuration.api_key = 'other_key'
 
       p = payload
@@ -67,6 +74,8 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if 'exp' claim is in the past" do
+      expect_jwt_error(::JWT::ExpiredSignature, 'Signature has expired')
+
       p = payload(exp: 1.day.ago)
       jwt = JWT.new(token(p))
 
@@ -75,6 +84,8 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if 'nbf' claim is in the future" do
+      expect_jwt_error(::JWT::ImmatureSignature, 'Signature nbf has not been reached')
+
       p = payload(nbf: 1.day.from_now)
       jwt = JWT.new(token(p))
 
@@ -83,6 +94,8 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if `dest` is not a valid shopify domain" do
+      expect_jwt_error(JWT::InvalidDestinationError, "'dest' claim host not a valid shopify host")
+
       p = payload(dest: 'https://example.com')
       jwt = JWT.new(token(p))
 
@@ -91,6 +104,8 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if `iss` host doesn't match `dest` host" do
+      expect_jwt_error(JWT::MismatchedHostsError, "'dest' claim host does not match 'iss' claim host")
+
       p = payload(dest: 'https://other.myshopify.io')
       jwt = JWT.new(token(p))
 
@@ -107,6 +122,11 @@ module ShopifyApp
     end
 
     private
+
+    def expect_jwt_error(klass, message)
+      message = "[ShopifyApp::JWT] Failed to validate JWT: [#{klass}] #{message}"
+      Rails.logger.expects(:warn).with(message)
+    end
 
     def token(payload)
       ::JWT.encode(payload, ShopifyApp.configuration.secret, 'HS256')
