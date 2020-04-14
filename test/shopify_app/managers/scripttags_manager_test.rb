@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
@@ -5,9 +6,9 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   setup do
     @scripttags = [
-      {event: 'onload', src: 'https://example-app.com/fancy.js'},
-      {event: 'onload', src: 'https://example-app.com/foobar.js'},
-      {event: 'onload', src: ->(domain) { "https://example-app.com/#{domain}-123.js" } }
+      { event: 'onload', src: 'https://example-app.com/fancy.js' },
+      { event: 'onload', src: 'https://example-app.com/foobar.js' },
+      { event: 'onload', src: ->(domain) { "https://example-app.com/#{domain}-123.js" } },
     ]
 
     @manager = ShopifyApp::ScripttagsManager.new(@scripttags, 'example-app.com')
@@ -46,7 +47,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   test "#create_scripttags when a script src raises an exception, it's propagated" do
     ShopifyAPI::ScriptTag.stubs(:all).returns(all_mock_scripttags[0..1])
-    @manager.required_scripttags.last[:src] = -> (domain) { raise 'oops!' }
+    @manager.required_scripttags.last[:src] = -> (_domain) { raise 'oops!' }
 
     e = assert_raise do
       @manager.create_scripttags
@@ -85,7 +86,8 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   end
 
   test "#destroy_scripttags does not destroy scripttags that do not have a matching address" do
-    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: 'http://something-or-the-other.com/badscript.js', id: 7214109)])
+    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: 'http://something-or-the-other.com/badscript.js',
+                                                    id: 7214109)])
     ShopifyAPI::ScriptTag.expects(:delete).never
 
     @manager.destroy_scripttags
@@ -95,11 +97,11 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     args = {
       shop_domain: 'example-app.com',
       shop_token: 'token',
-      scripttags: [event: 'onload', src: 'https://example-app.com/example-app.com-123.js']
+      scripttags: [event: 'onload', src: 'https://example-app.com/example-app.com-123.js'],
     }
 
     assert_enqueued_with(job: ShopifyApp::ScripttagsManagerJob, args: [args]) do
-      ShopifyApp::ScripttagsManager.queue(args[:shop_domain], args[:shop_token], @scripttags[-1,1])
+      ShopifyApp::ScripttagsManager.queue(args[:shop_domain], args[:shop_token], @scripttags[-1, 1])
     end
   end
 
