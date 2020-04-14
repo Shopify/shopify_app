@@ -1,5 +1,11 @@
 13.0.1
 ------
+* Small addition to WebhookJob to return if the shop is nil #952
+* Added Rubocop to the Repo #948
+* Added a WebhookVerification test helper #950
+
+13.0.1
+------
 * fix for deprecation warning while loading session storage at startup
 
 13.0.0
