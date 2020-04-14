@@ -25,15 +25,8 @@ module ShopifyApp
     end
 
     def jwt_callback
-      if auth_hash && jwt_shopify_domain == shop_name && jwt_shopify_user_id == associated_user_id
-        session_store = ShopifyAPI::Session.new(
-          domain: shop_name,
-          token: token,
-          api_version: ShopifyApp.configuration.api_version
-        )
-
-        ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
-
+      if valid_jwt_auth?
+        create_user_session_from_jwt_callback
         head(:ok)
       else
         head(:unauthorized)
@@ -41,6 +34,20 @@ module ShopifyApp
     end
 
     private
+
+    def valid_jwt_auth?
+      auth_hash && jwt_shopify_domain == shop_name && jwt_shopify_user_id == associated_user_id
+    end
+
+    def create_user_session_from_jwt_callback
+      session = ShopifyAPI::Session.new(
+        domain: shop_name,
+        token: token,
+        api_version: ShopifyApp.configuration.api_version
+      )
+
+      ShopifyApp::SessionRepository.store_user_session(session, associated_user)
+    end
 
     def login_shop
       reset_session_options
