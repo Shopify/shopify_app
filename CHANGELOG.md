@@ -3,6 +3,8 @@
 * Small addition to WebhookJob to return if the shop is nil #952
 * Added Rubocop to the Repo #948
 * Added a WebhookVerification test helper #950
+* Fix for deprecation warning while loading session storage at startup
+* Changes that will allow future JWT authentication
 
 13.0.1
 ------
