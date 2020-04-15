@@ -205,11 +205,16 @@ module ShopifyApp
     end
 
     def return_address
+      return base_return_address unless ShopifyApp.configuration.allow_jwt_authentication
+      return_address_with_params(shop: current_shopify_domain)
+    end
+
+    def base_return_address
       session.delete(:return_to) || ShopifyApp.configuration.root_url
     end
 
     def return_address_with_params(params)
-      uri = URI(return_address)
+      uri = URI(base_return_address)
       uri.query = CGI.parse(uri.query.to_s)
         .symbolize_keys
         .transform_values { |v| v.one? ? v.first : v }
