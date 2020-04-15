@@ -46,7 +46,7 @@ module ShopifyApp
           copy_file('shopify_app.js', 'app/javascript/shopify_app/shopify_app.js')
           copy_file('flash_messages.js', 'app/javascript/shopify_app/flash_messages.js')
           copy_file('shopify_app_index.js', 'app/javascript/shopify_app/index.js')
-          append_to_file('app/javascript/packs/application.js', 'require("shopify_app")')
+          append_to_file('app/javascript/packs/application.js', "require(\"shopify_app\")\n")
         else
           copy_file('shopify_app.js', 'app/assets/javascripts/shopify_app.js')
           copy_file('flash_messages.js', 'app/assets/javascripts/flash_messages.js')
