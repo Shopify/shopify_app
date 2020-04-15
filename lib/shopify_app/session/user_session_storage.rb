@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   module UserSessionStorage
     extend ActiveSupport::Concern

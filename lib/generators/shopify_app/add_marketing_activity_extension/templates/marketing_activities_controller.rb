@@ -3,7 +3,7 @@
 class MarketingActivitiesController < ShopifyApp::ExtensionVerificationController
   def preload_form_data
     preload_data = {
-      "form_data": {}
+      "form_data": {},
     }
     render(json: preload_data, status: :ok)
   end
@@ -31,14 +31,14 @@ class MarketingActivitiesController < ShopifyApp::ExtensionVerificationControlle
         "preview_url": placeholder_img,
         "content_type": "text/html",
         "width": 360,
-        "height": 200
+        "height": 200,
       },
       "mobile": {
         "preview_url": placeholder_img,
         "content_type": "text/html",
         "width": 360,
-        "height": 200
-      }
+        "height": 200,
+      },
     }
     render(json: preview_response, status: :ok)
   end
