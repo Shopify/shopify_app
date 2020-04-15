@@ -1,6 +1,6 @@
 ---
 nl:
-  logged_out: u bent afgemeld
+  logged_out: je bentafgemeld
   could_not_log_in: Kon niet aanmelden bij Shopify-winkel
   invalid_shop_url: Ongeldig winkeldomein
   enable_cookies_heading: Schakel cookies in van %{app}
