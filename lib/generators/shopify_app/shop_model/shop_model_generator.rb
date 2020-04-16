@@ -30,9 +30,13 @@ module ShopifyApp
         Rails.version.match(/\d\.\d/)[0]
       end
 
-      # for generating a timestamp when using `create_migration`
-      def self.next_migration_number(dir)
-        ActiveRecord::Generators::Base.next_migration_number(dir)
+      class << self
+        private :next_migration_number
+
+        # for generating a timestamp when using `create_migration`
+        def next_migration_number(dir)
+          ActiveRecord::Generators::Base.next_migration_number(dir)
+        end
       end
     end
   end
