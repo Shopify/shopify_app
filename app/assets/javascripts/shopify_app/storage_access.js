@@ -11,17 +11,7 @@
   }
 
   StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
-    var normalizedLink = document.createElement('a');
-
-    normalizedLink.href = this.setNormalizedLink(storageAccessStatus);
-
-    data = JSON.stringify({
-      message: 'Shopify.API.remoteRedirect',
-      data: {
-        location: normalizedLink.href,
-      }
-    });
-    window.parent.postMessage(data, this.redirectData.myshopifyUrl);
+    appBridgeRedirect(this.setNormalizedLink(storageAccessStatus));
   }
 
   StorageAccessHelper.prototype.redirectToAppsIndex = function() {
