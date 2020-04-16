@@ -4,7 +4,6 @@ inherit_gem:
 AllCops:
   TargetRubyVersion: 2.4
   Exclude:
-    - 'lib/generators/**/*'
     - 'test/tmp/**/*'
 
 Style/MethodCallWithArgsParentheses:
