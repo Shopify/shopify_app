@@ -3,18 +3,17 @@ require 'test_helper'
 
 class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
   def app
-    Rack::Lint.new(lambda { |env|
-      Rack::Request.new(env)
+    simple_app = lambda { |_|
+      [200, { "Content-Type" => "text/yaml" }, ""]
+    }
 
-      response = Rack::Response.new("", 200, "Content-Type" => "text/yaml")
-      response.finish
-    })
+    Rack::Lint.new(ShopifyApp::JWTMiddleware.new(simple_app))
   end
 
   test 'does not change env if no authorization header' do
     env = Rack::MockRequest.env_for('https://example.com')
 
-    ShopifyApp::JWTMiddleware.new(app).call(env)
+    app.call(env)
 
     assert_nil env['jwt.shopify_domain']
   end
@@ -23,7 +22,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     env = Rack::MockRequest.env_for('https://example.com')
     env['HTTP_AUTHORIZATION'] = 'something'
 
-    ShopifyApp::JWTMiddleware.new(app).call(env)
+    app.call(env)
 
     assert_nil env['jwt.shopify_domain']
   end
@@ -35,7 +34,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     env = Rack::MockRequest.env_for('https://example.com')
     env['HTTP_AUTHORIZATION'] = 'Bearer abc'
 
-    ShopifyApp::JWTMiddleware.new(app).call(env)
+    app.call(env)
 
     assert_nil env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
@@ -48,7 +47,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     env = Rack::MockRequest.env_for('https://example.com')
     env['HTTP_AUTHORIZATION'] = 'Bearer abc'
 
-    ShopifyApp::JWTMiddleware.new(app).call(env)
+    app.call(env)
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_nil env['jwt.shopify_user_id']
@@ -61,7 +60,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     env = Rack::MockRequest.env_for('https://example.com')
     env['HTTP_AUTHORIZATION'] = 'Bearer abc'
 
-    ShopifyApp::JWTMiddleware.new(app).call(env)
+    app.call(env)
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']

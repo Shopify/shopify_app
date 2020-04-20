@@ -7,18 +7,20 @@ module ShopifyApp
     end
 
     def call(env)
-      return unless env['HTTP_AUTHORIZATION']
+      response = @app.call(env)
+
+      return response unless env['HTTP_AUTHORIZATION']
 
       match = env['HTTP_AUTHORIZATION'].match(TOKEN_REGEX)
       token = match && match[1]
-      return unless token
+      return response unless token
 
       jwt = ShopifyApp::JWT.new(token)
 
       env['jwt.shopify_domain'] = jwt.shopify_domain
       env['jwt.shopify_user_id'] = jwt.shopify_user_id
 
-      @app.call(env)
+      response
     end
   end
 end
