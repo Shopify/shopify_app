@@ -7,20 +7,35 @@ module ShopifyApp
     end
 
     def call(env)
-      response = @app.call(env)
+      return call_next(env) unless authorization_header?(env)
 
-      return response unless env['HTTP_AUTHORIZATION']
+      token = extract_token(env)
+      return call_next(env) unless token
 
+      set_env_variables(token, env)
+      call_next(env)
+    end
+
+    private
+
+    def call_next(env)
+      @app.call(env)
+    end
+
+    def authorization_header?(env)
+      env['HTTP_AUTHORIZATION']
+    end
+
+    def extract_token(env)
       match = env['HTTP_AUTHORIZATION'].match(TOKEN_REGEX)
-      token = match && match[1]
-      return response unless token
+      match && match[1]
+    end
 
+    def set_env_variables(token, env)
       jwt = ShopifyApp::JWT.new(token)
 
       env['jwt.shopify_domain'] = jwt.shopify_domain
       env['jwt.shopify_user_id'] = jwt.shopify_user_id
-
-      response
     end
   end
 end

@@ -2,11 +2,13 @@
 require 'test_helper'
 
 class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
-  def app
-    simple_app = lambda { |_|
-      [200, { "Content-Type" => "text/yaml" }, ""]
+  def simple_app
+    lambda { |env|
+      [200, { "Content-Type" => "text/yaml" }, env['jwt.shopify_domain'] || '']
     }
+  end
 
+  def app
     Rack::Lint.new(ShopifyApp::JWTMiddleware.new(simple_app))
   end
 
@@ -65,5 +67,16 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
   end
-end
 
+  test 'sets the jwt values before calling the next middleware' do
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', 1)
+    ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
+
+    env = Rack::MockRequest.env_for('https://example.com')
+    env['HTTP_AUTHORIZATION'] = 'Bearer abc'
+
+    _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
+
+    assert_equal 'example.myshopify.com', body
+  end
+end
