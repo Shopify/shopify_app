@@ -102,15 +102,11 @@ module ShopifyApp
     test '#jwt_callback persists the user token' do
       mock_shopify_user_omniauth
       session = mock_user_session
-      jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
-        TEST_SHOPIFY_DOMAIN,
-        TEST_ASSOCIATED_USER['id']
-      )
 
-      ShopifyApp::JWT.stubs(:new).returns(jwt_mock)
       ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER)
 
-      request.env['HTTP_AUTHORIZATION'] = "Bearer 123"
+      request.env['jwt.shopify_domain'] = TEST_SHOPIFY_DOMAIN
+      request.env['jwt.shopify_user_id'] = TEST_ASSOCIATED_USER['id']
       get :jwt_callback
       assert_response :ok
     end

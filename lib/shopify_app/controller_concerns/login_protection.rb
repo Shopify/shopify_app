@@ -83,17 +83,11 @@ module ShopifyApp
     protected
 
     def jwt_shopify_domain
-      return unless jwt
-      @jwt_shopify_domain ||= JWT.new(jwt).shopify_domain
+      request.env['jwt.shopify_domain']
     end
 
     def jwt_shopify_user_id
-      return unless jwt
-      @jwt_user_id ||= JWT.new(jwt).shopify_user_id
-    end
-
-    def jwt
-      @jwt ||= authenticate_with_http_token { |token| token }
+      request.env['jwt.shopify_user_id']
     end
 
     def redirect_to_login
