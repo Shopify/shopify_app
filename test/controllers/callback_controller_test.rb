@@ -101,44 +101,37 @@ module ShopifyApp
 
     test '#jwt_callback persists the user token' do
       mock_shopify_user_omniauth
+      mock_shopify_jwt
       session = mock_user_session
 
       ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER)
 
-      request.env['jwt.shopify_domain'] = TEST_SHOPIFY_DOMAIN
-      request.env['jwt.shopify_user_id'] = TEST_ASSOCIATED_USER['id']
-      get :jwt_callback
+      get :callback
       assert_response :ok
     end
 
     test '#jwt_callback returns unauthorized if no omniauth data' do
-      get :jwt_callback
+      mock_shopify_jwt
+
+      get :callback
       assert_response :unauthorized
     end
 
     test '#jwt_callback returns unauthorized if the jwt user does not match omniauth user' do
       mock_shopify_user_omniauth
-      jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
-        TEST_SHOPIFY_DOMAIN,
-        'another-user-id'
-      )
-      ShopifyApp::JWT.stubs(:new).returns(jwt_mock)
+      mock_shopify_jwt
+      request.env['jwt.shopify_user_id'] = 'bad-user'
 
-      request.env['HTTP_AUTHORIZATION'] = "Bearer 123"
-      get :jwt_callback
+      get :callback
       assert_response :unauthorized
     end
 
     test '#jwt_callback returns unauthorized if the jwt shop does not match omniauth shop' do
       mock_shopify_user_omniauth
-      jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(
-        'some-other-shopify-domain.myshopify.io',
-        TEST_ASSOCIATED_USER['id']
-      )
-      ShopifyApp::JWT.stubs(:new).returns(jwt_mock)
+      mock_shopify_jwt
+      request.env['jwt.shopify_domain'] = 'bad-shop'
 
-      request.env['HTTP_AUTHORIZATION'] = "Bearer 123"
-      get :jwt_callback
+      get :callback
       assert_response :unauthorized
     end
 
@@ -269,6 +262,11 @@ module ShopifyApp
     end
 
     private
+
+    def mock_shopify_jwt
+      request.env['jwt.shopify_domain'] = TEST_SHOPIFY_DOMAIN
+      request.env['jwt.shopify_user_id'] = TEST_ASSOCIATED_USER['id']
+    end
 
     def mock_user_session
       ShopifyAPI::Session.new(

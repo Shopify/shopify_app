@@ -6,6 +6,11 @@ module ShopifyApp
     include ShopifyApp::LoginProtection
 
     def callback
+      if jwt_shopify_domain || jwt_shopify_user_id
+        jwt_callback
+        return
+      end
+
       if auth_hash
         login_shop
 
@@ -24,6 +29,8 @@ module ShopifyApp
       end
     end
 
+    private
+
     def jwt_callback
       if valid_jwt_auth?
         create_user_session_from_jwt_callback
@@ -32,8 +39,6 @@ module ShopifyApp
         head(:unauthorized)
       end
     end
-
-    private
 
     def valid_jwt_auth?
       auth_hash && jwt_shopify_domain == shop_name && jwt_shopify_user_id == associated_user_id
