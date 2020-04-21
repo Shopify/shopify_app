@@ -108,7 +108,7 @@ module ShopifyApp
           path = referer.path
           query = "#{referer.query}&#{sanitized_params.to_query}"
         end
-        session[:return_to] = query.blank? ? "#{path}" : "#{path}?#{query}"
+        session[:return_to] = query.blank? ? path.to_s : "#{path}?#{query}"
         redirect_to(login_url_with_optional_shop)
       end
     end
