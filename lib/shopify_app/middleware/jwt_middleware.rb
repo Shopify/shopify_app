@@ -7,7 +7,7 @@ module ShopifyApp
     end
 
     def call(env)
-      return call_next(env) unless authorization_header?(env)
+      return call_next(env) unless authorization_header(env)
 
       token = extract_token(env)
       return call_next(env) unless token
@@ -22,12 +22,12 @@ module ShopifyApp
       @app.call(env)
     end
 
-    def authorization_header?(env)
+    def authorization_header(env)
       env['HTTP_AUTHORIZATION']
     end
 
     def extract_token(env)
-      match = env['HTTP_AUTHORIZATION'].match(TOKEN_REGEX)
+      match = authorization_header(env).match(TOKEN_REGEX)
       match && match[1]
     end
 
