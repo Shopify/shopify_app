@@ -1,3 +1,9 @@
+13.1.0
+------
+* Adds the shop URL as a parameter when redirecting after the callback
+* Bump minimum Ruby version to 2.4
+* Bug fixes
+
 13.0.1
 ------
 * Small addition to WebhookJob to return if the shop is nil #952
