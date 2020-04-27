@@ -16,7 +16,7 @@ module ShopifyApp
 
     test "receives webhook and performs job" do
       send_webhook 'order_update', { foo: :bar }
-      assert_response :no_content
+      assert_response :ok
       assert_enqueued_jobs 1
     end
 
