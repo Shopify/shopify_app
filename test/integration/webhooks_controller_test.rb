@@ -27,7 +27,7 @@ module ShopifyApp
       OrderUpdateJob.expects(:perform_later).with(job_args)
 
       send_webhook 'order_update', webhook
-      assert_response :no_content
+      assert_response :ok
     end
 
     test "returns error for webhook with no job class" do
