@@ -512,7 +512,7 @@ Migrating to 13.0.0
 Version 13.0.0 adds the ability to use both user and shop sessions, concurrently. This however involved a large
 change to how session stores work. Here are the steps to migrate to 13.x
 
-### Changes to `config/initializers/shopify_app.rb.tt`
+### Changes to `config/initializers/shopify_app.rb`
 - *REMOVE* `config.per_user_tokens = [true|false]` this is no longer needed
 - *CHANGE* `config.session_repository = 'Shop'` To  `config.shop_session_repository = 'Shop'`
 - *ADD (optional)*  User Session Storage `config.user_session_repository = 'User'`
