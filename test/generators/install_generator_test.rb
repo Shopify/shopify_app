@@ -37,26 +37,26 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "creates the ShopifyApp initializer with args" do
     run_generator %w(--application_name Test Name --api_key key --secret shhhhh
                      --api_version unstable --scope read_orders write_products)
-    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+    assert_file "config/initializers/shopify_app.rb.tt" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
-      assert_match "config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'", shopify_app
+      assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
   end
 
   test "creates the ShopifyApp initializer with double-quoted args" do
     run_generator %w(--application_name Test Name --api_key key --secret shhhhh --scope read_orders write_products)
-    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+    assert_file "config/initializers/shopify_app.rb.tt" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
-      assert_match "config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'", shopify_app
+      assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
   end
 
