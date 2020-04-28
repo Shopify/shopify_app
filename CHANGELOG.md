@@ -1,3 +1,7 @@
+13.1.1
+------
+* Update browser_sniffer to 1.2.2
+
 13.1.0
 ------
 * Adds the shop URL as a parameter when redirecting after the callback
