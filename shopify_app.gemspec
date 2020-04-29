@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('shopify_api', '~> 9.0.2')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 2.2.2')
   s.add_runtime_dependency('jwt', '~> 2.2.1')
+  s.add_runtime_dependency('redirect_safely', '~> 1.0')
 
   s.add_development_dependency('rake')
   s.add_development_dependency('byebug')
