@@ -75,28 +75,24 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp.configuration.allow_jwt_authentication = true
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
-    payload = {
-      'dest' => 'shopify_domain',
-      'sub' => 'shopify_user',
-    }
-
-    jwt = JWT.encode(payload, nil, 'none')
-    jwt_mock = Struct.new(:shopify_user_id).new(payload['sub'])
-    ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
+    dest = 'shopify_domain'
+    sub = 'shopify_user'
 
     expected_session = ShopifyAPI::Session.new(
       domain: domain,
       token: token,
       api_version: '2020-01',
     )
+
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
-      .with(payload['sub']).returns(expected_session)
+      .with(sub).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
-      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
+      request.env['jwt.shopify_domain'] = dest
+      request.env['jwt.shopify_user_id'] = sub
       get :index
 
       assert_equal expected_session, @controller.current_shopify_session
@@ -107,13 +103,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp.configuration.allow_jwt_authentication = true
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
-    payload = {
-      'dest' => 'test.shopify.com',
-    }
-
-    jwt = JWT.encode(payload, nil, 'none')
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(payload['dest'], nil)
-    ShopifyApp::JWT.stubs(:new).with(jwt).returns(jwt_mock)
+    dest = 'test.shopify.com'
 
     expected_session = ShopifyAPI::Session.new(
       domain: domain,
@@ -124,11 +114,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
-      .with(payload['dest']).returns(expected_session)
+      .with(dest).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
     with_application_test_routes do
-      request.env['HTTP_AUTHORIZATION'] = "Bearer #{jwt}"
+      request.env['jwt.shopify_domain'] = dest
       get :index
 
       assert_equal expected_session, @controller.current_shopify_session
@@ -373,6 +363,20 @@ class LoginProtectionControllerTest < ActionController::TestCase
       example_shop = 'shop.myshopify.com'
       get :redirect, params: { shop: example_shop }
       assert_fullpage_redirected(example_shop, response)
+    end
+  end
+
+  test '#fullpage_redirect_to, when the shop params is missing, sends a post message to the shop in the jwt' do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    domain = 'shop.myshopify.com'
+    payload = {
+      'dest' => domain,
+    }
+
+    with_application_test_routes do
+      request.env['jwt.shopify_domain'] = domain
+      get :redirect
+      assert_fullpage_redirected(domain, response)
     end
   end
 

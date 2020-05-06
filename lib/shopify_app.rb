@@ -4,6 +4,7 @@ require 'shopify_app/version'
 # deps
 require 'shopify_api'
 require 'omniauth-shopify-oauth2'
+require 'redirect_safely'
 
 module ShopifyApp
   def self.rails6?
@@ -42,6 +43,7 @@ module ShopifyApp
   require 'shopify_app/managers/scripttags_manager'
 
   # middleware
+  require 'shopify_app/middleware/jwt_middleware'
   require 'shopify_app/middleware/same_site_cookie_middleware'
 
   # session
