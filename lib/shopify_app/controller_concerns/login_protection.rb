@@ -164,7 +164,10 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      shopify_domain = sanitized_shop_name || session[:shopify_domain]
+      shopify_domain = sanitized_shop_name ||
+        jwt_shopify_domain ||
+        session[:shopify_domain]
+
       return shopify_domain if shopify_domain.present?
 
       raise ShopifyDomainNotFound
