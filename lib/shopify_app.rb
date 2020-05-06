@@ -43,6 +43,7 @@ module ShopifyApp
   require 'shopify_app/managers/scripttags_manager'
 
   # middleware
+  require 'shopify_app/middleware/jwt_middleware'
   require 'shopify_app/middleware/same_site_cookie_middleware'
 
   # session
