@@ -1,3 +1,9 @@
+13.2.0
+------
+* Get current shop domain from JWT header
+* Validate that the omniauth data matches the JWT data
+* Persist the token information to the session store
+
 13.1.1
 ------
 * Update browser_sniffer to 1.2.2
