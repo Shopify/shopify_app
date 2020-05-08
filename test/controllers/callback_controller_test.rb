@@ -11,7 +11,7 @@ end
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
-    TEST_ASSOCIATED_USER = { "shopify_user_id" => 'test-shopify-user' }
+    TEST_ASSOCIATED_USER = { 'id' => 'test-shopify-user' }
     TEST_SESSION = "this.is.a.user.session"
 
     setup do
@@ -97,6 +97,42 @@ module ShopifyApp
 
       mock_shopify_omniauth
       get :callback, params: { shop: 'shop' }
+    end
+
+    test '#jwt_callback persists the user token' do
+      mock_shopify_user_omniauth
+      mock_shopify_jwt
+      session = mock_user_session
+
+      ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER)
+
+      get :callback
+      assert_response :ok
+    end
+
+    test '#jwt_callback returns unauthorized if no omniauth data' do
+      mock_shopify_jwt
+
+      get :callback
+      assert_response :unauthorized
+    end
+
+    test '#jwt_callback returns unauthorized if the jwt user does not match omniauth user' do
+      mock_shopify_user_omniauth
+      mock_shopify_jwt
+      request.env['jwt.shopify_user_id'] = 'bad-user'
+
+      get :callback
+      assert_response :unauthorized
+    end
+
+    test '#jwt_callback returns unauthorized if the jwt shop does not match omniauth shop' do
+      mock_shopify_user_omniauth
+      mock_shopify_jwt
+      request.env['jwt.shopify_domain'] = 'bad-shop'
+
+      get :callback
+      assert_response :unauthorized
     end
 
     test '#install_webhooks uses the shop token for shop strategy' do
@@ -226,6 +262,19 @@ module ShopifyApp
     end
 
     private
+
+    def mock_shopify_jwt
+      request.env['jwt.shopify_domain'] = TEST_SHOPIFY_DOMAIN
+      request.env['jwt.shopify_user_id'] = TEST_ASSOCIATED_USER['id']
+    end
+
+    def mock_user_session
+      ShopifyAPI::Session.new(
+        token: '1234',
+        domain: TEST_SHOPIFY_DOMAIN,
+        api_version: ShopifyApp.configuration.api_version,
+      )
+    end
 
     def mock_shopify_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore

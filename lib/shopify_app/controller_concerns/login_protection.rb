@@ -83,17 +83,11 @@ module ShopifyApp
     protected
 
     def jwt_shopify_domain
-      return unless jwt
-      @jwt_shopify_domain ||= JWT.new(jwt).shopify_domain
+      request.env['jwt.shopify_domain']
     end
 
     def jwt_shopify_user_id
-      return unless jwt
-      @jwt_user_id ||= JWT.new(jwt).shopify_user_id
-    end
-
-    def jwt
-      @jwt ||= authenticate_with_http_token { |token| token }
+      request.env['jwt.shopify_user_id']
     end
 
     def redirect_to_login
@@ -139,7 +133,7 @@ module ShopifyApp
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
 
-      return_to = session[:return_to] || params[:return_to]
+      return_to = RedirectSafely.make_safe(session[:return_to] || params[:return_to], nil)
 
       if return_to.present? && return_to_param_required?
         query_params[:return_to] = return_to
@@ -170,7 +164,10 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      shopify_domain = sanitized_shop_name || session[:shopify_domain]
+      shopify_domain = sanitized_shop_name ||
+        jwt_shopify_domain ||
+        session[:shopify_domain]
+
       return shopify_domain if shopify_domain.present?
 
       raise ShopifyDomainNotFound

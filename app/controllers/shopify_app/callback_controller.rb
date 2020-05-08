@@ -6,10 +6,22 @@ module ShopifyApp
     include ShopifyApp::LoginProtection
 
     def callback
-      if auth_hash
-        login_shop
+      unless auth_hash
+        return respond_with_error
+      end
 
-        if ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+      if jwt_request? && !valid_jwt_auth?
+        return respond_with_error
+      end
+
+      if jwt_request?
+        set_shopify_session
+        head(:ok)
+      else
+        reset_session_options
+        set_shopify_session
+
+        if redirect_for_user_token?
           return redirect_to(login_url_with_optional_shop)
         end
 
@@ -18,17 +30,30 @@ module ShopifyApp
         perform_after_authenticate_job
 
         redirect_to(return_address)
+      end
+    end
+
+    private
+
+    def respond_with_error
+      if jwt_request?
+        head(:unauthorized)
       else
         flash[:error] = I18n.t('could_not_log_in')
         redirect_to(login_url_with_optional_shop)
       end
     end
 
-    private
+    def redirect_for_user_token?
+      ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+    end
 
-    def login_shop
-      reset_session_options
-      set_shopify_session
+    def jwt_request?
+      jwt_shopify_domain || jwt_shopify_user_id
+    end
+
+    def valid_jwt_auth?
+      auth_hash && jwt_shopify_domain == shop_name && jwt_shopify_user_id == associated_user_id
     end
 
     def auth_hash
@@ -43,6 +68,10 @@ module ShopifyApp
       return unless auth_hash['extra'].present?
 
       auth_hash['extra']['associated_user']
+    end
+
+    def associated_user_id
+      associated_user && associated_user['id']
     end
 
     def token
