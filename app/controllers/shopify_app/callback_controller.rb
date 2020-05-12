@@ -92,9 +92,11 @@ module ShopifyApp
 
       session[:shopify_user] = associated_user
       if session[:shopify_user].present?
+        session[:shop_id] = nil if shop_session && shop_session.domain != shop_name
         session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
       else
         session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
+        session[:user_id] = nil if user_session && user_session.domain != shop_name
       end
       session[:shopify_domain] = shop_name
       session[:user_session] = auth_hash&.extra&.session
