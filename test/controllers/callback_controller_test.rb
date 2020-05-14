@@ -66,6 +66,66 @@ module ShopifyApp
       assert_nil session[:shopify_user]
     end
 
+    test '#callback keeps the user_id if shop session is for the same shop' do
+      mock_shopify_omniauth
+      session[:user_id] = 'valid-user-id'
+      user_shop_session = ShopifyAPI::Session.new(
+        domain: TEST_SHOPIFY_DOMAIN,
+        token: '1234',
+        api_version: nil,
+      )
+      ShopifyApp::SessionRepository.stubs(:retrieve_user_session).with('valid-user-id').returns(user_shop_session)
+
+      get :callback, params: { shop: 'shop' }
+      assert_equal 'valid-user-id', session[:user_id]
+      assert_not_nil session[:shop_id]
+    end
+
+    test '#callback clears stale user_id if shop session is for a different shop' do
+      mock_shopify_omniauth
+      session[:user_id] = 'valid-user-id'
+      user_shop_session = ShopifyAPI::Session.new(
+        domain: 'other-shop.myshopify.io',
+        token: '1234',
+        api_version: nil,
+      )
+      ShopifyApp::SessionRepository.stubs(:retrieve_user_session).with('valid-user-id').returns(user_shop_session)
+
+      get :callback, params: { shop: 'shop' }
+      assert_nil session[:user_id]
+      assert_not_nil session[:shop_id]
+    end
+
+    test '#callback keeps shop_id if user session is for the same shop' do
+      mock_shopify_user_omniauth
+      session[:shop_id] = 'valid-shop-id'
+      shop_session = ShopifyAPI::Session.new(
+        domain: TEST_SHOPIFY_DOMAIN,
+        token: '1234',
+        api_version: nil,
+      )
+      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(shop_session)
+
+      get :callback, params: { shop: 'shop' }
+      assert_not_nil session[:user_id]
+      assert_equal 'valid-shop-id', session[:shop_id]
+    end
+
+    test '#callback clears a stale shop_id if user session is for a different shop' do
+      mock_shopify_user_omniauth
+      session[:shop_id] = 'valid-shop-id'
+      other_shop_session = ShopifyAPI::Session.new(
+        domain: 'other-domain.myshopify.io',
+        token: '1234',
+        api_version: nil,
+      )
+      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(other_shop_session)
+
+      get :callback, params: { shop: 'shop' }
+      assert_not_nil session[:user_id]
+      assert_nil session[:shop_id]
+    end
+
     test '#callback sets up a shopify session with a user for online mode' do
       mock_shopify_user_omniauth
 
@@ -149,15 +209,14 @@ module ShopifyApp
     end
 
     test '#install_webhooks still uses the shop token for user strategy' do
-      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(shop_session)
-      user_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
-      ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(user_session)
+      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
+      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('135').returns(shop_session)
+
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '1234', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321', ShopifyApp.configuration.webhooks)
 
       session[:shop_id] = '135'
       mock_shopify_user_omniauth
