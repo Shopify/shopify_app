@@ -529,8 +529,10 @@ change to how session stores work. Here are the steps to migrate to 13.x
 ### Changes to `ShopifyApp::LoginProtection`
 `ShopifyApp::LoginProtection`
 
-if you are using `ShopifyApp::LoginProtection#shop_session` in your code, it will need to be
+- CHANGE if you are using `ShopifyApp::LoginProtection#shopify_session` in your code, it will need to be
 changed to `ShopifyApp::LoginProtection#activate_shopify_session`
+- CHANGE if you are using `ShopifyApp::LoginProtection#clear_shop_session` in your code, it will need to be
+changed to `ShopifyApp::LoginProtection#clear_shopify_session`
 
 ### Notes
 You do not need a user model; a shop session is fine for most applications.
