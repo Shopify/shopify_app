@@ -3,12 +3,6 @@ module ShopifyApp
   module PayloadVerification
     extend ActiveSupport::Concern
 
-    included do
-      skip_before_action :verify_authenticity_token, raise: false
-    end
-
-    private
-
     def hmac_valid?(data)
       secrets = [ShopifyApp.configuration.secret, ShopifyApp.configuration.old_secret].reject(&:blank?)
 
