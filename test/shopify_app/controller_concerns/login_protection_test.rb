@@ -369,9 +369,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test '#fullpage_redirect_to, when the shop params is missing, sends a post message to the shop in the jwt' do
     ShopifyApp.configuration.allow_jwt_authentication = true
     domain = 'shop.myshopify.com'
-    payload = {
-      'dest' => domain,
-    }
 
     with_application_test_routes do
       request.env['jwt.shopify_domain'] = domain

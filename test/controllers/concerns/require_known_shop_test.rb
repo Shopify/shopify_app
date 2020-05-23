@@ -5,7 +5,7 @@ class RequireKnownShopTest < ActionController::TestCase
     include ShopifyApp::RequireKnownShop
 
     def index
-      render html: '<h1>Success</ h1>'
+      render(html: '<h1>Success</ h1>')
     end
   end
 
