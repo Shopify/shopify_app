@@ -5,6 +5,7 @@ AllCops:
   TargetRubyVersion: 2.7
   Exclude:
     - 'test/tmp/**/*'
+    - 'vendor/bundle/**/*'
 
 Style/MethodCallWithArgsParentheses:
   Exclude:
