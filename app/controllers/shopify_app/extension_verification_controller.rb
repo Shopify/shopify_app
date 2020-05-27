@@ -5,5 +5,9 @@ module ShopifyApp
     include ShopifyApp::PayloadVerification
     protect_from_forgery with: :null_session
     before_action :verify_request
+
+    def verify_request
+      head(:unauthorized) unless hmac_valid?(request.body.read)
+    end
   end
 end
