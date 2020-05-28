@@ -6,4 +6,6 @@ gemspec
 
 gem 'rails-controller-testing', group: :test
 
-gem 'rubocop-shopify', require: false
+group :rubocop do
+  gem 'rubocop-shopify', require: false
+end
