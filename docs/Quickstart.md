@@ -1,7 +1,8 @@
 Quickstart
 ==========
 
-Get started building and deploying a new Shopify App to Heroku in just a few minutes. This guide assumes you have Ruby/Rails installed on your computer already; if you haven't done that already start with [this guide.](https://guides.rubyonrails.org/v5.0/getting_started.html#installing-rails)
+Get started building and deploying a new Shopify App to Heroku in just a few minutes.
+This guide assumes you have Ruby, Rails and PostgreSQL installed on your computer already; if you haven't done that already start with [this guide.](https://guides.rubyonrails.org/v5.0/getting_started.html#installing-rails)
 
 1. New Rails App (with postgres)
 --------------------------------
@@ -26,15 +27,6 @@ Head to the Heroku dashboard and create a new app, or run the following commands
 CLI:
 ```sh
 $ heroku create name
-$ heroku git:remote -a name
-```
-
-Once you have created an app on Heroku, we need to let Git know where the Heroku server is so we can deploy to it later. Copy the app's name from your Heroku dashboard and substitute `appname.git` with the name you chose earlier:
-
-web:
-```sh
-# https://dashboard.heroku.com/new
-$ git remote add heroku git@heroku.com:appname.git
 ```
 
 3. Create a new App in the Shopify Partner dashboard
