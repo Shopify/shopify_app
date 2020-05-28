@@ -32,7 +32,7 @@ Table of Contents
 
 Introduction
 -----------
-Get started with the [Shopify Admin API](https://help.shopify.com/en/api/getting-started) faster; This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via Oauth (other authentication methods are not supported).
+Get started with the [Shopify Admin API](https://help.shopify.com/en/api/getting-started) faster; This gem includes a Rails Engine and generators for writing Rails applications using the Shopify API. The Engine provides a SessionsController and all the required code for authenticating with a shop via OAuth (other authentication methods are not supported).
 
 *Note: It's recommended to use this on a new Rails project so that the generator won't overwrite/delete your files.*
 
@@ -108,7 +108,7 @@ $ rails generate shopify_app:install
 
 Other options include:
 * `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)
-* `scope` - the Oauth access scope required for your app, e.g. **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space and can be supplied with or without double-quotes
+* `scope` - the OAuth access scope required for your app, e.g. **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space and can be supplied with or without double-quotes
 (e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)
 For more information, refer the [docs](http://docs.shopify.com/api/tutorials/oauth).
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
@@ -143,7 +143,7 @@ This optional generator, not included with the default generator, creates the ap
 $ rails generate shopify_app:add_marketing_activity_extension
 ```
 
-This will create a controller with the endpoints required to build a [marketing activities extension](https://help.shopify.com/en/api/embedded-apps/app-extensions/shopify-admin/marketing-activities). The extension will be generated with a base url at `/marketing_activities`, which should also be configured in partners.
+This will create a controller with the endpoints required to build a [marketing activities extension](https://help.shopify.com/en/api/embedded-apps/app-extensions/shopify-admin/marketing-activities). The extension will be generated with a base URL at `/marketing_activities`, which should also be configured in partners.
 
 ### Controllers, Routes and Views
 
@@ -324,11 +324,11 @@ ShopifyApp.configure do |config|
 end
 ```
 
-When the oauth callback is completed successfully, ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every oauth callback, it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
+When the OAuth callback is completed successfully, ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every OAuth callback, it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
 
 ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the received topic. For example, if you register the webhook from above, then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params: `shop_domain` and `webhook` (which is the webhook body).
 
-If you would like to namespace your jobs, you may set `webhook_jobs_namespace` in the config. For example, if your app handles webhooks from other ecommerce applications as well, and you want Shopify cart update webhooks to be processed by a job living in `jobs/shopify/webhooks/carts_update_job.rb` rather than `jobs/carts_update_job.rb`):
+If you would like to namespace your jobs, you may set `webhook_jobs_namespace` in the config. For example, if your app handles webhooks from other e-commerce applications as well, and you want Shopify cart update webhooks to be processed by a job living in `jobs/shopify/webhooks/carts_update_job.rb` rather than `jobs/carts_update_job.rb`):
 
 ```ruby
 ShopifyApp.configure do |config|
@@ -368,7 +368,7 @@ end
 
 The module skips the `verify_authenticity_token` before_action and adds an action to verify that the webhook came from Shopify. You can now add a post route to your application, pointing to the controller and action to accept the webhook data from Shopify.
 
-The WebhooksManager uses ActiveJob. If ActiveJob is not configured then by default Rails will run the jobs inline. However, it is highly recommended to configure a proper background processing queue like sidekiq or resque in production.
+The WebhooksManager uses ActiveJob. If ActiveJob is not configured then by default Rails will run the jobs inline. However, it is highly recommended to configure a proper background processing queue like Sidekiq or Resque in production.
 
 ShopifyApp can create webhooks for you using the `add_webhook` generator. This will add the new webhook to your config and create the required job class for you.
 
@@ -459,7 +459,7 @@ class ReviewsController < ApplicationController
 end
 ```
 
-Create your app proxy url in the [Shopify Partners' Dashboard][dashboard], making sure to point it to `https://your_app_website.com/app_proxy`.
+Create your app proxy URL in the [Shopify Partners' Dashboard][dashboard], making sure to point it to `https://your_app_website.com/app_proxy`.
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
 
 App Bridge
@@ -573,7 +573,7 @@ Upgrading from 8.6 to 9.0.0
 
 ### Configuration change
 
-Add an api version configuration in `config/initializers/shopify_app.rb`
+Add an API version configuration in `config/initializers/shopify_app.rb`
 Set this to the version you want to run against by default. See [Shopify API docs](https://help.shopify.com/en/api/versioning) for versions available.
 ```ruby
 config.api_version = '2019-04'
@@ -619,7 +619,7 @@ is changed to
 
 ### ShopifyAPI changes
 
-You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with api versioning.
+You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with API versioning.
 
 [dashboard]:https://partners.shopify.com
 [app-bridge]:https://help.shopify.com/en/api/embedded-apps/app-bridge
