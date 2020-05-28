@@ -13,7 +13,6 @@ module ShopifyApp
       secrets.any? do |secret|
         digest = OpenSSL::Digest.new('sha256')
         ActiveSupport::SecurityUtils.secure_compare(
-          # request.headers['HTTP_X_SHOPIFY_HMAC_SHA256'],
           shopify_hmac,
           Base64.strict_encode64(OpenSSL::HMAC.digest(digest, secret, data))
         )
