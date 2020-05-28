@@ -6,6 +6,8 @@ module ShopifyApp
     protect_from_forgery with: :null_session
     before_action :verify_request
 
+    private
+
     def verify_request
       head(:unauthorized) unless hmac_valid?(request.body.read)
     end
