@@ -80,7 +80,12 @@ Once you've generated your app, push it into your Heroku environment to see it u
 ```sh
 $ git push heroku
 $ heroku run rake db:migrate
+$ heroku open
 ```
+
+Note: Rails 6 no longer has a static index page in production by default.
+When you view the new app, you will see a blank page or a HTTP 404 error.
+If you wish, you can follow Heroku's [Create a welcome page](https://devcenter.heroku.com/articles/getting-started-with-rails6#create-a-welcome-page) steps.
 
 7. Install the App!
 -------------------
