@@ -328,7 +328,7 @@ When the OAuth callback is completed successfully, ShopifyApp will queue a backg
 
 ShopifyApp also provides a WebhooksController that receives webhooks and queues a job based on the received topic. For example, if you register the webhook from above, then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params: `shop_domain` and `webhook` (which is the webhook body).
 
-If you would like to namespace your jobs, you may set `webhook_jobs_namespace` in the config. For example, if your app handles webhooks from other e-commerce applications as well, and you want Shopify cart update webhooks to be processed by a job living in `jobs/shopify/webhooks/carts_update_job.rb` rather than `jobs/carts_update_job.rb`):
+If you would like to namespace your jobs, you may set `webhook_jobs_namespace` in the config. For example, if your app handles webhooks from other ecommerce applications as well, and you want Shopify cart update webhooks to be processed by a job living in `jobs/shopify/webhooks/carts_update_job.rb` rather than `jobs/carts_update_job.rb`):
 
 ```ruby
 ShopifyApp.configure do |config|
