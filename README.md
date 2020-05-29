@@ -100,13 +100,9 @@ These values can be found on the "App Setup" page in the [Shopify Partners Dashb
 
 ```sh
 $ rails generate shopify_app:install
-
-# or optionally with arguments:
-
-$ rails generate shopify_app:install
 ```
 
-Other options include:
+Options include:
 * `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)
 * `scope` - the OAuth access scope required for your app, e.g. **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space and can be supplied with or without double-quotes
 (e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)
