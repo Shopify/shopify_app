@@ -3,6 +3,8 @@ module ShopifyApp
   module PayloadVerification
     extend ActiveSupport::Concern
 
+    private
+
     def shopify_hmac
       request.headers['HTTP_X_SHOPIFY_HMAC_SHA256']
     end
