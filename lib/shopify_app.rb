@@ -31,8 +31,9 @@ module ShopifyApp
   require 'shopify_app/controller_concerns/itp'
   require 'shopify_app/controller_concerns/login_protection'
   require 'shopify_app/controller_concerns/embedded_app'
-  require 'shopify_app/controller_concerns/webhook_verification'
+  require 'shopify_app/controller_concerns/payload_verification'
   require 'shopify_app/controller_concerns/app_proxy_verification'
+  require 'shopify_app/controller_concerns/webhook_verification'
 
   # jobs
   require 'shopify_app/jobs/webhooks_manager_job'
