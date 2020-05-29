@@ -1,7 +1,8 @@
 Quickstart
 ==========
 
-Get started building and deploying a new Shopify App to Heroku in just a few minutes. This guide assumes you have Ruby/Rails installed on your computer already; if you haven't done that already start with [this guide.](https://guides.rubyonrails.org/v5.0/getting_started.html#installing-rails)
+Get started building and deploying a new Shopify App to Heroku in just a few minutes.
+This guide assumes you have Ruby, Rails and PostgreSQL installed on your computer already; if you haven't done that already start with [this guide.](https://guides.rubyonrails.org/v5.0/getting_started.html#installing-rails)
 
 1. New Rails App (with postgres)
 --------------------------------
@@ -26,15 +27,6 @@ Head to the Heroku dashboard and create a new app, or run the following commands
 CLI:
 ```sh
 $ heroku create name
-$ heroku git:remote -a name
-```
-
-Once you have created an app on Heroku, we need to let Git know where the Heroku server is so we can deploy to it later. Copy the app's name from your Heroku dashboard and substitute `appname.git` with the name you chose earlier:
-
-web:
-```sh
-# https://dashboard.heroku.com/new
-$ git remote add heroku git@heroku.com:appname.git
 ```
 
 3. Create a new App in the Shopify Partner dashboard
@@ -64,14 +56,13 @@ Generate the code for your app by running these commands:
 
 ```sh
 # Use the keys from your app you created in the partners area
-$ rails generate shopify_app --api_key <shopify_api_key> --secret <shopify_api_secret>
+$ rails generate shopify_app
 $ git add .
 $ git commit -m 'generated shopify app'
 ```
 
-If you forget to set your keys or redirect uri above, you will find them in the shopify_app initializer at: `/config/initializers/shopify_app.rb`.
-
-We recommend adding a gem or utilizing environment variables (`.env`) to handle your keys before releasing your app. [Learn more about using environment variables.](https://www.honeybadger.io/blog/ruby-guide-environment-variables/)
+Your API key and secret are read from environment variables. Refer to the main
+README for further details on how to set this up.
 
 6. Deploy your app
 ---------
