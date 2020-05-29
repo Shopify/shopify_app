@@ -1,3 +1,8 @@
+Unreleased
+----------
+
+* Added Payload Verification module [#992](https://github.com/Shopify/shopify_app/pull/992)
+
 13.2.0
 ------
 * Get current shop domain from JWT header
