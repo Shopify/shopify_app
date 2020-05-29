@@ -56,14 +56,13 @@ Generate the code for your app by running these commands:
 
 ```sh
 # Use the keys from your app you created in the partners area
-$ rails generate shopify_app --api_key <shopify_api_key> --secret <shopify_api_secret>
+$ rails generate shopify_app
 $ git add .
 $ git commit -m 'generated shopify app'
 ```
 
-If you forget to set your keys or redirect uri above, you will find them in the shopify_app initializer at: `/config/initializers/shopify_app.rb`.
-
-We recommend adding a gem or utilizing environment variables (`.env`) to handle your keys before releasing your app. [Learn more about using environment variables.](https://www.honeybadger.io/blog/ruby-guide-environment-variables/)
+Your API key and secret are read from environment variables. Refer to the main
+README for further details on how to set this up.
 
 6. Deploy your app
 ---------
