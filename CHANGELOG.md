@@ -1,7 +1,7 @@
-Unreleased
-----------
-
+13.3.0
+------
 * Added Payload Verification module [#992](https://github.com/Shopify/shopify_app/pull/992)
+* Add concern to check for valid shop domains in the unauthenticated controller
 
 13.2.0
 ------
