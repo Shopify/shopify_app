@@ -28,16 +28,6 @@ class CsrfProtectionTest < ActionDispatch::IntegrationTest
     Rails.application.reload_routes!
   end
 
-  test 'it raises an error if module is included without including ShopifyApp::LoginProtection first' do
-    error = assert_raises ShopifyApp::CsrfProtection::MissingIncludeError do
-      class Test
-        include ShopifyApp::CsrfProtection
-      end
-    end
-
-    assert_equal 'You must include ShopifyApp::LoginProtection before including this module.', error.message
-  end
-
   test 'it raises an invalid authenticity token error if a valid session token or csrf token is not provided' do
     assert_raises ActionController::InvalidAuthenticityToken do
       post '/csrf_protection_test'
