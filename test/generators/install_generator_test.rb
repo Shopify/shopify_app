@@ -24,7 +24,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "My Shopify App"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
-      assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
+      assert_match "config.secret = ENV['SHOPIFY_API_SECRET_KEY']", shopify_app
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
       assert_match 'config.api_version = "2019-10"', shopify_app
@@ -40,7 +40,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
-      assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
+      assert_match "config.secret = ENV['SHOPIFY_API_SECRET_KEY']", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
@@ -53,7 +53,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
-      assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
+      assert_match "config.secret = ENV['SHOPIFY_API_SECRET_KEY']", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match "config.shop_session_repository = 'Shop'", shopify_app

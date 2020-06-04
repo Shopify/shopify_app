@@ -89,7 +89,7 @@ The default and install generators have been updated to source Shopify API key a
 
 ```
 SHOPIFY_API_KEY=your api key
-SHOPIFY_API_SECRET=your api secret
+SHOPIFY_API_SECRET_KEY=your api secret
 ```
 
 These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
