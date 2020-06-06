@@ -43,8 +43,7 @@ $ heroku create name
 Run these commands to add the `shopify_app` Gem to your app:
 
 ```sh
-$ echo "gem 'shopify_app'" >> Gemfile
-$ bundle install
+$ bundle add shopify_app
 ```
 
 **Note:** we recommend using the latest version of Shopify Gem. Check the [Git tags](https://github.com/Shopify/shopify_app/tags) to see the latest release version and then add it to your Gemfile e.g `gem 'shopify_app', '~> 7.0.0'`
