@@ -58,8 +58,7 @@ $ rails new my_shopify_app
 $ cd my_shopify_app
 
 # Add the gem shopify_app to your Gemfile
-$ echo "gem 'shopify_app'" >> Gemfile
-$ bundle install
+$ bundle add shopify_app
 ```
 
 Now we are ready to run any of the [generators](#generators) included with `shopify_app`. The following section explains the generators and what you can do with them.
