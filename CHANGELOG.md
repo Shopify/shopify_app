@@ -1,3 +1,7 @@
+13.4.0
+------
+* Skip CSRF protection if a valid signed JWT token is present as we trust Shopify to be the only source that can sign it securely. [#994](https://github.com/Shopify/shopify_app/pull/994)
+
 13.3.0
 ------
 * Added Payload Verification module [#992](https://github.com/Shopify/shopify_app/pull/992)
