@@ -65,9 +65,9 @@ module ShopifyApp
     end
 
     def associated_user
-      return unless auth_hash['extra'].present?
+      return unless auth_hash.dig('extra', 'associated_user').present?
 
-      auth_hash['extra']['associated_user']
+      auth_hash['extra']['associated_user'].merge('scope' => auth_hash['extra']['associated_user_scope'])
     end
 
     def associated_user_id
