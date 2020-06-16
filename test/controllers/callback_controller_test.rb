@@ -12,6 +12,8 @@ module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
     TEST_ASSOCIATED_USER = { 'id' => 'test-shopify-user' }
+    ASSOCIATED_USER_SCOPE = "read_products"
+    TEST_ASSOCIATED_USER_WITH_SCOPE = TEST_ASSOCIATED_USER.merge('scope' => ASSOCIATED_USER_SCOPE)
     TEST_SESSION = "this.is.a.user.session"
 
     setup do
@@ -133,7 +135,7 @@ module ShopifyApp
       get :callback, params: { shop: 'shop' }
       assert_equal '4321', session[:user_id]
       assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
-      assert_equal TEST_ASSOCIATED_USER, session[:shopify_user]
+      assert_equal TEST_ASSOCIATED_USER_WITH_SCOPE, session[:shopify_user]
       assert_equal TEST_SESSION, session[:user_session]
     end
 
@@ -164,7 +166,7 @@ module ShopifyApp
       mock_shopify_jwt
       session = mock_user_session
 
-      ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER)
+      ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER_WITH_SCOPE)
 
       get :callback
       assert_response :ok
@@ -353,7 +355,7 @@ module ShopifyApp
         credentials: { token: '1234' },
         extra: {
           associated_user: TEST_ASSOCIATED_USER,
-          associated_user_scope: "read_products",
+          associated_user_scope: ASSOCIATED_USER_SCOPE,
           scope: "read_products",
           session: TEST_SESSION,
         }
