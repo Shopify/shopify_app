@@ -17,9 +17,19 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     provide_existing_application_controller
   end
 
-  test "creates the home controller" do
+  test "creates the default home controller with home index view" do
     run_generator
-    assert_file "app/controllers/home_controller.rb"
+
+    assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
+    assert_file "app/views/home/index.html.erb"
+    assert_no_file "app/controllers/products_controller.rb"
+  end
+
+  test "creates unauthenticated home controller with home index view given --with_session_token option" do
+    run_generator %w(--with-session-token)
+
+    assert_file "app/controllers/home_controller.rb", /HomeController < ApplicationController/
+    assert_file "app/views/home/index.html.erb"
   end
 
   test "creates the home index view with embedded false" do

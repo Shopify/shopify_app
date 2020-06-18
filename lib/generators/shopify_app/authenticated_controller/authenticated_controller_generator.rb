@@ -7,7 +7,7 @@ module ShopifyApp
     class AuthenticatedControllerGenerator < Rails::Generators::Base
       source_root File.expand_path('../templates', __FILE__)
 
-      def create_home_controller
+      def create_authenticated_controller
         template('authenticated_controller.rb', 'app/controllers/authenticated_controller.rb')
       end
     end
