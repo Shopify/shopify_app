@@ -74,7 +74,7 @@ Generators
 
 ### Default Generator
 
-The default generator will run the `install`, `shop`, and `home_controller` generators. This is the recommended way to start a new app from scratch:
+The default generator will run the `install`, `shop`, `authenticated_controller`, and `home_controller` generators. This is the recommended way to start a new app from scratch:
 
 ```sh
 $ rails generate shopify_app
@@ -123,6 +123,16 @@ $ rails generate shopify_app:home_controller
 
 This generator creates an example home controller and view which fetches and displays products using the Shopify API.
 
+Options include:
+* __[beta]__ `with-session-token`: This flag generates an unauthenticated home_controller and a protected sample products_controller. It also creates a home view that leverages a session token to fetch products from your products_controller. Use this flag if you plan to build a single-page application or to secure your app using JWT session tokens (e.g. `--with-session-token` or `--with-session-token true`). 
+
+### Products Controller Generator
+
+```sh
+$ rails generate shopify_app:products_controller
+```
+
+This generator creates an example products API controller to fetch products using the Shopify API.
 
 ### App Proxy Controller Generator
 
