@@ -15,5 +15,6 @@ class AuthenticatedTest < ActionController::TestCase
     AuthenticatedTestController.include?(ShopifyApp::LoginProtection)
     AuthenticatedTestController.include?(ShopifyApp::CsrfProtection)
     AuthenticatedTestController.include?(ShopifyApp::EmbeddedApp)
+    AuthenticatedTestController.include?(ShopifyApp::AccessTokenHeaders)
   end
 end

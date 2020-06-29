@@ -9,6 +9,7 @@ module ShopifyApp
       include ShopifyApp::LoginProtection
       include ShopifyApp::CsrfProtection
       include ShopifyApp::EmbeddedApp
+      include ShopifyApp::AccessTokenHeaders
       before_action :login_again_if_different_user_or_shop
       around_action :activate_shopify_session
     end
