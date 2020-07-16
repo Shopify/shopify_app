@@ -1,4 +1,4 @@
-Upcoming changes
+13.4.1
 ------
 * Fix the version checks for the dependency on `shopify_api` to allow all of v9.X
 
