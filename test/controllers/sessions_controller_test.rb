@@ -178,6 +178,14 @@ module ShopifyApp
       end
     end
 
+    test '#create should return an error for a non-myshopify URL when using JWT authentication' do
+      ShopifyApp.configuration.allow_jwt_authentication = true
+      post :create, params: { shop: 'invalid domain' }
+      assert_response :redirect
+      assert_redirected_to '/'
+      assert_equal I18n.t('invalid_shop_url'), flash[:error]
+    end
+
     test "#create should render the login page if the shop param doesn't exist" do
       post :create
       assert_redirected_to '/'
