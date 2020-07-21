@@ -1,3 +1,7 @@
+13.5.0
+------
+* Add `signal_access_token_required` helper method for apps to indicate access token has expired and that a new one is required
+
 13.4.1
 ------
 * Fix the version checks for the dependency on `shopify_api` to allow all of v9.X
