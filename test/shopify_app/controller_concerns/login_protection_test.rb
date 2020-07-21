@@ -16,6 +16,12 @@ class LoginProtectionController < ActionController::Base
     render(plain: "OK")
   end
 
+  def index_with_headers
+    response.set_header('Mock-Header', 'Mock-Value')
+    signal_access_token_required
+    render(plain: "OK")
+  end
+
   def second_login
     render(plain: "OK")
   end
@@ -413,6 +419,20 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test 'signal_access_token_required sets X-Shopify-API-Request-Unauthorized header' do
+    with_application_test_routes do
+      get :index_with_headers
+      assert_equal true, response.get_header('X-Shopify-API-Request-Failure-Unauthorized')
+    end
+  end
+
+  test 'signal_access_token_required does not overwrite previously set headers' do
+    with_application_test_routes do
+      get :index_with_headers
+      assert_equal 'Mock-Value', response.get_header('Mock-Header')
+    end
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, _response)
@@ -432,6 +452,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
         get '/second_login' => 'login_protection#second_login'
         get '/redirect' => 'login_protection#redirect'
         get '/raise_unauthorized' => 'login_protection#raise_unauthorized'
+        get '/index_with_headers' => 'login_protection#index_with_headers'
       end
       yield
     end

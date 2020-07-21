@@ -14,6 +14,8 @@ module ShopifyApp
       rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
     end
 
+    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
+
     def activate_shopify_session
       return redirect_to_login if current_shopify_session.blank?
       clear_top_level_oauth_cookie
@@ -78,6 +80,10 @@ module ShopifyApp
         clear_shopify_session
         redirect_to_login
       end
+    end
+
+    def signal_access_token_required
+      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
     end
 
     protected
