@@ -7,4 +7,5 @@ ShopifyApp.configure do |config|
   config.embedded_app = true
   config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
   config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
+  config.allow_jwt_authentication = true
 end

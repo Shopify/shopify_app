@@ -7,4 +7,5 @@ ShopifyApp.configure do |config|
   config.webhooks = [
     { topic: 'carts/update', address: 'https://example.com/webhooks/carts_update', format: 'json' },
   ]
+  config.allow_jwt_authentication = true
 end
