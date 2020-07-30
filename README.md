@@ -36,7 +36,7 @@ Get started with the [Shopify Admin API](https://help.shopify.com/en/api/getting
 
 *Note: It's recommended to use this on a new Rails project so that the generator won't overwrite/delete your files.*
 
-Learn how to create and deploy a new Shopify App to Heroku with our [quickstart guide](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md), or dive in in less than 5 minutes with this quickstart video:
+Learn how to create and deploy a new Shopify App to Heroku with our [quickstart guide](https://github.com/Shopify/shopify_app/blob/master/docs/Quickstart.md), or dive in less than 5 minutes with this quickstart video:
 
 [https://www.youtube.com/watch?v=yGxeoAHlQOg](https://www.youtube.com/watch?v=yGxeoAHlQOg)
 
