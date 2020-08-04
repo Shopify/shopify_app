@@ -14,8 +14,6 @@ module ShopifyApp
       rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
     end
 
-    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
-
     def activate_shopify_session
       return redirect_to_login if current_shopify_session.blank?
       clear_top_level_oauth_cookie
@@ -40,8 +38,10 @@ module ShopifyApp
 
     def user_session_by_jwt
       return unless ShopifyApp.configuration.allow_jwt_authentication
-      return unless jwt_shopify_user_id
-      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
+      # return unless jwt_shopify_user_id
+      # ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
+      return unless jwt_shopify_session_id
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_session_id(jwt_shopify_session_id)
     end
 
     def user_session_by_cookie
@@ -82,10 +82,6 @@ module ShopifyApp
       end
     end
 
-    def signal_access_token_required
-      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
-    end
-
     protected
 
     def jwt_shopify_domain
@@ -94,6 +90,10 @@ module ShopifyApp
 
     def jwt_shopify_user_id
       request.env['jwt.shopify_user_id']
+    end
+
+    def jwt_shopify_session_id
+      request.env['jwt.shopify_session_id']
     end
 
     def redirect_to_login
@@ -210,8 +210,6 @@ module ShopifyApp
     def return_address
       return base_return_address unless ShopifyApp.configuration.allow_jwt_authentication
       return_address_with_params(shop: current_shopify_domain)
-    rescue ShopifyDomainNotFound
-      base_return_address
     end
 
     def base_return_address
