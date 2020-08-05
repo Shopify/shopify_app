@@ -1,3 +1,7 @@
+13.6.0
+------
+* Generate an optional unauthenticated home_controller and authenticated products_controller using the `--with-session-token` flag to use JWT session tokens
+
 13.5.0
 ------
 * Add `signal_access_token_required` helper method for apps to indicate access token has expired and that a new one is required
