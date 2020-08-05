@@ -1,3 +1,5 @@
+//= require ./app_bridge_redirect.js
+
 (function() {
   var ACCESS_GRANTED_STATUS = 'storage_access_granted';
   var ACCESS_DENIED_STATUS = 'storage_access_denied';
