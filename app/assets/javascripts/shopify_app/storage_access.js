@@ -11,7 +11,7 @@
   }
 
   StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
-    appBridgeRedirect(this.setNormalizedLink(storageAccessStatus));
+    window.appBridgeRedirect(this.setNormalizedLink(storageAccessStatus));
   }
 
   StorageAccessHelper.prototype.redirectToAppsIndex = function() {

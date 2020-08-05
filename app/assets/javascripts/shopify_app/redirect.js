@@ -1,3 +1,5 @@
+//= require ./app_bridge_redirect.js
+
 (function() {
   function redirect() {
     var redirectTargetElement = document.getElementById("redirection-target");
@@ -13,7 +15,7 @@
       window.top.location.href = targetInfo.url;
     } else {
       // If the current window is the 'child', change the parent's URL with App Bridge Redirect
-      appBridgeRedirect(targetInfo.url);
+      window.appBridgeRedirect(targetInfo.url);
     }
   }
 
