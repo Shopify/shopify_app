@@ -1,6 +1,8 @@
-13.6.0
+14.0.0
 ------
-* Generate an optional unauthenticated home_controller and authenticated products_controller using the `--with-session-token` flag to use JWT session tokens
+* Ruby 2.4 is no longer supported by this gem
+* Bump gemspec ruby dependency to 2.5
+* (Beta) Add `--with-session-token` flag to the Shopify App generator to create an app that is compatible with App Bridge Authentication
 
 13.5.0
 ------
