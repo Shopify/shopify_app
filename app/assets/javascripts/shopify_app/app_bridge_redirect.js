@@ -10,6 +10,8 @@
   
     var normalizedLink = document.createElement('a');
     normalizedLink.href = url;
+
+    console.log('aaaaaaaaaa appBridgeRedirect', window.top === window.self);
   
     Redirect.create(app).dispatch(Redirect.Action.REMOTE, normalizedLink.href);
   }
