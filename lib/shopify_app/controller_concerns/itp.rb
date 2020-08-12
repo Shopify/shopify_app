@@ -6,10 +6,15 @@ module ShopifyApp
     private
 
     def set_test_cookie
-      return unless ShopifyApp.configuration.embedded_app?
-      return unless user_agent_can_partition_cookies
+      return unless should_set_test_cookie?
 
       session['shopify.cookies_persist'] = true
+    end
+
+    def should_set_test_cookie?
+      ShopifyApp.configuration.embedded_app? &&
+        !ShopifyApp.configuration.allow_jwt_authentication &&
+        user_agent_can_partition_cookies
     end
 
     def set_top_level_oauth_cookie

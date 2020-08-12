@@ -52,8 +52,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp.configuration.allow_jwt_authentication = false
   end
 
-  test '#index sets test cookie if embedded app and user agent can partition cookies' do
+  test '#index sets test cookie if embedded app, using cookie auth and user agent can partition cookies' do
     with_application_test_routes do
+      ShopifyApp.configuration.allow_jwt_authentication = false
+
       request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
       get :index
       assert_equal true, session['shopify.cookies_persist']
