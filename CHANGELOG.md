@@ -1,3 +1,7 @@
+14.0.1
+------
+* Update webpack to 4.44.1
+
 14.0.0
 ------
 * Ruby 2.4 is no longer supported by this gem
