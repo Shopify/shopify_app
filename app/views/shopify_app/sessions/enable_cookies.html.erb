@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
+  <script src="https://unpkg.com/@shopify/app-bridge@^1"></script>
+  <script>
+    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
+    window.shopOrigin = "https://<%= @shop %>";
+    window.returnTo = "<%= params[:return_to] %>"
+  </script>
   <%= render 'shopify_app/partials/layout_styles' %>
   <%= render 'shopify_app/partials/typography_styles' %>
   <%= render 'shopify_app/partials/card_styles' %>
@@ -14,12 +20,6 @@
       display: none;
     }
   </style>
-  <script>
-    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
-    window.shopOrigin = "https://<%= @shop %>";
-    window.returnTo = "<%= params[:return_to] %>"
-  </script>
-
   <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>

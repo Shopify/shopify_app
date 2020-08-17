@@ -1,3 +1,5 @@
+//= require ./app_bridge_redirect.js
+
 (function() {
   function redirect() {
     var redirectTargetElement = document.getElementById("redirection-target");
@@ -12,15 +14,8 @@
       // If the current window is the 'parent', change the URL by setting location.href
       window.top.location.href = targetInfo.url;
     } else {
-      // If the current window is the 'child', change the parent's URL with postMessage
-      normalizedLink = document.createElement('a');
-      normalizedLink.href = targetInfo.url;
-
-      data = JSON.stringify({
-        message: 'Shopify.API.remoteRedirect',
-        data: {location: normalizedLink.href}
-      });
-      window.parent.postMessage(data, targetInfo.myshopifyUrl);
+      // If the current window is the 'child', change the parent's URL with App Bridge Redirect
+      window.appBridgeRedirect(targetInfo.url);
     }
   }
 
