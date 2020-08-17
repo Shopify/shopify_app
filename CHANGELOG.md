@@ -1,3 +1,7 @@
+14.1.0
+------
+* Replace redirect calls to use App Bridge redirect functionality
+
 14.0.0
 ------
 * Ruby 2.4 is no longer supported by this gem
