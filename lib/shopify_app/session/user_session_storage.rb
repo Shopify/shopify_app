@@ -9,10 +9,12 @@ module ShopifyApp
     end
 
     class_methods do
-      def store(auth_session, user)
-        user = find_or_initialize_by(shopify_user_id: user[:id])
+      def store(auth_session, user, shopify_session_id)
+        # user = find_or_initialize_by(shopify_user_id: user[:id]) 
+        user = find_or_initialize_by(shopify_user_id: shopify_session_id) 
         user.shopify_token = auth_session.token
         user.shopify_domain = auth_session.domain
+        user.shopify_session_id = shopify_session_id # need this??
         user.save!
         user.id
       end
