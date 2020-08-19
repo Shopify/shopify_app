@@ -28,8 +28,8 @@ module ShopifyApp
         shop_storage.store(session)
       end
 
-      def store_user_session(session, user)
-        user_storage.store(session, user)
+      def store_user_session(session, user, shopify_session_id)
+        user_storage.store(session, user, shopify_session_id)
       end
 
       def shop_storage

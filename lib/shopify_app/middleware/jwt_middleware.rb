@@ -37,6 +37,7 @@ module ShopifyApp
 
       env['jwt.shopify_domain'] = jwt.shopify_domain
       env['jwt.shopify_user_id'] = jwt.shopify_user_id
+      env['jwt.shopify_session_id'] = jwt.shopify_session_id
     end
   end
 end

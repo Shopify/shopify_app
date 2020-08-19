@@ -28,6 +28,10 @@ module ShopifyApp
       @payload && @payload['sub']
     end
 
+    def shopify_session_id
+      @payload && @payload['sid']
+    end
+
     private
 
     def set_payload
