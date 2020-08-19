@@ -8,6 +8,7 @@ module ShopifyApp
     end
 
     def call(env)
+      byebug
       return call_next(env) unless authorization_header(env)
 
       token = extract_token(env)

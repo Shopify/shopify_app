@@ -41,7 +41,7 @@ module ShopifyApp
       # return unless jwt_shopify_user_id
       # ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
       return unless jwt_shopify_session_id
-      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_session_id(jwt_shopify_session_id)
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_session_id)
     end
 
     def user_session_by_cookie
