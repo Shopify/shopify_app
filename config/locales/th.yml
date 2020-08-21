@@ -3,7 +3,7 @@ th:
   logged_out: ออกจากระบบสำเร็จ
   could_not_log_in: ไม่สามารถเข้าสู่ระบบร้านค้า Shopify ได้
   invalid_shop_url: โดเมนร้านค้าไม่ถูกต้อง
-  enable_cookies_heading: เปิดใช้งานคุกกี้จาก %{app}
+  enable_cookies_heading: เปิดใช้คุกกี้จาก %{app}
   enable_cookies_body: คุณต้องเปิดใช้งานคุกกี้ด้วยตนเองในเบราว์เซอร์นี้เพื่อใช้งาน
     %{app} ภายใน Shopify
   enable_cookies_footer: คุกกี้ช่วยให้แอปตรวจสอบความถูกต้องของคุณด้วยการจัดเก็บความชื่นชอบและข้อมูลส่วนตัวของคุณชั่วคราว
