@@ -1,5 +1,3 @@
-//= require ./app_bridge_redirect.js
-
 (function() {
   var ACCESS_GRANTED_STATUS = 'storage_access_granted';
   var ACCESS_DENIED_STATUS = 'storage_access_denied';
@@ -13,7 +11,17 @@
   }
 
   StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
-    window.appBridgeRedirect(this.setNormalizedLink(storageAccessStatus));
+    var normalizedLink = document.createElement('a');
+
+    normalizedLink.href = this.setNormalizedLink(storageAccessStatus);
+
+    data = JSON.stringify({
+      message: 'Shopify.API.remoteRedirect',
+      data: {
+        location: normalizedLink.href,
+      }
+    });
+    window.parent.postMessage(data, this.redirectData.myshopifyUrl);
   }
 
   StorageAccessHelper.prototype.redirectToAppsIndex = function() {
