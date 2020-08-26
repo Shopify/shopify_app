@@ -1,3 +1,7 @@
+14.2.0
+------
+* Revert "Replace redirect calls to use App Bridge redirect functionality"
+
 14.1.0
 ------
 * Replace redirect calls to use App Bridge redirect functionality

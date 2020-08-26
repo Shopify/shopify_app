@@ -1,15 +1,10 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
-  <script src="https://unpkg.com/@shopify/app-bridge@^1"></script>
-  <script>
-    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
-    window.shopOrigin = "https://<%= current_shopify_domain %>";
-  </script>
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
