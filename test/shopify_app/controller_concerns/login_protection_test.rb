@@ -91,7 +91,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     )
 
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
-      .with(sub).returns(expected_session)
+      .at_most(2).with(sub).returns(expected_session)
     ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
@@ -240,8 +240,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test '#activate_shopify_session with Shopify session, clears top-level auth cookie' do
+  test '#activate_shopify_session with only shop_session, clears top-level auth cookie' do
     with_application_test_routes do
+      ShopifyApp::SessionRepository.user_storage = nil
+
       session['shopify.top_level_oauth'] = true
       sess = stub(domain: 'https://foobar.myshopify.com')
       @controller.expects(:current_shopify_session).returns(sess).at_least_once
@@ -271,6 +273,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test "#activate_shopify_session with no Shopify session, redirects to login_url with \
         shop param of referer" do
     with_application_test_routes do
+      ShopifyApp.configuration.user_session_repository = nil
       @controller.expects(:current_shopify_session).returns(nil)
       request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
 
@@ -283,6 +286,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
         shop param of referer" do
     with_custom_login_url 'https://domain.com/custom/route/login' do
       with_application_test_routes do
+        ShopifyApp.configuration.user_session_repository = nil
         @controller.expects(:current_shopify_session).returns(nil)
         request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
 
@@ -340,6 +344,31 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       get :index, params: { shop: 'foobar' }, xhr: true
       assert_equal 401, response.status
+    end
+  end
+
+  test '#activate_shopify_session with shop_session and no user_session when \
+        user_session expected returns an HTTP 401 when the request is an XHR' do
+    # Set up a shop_session
+    with_application_test_routes do
+      session[:shop_id] = 'foobar'
+      get :index, params: { shop: 'foobar' }, xhr: true
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
+      assert @controller.current_shopify_session
+      assert_equal 401, response.status
+    end
+  end
+
+  test '#activate_shopify_session with shop_session and no user_session when \
+        user_session expected redirect to login when the request is not an XHR' do
+    # Set up a shop_session
+    with_application_test_routes do
+      session[:shop_id] = 'foobar'
+      get :index, params: { shop: 'foobar' }
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
+      assert @controller.current_shopify_session
+      assert_equal 302, response.status
+      assert_redirected_to '/login?shop=foobar.myshopify.com'
     end
   end
 
