@@ -1,14 +1,15 @@
+# frozen_string_literal: true
 module ShopifyApp
+  class MissingWebhookJobError < StandardError; end
+
   class WebhooksController < ActionController::Base
     include ShopifyApp::WebhookVerification
 
-    class ShopifyApp::MissingWebhookJobError < StandardError; end
-
     def receive
       params.permit!
-      job_args = {shop_domain: shop_domain, webhook: webhook_params.to_h}
+      job_args = { shop_domain: shop_domain, webhook: webhook_params.to_h }
       webhook_job_klass.perform_later(job_args)
-      head :no_content
+      head(:ok)
     end
 
     private
@@ -18,7 +19,7 @@ module ShopifyApp
     end
 
     def webhook_job_klass
-      webhook_job_klass_name.safe_constantize or raise ShopifyApp::MissingWebhookJobError
+      webhook_job_klass_name.safe_constantize || raise(ShopifyApp::MissingWebhookJobError)
     end
 
     def webhook_job_klass_name(type = webhook_type)

@@ -1,6 +1,6 @@
+# frozen_string_literal: true
 module ShopifyApp
   class Configuration
-
     # Shopify App settings. These values should match the configuration
     # for the app in your Shopify Partners page. Change your settings in
     # `config/initializers/shopify_app.rb`
@@ -14,12 +14,11 @@ module ShopifyApp
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
-    attr_accessor :session_repository
     attr_accessor :api_version
 
     # customise urls
     attr_accessor :root_url
-    attr_accessor :login_url
+    attr_writer :login_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -34,6 +33,12 @@ module ShopifyApp
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
+    # allow enabling of same site none on cookies
+    attr_writer :enable_same_site_none
+
+    # allow enabling jwt headers for authentication
+    attr_accessor :allow_jwt_authentication
+
     def initialize
       @root_url = '/'
       @myshopify_domain = 'myshopify.com'
@@ -46,14 +51,20 @@ module ShopifyApp
       @login_url || File.join(@root_url, 'login')
     end
 
-    def session_repository=(klass)
-      if Rails.configuration.cache_classes
-        ShopifyApp::SessionRepository.storage = klass
-      else
-        ActiveSupport::Reloader.to_prepare do
-          ShopifyApp::SessionRepository.storage = klass
-        end
-      end
+    def user_session_repository=(klass)
+      ShopifyApp::SessionRepository.user_storage = klass
+    end
+
+    def user_session_repository
+      ShopifyApp::SessionRepository.user_storage
+    end
+
+    def shop_session_repository=(klass)
+      ShopifyApp::SessionRepository.shop_storage = klass
+    end
+
+    def shop_session_repository
+      ShopifyApp::SessionRepository.shop_storage
     end
 
     def has_webhooks?
@@ -62,6 +73,10 @@ module ShopifyApp
 
     def has_scripttags?
       scripttags.present?
+    end
+
+    def enable_same_site_none
+      !Rails.env.test? && (@enable_same_site_none.nil? ? embedded_app? : @enable_same_site_none)
     end
   end
 

@@ -16,4 +16,5 @@ provider :shopify,
 
     strategy.options[:client_options][:site] = shop
     strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
+    strategy.options[:per_user_permissions] = strategy.session[:user_tokens]
   }

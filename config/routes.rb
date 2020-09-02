@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ShopifyApp::Engine.routes.draw do
   controller :sessions do
     get 'login' => :new, :as => :login

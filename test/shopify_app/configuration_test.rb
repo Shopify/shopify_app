@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class ConfigurationTest < ActiveSupport::TestCase
-
   setup do
     ShopifyApp.configuration = nil
   end
@@ -25,14 +25,16 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "can set root_url which affects login_url" do
-    begin
+    # TODO: drop `rubocop:todo Style/RedundantBegin` together with Ruby 2.4 support
+    #   As this style is supported since Ruby 2.5 (see https://bugs.ruby-lang.org/issues/12906)
+    begin # rubocop:todo Style/RedundantBegin
       original_root = ShopifyApp.configuration.root_url
 
       ShopifyApp.configure do |config|
         config.root_url = "/nested"
       end
 
-      assert_equal "/nested/login", ShopifyApp.configuration.login_url
+      assert_equal("/nested/login", ShopifyApp.configuration.login_url)
     ensure
       ShopifyApp.configuration.root_url = original_root
     end
@@ -51,7 +53,7 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "can configure webhooks for creation" do
-    webhook = {topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}
+    webhook = { topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json' }
 
     ShopifyApp.configure do |config|
       config.webhooks = [webhook]
@@ -64,7 +66,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     refute ShopifyApp.configuration.has_webhooks?
 
     ShopifyApp.configure do |config|
-      config.webhooks = [{topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json'}]
+      config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json' }]
     end
 
     assert ShopifyApp.configuration.has_webhooks?
@@ -117,4 +119,86 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
   end
 
+  test "can set shop_session_repository with a string" do
+    ShopifyApp.configure do |config|
+      config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
+    end
+
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
+  end
+
+  test "can set shop_session_repository with a class" do
+    ShopifyApp.configure do |config|
+      config.shop_session_repository = ShopifyApp::InMemoryShopSessionStore
+    end
+
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp.configuration.shop_session_repository
+    assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp::SessionRepository.shop_storage
+  end
+
+  test "can set user_session_repository with a string" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
+    end
+
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
+  end
+
+  test "can set user_session_repository with a class" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = ShopifyApp::InMemoryUserSessionStore
+    end
+
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp.configuration.user_session_repository
+    assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
+  end
+
+  test "enable_same_site_none is false in tests" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+      config.enable_same_site_none = true
+    end
+
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is true if embedded and enable_same_site_none is nil" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+    end
+
+    Rails.env.expects(:test?).returns(false)
+    assert ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is false if embedded and enable_same_site_none is false" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = true
+      config.enable_same_site_none = false
+    end
+
+    Rails.env.expects(:test?).returns(false)
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is false if not embedded and enable_same_site_none is nil" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = false
+    end
+
+    Rails.env.expects(:test?).returns(false)
+    refute ShopifyApp.configuration.enable_same_site_none
+  end
+
+  test "enable_same_site_none is true if not embedded and enable_same_site_none is true" do
+    ShopifyApp.configure do |config|
+      config.embedded_app = false
+      config.enable_same_site_none = true
+    end
+
+    Rails.env.expects(:test?).returns(false)
+    assert ShopifyApp.configuration.enable_same_site_none
+  end
 end

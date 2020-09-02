@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails/generators/base'
 
 module ShopifyApp
@@ -8,7 +9,7 @@ module ShopifyApp
       class_option :address, type: :string, aliases: "-a", required: true
 
       hook_for :test_framework, as: :job, in: :rails do |instance, generator|
-        instance.invoke generator, [ instance.send(:job_file_name) ]
+        instance.invoke(generator, [instance.send(:job_file_name)])
       end
 
       def init_webhook_config
@@ -32,14 +33,14 @@ module ShopifyApp
         initializer = load_initializer
 
         unless initializer.include?(webhook_config)
-          shell.say "Error adding webhook to config. Add this line manually: #{webhook_config}", :red
+          shell.say("Error adding webhook to config. Add this line manually: #{webhook_config}", :red)
         end
       end
 
       def add_webhook_job
         @job_file_name = job_file_name + '_job'
-        @job_class_name  = @job_file_name.classify
-        template 'webhook_job.rb', "app/jobs/#{@job_file_name}.rb"
+        @job_class_name = @job_file_name.classify
+        template('webhook_job.rb', "app/jobs/#{@job_file_name}.rb")
       end
 
       private

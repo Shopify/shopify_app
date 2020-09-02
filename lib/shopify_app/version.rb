@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
-  VERSION = '11.4.0'.freeze
+  VERSION = '14.2.0'
 end

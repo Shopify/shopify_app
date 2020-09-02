@@ -43,33 +43,34 @@ suite('StorageAccessHelper', () => {
       sinon.assert.called(storageAccessHelper.setUpCookiePartitioning);
     });
 
-    test('calls redirectToAppHome instead of manageStorageAccess or setUpCookiePartitioningStub if ITPHelper.userAgentIsAffected returns true', async () => {
+    test('calls redirectToAppTargetUrl instead of manageStorageAccess or setUpCookiePartitioningStub if ITPHelper.userAgentIsAffected returns true', async () => {
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'sameSiteNoneIncompatible').callsFake(() => true);
       storageAccessHelperSandbox.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => false);
 
       storageAccessHelperSandbox.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
       sinon.assert.notCalled(storageAccessHelper.manageStorageAccess);
-      sinon.assert.called(storageAccessHelper.redirectToAppHome);
+      sinon.assert.called(storageAccessHelper.redirectToAppTargetUrl);
       sinon.assert.notCalled(storageAccessHelper.setUpCookiePartitioning);
     });
 
-    test('calls manageStorageAccess instead of redirectToAppHome if ITPHelper.userAgentIsAffected returns true', async () => {
+    test('calls manageStorageAccess instead of redirectToAppTargetUrl if ITPHelper.userAgentIsAffected returns true', async () => {
       storageAccessHelperSandbox.stub(ITPHelper.prototype, 'userAgentIsAffected').callsFake(() => true);
 
       storageAccessHelperSandbox.stub(storageAccessHelper, 'manageStorageAccess').callsFake(() => true);
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'setUpCookiePartitioning');
 
       storageAccessHelper.execute();
 
       sinon.assert.called(storageAccessHelper.manageStorageAccess);
-      sinon.assert.notCalled(storageAccessHelper.redirectToAppHome);
+      sinon.assert.notCalled(storageAccessHelper.redirectToAppTargetUrl);
       sinon.assert.notCalled(storageAccessHelper.setUpCookiePartitioning);
     });
   });
@@ -159,34 +160,34 @@ suite('StorageAccessHelper', () => {
   });
 
   suite('handleRequestStorageAccess', () => {
-    test('calls redirectToAppHome instead of redirectToAppsIndex when document.requestStorageAccess resolves', () => {
+    test('calls redirectToAppTargetUrl instead of redirectToAppsIndex when document.requestStorageAccess resolves', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve) => {
           resolve();
         });
       };
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.called(storageAccessHelper.redirectToAppHome);
+        sinon.assert.called(storageAccessHelper.redirectToAppTargetUrl);
         sinon.assert.notCalled(storageAccessHelper.redirectToAppsIndex);
       });
     });
 
-    test('calls redirectToAppsIndex with "storage_access_denied" instead of calling redirectToAppHome when document.requestStorageAccess fails', () => {
+    test('calls redirectToAppsIndex with "storage_access_denied" instead of calling redirectToAppTargetUrl when document.requestStorageAccess fails', () => {
       document.requestStorageAccess = () => {
         return new Promise((resolve, reject) => {
           reject();
         });
       };
 
-      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppHome');
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppTargetUrl');
       storageAccessHelperSandbox.stub(storageAccessHelper, 'redirectToAppsIndex');
 
       storageAccessHelper.handleRequestStorageAccess().then(() => {
-        sinon.assert.notCalled(storageAccessHelper.redirectToAppHome);
+        sinon.assert.notCalled(storageAccessHelper.redirectToAppTargetUrl);
         sinon.assert.calledWith(storageAccessHelper.redirectToAppsIndex, 'storage_access_denied');
       });
     });
@@ -247,8 +248,34 @@ suite('StorageAccessHelper', () => {
     });
   });
 
+  suite('sameSiteNoneIncompatible', () => {
+    test('matches the correct user agents', () => {
+      var incompatibleUserAgents = [
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/87.0.279142407 Mobile/15E148 Safari/605.1",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Linux; U; Android 7.0; en-US; SM-G935F Build/NRD90M) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 UCBrowser/11.3.8.976 U3/0.8.0 Mobile Safari/534.30",
+      ]
+      for (var i = 0; i < incompatibleUserAgents.length; i++) {
+        sinon.assert.match(true, storageAccessHelper.sameSiteNoneIncompatible(incompatibleUserAgents[i]))
+      }
+    });
+
+    test('doesnt match the same shite agents', () => {
+      var compatibleUserAgents = [
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:72.0) Gecko/20100101 Firefox/72.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15",
+      ]
+
+      for (var i = 0; i < compatibleUserAgents.length; i++) {
+        sinon.assert.match(false, storageAccessHelper.sameSiteNoneIncompatible(compatibleUserAgents[i]))
+      }
+    });
+  })
+
   suite('setCookieAndRedirect', () => {
     test('sets the shopify.cookies_persist cookie', () => {
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'sameSiteNoneIncompatible').callsFake(() => true);
       storageAccessHelper.setCookieAndRedirect();
       sinon.assert.match(document.cookie.match('shopify.cookies_persist').length, 1);
     });

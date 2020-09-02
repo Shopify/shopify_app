@@ -1,5 +1,6 @@
 {
   "name": "shopify_app",
+  "version": "14.2.0",
   "repository": "git@github.com:Shopify/shopify_app.git",
   "author": "Shopify",
   "license": "MIT",
@@ -19,7 +20,7 @@
     "mocha-debug": "^0.0.1",
     "sinon": "^7.4.2",
     "sinon-chai": "^3.2.0",
-    "webpack": "^4.40.2"
+    "webpack": "^4.44.1"
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"

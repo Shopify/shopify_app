@@ -1,3 +1,129 @@
+14.2.0
+------
+* Revert "Replace redirect calls to use App Bridge redirect functionality"
+
+14.1.0
+------
+* Replace redirect calls to use App Bridge redirect functionality
+
+14.0.0
+------
+* Ruby 2.4 is no longer supported by this gem
+* Bump gemspec ruby dependency to 2.5
+* (Beta) Add `--with-session-token` flag to the Shopify App generator to create an app that is compatible with App Bridge Authentication
+
+13.5.0
+------
+* Add `signal_access_token_required` helper method for apps to indicate access token has expired and that a new one is required
+
+13.4.1
+------
+* Fix the version checks for the dependency on `shopify_api` to allow all of v9.X
+
+13.4.0
+------
+* Skip CSRF protection if a valid signed JWT token is present as we trust Shopify to be the only source that can sign it securely. [#994](https://github.com/Shopify/shopify_app/pull/994)
+
+13.3.0
+------
+* Added Payload Verification module [#992](https://github.com/Shopify/shopify_app/pull/992)
+* Add concern to check for valid shop domains in the unauthenticated controller
+
+13.2.0
+------
+* Get current shop domain from JWT header
+* Validate that the omniauth data matches the JWT data
+* Persist the token information to the session store
+
+13.1.1
+------
+* Update browser_sniffer to 1.2.2
+
+13.1.0
+------
+* Adds the shop URL as a parameter when redirecting after the callback
+* Bump minimum Ruby version to 2.4
+* Bug fixes
+
+13.0.1
+------
+* Small addition to WebhookJob to return if the shop is nil #952
+* Added Rubocop to the Repo #948
+* Added a WebhookVerification test helper #950
+* Fix for deprecation warning while loading session storage at startup
+* Changes that will allow future JWT authentication
+
+13.0.1
+------
+* fix for deprecation warning while loading session storage at startup
+
+13.0.0
+------
++ #887 Added concurrent user and shop session support (online/offline)
+  BREAKING, please see README for migration notes.
+
+12.0.7
+------
+* Remove check for API_KEY in config that was throwing errors during install #919
+
+12.0.6
+------
+* Adds changelog information and README updates for 8.4.0 #916
+
+12.0.5
+------
+* Updating shopify_api gem to 9.0.1
+
+12.0.4
+------
+* Reverts reverted PR (#895) #897
+
+12.0.3
+------
+* Moves samesite middleware higher in the stack #898
+* Fix issue where not redirecting user to granted storage page casues infinite loop #900
+
+12.0.2
+------
+* Reverts "Fix for return_to in safari after enable_cookies/granted_storage_access" introduced in 12.0.1
+
+12.0.1
+------
+* disable samesite cookie middleware in tests
+* middleware compatibility for ruby 2.3
+* samesite cookie fixes for javascript libraries
+* change generators to add AppBridge instead of EASDK
+* Fix for return_to in safari after enable_cookies/granted_storage_access
+
+12.0.0
+-----
+* Updating shopify_api gem to 9.0.0
+
+11.7.1
+-----
+* Fix to allow SessionStorage to be flexible on what model names that the are used for storing shop and user data
+
+11.7.0
+-----
+* Move ExtensionVerificationController from engine to app controllers, as being in the engine makes ActionController::Base get loaded before app initiates [#855](https://github.com/Shopify/shopify_app/pull/855)
+* Add back per-user token support (added in 11.5.0, reverted in 11.5.1)
+  * If you have an override on the `self.store(auth_session)` method on your `SessionRepository` model, the method signature must be changed as according to this [change](https://github.com/Shopify/shopify_app/pull/856/files#diff-deaed2b262ec885f4e36de05621e41eaR18)
+
+11.6.0
+-----
+* Enable SameSite=None; Secure by default on all cookies for embedded apps [#851](https://github.com/Shopify/shopify_app/pull/851)
+  * Ensures compatibility of embedded apps with upcoming Chrome version 80 changes to cookie behaviour
+  * Configurable via `ShopifyApp.configuration.enable_same_site_none` (default true for embedded apps)
+
+11.5.1
+-----
+* Revert per-user token support temporarily
+
+11.5.0
+-----
+* Modularizes durable session storage
+* Introduces per-user token support and user session management
+
 11.4.0
 -----
 * Remove `dotenv-rails` dependency. [#835](https://github.com/Shopify/shopify_app/pull/835)
@@ -137,6 +263,7 @@ Added support for rotating Shopify access tokens:
 8.4.0
 ----
 * Fix embedded app session management in Safari 12.1
+  * Note that with this change we have extracted the callback action in its own controller. If you are relying on it, see the README for more details: https://github.com/Shopify/shopify_app#callback
 * Shop names passed to OAuth are no longer case sensitive
 
 8.3.2

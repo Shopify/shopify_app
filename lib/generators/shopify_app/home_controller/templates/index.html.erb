@@ -1,21 +1,71 @@
-<h2>Products</h2>
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@shopify/polaris@4.25.0/styles.min.css"
+      />
+<% if @with_session_token %>    <script>
+      document.addEventListener("DOMContentLoaded", async function() {
+        var SessionToken = window["app-bridge"].actions.SessionToken
+        var app = window.app;
 
-<ul>
-  <% @products.each do |product| %>
-    <li><%= link_to product.title, "https://#{@shop_session.domain}/admin/products/#{product.id}", target: "_top" %></li>
-  <% end %>
-</ul>
+        app.dispatch(
+          SessionToken.request(),
+        );
 
-<hr>
+        // Save a session token for future requests
+        window.sessionToken = await new Promise((resolve) => {
+          app.subscribe(SessionToken.ActionType.RESPOND, (data) => {
+            resolve(data.sessionToken || "");
+          });
+        });
 
-<h2>Webhooks</h2>
+        var fetchProducts = function() {
+          var headers = new Headers({ "Authorization": "Bearer " + window.sessionToken });
+          return fetch("/products", { headers })
+            .then(response => response.json())
+            .then(data => {
+              var products = data.products;
 
-<% if @webhooks.present? %>
-  <ul>
-    <% @webhooks.each do |webhook| %>
-      <li><%= webhook.topic %> : <%= webhook.address %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>This app has not created any webhooks for this Shop. Add webhooks to your ShopifyApp initializer if you need webhooks</p>
-<% end %>
+              if (products === undefined || products.length == 0) {
+                document.getElementById("products").innerHTML = "<br>No products to display.";
+              } else {
+                var list = "";
+                products.forEach((product) => {
+                  var link = `<a target="_top" href="https://<%%= @shop_origin %>/admin/products/${product.id}">`
+                  list += "<li>" + link + product.title + "</a></li>";
+                });
+                document.getElementById("products").innerHTML = "<ul>" + list + "</ul>";
+              }
+            });
+        }();
+      });
+    </script>
+<% end %>  </head>
+  <body>
+    <h2>Products</h2>
+<% if @with_session_token %>    <div id="products"><br>Loading...</div><% else %>
+    <ul>
+      <%% @products.each do |product| %>
+        <li><%%= link_to product.title, "https://#{@current_shopify_session.domain}/admin/products/#{product.id}", target: "_top" %></li>
+      <%% end %>
+    </ul>
+
+    <hr>
+
+    <h2>Webhooks</h2>
+
+    <%% if @webhooks.present? %>
+      <ul>
+        <%% @webhooks.each do |webhook| %>
+          <li><%%= webhook.topic %> : <%%= webhook.address %></li>
+        <%% end %>
+      </ul>
+    <%% else %>
+      <p>This app has not created any webhooks for this Shop. Add webhooks to your ShopifyApp initializer if you need webhooks</p>
+    <%% end %><% end %>
+  </body>
+</html>

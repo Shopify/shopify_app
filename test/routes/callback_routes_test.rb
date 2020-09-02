@@ -5,7 +5,7 @@ require 'test_helper'
 class CallbackRoutesTest < ActionController::TestCase
   setup do
     @routes = ShopifyApp::Engine.routes
-    ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
+    ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp.configuration = nil
   end
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   class Engine < Rails::Engine
     engine_name 'shopify_app'
@@ -11,6 +12,14 @@ module ShopifyApp
         shopify_app/request_storage_access.js
         storage_access.svg
       ]
+    end
+
+    initializer "shopify_app.middleware" do |app|
+      app.config.middleware.insert_after(::Rack::Runtime, ShopifyApp::SameSiteCookieMiddleware)
+
+      if ShopifyApp.configuration.allow_jwt_authentication
+        app.config.middleware.insert_after(ShopifyApp::SameSiteCookieMiddleware, ShopifyApp::JWTMiddleware)
+      end
     end
   end
 end

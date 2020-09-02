@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 class SessionsRoutesTest < ActionController::TestCase
   setup do
     @routes = ShopifyApp::Engine.routes
-    ShopifyApp::SessionRepository.storage = ShopifyApp::InMemorySessionStore
+    ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp.configuration = nil
   end
 
@@ -12,7 +13,7 @@ class SessionsRoutesTest < ActionController::TestCase
   end
 
   test "post login routes to sessions#create" do
-    assert_routing({method: 'post', path: '/login'}, { controller: 'shopify_app/sessions', action: "create" })
+    assert_routing({ method: 'post', path: '/login' }, { controller: 'shopify_app/sessions', action: "create" })
   end
 
   test "logout routes to sessions#destroy" do

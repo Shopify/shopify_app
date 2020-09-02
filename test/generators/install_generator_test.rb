@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'generators/shopify_app/install/install_generator'
 
@@ -34,27 +35,28 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "creates the ShopifyApp initializer with args" do
-    run_generator %w(--application_name Test Name --api_key key --secret shhhhh --api_version unstable --scope read_orders, write_products)
+    run_generator %w(--application_name Test Name
+                     --api_version unstable --scope read_orders write_products)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
-      assert_match 'config.scope = "read_orders, write_products"', shopify_app
+      assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
-      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
+      assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
   end
 
   test "creates the ShopifyApp initializer with double-quoted args" do
-    run_generator %w(--application_name "Test Name" --api_key key --secret shhhhh --scope "read_orders, write_products")
+    run_generator %w(--application_name Test Name --scope read_orders write_products)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV['SHOPIFY_API_KEY']", shopify_app
       assert_match "config.secret = ENV['SHOPIFY_API_SECRET']", shopify_app
-      assert_match 'config.scope = "read_orders, write_products"', shopify_app
+      assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match 'config.embedded_app = true', shopify_app
-      assert_match 'config.session_repository = ShopifyApp::InMemorySessionStore', shopify_app
+      assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
   end
 
@@ -82,13 +84,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/routes.rb" do |routes|
       assert_match "mount ShopifyApp::Engine, at: '/'", routes
-    end
-  end
-
-  test "adds dotenv gem to Gemfile" do
-    run_generator
-    assert_file "Gemfile" do |gemfile|
-      assert_match "gem 'dotenv-rails', group: [:test, :development]", gemfile
     end
   end
 

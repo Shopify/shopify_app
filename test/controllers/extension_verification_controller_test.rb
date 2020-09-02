@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 require 'test_helper'
 
-class ExtensionController < ExtensionVerificationController
+class ExtensionController < ShopifyApp::ExtensionVerificationController
   def extension_action
-    head :ok
+    head(:ok)
   end
 end
 

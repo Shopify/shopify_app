@@ -11,55 +11,119 @@ module ShopifyApp
 
     included do
       after_action :set_test_cookie
-      rescue_from ActiveResource::UnauthorizedAccess, :with => :close_session
+      rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
     end
 
-    def shopify_session
-      return redirect_to_login unless shop_session
+    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
+
+    def activate_shopify_session
+      return redirect_to_login if current_shopify_session.blank?
       clear_top_level_oauth_cookie
 
       begin
-        ShopifyAPI::Base.activate_session(shop_session)
+        ShopifyAPI::Base.activate_session(current_shopify_session)
         yield
       ensure
         ShopifyAPI::Base.clear_session
       end
     end
 
-    def shop_session
-      return unless session[:shopify]
-      @shop_session ||= ShopifyApp::SessionRepository.retrieve(session[:shopify])
+    def current_shopify_session
+      @current_shopify_session ||= begin
+        user_session || shop_session
+      end
     end
 
-    def login_again_if_different_shop
-      if shop_session && params[:shop] && params[:shop].is_a?(String) && (shop_session.domain != params[:shop])
-        clear_shop_session
+    def user_session
+      user_session_by_jwt || user_session_by_cookie
+    end
+
+    def user_session_by_jwt
+      return unless ShopifyApp.configuration.allow_jwt_authentication
+      return unless jwt_shopify_user_id
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
+    end
+
+    def user_session_by_cookie
+      return unless session[:user_id].present?
+      ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
+    end
+
+    def shop_session
+      shop_session_by_jwt || shop_session_by_cookie
+    end
+
+    def shop_session_by_jwt
+      return unless ShopifyApp.configuration.allow_jwt_authentication
+      return unless jwt_shopify_domain
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(jwt_shopify_domain)
+    end
+
+    def shop_session_by_cookie
+      return unless session[:shop_id].present?
+      ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
+    end
+
+    def login_again_if_different_user_or_shop
+      if session[:user_session].present? && params[:session].present? # session data was sent/stored correctly
+        clear_session = session[:user_session] != params[:session] # current user is different from stored user
+
+      end
+
+      if current_shopify_session &&
+        params[:shop] && params[:shop].is_a?(String) &&
+        (current_shopify_session.domain != params[:shop])
+        clear_session = true
+      end
+
+      if clear_session
+        clear_shopify_session
         redirect_to_login
       end
     end
 
+    def signal_access_token_required
+      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
+    end
+
     protected
+
+    def jwt_shopify_domain
+      request.env['jwt.shopify_domain']
+    end
+
+    def jwt_shopify_user_id
+      request.env['jwt.shopify_user_id']
+    end
 
     def redirect_to_login
       if request.xhr?
-        head :unauthorized
+        head(:unauthorized)
       else
         if request.get?
-          session[:return_to] = "#{request.path}?#{sanitized_params.to_query}"
+          path = request.path
+          query = sanitized_params.to_query
+        else
+          referer = URI(request.referer || "/")
+          path = referer.path
+          query = "#{referer.query}&#{sanitized_params.to_query}"
         end
+        session[:return_to] = query.blank? ? path.to_s : "#{path}?#{query}"
         redirect_to(login_url_with_optional_shop)
       end
     end
 
     def close_session
-      clear_shop_session
+      clear_shopify_session
       redirect_to(login_url_with_optional_shop)
     end
 
-    def clear_shop_session
-      session[:shopify] = nil
+    def clear_shopify_session
+      session[:shop_id] = nil
+      session[:user_id] = nil
       session[:shopify_domain] = nil
       session[:shopify_user] = nil
+      session[:user_session] = nil
     end
 
     def login_url_with_optional_shop(top_level: false)
@@ -75,8 +139,10 @@ module ShopifyApp
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
 
-      if session[:return_to] && return_to_param_required?
-        query_params[:return_to] = session[:return_to]
+      return_to = RedirectSafely.make_safe(session[:return_to] || params[:return_to], nil)
+
+      if return_to.present? && return_to_param_required?
+        query_params[:return_to] = return_to
       end
 
       has_referer_shop_name = referer_sanitized_shop_name.present?
@@ -96,14 +162,18 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render 'shopify_app/shared/redirect', layout: false, locals: { url: url, current_shopify_domain: current_shopify_domain }
+        render('shopify_app/shared/redirect', layout: false,
+               locals: { url: url, current_shopify_domain: current_shopify_domain })
       else
-        redirect_to url
+        redirect_to(url)
       end
     end
 
     def current_shopify_domain
-      shopify_domain = sanitized_shop_name || session[:shopify_domain]
+      shopify_domain = sanitized_shop_name ||
+        jwt_shopify_domain ||
+        session[:shopify_domain]
+
       return shopify_domain if shopify_domain.present?
 
       raise ShopifyDomainNotFound
@@ -138,7 +208,24 @@ module ShopifyApp
     end
 
     def return_address
+      return base_return_address unless ShopifyApp.configuration.allow_jwt_authentication
+      return_address_with_params(shop: current_shopify_domain)
+    rescue ShopifyDomainNotFound
+      base_return_address
+    end
+
+    def base_return_address
       session.delete(:return_to) || ShopifyApp.configuration.root_url
+    end
+
+    def return_address_with_params(params)
+      uri = URI(base_return_address)
+      uri.query = CGI.parse(uri.query.to_s)
+        .symbolize_keys
+        .transform_values { |v| v.one? ? v.first : v }
+        .merge(params)
+        .to_query
+      uri.to_s
     end
   end
 end

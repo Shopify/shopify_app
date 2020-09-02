@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 require 'generators/shopify_app/add_marketing_activity_extension/add_marketing_activity_extension_generator'
 
@@ -11,7 +12,7 @@ class AddMarketingActivityExtensionGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "app/controllers/marketing_activities_controller.rb" do |controller|
-      assert_match 'class MarketingActivitiesController < ExtensionVerificationController', controller
+      assert_match 'class MarketingActivitiesController < ShopifyApp::ExtensionVerificationController', controller
     end
   end
 
