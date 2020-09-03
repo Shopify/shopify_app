@@ -1,7 +1,7 @@
 (function() {
   function setUpTopLevelInteraction() {
     var TopLevelInteraction = new ITPHelper({
-      redirectUrl: window.redirectUrl,
+      redirectUrl: document.body.dataset.redirectUrl,
     });
 
     TopLevelInteraction.execute();
