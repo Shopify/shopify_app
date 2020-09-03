@@ -67,6 +67,14 @@ module ShopifyApp
       ShopifyApp::SessionRepository.shop_storage
     end
 
+    def session_repository=(klass)
+      ShopifyApp::SessionRepository.session_storage = klass
+    end
+
+    def session_repository
+      ShopifyApp::SessionRepository.session_storage
+    end
+
     def has_webhooks?
       webhooks.present?
     end

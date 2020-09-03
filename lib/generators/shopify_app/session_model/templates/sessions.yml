@@ -1,0 +1,4 @@
+regular_session:
+  shopify_user_id: 1
+  shopify_token: "token"
+  shopify_session_id: 1
