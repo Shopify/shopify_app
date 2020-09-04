@@ -17,6 +17,11 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
 
     def activate_shopify_session
+      if user_session_expected? && user_session.blank?
+        signal_access_token_required
+        return redirect_to_login
+      end
+
       return redirect_to_login if current_shopify_session.blank?
       clear_top_level_oauth_cookie
 
@@ -226,6 +231,12 @@ module ShopifyApp
         .merge(params)
         .to_query
       uri.to_s
+    end
+
+    private
+
+    def user_session_expected?
+      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
   end
 end
