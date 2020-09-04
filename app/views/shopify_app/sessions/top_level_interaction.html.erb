@@ -15,15 +15,9 @@
     }
   </style>
 
-  <script>
-    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
-    window.shopOrigin = "https://<%= @shop %>";
-    window.redirectUrl = "<%= @url %>";
-  </script>
-
   <%= javascript_include_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body>
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="https://<%= @shop %>" data-redirect-url="<%= @url %>">
   <main id="TopLevelInteractionContent">
     <div class="Polaris-Page">
       <div class="Polaris-Page__Content">
