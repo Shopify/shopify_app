@@ -4,7 +4,7 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     included do
-      validates :shopify_token, presence: true
+      validates :shopify_token, presence: :shopify_token_present?
       validates :api_version, presence: true
     end
 
@@ -15,6 +15,12 @@ module ShopifyApp
         api_version: api_version,
         &block
       )
+    end
+    
+    protected
+    
+    def shopify_token_present?
+      true
     end
   end
 end
