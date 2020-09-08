@@ -16,9 +16,9 @@ module ShopifyApp
         &block
       )
     end
-    
+
     protected
-    
+
     def shopify_token_nillable?
       false
     end
