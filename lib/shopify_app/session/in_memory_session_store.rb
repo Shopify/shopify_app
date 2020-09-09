@@ -10,6 +10,7 @@ module ShopifyApp
     end
 
     def self.store(session, *_args)
+      byebug
       id = SecureRandom.uuid
       repo[id] = session
       id

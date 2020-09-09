@@ -8,7 +8,7 @@ module ShopifyApp
 
       attr_writer :user_storage
 
-      attr_writer :session_storage
+      attr_writer :actual_session_storage
 
       def retrieve_shop_session(id)
         shop_storage.retrieve(id)
@@ -34,8 +34,9 @@ module ShopifyApp
         user_storage.store(session, user)
       end
 
-      def store_session(session, session_id, user)
-        session_storage.store(session, session_id, user)
+      def store_actual_session(session, session_id, user)
+        byebug
+        actual_session_storage.store(session, session_id, user)
       end
 
       def shop_storage
@@ -46,8 +47,8 @@ module ShopifyApp
         load_user_storage
       end 
 
-      def session_storage
-        load_session_storage
+      def actual_session_storage
+        load_actual_session_storage
       end
 
       private
@@ -62,9 +63,10 @@ module ShopifyApp
         @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
       end
 
-      def load_session_storage
-        return unless @session_storage
-        @session_storage.respond_to?(:safe_constantize) ? @session_storage.safe_constantize : @session_storage
+      def load_actual_session_storage
+        return NullSessionStore unless @actual_session_storage
+        # byebug
+        @actual_session_storage.respond_to?(:safe_constantize) ? @actual_session_storage.safe_constantize : @actual_session_storage
       end
     end
   end
