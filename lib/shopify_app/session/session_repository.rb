@@ -35,7 +35,6 @@ module ShopifyApp
       end
 
       def store_actual_session(session, session_id, user)
-        byebug
         actual_session_storage.store(session, session_id, user)
       end
 
@@ -65,7 +64,6 @@ module ShopifyApp
 
       def load_actual_session_storage
         return NullSessionStore unless @actual_session_storage
-        # byebug
         @actual_session_storage.respond_to?(:safe_constantize) ? @actual_session_storage.safe_constantize : @actual_session_storage
       end
     end
