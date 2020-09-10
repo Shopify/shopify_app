@@ -9,9 +9,10 @@ module ShopifyApp
     end
 
     class_methods do
-      def store(auth_session, *_args)
+      def store(auth_session, scopes, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.domain)
         shop.shopify_token = auth_session.token
+        shop.scopes = scopes
         shop.save!
         shop.id
       end
@@ -35,6 +36,7 @@ module ShopifyApp
           domain: shop.shopify_domain,
           token: shop.shopify_token,
           api_version: shop.api_version,
+          extra: { scopes: shop.scopes }
         )
       end
     end

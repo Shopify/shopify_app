@@ -11,6 +11,7 @@ class LoginProtectionController < ActionController::Base
 
   around_action :activate_shopify_session, only: [:index]
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
+  before_action :update_scopes_if_insufficient_access, only: [:index_with_scope_check]
 
   def index
     render(plain: "OK")
@@ -19,6 +20,10 @@ class LoginProtectionController < ActionController::Base
   def index_with_headers
     response.set_header('Mock-Header', 'Mock-Value')
     signal_access_token_required
+    render(plain: "OK")
+  end
+
+  def index_with_scope_check
     render(plain: "OK")
   end
 
@@ -43,6 +48,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
     ShopifyApp.configuration.api_key = 'api_key'
+    ShopifyApp.configuration.scope = %w(read_products read_themes write_themes).join(',')
 
     request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) '\
                                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
@@ -462,6 +468,54 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test '#update_scopes_if_insufficient_access signals insufficient scopes if shop scopes dont match expected' do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    domain = 'https://test.myshopify.io'
+    token = 'admin_api_token'
+
+    expected_session = ShopifyAPI::Session.new(
+      domain: domain,
+      token: token,
+      api_version: '2020-01',
+      extra: { scopes: %w(read_products read_themes) }
+    )
+
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
+      .with(domain).returns(expected_session)
+
+    with_application_test_routes do
+      request.env['jwt.shopify_domain'] = domain
+      get :index_with_scope_check
+
+      assert_equal 403, response.status
+      assert_equal true, response.get_header('X-Shopify-Insufficient-Scopes')
+    end
+  end
+
+  test '#update_scopes_if_insufficient_access does not signal insufficient scopes if shop scopes match as expected' do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    domain = 'https://test.myshopify.io'
+    token = 'admin_api_token'
+
+    expected_session = ShopifyAPI::Session.new(
+      domain: domain,
+      token: token,
+      api_version: '2020-01',
+      extra: { scopes: ShopifyApp.configuration.scope.split(',') }
+    )
+
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
+      .with(domain).returns(expected_session)
+
+    with_application_test_routes do
+      request.env['jwt.shopify_domain'] = domain
+      get :index_with_scope_check
+
+      assert_equal 200, response.status
+      assert_nil response.get_header('X-Shopify-Insufficient-Scopes')
+    end
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, _response)
@@ -482,6 +536,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
         get '/redirect' => 'login_protection#redirect'
         get '/raise_unauthorized' => 'login_protection#raise_unauthorized'
         get '/index_with_headers' => 'login_protection#index_with_headers'
+        get '/index_with_scope_check' => 'login_protection#index_with_scope_check'
       end
       yield
     end

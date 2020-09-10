@@ -16,6 +16,10 @@ module ShopifyApp
         migration_template('db/migrate/create_shops.erb', 'db/migrate/create_shops.rb')
       end
 
+      def add_scopes_migration
+        migration_template('db/migrate/add_scopes.erb', 'db/migrate/add_scopes.rb')
+      end
+
       def update_shopify_app_initializer
         gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryShopSessionStore', 'Shop')
       end

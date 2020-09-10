@@ -105,6 +105,7 @@ module ShopifyApp
         domain: TEST_SHOPIFY_DOMAIN,
         token: '1234',
         api_version: nil,
+        extra: { scopes: [ASSOCIATED_USER_SCOPE] }
       )
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(shop_session)
 
@@ -120,6 +121,7 @@ module ShopifyApp
         domain: 'other-domain.myshopify.io',
         token: '1234',
         api_version: nil,
+        extra: { scopes: [ASSOCIATED_USER_SCOPE] }
       )
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(other_shop_session)
 
@@ -211,7 +213,12 @@ module ShopifyApp
     end
 
     test '#install_webhooks still uses the shop token for user strategy' do
-      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
+      shop_session = ShopifyAPI::Session.new(
+        domain: 'shop',
+        token: '4321',
+        api_version: '2019-1',
+        extra: { scopes: [ASSOCIATED_USER_SCOPE] }
+      )
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('135').returns(shop_session)
 
       ShopifyApp.configure do |config|
@@ -340,7 +347,15 @@ module ShopifyApp
     def mock_shopify_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
-      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: TEST_SHOPIFY_DOMAIN, credentials: { token: '1234' })
+      OmniAuth.config.add_mock(
+        :shopify,
+        provider: :shopify,
+        uid: TEST_SHOPIFY_DOMAIN,
+        credentials: { token: '1234' },
+        extra: {
+          scope: "read_products",
+        }
+      )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
     end
