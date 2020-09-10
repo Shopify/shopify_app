@@ -15,6 +15,7 @@ module ShopifyApp
     end
 
     ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
+    INSUFFICIENT_SCOPES_HEADER = 'X-Shopify-Insufficient-Scopes'
 
     def activate_shopify_session
       if user_session_expected? && user_session.blank?
@@ -65,6 +66,10 @@ module ShopifyApp
       shop_session_by_jwt || shop_session_by_cookie
     end
 
+    def associated_scopes
+      shop_session.extra[:scopes]
+    end
+
     def shop_session_by_jwt
       return unless ShopifyApp.configuration.allow_jwt_authentication
       return unless jwt_shopify_domain
@@ -99,8 +104,19 @@ module ShopifyApp
       end
     end
 
+    def update_scopes_if_insufficient_access
+      expected_scopes = ShopifyApp.configuration.scope.split(',')
+      missing_scopes = normalized_scopes(expected_scopes) - normalized_scopes(associated_scopes)
+      signal_insufficient_scopes unless missing_scopes.empty?
+    end
+
     def signal_access_token_required
       response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
+    end
+
+    def signal_insufficient_scopes
+      response.set_header(INSUFFICIENT_SCOPES_HEADER, true)
+      head(403)
     end
 
     protected
@@ -249,6 +265,12 @@ module ShopifyApp
 
     def user_session_expected?
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+    end
+
+    def normalized_scopes(scopes)
+      scope_list = scopes.map(&:strip).reject(&:empty?).uniq
+      ignore_scopes = scope_list.map { |scope| scope =~ /\Awrite_(.*)\z/ && "read_#{Regexp.last_match(1)}" }.compact
+      scope_list - ignore_scopes
     end
   end
 end

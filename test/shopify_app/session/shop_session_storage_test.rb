@@ -44,6 +44,7 @@ module ShopifyApp
 
     test ".store can store shop session records" do
       mock_shop_instance = MockShopInstance.new(id: 12345)
+      mock_scopes = %w(read_orders write_customers)
       mock_shop_instance.stubs(:save!).returns(true)
 
       ShopMockSessionStore.stubs(:find_or_initialize_by).returns(mock_shop_instance)
@@ -51,7 +52,7 @@ module ShopifyApp
       mock_auth_hash = mock
       mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
       mock_auth_hash.stubs(:token).returns("a-new-token!")
-      saved_id = ShopMockSessionStore.store(mock_auth_hash)
+      saved_id = ShopMockSessionStore.store(mock_auth_hash, mock_scopes)
 
       assert_equal "a-new-token!", mock_shop_instance.shopify_token
       assert_equal mock_shop_instance.id, saved_id

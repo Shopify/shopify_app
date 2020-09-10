@@ -24,12 +24,17 @@ module ShopifyApp
         user_storage.retrieve_by_shopify_user_id(user_id)
       end
 
-      def store_shop_session(session)
-        shop_storage.store(session)
+      def store_shop_session(session, scopes)
+        shop_storage.store(session, scopes)
       end
 
       def store_user_session(session, user)
         user_storage.store(session, user)
+      end
+
+      def update_scopes(shop_session, scopes)
+        missing_scopes = scopes - shop_session.extra[:scopes] if shop_session.present?
+        shop_storage.store(shop_session, scopes) unless missing_scopes.nil? || missing_scopes.empty?
       end
 
       def shop_storage

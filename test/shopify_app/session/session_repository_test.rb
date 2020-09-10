@@ -80,15 +80,16 @@ module ShopifyApp
 
     test '.store_shop_session stores a shop session' do
       SessionRepository.shop_storage = InMemoryShopSessionStore
+      mock_scopes = %w(read_orders write_customers)
 
       session = ShopifyAPI::Session.new(
         domain: 'shop.myshopify.com',
         token: 'abracadabra',
         api_version: :unstable
       )
-      InMemoryShopSessionStore.expects(:store).with(session)
+      InMemoryShopSessionStore.expects(:store).with(session, mock_scopes)
 
-      SessionRepository.store_shop_session(session)
+      SessionRepository.store_shop_session(session, mock_scopes)
     end
 
     test '.store_user_session stores a user session' do
