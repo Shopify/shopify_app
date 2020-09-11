@@ -17,12 +17,13 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
 
     def activate_shopify_session
-      if user_session_expected? && user_session.blank?
-        signal_access_token_required
-        return redirect_to_login
-      end
+      signal_access_token_required
 
-      return redirect_to_login if current_shopify_session.blank?
+      #  if user_session_expected? && user_session.blank?
+      #    return redirect_to_login
+      #  end
+
+      # return redirect_to_login if current_shopify_session.blank?
       clear_top_level_oauth_cookie
 
       begin
@@ -88,7 +89,16 @@ module ShopifyApp
     end
 
     def signal_access_token_required
-      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
+      if user_session_expected? && current_shopify_session.blank?
+        response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'BOTH')
+        head(:unauthorized)
+      elsif user_session_expected? && user_session.blank?
+        response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'ONLINE')
+        head(:unauthorized)
+      elsif shop_session.blank?
+        response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'OFFLINE')
+        head(:unauthorized)
+      end
     end
 
     protected

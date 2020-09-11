@@ -9,6 +9,8 @@ module ShopifyApp
       before_action :check_shop_known
     end
 
+    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
+
     def current_shopify_domain
       return if params[:shop].blank?
       @shopify_domain ||= ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
@@ -22,7 +24,10 @@ module ShopifyApp
 
     def check_shop_known
       @shop = SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
-      redirect_to(shop_login) unless @shop
+      unless @shop
+        response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'OFFLINE')
+        @is_offline_token_required = true
+      end
     end
 
     def shop_login
