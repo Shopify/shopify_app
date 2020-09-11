@@ -27,6 +27,8 @@ module ShopifyApp
   require 'shopify_app/utils'
 
   # controller concerns
+  require 'shopify_app/controller_concerns/access_token'
+  require 'shopify_app/controller_concerns/session_token_protection'
   require 'shopify_app/controller_concerns/csrf_protection'
   require 'shopify_app/controller_concerns/localization'
   require 'shopify_app/controller_concerns/itp'
