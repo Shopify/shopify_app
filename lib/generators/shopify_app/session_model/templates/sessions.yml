@@ -1,4 +1,5 @@
 regular_session:
+  shopify_domain: 'regular-shop.myshopify.com'
+  shopify_token: 'token'
+  shopify_session_id: 'abc123'
   shopify_user_id: 1
-  shopify_token: "token"
-  shopify_session_id: 1

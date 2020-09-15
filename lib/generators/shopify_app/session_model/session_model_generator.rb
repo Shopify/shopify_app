@@ -17,7 +17,7 @@ module ShopifyApp
       end
 
       def update_shopify_app_initializer
-        gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryShopifySessionStore', 'User')
+        gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryActualSessionStore', 'Session')
       end
 
       def create_session_fixtures

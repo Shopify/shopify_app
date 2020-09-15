@@ -2,7 +2,6 @@
 module ShopifyApp
   class InMemoryActualSessionStore < InMemorySessionStore
     def self.store(session, session_id, user, *args)
-      byebug
       id = super
       repo[session_id.shopify_session_id] = session_id
       repo[session_id.shopify_user_id] = user
