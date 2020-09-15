@@ -57,7 +57,7 @@ module ShopifyApp
         ShopifyApp::SessionRepository.retrieve_actual_session_by_shopify_session_id(jwt_shopify_session_id)
       else
         ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
-      ends
+      end
     end
 
     def user_session_by_cookie

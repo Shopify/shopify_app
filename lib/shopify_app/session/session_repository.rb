@@ -26,6 +26,10 @@ module ShopifyApp
         user_storage.retrieve_by_shopify_user_id(user_id)
       end
 
+      def retrieve_actual_session_by_shopify_session_id(session_id)
+        actual_session_storage.retrieve_by_shopify_session_id(session_id)
+      end 
+
       def store_shop_session(session)
         shop_storage.store(session)
       end
