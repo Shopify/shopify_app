@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Session < ActiveRecord::Base
-  include ShopifyApp::SessionStorage
+  include ShopifyApp::ActualSessionStorage
 
   def api_version
     ShopifyApp.configuration.api_version
