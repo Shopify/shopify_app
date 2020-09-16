@@ -25,7 +25,12 @@ module ShopifyApp
     def check_shop_known
       @shop = SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
       unless @shop
-        response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'OFFLINE')
+        empty_api_session = ShopifyAPI::Session.new(
+          domain: current_shopify_domain,
+          token: 'fake',
+          api_version: ShopifyApp.configuration.api_version
+        )
+        SessionRepository.store_shop_session(empty_api_session)
         @is_offline_token_required = true
       end
     end

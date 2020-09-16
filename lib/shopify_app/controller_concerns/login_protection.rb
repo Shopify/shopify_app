@@ -89,13 +89,13 @@ module ShopifyApp
     end
 
     def signal_access_token_required
-      if user_session_expected? && current_shopify_session.blank?
+      if user_session_expected? && current_shopify_session.token == "fake"
         response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'BOTH')
         head(:unauthorized)
       elsif user_session_expected? && user_session.blank?
         response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'ONLINE')
         head(:unauthorized)
-      elsif shop_session.blank?
+      elsif shop_session.token == "fake"
         response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, 'OFFLINE')
         head(:unauthorized)
       end
