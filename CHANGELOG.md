@@ -1,3 +1,7 @@
+14.4.1
+------
+* Add debug logs for investigating authentication issues
+
 14.4.0
 ------
 * Replace script tags for ITP screens with data attributes

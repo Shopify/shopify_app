@@ -13,10 +13,12 @@ module ShopifyApp
     end
 
     def set_top_level_oauth_cookie
+      Rails.logger.debug("[ShopifyApp::Itp] Setting top level oauth cookie...")
       session['shopify.top_level_oauth'] = true
     end
 
     def clear_top_level_oauth_cookie
+      Rails.logger.debug("[ShopifyApp::Itp] Clearing top level oauth cookie...")
       session.delete('shopify.top_level_oauth')
     end
 
