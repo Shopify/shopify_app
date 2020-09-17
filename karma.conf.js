@@ -8,7 +8,7 @@ module.exports = function(config) {
   config.set({
     mode: 'development',
     basePath: '',
-    frameworks: ['mocha-debug', 'mocha', 'chai-sinon'],
+    frameworks: ['mocha', 'chai-sinon'],
     files: [
       'app/assets/javascripts/**/*.js',
       'test/javascripts/**/*test.js',
