@@ -94,7 +94,7 @@ module ShopifyApp
 
     # rubocop:disable Lint/SuppressedException
     def set_user_tokens_option
-      if shop_session.blank?
+      if shop_session.blank? || shop_session.token == 'fake'
         session[:user_tokens] = false
         return
       end
