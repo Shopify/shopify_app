@@ -11,17 +11,21 @@ module ShopifyApp
       end
 
       if jwt_request? && !valid_jwt_auth?
+        Rails.logger.debug("[ShopifyApp::CallbackController] Invalid JWT auth detected.")
         return respond_with_error
       end
 
       if jwt_request?
+        Rails.logger.debug("[ShopifyApp::CallbackController] JWT request detected. Setting shopify session...")
         set_shopify_session
         head(:ok)
       else
+        Rails.logger.debug("[ShopifyApp::CallbackController] Not a JWT request. Resetting session options...")
         reset_session_options
         set_shopify_session
 
         if redirect_for_user_token?
+          Rails.logger.debug("[ShopifyApp::CallbackController] Redirecting for user token...")
           return redirect_to(login_url_with_optional_shop)
         end
 

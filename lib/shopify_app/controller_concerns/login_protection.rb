@@ -18,17 +18,24 @@ module ShopifyApp
 
     def activate_shopify_session
       if user_session_expected? && user_session.blank?
+        Rails.logger.debug("[ShopifyApp::LoginProtection] User session required. Redirecting to login...")
         signal_access_token_required
         return redirect_to_login
       end
 
-      return redirect_to_login if current_shopify_session.blank?
+      if current_shopify_session.blank?
+        Rails.logger.debug("[ShopifyApp::LoginProtection] Current shopify session is blank. Redirecting to login...")
+        return redirect_to_login
+      end
+
       clear_top_level_oauth_cookie
 
       begin
+        Rails.logger.debug("[ShopifyApp::LoginProtection] Activating session...")
         ShopifyAPI::Base.activate_session(current_shopify_session)
         yield
       ensure
+        Rails.logger.debug("[ShopifyApp::LoginProtection] Clearing session...")
         ShopifyAPI::Base.clear_session
       end
     end
@@ -71,8 +78,12 @@ module ShopifyApp
 
     def login_again_if_different_user_or_shop
       if session[:user_session].present? && params[:session].present? # session data was sent/stored correctly
+        Rails.logger.debug("[ShopifyApp::LoginProtection] Session data was sent/stored correctly.")
         clear_session = session[:user_session] != params[:session] # current user is different from stored user
-
+        if clear_session
+          Rails.logger.debug("[ShopifyApp::LoginProtection] Current user is different from stored user.")
+        end
+        clear_session
       end
 
       if current_shopify_session &&
@@ -82,6 +93,7 @@ module ShopifyApp
       end
 
       if clear_session
+        Rails.logger.debug("[ShopifyApp::LoginProtection] Clearing shopify session and redirecting to login...")
         clear_shopify_session
         redirect_to_login
       end
