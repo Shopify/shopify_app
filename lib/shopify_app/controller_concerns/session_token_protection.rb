@@ -3,6 +3,7 @@
 module ShopifyApp
   module SessionTokenProtection
     extend ActiveSupport::Concern
+    include ShopifyApp::AccessToken
 
     class ShopifyDomainNotFound < StandardError; end
 
@@ -40,8 +41,6 @@ module ShopifyApp
 
     private
 
-    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
-
     def shopify_session
       # TODO: Determine a true session using the `sid` field from a JWT payload
     end
@@ -62,14 +61,6 @@ module ShopifyApp
 
     def shopify_user_id
       request.env['jwt.shopify_user_id']
-    end
-
-    def user_session_expected?
-      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
-    end
-
-    def signal_access_token_required
-      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
     end
   end
 end
