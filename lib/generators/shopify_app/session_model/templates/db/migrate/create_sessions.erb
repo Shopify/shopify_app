@@ -5,6 +5,7 @@ class CreateSessions < ActiveRecord::Migration[<%= rails_migration_version %>]
       t.string :shopify_domain, null: false
       t.string :shopify_token, null: false
       t.bigint :shopify_user_id, null: false
+      t.datetime :shopify_token_expires_at, null: false
 
       t.timestamps
     end

@@ -109,6 +109,10 @@ module ShopifyApp
       auth_hash['credentials']['token']
     end
 
+    def expires_at
+      auth_hash['credentials']['expires_at']
+    end
+
     def reset_session_options
       request.session_options[:renew] = true
       session.delete(:_csrf_token)
@@ -118,14 +122,15 @@ module ShopifyApp
       session_store = ShopifyAPI::Session.new(
         domain: shop_name,
         token: token,
-        api_version: ShopifyApp.configuration.api_version
+        api_version: ShopifyApp.configuration.api_version,
       )
 
       session[:shopify_user] = associated_user
       if session[:shopify_user].present?
         session[:shop_id] = nil if shop_session && shop_session.domain != shop_name
         session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
-        ShopifyApp::SessionRepository.store_actual_session(session_store, jwt_shopify_session_id, associated_user) if jwt_shopify_session_id
+        ShopifyApp::SessionRepository.clean_up_actual_sessions
+        ShopifyApp::SessionRepository.store_actual_session(session_store, jwt_shopify_session_id, associated_user, expires_at) if jwt_shopify_session_id
       else
         session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
         session[:user_id] = nil if user_session && user_session.domain != shop_name

@@ -38,8 +38,8 @@ module ShopifyApp
         user_storage.store(session, user)
       end
 
-      def store_actual_session(session, session_id, user)
-        actual_session_storage.store(session, session_id, user)
+      def store_actual_session(session, session_id, user, expires_at)
+        actual_session_storage.store(session, session_id, user, expires_at)
       end
 
       def shop_storage
@@ -52,6 +52,10 @@ module ShopifyApp
 
       def actual_session_storage
         load_actual_session_storage
+      end
+
+      def clean_up_actual_sessions
+        actual_session_storage.clean_up
       end
 
       private

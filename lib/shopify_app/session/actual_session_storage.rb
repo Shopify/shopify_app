@@ -5,11 +5,12 @@ module ShopifyApp
     include ::ShopifyApp::SessionStorage
 
     class_methods do
-      def store(auth_session, session_id, user)
+      def store(auth_session, session_id, user, expires_at)
         session = find_or_initialize_by(shopify_session_id: session_id)
         session.shopify_token = auth_session.token
         session.shopify_domain = auth_session.domain
         session.shopify_user_id = user[:id]
+        session.shopify_token_expires_at = Time.at(expires_at)
         session.save!
         session.id
       end
@@ -22,6 +23,12 @@ module ShopifyApp
       def retrieve_by_shopify_session_id(session_id)
         session = find_by(shopify_session_id: session_id)
         construct_session(session)
+      end
+
+      def clean_up
+        where('shopify_token_expires_at < ?', DateTime.now).each do |session|
+          session.delete
+        end
       end
 
       private
