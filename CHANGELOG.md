@@ -1,3 +1,7 @@
+14.4.2
+------
+* Add debug logs in sessions controller
+
 14.4.1
 ------
 * Add debug logs for investigating authentication issues
