@@ -322,6 +322,48 @@ module ShopifyApp
       assert_redirected_to "/?shop=#{TEST_SHOPIFY_DOMAIN}"
     end
 
+    test "#callback performs install_webhook job after JWT authentication" do
+      mock_shopify_user_omniauth
+      mock_shopify_jwt
+
+      ShopifyApp.configure do |config|
+        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+      end
+
+      ShopifyApp::WebhooksManager.expects(:queue)
+
+      get :callback
+      assert_response :ok
+    end
+
+    test "#callback performs install_scripttags job after JWT authentication" do
+      mock_shopify_user_omniauth
+      mock_shopify_jwt
+
+      ShopifyApp.configure do |config|
+        config.scripttags = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+      end
+
+      ShopifyApp::ScripttagsManager.expects(:queue)
+
+      get :callback
+      assert_response :ok
+    end
+
+    test "#callback performs after_authenticate job after JWT authentication" do
+      mock_shopify_user_omniauth
+      mock_shopify_jwt
+
+      ShopifyApp.configure do |config|
+        config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
+      end
+
+      Shopify::AfterAuthenticateJob.expects(:perform_now)
+
+      get :callback
+      assert_response :ok
+    end
+
     private
 
     def mock_shopify_jwt
