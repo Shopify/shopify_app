@@ -11,7 +11,7 @@ class LoginProtectionController < ActionController::Base
 
   around_action :activate_shopify_session, only: [:index]
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
-  before_action :update_scopes_if_insufficient_access, only: [:index_with_scope_check]
+  before_action :handle_scopes_mismatch, only: [:index_with_scope_check]
 
   def index
     render(plain: "OK")
@@ -488,7 +488,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       get :index_with_scope_check
 
       assert_equal 403, response.status
-      assert_equal true, response.get_header('X-Shopify-Insufficient-Scopes')
+      assert_equal true, response.get_header('X-Shopify-Mismatched-Scopes')
     end
   end
 
@@ -512,7 +512,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       get :index_with_scope_check
 
       assert_equal 200, response.status
-      assert_nil response.get_header('X-Shopify-Insufficient-Scopes')
+      assert_nil response.get_header('X-Shopify-Mismatched-Scopes')
     end
   end
 

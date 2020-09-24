@@ -110,7 +110,7 @@ module ShopifyApp
     end
 
     def shop_scopes
-      auth_hash['extra']['scope'].split(',')
+      OmniAuth::Shopify::Scopes.deserialize(auth_hash['extra']['scope']).to_a
     end
 
     def reset_session_options

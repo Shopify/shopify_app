@@ -5,6 +5,7 @@ source "https://rubygems.org"
 gemspec
 
 gem 'rails-controller-testing', group: :test
+gem 'omniauth-shopify-oauth2', path: '../omniauth-shopify-oauth2'
 
 group :rubocop do
   gem 'rubocop-shopify', require: false
