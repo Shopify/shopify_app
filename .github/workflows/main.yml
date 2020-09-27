@@ -1,23 +1,10 @@
-- name: markdown-link-check
-  # You may pin to the exact commit or the version.
-  # uses: gaurav-nelson/github-action-markdown-link-check@95d5f3b63d2ca8e93f527396308c41e70634e2e7
-  uses: gaurav-nelson/github-action-markdown-link-check@1.0.7
-  with:
-    # Use yes to enable markdown-link-check quiet mode which only list errors.
-    use-quiet-mode: # default is no
-    # Use yes to enable markdown-link-check verbose mode which lists additional details.
-    use-verbose-mode: # default is no
-    # Specify path to a markdown-link-check JSON configuration file.
-    config-file: # default is mlc_config.json
-    # Specify path to a custom folder where your markdown files are located.
-    folder-path: # default is .
-    # Specify a max-depth of directories you want to search for markdown files.
-    max-depth: # default is -1
-    # Use yes to only check for modified markdown files instead of checking all markdown files.
-    check-modified-files-only: # default is no
-    # Use this to specify the base branch against which the action finds the modififed files.
-    base-branch: # default is master
-    # Use this to specify the file extension of Markdown files.
-    file-extension: # default is .md
-    # Specify additional files you want to check
-    file-path: # default is 
+name: Check Markdown links
+
+on: push
+
+jobs:
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: gaurav-nelson/github-action-markdown-link-check@v1
