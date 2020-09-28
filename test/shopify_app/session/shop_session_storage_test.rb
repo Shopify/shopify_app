@@ -10,6 +10,10 @@ module ShopifyApp
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
 
+    setup do
+      ShopifyApp.configuration.scopes_exist_on_shop = false
+    end
+
     test ".retrieve can retrieve shop session records by ID" do
       ShopMockSessionStore.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
@@ -55,6 +59,7 @@ module ShopifyApp
       saved_id = ShopMockSessionStore.store(mock_auth_hash, mock_scopes)
 
       assert_equal "a-new-token!", mock_shop_instance.shopify_token
+      assert_nil mock_shop_instance.scopes
       assert_equal mock_shop_instance.id, saved_id
     end
 
@@ -71,6 +76,23 @@ module ShopifyApp
       ShopMockSessionStore.stubs(:find_by).with(shopify_domain: shop_domain).returns(nil)
 
       refute ShopMockSessionStore.retrieve_by_shopify_domain(shop_domain)
+    end
+
+    test '.store can store scopes if scopes_exist_on_shop is true' do
+      ShopifyApp.configuration.scopes_exist_on_shop = true
+      mock_shop_instance = MockShopInstance.new(id: 12345)
+      mock_scopes = %w(read_orders write_customers)
+      mock_shop_instance.stubs(:save!).returns(true)
+
+      ShopMockSessionStore.stubs(:find_or_initialize_by).returns(mock_shop_instance)
+
+      mock_auth_hash = mock
+      mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
+      mock_auth_hash.stubs(:token).returns("a-new-token!")
+
+      saved_id = ShopMockSessionStore.store(mock_auth_hash, mock_scopes)
+
+      assert_equal mock_scopes, mock_shop_instance.scopes
     end
   end
 end

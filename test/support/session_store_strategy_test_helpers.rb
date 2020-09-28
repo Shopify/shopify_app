@@ -4,7 +4,7 @@ module SessionStoreStrategyTestHelpers
     attr_reader :id, :shopify_domain, :api_version
     attr_accessor :shopify_token, :scopes
     def initialize(id: 1, shopify_domain: 'example.myshopify.com',
-      shopify_token: 'abcd-shop-token', api_version: 'unstable', scopes: ['read_orders', 'write_customers'])
+      shopify_token: 'abcd-shop-token', api_version: 'unstable', scopes: nil)
       @id = id
       @shopify_domain = shopify_domain
       @shopify_token = shopify_token

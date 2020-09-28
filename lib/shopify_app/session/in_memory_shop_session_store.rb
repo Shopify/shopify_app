@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 module ShopifyApp
   class InMemoryShopSessionStore < InMemorySessionStore
-    def self.store(session, *args)
+    def self.store(session, scopes, *args)
       id = super
-      repo[session.domain] = session
+      shopify_api_session = session
+
+      if ShopifyApp.configuration.scopes_exist_on_shop
+        shopify_api_session.extra = { scopes: scopes }
+      end
+
+      repo[shopify_api_session.domain] = shopify_api_session
       id
     end
 

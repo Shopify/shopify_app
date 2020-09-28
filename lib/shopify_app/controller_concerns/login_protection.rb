@@ -67,6 +67,7 @@ module ShopifyApp
     end
 
     def associated_scopes
+      return if shop_session.extra.nil?
       shop_session.extra[:scopes]
     end
 
@@ -105,6 +106,7 @@ module ShopifyApp
     end
 
     def handle_scopes_mismatch
+      return unless ShopifyApp.configuration.scopes_exist_on_shop
       expected_scopes = OmniAuth::Shopify::Scopes.deserialize(ShopifyApp.configuration.scope).normalize
       #expected_scopes = OmniAuth::Shopify::Configuration.scopes_for(provider: :shopify).normalize
       actual_scopes = OmniAuth::Shopify::Scopes.new(associated_scopes).normalize

@@ -49,6 +49,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
     ShopifyApp.configuration.api_key = 'api_key'
     ShopifyApp.configuration.scope = %w(read_products read_themes write_themes).join(',')
+    ShopifyApp.configuration.scopes_exist_on_shop = false
 
     request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) '\
                                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
@@ -468,8 +469,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test '#update_scopes_if_insufficient_access signals insufficient scopes if shop scopes dont match expected' do
+  test '#handle_scopes_mismatch signals mismatched scopes if shop scopes dont match expected' do
     ShopifyApp.configuration.allow_jwt_authentication = true
+    ShopifyApp.configuration.scopes_exist_on_shop = true
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
 
@@ -481,7 +483,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     )
 
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
-      .with(domain).returns(expected_session)
+      .with(domain).returns(expected_session).times(2)
 
     with_application_test_routes do
       request.env['jwt.shopify_domain'] = domain
@@ -492,8 +494,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test '#update_scopes_if_insufficient_access does not signal insufficient scopes if shop scopes match as expected' do
+  test '#handle_scopes_mismatch does not signal mismatched scopes if shop scopes match as expected' do
     ShopifyApp.configuration.allow_jwt_authentication = true
+    ShopifyApp.configuration.scopes_exist_on_shop = true
     domain = 'https://test.myshopify.io'
     token = 'admin_api_token'
 
@@ -505,7 +508,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     )
 
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
-      .with(domain).returns(expected_session)
+      .with(domain).returns(expected_session).times(2)
 
     with_application_test_routes do
       request.env['jwt.shopify_domain'] = domain

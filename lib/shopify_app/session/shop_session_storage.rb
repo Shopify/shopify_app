@@ -10,11 +10,9 @@ module ShopifyApp
 
     class_methods do
       def store(auth_session, scopes, *_args)
-        shop = find_or_initialize_by(shopify_domain: auth_session.domain)
+        shop = set_required_shopify_session_attributes(auth_session)
 
-        shop.shopify_token = auth_session.token
-
-        shop.scopes = scopes
+        shop.scopes = scopes if ShopifyApp.configuration.scopes_exist_on_shop
 
         shop.save!
         shop.id
@@ -32,15 +30,25 @@ module ShopifyApp
 
       private
 
+      def set_required_shopify_session_attributes(auth_session)
+        shop = find_or_initialize_by(shopify_domain: auth_session.domain)
+        shop.shopify_token = auth_session.token
+        shop
+      end
+
       def construct_session(shop)
         return unless shop
-
-        ShopifyAPI::Session.new(
+        shopify_api_session = ShopifyAPI::Session.new(
           domain: shop.shopify_domain,
           token: shop.shopify_token,
           api_version: shop.api_version,
-          extra: { scopes: shop.scopes }
         )
+
+        if ShopifyApp.configuration.scopes_exist_on_shop
+          shopify_api_session.extra = { scopes: shop.scopes }
+        end
+
+        shopify_api_session
       end
     end
   end

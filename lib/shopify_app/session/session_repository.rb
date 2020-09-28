@@ -33,8 +33,15 @@ module ShopifyApp
       end
 
       def update_scopes(shop_session, scopes)
-        missing_scopes = scopes - shop_session.extra[:scopes] if shop_session.present?
-        shop_storage.store(shop_session, scopes) unless missing_scopes.nil? || missing_scopes.empty?
+        return unless ShopifyApp.configuration.scopes_exist_on_shop
+        return unless shop_session
+        return unless scopes
+
+        expected_scopes = OmniAuth::Shopify::Scopes.new(scopes)
+        current_scopes = shop_session.extra.nil? ? nil :
+          OmniAuth::Shopify.Scopes.new(shop_session.extra[:scopes])
+
+        shop_storage.store(shop_session, scopes) unless expected_scopes == current_scopes
       end
 
       def shop_storage

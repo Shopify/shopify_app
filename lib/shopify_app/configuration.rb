@@ -39,6 +39,9 @@ module ShopifyApp
     # allow enabling jwt headers for authentication
     attr_accessor :allow_jwt_authentication
 
+    # indicate whether scopes exist on shop records
+    attr_accessor :scopes_exist_on_shop
+
     def initialize
       @root_url = '/'
       @myshopify_domain = 'myshopify.com'
