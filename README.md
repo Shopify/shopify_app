@@ -26,7 +26,7 @@ Table of Contents
 - [Troubleshooting](#troubleshooting)
 - [Testing an embedded app outside the Shopify admin](#testing-an-embedded-app-outside-the-shopify-admin)
 - [Migration to 13.0.0](#migrating-to-1300)
-- [Questions or problems?](#questions-or-problems-)
+- [Questions or problems?](#questions-or-problems)
 - [Rails 6 Compatibility](#rails-6-compatibility)
 - [Upgrading from 8.6 to 9.0.0](#upgrading-from-86-to-900)
 
@@ -105,7 +105,7 @@ Options include:
 * `application_name` - the name of your app, it can be supplied with or without double-quotes if a whitespace is present. (e.g. `--application_name Example App` or `--application_name "Example App"`)
 * `scope` - the OAuth access scope required for your app, e.g. **read_products, write_orders**. *Multiple options* need to be delimited by a comma-space and can be supplied with or without double-quotes
 (e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)
-For more information, refer the [docs](http://docs.shopify.com/api/tutorials/oauth).
+For more information, refer to the [docs](http://docs.shopify.com/api/tutorials/oauth).
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
 
 You can update any of these settings later on easily; the arguments are simply for convenience.
@@ -427,7 +427,7 @@ bin/rails g shopify_app:rotate_shopify_token_job
 
 The generated rake task will be found at `lib/tasks/shopify/rotate_shopify_token.rake` and is provided strictly for example purposes. It might not work with your application out of the box without some configuration.
 
-⚠️ Note: if you are updating `shopify_app` from a version prior to 8.4.2 (and do not wish to run the default/install generator again), you will need to add [the following line](https://github.com/Shopify/shopify_app/blob/4f7e6cca2a472d8f7af44b938bd0fcafe4d8e88a/lib/generators/shopify_app/install/templates/shopify_provider.rb#L18) to `config/intializers/omniauth.rb`:
+⚠️ Note: if you are updating `shopify_app` from a version prior to 8.4.2 (and do not wish to run the default/install generator again), you will need to add [the following line](https://github.com/Shopify/shopify_app/blob/4f7e6cca2a472d8f7af44b938bd0fcafe4d8e88a/lib/generators/shopify_app/install/templates/shopify_provider.rb#L18) to `config/initializers/omniauth.rb`:
 
 ```ruby
 strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
