@@ -8,7 +8,7 @@ module ShopifyApp
 
       def create_views
         views.each do |view|
-          copy_file view
+          copy_file(view)
         end
       end
 
