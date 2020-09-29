@@ -270,11 +270,5 @@ module ShopifyApp
     def user_session_expected?
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
-
-    def normalized_scopes(scopes)
-      scope_list = scopes.map(&:strip).reject(&:empty?).uniq
-      ignore_scopes = scope_list.map { |scope| scope =~ /\Awrite_(.*)\z/ && "read_#{Regexp.last_match(1)}" }.compact
-      scope_list - ignore_scopes
-    end
   end
 end
