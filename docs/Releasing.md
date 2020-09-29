@@ -8,7 +8,7 @@ Releasing ShopifyApp
     - Change the title of the PR to something like: "Packaging for release X.Y.Z"
 1. Merge your pull request
 1. Checkout and pull from master so you have the latest version of the shopify_app
-1. Tag the HEAD with the version 
+1. Tag the HEAD with the version
 ```bash
 $ git tag -f vX.Y.Z && git push --tags --force
 ```
