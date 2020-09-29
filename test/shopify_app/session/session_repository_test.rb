@@ -3,6 +3,11 @@ require 'test_helper'
 
 module ShopifyApp
   class SessionRepositoryTest < ActiveSupport::TestCase
+
+    setup do
+      ShopifyApp.configuration.scopes_exist_on_shop = false
+    end
+
     teardown do
       SessionRepository.shop_storage = nil
       SessionRepository.user_storage = nil
@@ -87,7 +92,22 @@ module ShopifyApp
         token: 'abracadabra',
         api_version: :unstable
       )
-      InMemoryShopSessionStore.expects(:store).with(session, mock_scopes)
+      InMemoryShopSessionStore.expects(:store).with(session)
+
+      SessionRepository.store_shop_session(session, mock_scopes)
+    end
+
+    test '.store_shop_session stores a shop session with scopes if scopes_exist_on_shop is true' do
+      ShopifyApp.configuration.scopes_exist_on_shop = true
+      SessionRepository.shop_storage = InMemoryShopSessionStore
+      mock_scopes = %w(read_orders write_customers)
+
+      session = ShopifyAPI::Session.new(
+        domain: 'shop.myshopify.com',
+        token: 'abracadabra',
+        api_version: :unstable
+      )
+      InMemoryShopSessionStore.expects(:store_with_scopes).with(session, mock_scopes)
 
       SessionRepository.store_shop_session(session, mock_scopes)
     end

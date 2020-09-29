@@ -9,11 +9,15 @@ module ShopifyApp
     end
 
     class_methods do
-      def store(auth_session, scopes, *_args)
+      def store(auth_session, *_args)
         shop = set_required_shopify_session_attributes(auth_session)
+        shop.save!
+        shop.id
+      end
 
-        shop.scopes = scopes if ShopifyApp.configuration.scopes_exist_on_shop
-
+      def store_with_scopes(auth_session, scopes)
+        shop = set_required_shopify_session_attributes(auth_session)
+        shop.scopes = scopes
         shop.save!
         shop.id
       end

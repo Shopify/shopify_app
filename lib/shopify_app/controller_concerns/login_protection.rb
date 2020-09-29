@@ -107,8 +107,9 @@ module ShopifyApp
 
     def handle_scopes_mismatch
       return unless ShopifyApp.configuration.scopes_exist_on_shop
+      # TODO: Use configuration from OmniAuth to have consistency with expected scopes
+      # expected_scopes = OmniAuth::Shopify::Configuration.scopes_for(provider: :shopify).normalize
       expected_scopes = OmniAuth::Shopify::Scopes.deserialize(ShopifyApp.configuration.scope).normalize
-      #expected_scopes = OmniAuth::Shopify::Configuration.scopes_for(provider: :shopify).normalize
       actual_scopes = OmniAuth::Shopify::Scopes.new(associated_scopes).normalize
       signal_scopes_mismatch unless expected_scopes == actual_scopes
     end

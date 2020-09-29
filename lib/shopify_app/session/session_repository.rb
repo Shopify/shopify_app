@@ -25,7 +25,11 @@ module ShopifyApp
       end
 
       def store_shop_session(session, scopes)
-        shop_storage.store(session, scopes)
+        if ShopifyApp.configuration.scopes_exist_on_shop
+          shop_storage.store_with_scopes(session, scopes)
+        else
+          shop_storage.store(session)
+        end
       end
 
       def store_user_session(session, user)
@@ -41,7 +45,7 @@ module ShopifyApp
         current_scopes = shop_session.extra.nil? ? nil :
           OmniAuth::Shopify.Scopes.new(shop_session.extra[:scopes])
 
-        shop_storage.store(shop_session, scopes) unless expected_scopes == current_scopes
+        shop_storage.store_with_scopes(shop_session, scopes) unless expected_scopes == current_scopes
       end
 
       def shop_storage
