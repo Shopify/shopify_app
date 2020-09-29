@@ -1,3 +1,7 @@
+14.4.4
+------
+* Patch to not log params in ShopifyApp jobs [#1086](https://github.com/Shopify/shopify_app/pull/1086)
+
 14.4.3
 ------
 * Fix to ensure post authenticate jobs are run after callback requests [#1079](https://github.com/Shopify/shopify_app/pull/1079)
