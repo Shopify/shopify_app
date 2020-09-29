@@ -28,7 +28,7 @@ module ShopifyApp
 
       def retrieve_actual_session_by_shopify_session_id(session_id)
         actual_session_storage.retrieve_by_shopify_session_id(session_id)
-      end 
+      end
 
       def store_shop_session(session)
         shop_storage.store(session)
@@ -48,7 +48,7 @@ module ShopifyApp
 
       def user_storage
         load_user_storage
-      end 
+      end
 
       def actual_session_storage
         load_actual_session_storage

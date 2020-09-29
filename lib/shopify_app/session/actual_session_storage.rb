@@ -26,9 +26,7 @@ module ShopifyApp
       end
 
       def clean_up
-        where('shopify_token_expires_at < ?', DateTime.now).each do |session|
-          session.delete
-        end
+        where('shopify_token_expires_at < ?', Time.now).each(&:delete)
       end
 
       private

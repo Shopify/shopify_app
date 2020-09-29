@@ -130,7 +130,9 @@ module ShopifyApp
         session[:shop_id] = nil if shop_session && shop_session.domain != shop_name
         session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
         ShopifyApp::SessionRepository.clean_up_actual_sessions
-        ShopifyApp::SessionRepository.store_actual_session(session_store, jwt_shopify_session_id, associated_user, expires_at) if jwt_shopify_session_id
+        if jwt_shopify_session_id
+          ShopifyApp::SessionRepository.store_actual_session(session_store, jwt_shopify_session_id, associated_user, expires_at)
+        end
       else
         session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
         session[:user_id] = nil if user_session && user_session.domain != shop_name
