@@ -34,7 +34,7 @@ module ShopifyApp
 
     initializer "shopify_app.redact_job_params" do
       ActiveSupport.on_load(:active_job) do
-        if ActiveJob::Base.respond_to?(:log_arguments?, true)
+        if ActiveJob::Base.respond_to?(:log_arguments?)
           WebhooksManagerJob.log_arguments = false
           ScripttagsManagerJob.log_arguments = false
         elsif ActiveJob::Logging::LogSubscriber.private_method_defined?(:args_info)
