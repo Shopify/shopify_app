@@ -1,6 +1,6 @@
 14.4.4
 ------
-* Patch to not log params in ShopifyApp jobs
+* Patch to not log params in ShopifyApp jobs [#1086](https://github.com/Shopify/shopify_app/pull/1086)
 
 14.4.3
 ------
