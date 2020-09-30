@@ -155,6 +155,24 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp::SessionRepository.user_storage
   end
 
+  test "can set actual_session_repository with a string" do
+    ShopifyApp.configure do |config|
+      config.actual_session_repository = 'ShopifyApp::InMemoryActualSessionStore'
+    end
+
+    assert_equal ShopifyApp::InMemoryActualSessionStore, ShopifyApp.configuration.actual_session_repository
+    assert_equal ShopifyApp::InMemoryActualSessionStore, ShopifyApp::SessionRepository.actual_session_storage
+  end
+
+  test "can set actual_session_repository with a class" do
+    ShopifyApp.configure do |config|
+      config.actual_session_repository = ShopifyApp::InMemoryActualSessionStore
+    end
+
+    assert_equal ShopifyApp::InMemoryActualSessionStore, ShopifyApp.configuration.actual_session_repository
+    assert_equal ShopifyApp::InMemoryActualSessionStore, ShopifyApp::SessionRepository.actual_session_storage
+  end
+
   test "enable_same_site_none is false in tests" do
     ShopifyApp.configure do |config|
       config.embedded_app = true

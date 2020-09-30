@@ -72,7 +72,11 @@ module ShopifyApp
 
       def load_actual_session_storage
         return NullSessionStore unless @actual_session_storage
-        @actual_session_storage.respond_to?(:safe_constantize) ? @actual_session_storage.safe_constantize : @actual_session_storage
+        if @actual_session_storage.respond_to?(:safe_constantize)
+          @actual_session_storage.safe_constantize
+        else
+          @actual_session_storage
+        end
       end
     end
   end

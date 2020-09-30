@@ -131,7 +131,12 @@ module ShopifyApp
         session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
         ShopifyApp::SessionRepository.clean_up_actual_sessions unless NullSessionStore
         if jwt_shopify_session_id
-          ShopifyApp::SessionRepository.store_actual_session(session_store, jwt_shopify_session_id, associated_user, expires_at)
+          ShopifyApp::SessionRepository.store_actual_session(
+            session_store,
+            jwt_shopify_session_id,
+            associated_user,
+            expires_at
+          )
         end
       else
         session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)

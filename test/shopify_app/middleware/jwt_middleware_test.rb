@@ -68,7 +68,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
-    assert_nil env['jwt.shopify_session_id'] 
+    assert_nil env['jwt.shopify_session_id']
   end
 
   test 'sets shopify_domain, shopify_user_id and shopify_session_id if non-nil values' do
