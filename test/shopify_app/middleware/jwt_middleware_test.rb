@@ -30,7 +30,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
   end
 
   test 'does not add the shop to the env if nil shop value' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(nil, 1)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :shopify_session_id).new(nil, 1, 1)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
@@ -40,10 +40,11 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_nil env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
+    assert_equal 1, env['jwt.shopify_session_id']
   end
 
   test 'does not add the user to the env if nil user value' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', nil)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :shopify_session_id).new('example.myshopify.com', nil, 1)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
@@ -53,10 +54,11 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_nil env['jwt.shopify_user_id']
+    assert_equal 1, env['jwt.shopify_session_id']
   end
 
-  test 'sets shopify_domain and shopify_user_id if non-nil values' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', 1)
+  test 'does not add the session to the env if nil session value' do
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :shopify_session_id).new('example.myshopify.com', 1, nil)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
@@ -66,10 +68,25 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
+    assert_nil env['jwt.shopify_session_id'] 
+  end
+
+  test 'sets shopify_domain, shopify_user_id and shopify_session_id if non-nil values' do
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :shopify_session_id).new('example.myshopify.com', 1, 1)
+    ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
+
+    env = Rack::MockRequest.env_for('https://example.com')
+    env['HTTP_AUTHORIZATION'] = 'Bearer abc'
+
+    app.call(env)
+
+    assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
+    assert_equal 1, env['jwt.shopify_user_id']
+    assert_equal 1, env['jwt.shopify_session_id']
   end
 
   test 'sets the jwt values before calling the next middleware' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', 1)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :shopify_session_id).new('example.myshopify.com', 1, 1)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
