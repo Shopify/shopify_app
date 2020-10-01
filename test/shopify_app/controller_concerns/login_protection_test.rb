@@ -52,58 +52,58 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp.configuration.allow_jwt_authentication = false
   end
 
-  # test '#index sets test cookie if embedded app and user agent can partition cookies' do
-  #   with_application_test_routes do
-  #     request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-  #     get :index
-  #     assert_equal true, session['shopify.cookies_persist']
-  #   end
-  # end
+  test '#index sets test cookie if embedded app and user agent can partition cookies' do
+    with_application_test_routes do
+      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
+      get :index
+      assert_equal true, session['shopify.cookies_persist']
+    end
+  end
 
-  # test '#index doesn\'t set test cookie if non embedded app' do
-  #   with_application_test_routes do
-  #     ShopifyApp.configuration.embedded_app = false
+  test '#index doesn\'t set test cookie if non embedded app' do
+    with_application_test_routes do
+      ShopifyApp.configuration.embedded_app = false
 
-  #     get :index
-  #     assert_nil session['shopify.cookies_persist']
-  #   end
-  # end
+      get :index
+      assert_nil session['shopify.cookies_persist']
+    end
+  end
 
-  # test "#current_shopify_session returns nil when session is nil" do
-  #   with_application_test_routes do
-  #     session[:shop_id] = nil
-  #     get :index
-  #     assert_nil @controller.current_shopify_session
-  #   end
-  # end
+  test "#current_shopify_session returns nil when session is nil" do
+    with_application_test_routes do
+      session[:shop_id] = nil
+      get :index
+      assert_nil @controller.current_shopify_session
+    end
+  end
 
-  # test "#current_shopify_session retrieves user session using jwt" do
-  #   ShopifyApp.configuration.allow_jwt_authentication = true
-  #   domain = 'https://test.myshopify.io'
-  #   token = 'admin_api_token'
-  #   dest = 'shopify_domain'
-  #   sub = 'shopify_user'
+  test "#current_shopify_session retrieves user session using jwt" do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    domain = 'https://test.myshopify.io'
+    token = 'admin_api_token'
+    dest = 'shopify_domain'
+    sub = 'shopify_user'
 
-  #   expected_session = ShopifyAPI::Session.new(
-  #     domain: domain,
-  #     token: token,
-  #     api_version: '2020-01',
-  #   )
+    expected_session = ShopifyAPI::Session.new(
+      domain: domain,
+      token: token,
+      api_version: '2020-01',
+    )
 
-  #   ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
-  #     .at_most(2).with(sub).returns(expected_session)
-  #   ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-  #   ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
-  #   ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
+      .at_most(2).with(sub).returns(expected_session)
+    ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
 
-  #   with_application_test_routes do
-  #     request.env['jwt.shopify_domain'] = dest
-  #     request.env['jwt.shopify_user_id'] = sub
-  #     get :index
+    with_application_test_routes do
+      request.env['jwt.shopify_domain'] = dest
+      request.env['jwt.shopify_user_id'] = sub
+      get :index
 
-  #     assert_equal expected_session, @controller.current_shopify_session
-  #   end
-  # end
+      assert_equal expected_session, @controller.current_shopify_session
+    end
+  end
 
   test "#current_shopify_session retrieves shop session using jwt" do
     ShopifyApp.configuration.allow_jwt_authentication = true
