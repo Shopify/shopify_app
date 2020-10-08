@@ -100,7 +100,7 @@ module ShopifyApp
     end
 
     def signal_access_token_required
-      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, true)
+      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, "true")
     end
 
     protected
