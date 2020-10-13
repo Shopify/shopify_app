@@ -8,7 +8,7 @@ module ShopifyApp
 
       def create_controllers
         controllers.each do |controller|
-          copy_file controller
+          copy_file(controller)
         end
       end
 

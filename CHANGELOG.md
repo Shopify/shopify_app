@@ -1,3 +1,19 @@
+15.0.0
+------
+* Change `X-Shopify-API-Request-Failure-Unauthorized` HTTP header value from boolean to string
+
+14.4.4
+------
+* Patch to not log params in ShopifyApp jobs [#1086](https://github.com/Shopify/shopify_app/pull/1086)
+
+14.4.3
+------
+* Fix to ensure post authenticate jobs are run after callback requests [#1079](https://github.com/Shopify/shopify_app/pull/1079)
+
+14.4.2
+------
+* Add debug logs in sessions controller
+
 14.4.1
 ------
 * Add debug logs for investigating authentication issues

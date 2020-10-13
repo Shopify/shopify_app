@@ -451,7 +451,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test 'signal_access_token_required sets X-Shopify-API-Request-Unauthorized header' do
     with_application_test_routes do
       get :index_with_headers
-      assert_equal true, response.get_header('X-Shopify-API-Request-Failure-Unauthorized')
+      assert_equal 'true', response.get_header('X-Shopify-API-Request-Failure-Unauthorized')
     end
   end
 

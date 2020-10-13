@@ -6,50 +6,77 @@ module ShopifyApp
     include ShopifyApp::LoginProtection
 
     def callback
-      unless auth_hash
-        return respond_with_error
+      return respond_with_error if invalid_request?
+
+      store_access_token_and_build_session
+
+      if start_user_token_flow?
+        return respond_with_user_token_flow
       end
 
-      if jwt_request? && !valid_jwt_auth?
-        Rails.logger.debug("[ShopifyApp::CallbackController] Invalid JWT auth detected.")
-        return respond_with_error
-      end
+      perform_post_authenticate_jobs
 
-      if jwt_request?
-        Rails.logger.debug("[ShopifyApp::CallbackController] JWT request detected. Setting shopify session...")
-        set_shopify_session
-        head(:ok)
-      else
-        Rails.logger.debug("[ShopifyApp::CallbackController] Not a JWT request. Resetting session options...")
-        reset_session_options
-        set_shopify_session
-
-        if redirect_for_user_token?
-          Rails.logger.debug("[ShopifyApp::CallbackController] Redirecting for user token...")
-          return redirect_to(login_url_with_optional_shop)
-        end
-
-        install_webhooks
-        install_scripttags
-        perform_after_authenticate_job
-
-        redirect_to(return_address)
-      end
+      respond_successfully
     end
 
     private
 
+    def respond_successfully
+      if jwt_request?
+        head(:ok)
+      else
+        redirect_to(return_address)
+      end
+    end
+
+    def respond_with_user_token_flow
+      Rails.logger.debug("[ShopifyApp::CallbackController] Redirecting for user token...")
+      redirect_to(login_url_with_optional_shop)
+    end
+
+    def store_access_token_and_build_session
+      if native_browser_request?
+        Rails.logger.debug("[ShopifyApp::CallbackController] Not a JWT request. Resetting session options...")
+        reset_session_options
+      else
+        Rails.logger.debug("[ShopifyApp::CallbackController] JWT request detected. Setting shopify session...")
+      end
+      set_shopify_session
+    end
+
+    def invalid_request?
+      return true unless auth_hash
+
+      jwt_request? && !valid_jwt_auth?
+    end
+
+    def native_browser_request?
+      !jwt_request?
+    end
+
+    def perform_post_authenticate_jobs
+      install_webhooks
+      install_scripttags
+      perform_after_authenticate_job
+    end
+
     def respond_with_error
       if jwt_request?
+        Rails.logger.debug("[ShopifyApp::CallbackController] Invalid JWT auth detected.")
         head(:unauthorized)
       else
+        Rails.logger.debug("[ShopifyApp::CallbackController] Invalid non JWT auth detected.")
         flash[:error] = I18n.t('could_not_log_in')
         redirect_to(login_url_with_optional_shop)
       end
     end
 
-    def redirect_for_user_token?
-      ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+    def start_user_token_flow?
+      if jwt_request?
+        false
+      else
+        ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+      end
     end
 
     def jwt_request?
