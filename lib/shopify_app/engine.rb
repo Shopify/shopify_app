@@ -48,7 +48,7 @@ module ShopifyApp
         "ShopifyApp/#{ShopifyApp::VERSION}",
         "ShopifyAPI/#{::ShopifyAPI::VERSION}",
         "ActiveResource/#{::ActiveResource::VERSION::STRING}",
-        "Ruby/#{RUBY_VERSION}"
+        "Ruby/#{RUBY_VERSION}",
       ].join(' ')
     end
   end
