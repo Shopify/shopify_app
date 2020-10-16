@@ -42,5 +42,14 @@ module ShopifyApp
         end
       end
     end
+
+    initializer "shopify_app.user_agent" do
+      ::ShopifyAPI::Base.headers['User-Agent'] = [
+        "ShopifyApp/#{ShopifyApp::VERSION}",
+        "ShopifyAPI/#{::ShopifyAPI::VERSION}",
+        "ActiveResource/#{::ActiveResource::VERSION::STRING}",
+        "Ruby/#{RUBY_VERSION}"
+      ].join(' ')
+    end
   end
 end
