@@ -1,7 +1,7 @@
 ShopifyApp.configure do |config|
   config.application_name = "<%= @application_name %>"
-  config.api_key = ENV.fetch('SHOPIFY_API_KEY')
-  config.secret = ENV.fetch('SHOPIFY_API_SECRET')
+  config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence || raise('Missing SHOPIFY_API_KEY')
+  config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence || raise('Missing SHOPIFY_API_SECRET')
   config.old_secret = "<%= @old_secret %>"
   config.scope = "<%= @scope %>" # Consult this page for more scope options:
                                  # https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes
