@@ -15,7 +15,7 @@
 
     body {
       padding: 2.5em 0;
-      color: #212b37;
+      color: #202223;
       font-family: -apple-system,BlinkMacSystemFont,San Francisco,Roboto,Segoe UI,Helvetica Neue,sans-serif;
     }
 
@@ -44,7 +44,7 @@
     .subtitle {
       font-size: 0.8em;
       font-weight: 500;
-      color: #64737f;
+      color: #6D7175;
       line-height: 2em;
     }
 
@@ -103,9 +103,9 @@
 
   <main class="container" role="main">
     <% application_name = ShopifyApp.configuration.application_name %>
-    <h3 class="title">
+    <h1 class="title">
       <%= application_name.presence || 'Shopify App – Installation' %>
-    </h3>
+    </h1>
     <p class="subtitle">
       <label for="shop">Enter your shop domain to log in or install this app.</label>
     </p>
