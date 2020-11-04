@@ -47,20 +47,16 @@
                     <p><%= I18n.t('enable_cookies_body', app: ShopifyApp.configuration.application_name) %></p>
                   </div>
                   <div class="Polaris-Card__Section Polaris-Card__Section--subdued">
-                    <div class="Polaris-Stack Polaris-Stack--vertical">
-                      <div class="Polaris-Stack__Item">
-                        <p><%= I18n.t('enable_cookies_footer') %></p>
-                      </div>
-                      <div class="Polaris-Stack__Item">
-                        <div class="Polaris-Stack Polaris-Stack--distributionTrailing">
-                          <div class="Polaris-Stack__Item">
-                            <button type="button" class="Polaris-Button Polaris-Button--primary" id="AcceptCookies">
-                              <span class="Polaris-Button__Content"><span><%= I18n.t('enable_cookies_action') %></span></span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <p><%= I18n.t('enable_cookies_footer') %></p>
+                  </div>
+                </div>
+              </div>
+              <div class="Polaris-Stack__Item">
+                <div class="Polaris-Stack Polaris-Stack--distributionTrailing Polaris-Stack--distributionTrailingCustomSpacing">
+                  <div class="Polaris-Stack__Item">
+                    <button type="button" class="Polaris-Button Polaris-Button--primary" id="AcceptCookies">
+                      <span class="Polaris-Button__Content"><span><%= I18n.t('enable_cookies_action') %></span></span>
+                    </button>
                   </div>
                 </div>
               </div>
