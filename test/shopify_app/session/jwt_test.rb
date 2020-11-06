@@ -5,7 +5,7 @@ module ShopifyApp
   class JWTTest < ActiveSupport::TestCase
     TEST_SHOPIFY_DOMAIN = 'https://test.myshopify.io'
     TEST_SANITIZED_SHOPIFY_DOMAIN = 'test.myshopify.io'
-    TEST_USER_ID = 'test-user'
+    TEST_USER_ID = '121'
 
     setup do
       ShopifyApp.configuration.api_key = 'api_key'
@@ -19,7 +19,7 @@ module ShopifyApp
       jwt = JWT.new(token(p))
 
       assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
-      assert_equal TEST_USER_ID, jwt.shopify_user_id
+      assert_equal TEST_USER_ID.to_i, jwt.shopify_user_id
     end
 
     test "#shopify_domain and #shopify_user_id are returned using the old secret" do
@@ -28,7 +28,15 @@ module ShopifyApp
       jwt = JWT.new(t)
 
       assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
-      assert_equal TEST_USER_ID, jwt.shopify_user_id
+      assert_equal TEST_USER_ID.to_i, jwt.shopify_user_id
+    end
+
+    test "#shopify_user_id returns nil if sub is nil on token payload" do
+      p = payload
+      p['sub'] = nil
+      jwt = JWT.new(token(p))
+
+      assert_nil jwt.shopify_user_id
     end
 
     test "shopify_domain and shopify_user_id are nil if the jwt is invalid" do
