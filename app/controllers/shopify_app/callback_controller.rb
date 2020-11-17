@@ -30,16 +30,12 @@ module ShopifyApp
     end
 
     def respond_with_user_token_flow
-      Rails.logger.debug("[ShopifyApp::CallbackController] Redirecting for user token...")
       redirect_to(login_url_with_optional_shop)
     end
 
     def store_access_token_and_build_session
       if native_browser_request?
-        Rails.logger.debug("[ShopifyApp::CallbackController] Not a JWT request. Resetting session options...")
         reset_session_options
-      else
-        Rails.logger.debug("[ShopifyApp::CallbackController] JWT request detected. Setting shopify session...")
       end
       set_shopify_session
     end
@@ -62,10 +58,8 @@ module ShopifyApp
 
     def respond_with_error
       if jwt_request?
-        Rails.logger.debug("[ShopifyApp::CallbackController] Invalid JWT auth detected.")
         head(:unauthorized)
       else
-        Rails.logger.debug("[ShopifyApp::CallbackController] Invalid non JWT auth detected.")
         flash[:error] = I18n.t('could_not_log_in')
         redirect_to(login_url_with_optional_shop)
       end

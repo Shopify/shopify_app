@@ -10,19 +10,14 @@ module ShopifyApp
     end
 
     def new
-      if sanitized_shop_name.present?
-        Rails.logger.debug("[ShopifyApp::SessionsController] Sanitized shop name present. Authenticating...")
-        authenticate
-      end
+      authenticate if sanitized_shop_name.present?
     end
 
     def create
-      Rails.logger.debug("[ShopifyApp::SessionsController] Authenticating...")
       authenticate
     end
 
     def enable_cookies
-      Rails.logger.debug("[ShopifyApp::SessionsController] Enabling cookies...")
       return unless validate_shop_presence
 
       render(:enable_cookies, layout: false, locals: {
@@ -45,7 +40,6 @@ module ShopifyApp
     end
 
     def granted_storage_access
-      Rails.logger.debug("[ShopifyApp::SessionsController] Granted storage access.")
       return unless validate_shop_presence
 
       session['shopify.granted_storage_access'] = true
@@ -56,7 +50,6 @@ module ShopifyApp
     end
 
     def destroy
-      Rails.logger.debug("[ShopifyApp::SessionsController] Resetting session.")
       reset_session
       flash[:notice] = I18n.t('.logged_out')
       redirect_to(login_url_with_optional_shop)
@@ -73,23 +66,18 @@ module ShopifyApp
       set_user_tokens_option
 
       if user_agent_can_partition_cookies
-        Rails.logger.debug("[ShopifyApp::SessionsController] Authenticating with partitioning...")
         authenticate_with_partitioning
       else
-        Rails.logger.debug("[ShopifyApp::SessionsController] Authenticating normally...")
         authenticate_normally
       end
     end
 
     def authenticate_normally
       if request_storage_access?
-        Rails.logger.debug("[ShopifyApp::SessionsController] Redirecting to request storage access...")
         redirect_to_request_storage_access
       elsif authenticate_in_context?
-        Rails.logger.debug("[ShopifyApp::SessionsController] Authenticating in context...")
         authenticate_in_context
       else
-        Rails.logger.debug("[ShopifyApp::SessionsController] Authenticating at top level...")
         authenticate_at_top_level
       end
     end
@@ -107,7 +95,6 @@ module ShopifyApp
     # rubocop:disable Lint/SuppressedException
     def set_user_tokens_option
       if shop_session.blank?
-        Rails.logger.debug("[ShopifyApp::SessionsController] Shop session is blank.")
         session[:user_tokens] = false
         return
       end
@@ -130,7 +117,6 @@ module ShopifyApp
     def validate_shop_presence
       @shop = sanitized_shop_name
       unless @shop
-        Rails.logger.debug("[ShopifyApp::SessionsController] Invalid shop detected.")
         render_invalid_shop_error
         return false
       end
