@@ -50,6 +50,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   teardown do
     ShopifyApp.configuration.allow_jwt_authentication = false
+    ShopifyApp.configuration.allow_cookie_authentication = true
   end
 
   test '#index sets test cookie if embedded app and user agent can partition cookies' do
@@ -149,6 +150,18 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test "#current_shopify_session is nil when neither jwt nor cookie based auth are allowed" do
+    ShopifyApp.configuration.allow_cookie_authentication = false
+    with_application_test_routes do
+      session[:shop_id] = "shopify_id"
+      session[:user_id] = '145'
+      get :index
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).with(session[:shop_id]).returns(session).never
+      ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(session).never
+      assert_nil @controller.current_shopify_session
+    end
+  end
+
   test "#current_shopify_session retreives the session from storage" do
     with_application_test_routes do
       session[:shop_id] = "foobar"
@@ -165,6 +178,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
       assert @controller.current_shopify_session
     end
+  end
+
+  test "#current_shopify_session retrieves session when cookie authentication is enabled" do
+
   end
 
   test "#login_again_if_different_user_or_shop removes current session if the user changes when in per-user-token mode" do
