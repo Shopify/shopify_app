@@ -5,10 +5,10 @@
     this.redirectUrl = opts.redirectUrl;
   }
 
-  ITPHelper.prototype.redirect = function() {
-    sessionStorage.setItem('shopify.top_level_interaction', true);
-    window.location.href = this.redirectUrl;
-  }
+  // ITPHelper.prototype.redirect = function() {
+  //   sessionStorage.setItem('shopify.top_level_interaction', true);
+  //   window.location.href = this.redirectUrl;
+  // }
 
   ITPHelper.prototype.userAgentIsAffected = function() {
     return Boolean(document.hasStorageAccess);
