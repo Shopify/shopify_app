@@ -39,6 +39,7 @@ jobs:
       - name: Install Dependencies
         run: |
           bundle install
+          gem install rake
           yarn
       - name: Run Tests
         run: |
