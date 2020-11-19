@@ -21,6 +21,13 @@ jobs:
       #   # npm cache files are stored in `~/.npm` on Linux/macOS
       #   path: ~/.npm
       #   key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Cache gems
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-rubocop-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-rubocop-
       - name: Set up Ruby ${{ matrix.version }}
         uses: actions/setup-ruby@v1
         with: 
@@ -35,5 +42,5 @@ jobs:
           yarn
       - name: Run Tests
         run: |
-          yarn test
           bundle exec rake test
+          yarn test
