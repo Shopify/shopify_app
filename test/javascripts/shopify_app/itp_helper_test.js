@@ -14,6 +14,7 @@ suite('ITPHelper', () => {
     contentContainer.appendChild(button);
     document.body.appendChild(contentContainer);
     ITPHelperSandbox.stub(ITPHelper.prototype, 'redirect');
+    window.onbeforeunload = () => 'Oh no!';
   });
 
   teardown(() => {

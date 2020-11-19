@@ -25,6 +25,7 @@ suite('StorageAccessHelper', () => {
     document.body.appendChild(contentContainer);
     storageAccessHelper = new StorageAccessHelper(redirectDataStub);
     storageAccessHelperSandbox.stub(ITPHelper.prototype, 'redirect');
+    window.onbeforeunload = () => 'Oh no!';
   });
 
   teardown(() => {
