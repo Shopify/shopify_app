@@ -22,6 +22,6 @@
     "webpack": "^4.44.1"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"
+    "test": "./node_modules/.bin/karma start --browsers ChromeHeadlessNoSandbox --single-run"
   }
 }
