@@ -22,7 +22,6 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/controllers/home_controller.rb", /HomeController < ApplicationController/
     assert_file "app/views/home/index.html.erb"
-    assert_file "app/controllers/products_controller.rb"
   end
 
   test "creates authenticated home controller with home index view given --with_cookie_authentication option" do
@@ -30,7 +29,6 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
     assert_file "app/views/home/index.html.erb"
-    assert_no_file "app/controllers/products_controller.rb"
   end
 
   test "creates the home index view with embedded false" do

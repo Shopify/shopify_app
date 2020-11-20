@@ -11,6 +11,7 @@ module ShopifyApp
       class_option :scope, type: :array, default: ['read_products']
       class_option :embedded, type: :string, default: 'true'
       class_option :api_version, type: :string, default: nil
+      class_option :with_cookie_authentication, type: :boolean, default: false
 
       def create_shopify_app_initializer
         @application_name = format_array_argument(options['application_name'])
@@ -77,6 +78,10 @@ module ShopifyApp
 
       def format_array_argument(array)
         array.join(' ').tr('"', '')
+      end
+
+      def with_cookie_authentication?
+        options['with_cookie_authentication']
       end
     end
   end

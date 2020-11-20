@@ -180,10 +180,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session retrieves session when cookie authentication is enabled" do
-
-  end
-
   test "#login_again_if_different_user_or_shop removes current session if the user changes when in per-user-token mode" do
     with_application_test_routes do
       session[:shop_id] = "1"
