@@ -107,6 +107,7 @@ Options include:
 (e.g. `--scope read_products, write_orders, write_products` or `--scope "read_products, write_orders, write_products"`)
 For more information, refer to the [docs](http://docs.shopify.com/api/tutorials/oauth).
 * `embedded` - the default is to generate an [embedded app](http://docs.shopify.com/embedded-app-sdk), if you want a legacy non-embedded app then set this to false, `--embedded false`
+* __[Not recommended]__ `with-cookie-authentication` - sets up the authentication strategy of the app to use cookies. By default, it uses JWT based session tokens.
 
 You can update any of these settings later on easily; the arguments are simply for convenience.
 
@@ -121,10 +122,10 @@ After running the `install` generator, you can start your app with `bundle exec 
 $ rails generate shopify_app:home_controller
 ```
 
-This generator creates an example home controller and view which fetches and displays products using the Shopify API.
+This generator creates an example home controller and view which fetches and displays products using the Shopify API. By default, this generator creates an unauthenticated home_controller and a sample protected products_controller.
 
 Options include:
-* __[beta]__ `with-session-token`: This flag generates an unauthenticated home_controller and a protected sample products_controller. It also creates a home view that leverages a session token to fetch products from your products_controller. Use this flag if you plan to build a single-page application or to secure your app using JWT session tokens (e.g. `--with-session-token` or `--with-session-token true`). 
+* __[Not recommended]__ `with-cookie-authentication` - This flag generates an authenticated home_controller, where the authentication strategy relies cookies. By default, this generator creates an unauthenticated home_controller and protected sample products_controller.
 
 ### Products Controller Generator
 
