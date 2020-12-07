@@ -1,6 +1,5 @@
 *.gem
 .bundle
-Gemfile.lock
 pkg/*
 .DS_Store
 .yardoc
@@ -13,4 +12,3 @@ test/tmp/*
 /test/dummy/tmp/*
 /node_modules/
 .byebug_history
-
