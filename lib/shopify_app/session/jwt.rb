@@ -2,7 +2,9 @@
 module ShopifyApp
   class JWT
     class InvalidDestinationError < StandardError; end
+
     class MismatchedHostsError < StandardError; end
+
     class InvalidAudienceError < StandardError; end
 
     WARN_EXCEPTIONS = [
