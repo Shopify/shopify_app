@@ -2,7 +2,9 @@
 module ShopifyApp
   class JWT
     class InvalidDestinationError < StandardError; end
+
     class MismatchedHostsError < StandardError; end
+
     class InvalidAudienceError < StandardError; end
 
     WARN_EXCEPTIONS = [
@@ -25,7 +27,7 @@ module ShopifyApp
     end
 
     def shopify_user_id
-      @payload && @payload['sub']
+      @payload['sub'].to_i if @payload && @payload['sub']
     end
 
     private

@@ -1,3 +1,7 @@
+15.0.1
+------
+* Allow JWT session token `sub` field to be parsed as a string [#1103](https://github.com/Shopify/shopify_app/pull/1103)
+
 15.0.0
 ------
 * Change `X-Shopify-API-Request-Failure-Unauthorized` HTTP header value from boolean to string
