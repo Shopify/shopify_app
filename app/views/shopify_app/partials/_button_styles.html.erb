@@ -1,6 +1,5 @@
 <style>
   .Polaris-Button {
-    fill:#637381;
     position:relative;
     display:-webkit-inline-box;
     display:-ms-inline-flexbox;
@@ -15,12 +14,14 @@
     min-width:3.6rem;
     margin:0;
     padding:0.7rem 1.6rem;
-    background:linear-gradient(to bottom, white, #f9fafb);
-    border:1px solid #c4cdd5;
-    box-shadow:0 1px 0 0 rgba(22, 29, 37, 0.05);
-    border-radius:3px;
+    background-color:#ffffff;
+    border:1px solid #babfc3;
+    border-top-color: #c9cccf;
+    border-bottom-color: #babfc4;
+    box-shadow:0 1px 0 0 rgba(0, 0, 0, 0.05);
+    border-radius:4px;
     line-height:1;
-    color:#212b36;
+    color:#202223;
     text-align:center;
     cursor:pointer;
     -webkit-user-select:none;
@@ -29,30 +30,44 @@
     user-select:none;
     text-decoration:none;
     transition-property:background, border, box-shadow;
-    transition-duration:200ms;
+    transition-duration:100ms;
     transition-timing-function:cubic-bezier(0.64, 0, 0.35, 1);
   }
 
   .Polaris-Button:hover {
-    background:linear-gradient(to bottom, #f9fafb, #f4f6f8);
-    border-color:#c4cdd5;
+    background-color:#f6f6f7;
   }
 
   .Polaris-Button:focus {
-    border-color:#5c6ac4;
     outline:0;
-    box-shadow:0 0 0 1px #5c6ac4;
+  }
+
+  .Polaris-Button:focus:after {
+    box-shadow:0 0 0 .2rem #448fff;
+  }
+
+  .Polaris-Button:after {
+    content:'';
+    position:absolute;
+    z-index:1;
+    top:-.2rem;
+    right:-.2rem;
+    bottom:-.2rem;
+    left:-.2rem;
+    display:block;
+    pointer-events:none;
+    box-shadow:0 0 0 -.2rem #448fff;
+    transition:box-shadow 100ms cubic-bezier(0.64, 0, 0.35, 1);
+    border-radius:5px;
   }
 
   .Polaris-Button:active {
-    background:linear-gradient(to bottom, #f4f6f8, #f4f6f8);
-    border-color:#c4cdd5;
-    box-shadow:0 0 0 0 transparent, inset 0 1px 1px 0 rgba(99, 115, 129, 0.1), inset 0 1px 4px 0 rgba(99, 115, 129, 0.2);
+    background-color:#f1f2f3);
   }
 
   .Polaris-Button__Content {
-    font-size:1.5rem;
-    font-weight:400;
+    font-size:1.4rem;
+    font-weight:500;
     line-height:1.6rem;
     text-transform:initial;
     letter-spacing:initial;
@@ -70,35 +85,25 @@
     min-height:1px;
   }
 
-  @media (min-width: 40em) {
-    .Polaris-Button__Content {
-      font-size:1.4rem;
-    }
-  }
-
   .Polaris-Button--primary {
-    background:linear-gradient(to bottom, #6371c7, #5563c1);
-    border-color:#3f4eae;
-    box-shadow:inset 0 1px 0 0 #6774c8, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 0 0 transparent;
+    background-color:#008060;
+    border-color:transparent;
+    border-width:0;
     color:white;
-    fill:white;
   }
 
   .Polaris-Button--primary:hover {
-    background:linear-gradient(to bottom, #5c6ac4, #4959bd);
-    border-color:#3f4eae;
+    background-color:#006e52;
+    border-color:transparent;
     color:white;
-    text-decoration:none;
-  }
-
-  .Polaris-Button--primary:focus {
-    border-color:#202e78;
-    box-shadow:inset 0 1px 0 0 #6f7bcb, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 0 1px #202e78;
   }
 
   .Polaris-Button--primary:active {
-    background:linear-gradient(to bottom, #3f4eae, #3f4eae);
-    border-color:#38469b;
-    box-shadow:inset 0 0 0 0 transparent, 0 1px 0 0 rgba(22, 29, 37, 0.05), 0 0 1px 0 #38469b;
+    background-color:#005e46;
+    border-color:transparent;
+  }
+
+  .Polaris-Button--sizeLarge {
+    padding:1.1rem 2.4rem;
   }
 </style>
