@@ -1,3 +1,7 @@
+15.1.0
+------
+* Update all `html.erb` and `css` files to correspond with updated store admin design language [#1102](https://github.com/Shopify/shopify_app/pull/1102)
+
 15.0.1
 ------
 * Allow JWT session token `sub` field to be parsed as a string [#1103](https://github.com/Shopify/shopify_app/pull/1103)
