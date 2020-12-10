@@ -1,4 +1,4 @@
-15.1.0
+16.0.0
 ------
 * Update all `html.erb` and `css` files to correspond with updated store admin design language [#1102](https://github.com/Shopify/shopify_app/pull/1102)
 
