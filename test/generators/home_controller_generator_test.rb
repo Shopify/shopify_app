@@ -31,6 +31,22 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/home/index.html.erb"
   end
 
+  test "creates authenticated home controller with home index view given --embedded false option" do
+    ShopifyApp.configuration.embedded_app = nil
+    run_generator %w(--embedded false)
+
+    assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
+    assert_file "app/views/home/index.html.erb"
+  end
+
+  test "creates authenticated home controller with home index view when embedded false" do
+    ShopifyApp.configuration.embedded_app = false
+    run_generator
+
+    assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
+    assert_file "app/views/home/index.html.erb"
+  end
+
   test "creates the home index view with embedded false" do
     ShopifyApp.configuration.embedded_app = false
     run_generator

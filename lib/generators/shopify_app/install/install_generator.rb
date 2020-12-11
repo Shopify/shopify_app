@@ -81,7 +81,7 @@ module ShopifyApp
       end
 
       def with_cookie_authentication?
-        options['with_cookie_authentication']
+        options['with_cookie_authentication'] || !embedded_app?
       end
     end
   end

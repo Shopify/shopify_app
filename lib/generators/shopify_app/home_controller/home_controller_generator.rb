@@ -7,6 +7,7 @@ module ShopifyApp
       source_root File.expand_path('../templates', __FILE__)
 
       class_option :with_cookie_authentication, type: :boolean, default: false
+      class_option :embedded, type: :string, default: 'true'
 
       def create_home_controller
         @with_cookie_authentication = options['with_cookie_authentication']
@@ -29,11 +30,11 @@ module ShopifyApp
       private
 
       def embedded_app?
-        ShopifyApp.configuration.embedded_app?
+        ShopifyApp.configuration.embedded_app? || options['embedded'] == 'true'
       end
 
       def with_cookie_authentication?
-        @with_cookie_authentication
+        @with_cookie_authentication || !embedded_app?
       end
 
       def home_controller_template
