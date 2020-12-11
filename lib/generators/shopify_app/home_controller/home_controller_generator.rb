@@ -10,8 +10,6 @@ module ShopifyApp
       class_option :embedded, type: :string, default: 'true'
 
       def create_home_controller
-        @with_cookie_authentication = options['with_cookie_authentication']
-
         template(home_controller_template, 'app/controllers/home_controller.rb')
       end
 
@@ -29,16 +27,26 @@ module ShopifyApp
 
       private
 
+      def embedded?
+        options['embedded'] == 'true'
+      end
+
       def embedded_app?
-        ShopifyApp.configuration.embedded_app? || options['embedded'] == 'true'
+        ShopifyApp.configuration.embedded_app?
       end
 
       def with_cookie_authentication?
-        @with_cookie_authentication || !embedded_app?
+        options['with_cookie_authentication']
       end
 
       def home_controller_template
-        with_cookie_authentication? ? 'home_controller.rb' : 'unauthenticated_home_controller.rb'
+        return 'unauthenticated_home_controller.rb' unless authenticated_home_controller_required?
+
+        'home_controller.rb'
+      end
+
+      def authenticated_home_controller_required?
+        with_cookie_authentication? || !embedded? || !embedded_app?
       end
     end
   end
