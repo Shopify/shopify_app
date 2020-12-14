@@ -57,6 +57,7 @@ module ShopifyApp
     end
 
     def user_session_by_cookie
+      return unless ShopifyApp.configuration.allow_cookie_authentication
       return unless session[:user_id].present?
       ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
     end
@@ -72,6 +73,7 @@ module ShopifyApp
     end
 
     def shop_session_by_cookie
+      return unless ShopifyApp.configuration.allow_cookie_authentication
       return unless session[:shop_id].present?
       ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
     end

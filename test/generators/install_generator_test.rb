@@ -73,7 +73,15 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "creats and injects into omniauth initializer" do
+  test "uses cookie based auth strategy for non embedded app" do
+    run_generator %w(--embedded false)
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match 'config.allow_jwt_authentication = false', shopify_app
+      assert_match 'config.allow_cookie_authentication = true', shopify_app
+    end
+  end
+
+  test "creates and injects into omniauth initializer" do
     run_generator
     assert_file "config/initializers/omniauth.rb" do |omniauth|
       assert_match "provider :shopify", omniauth
@@ -97,6 +105,24 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/environments/development.rb" do |config|
       assert_match "config.hosts = (config.hosts rescue []) << /\\w+\\.ngrok\\.io/", config
+    end
+  end
+
+  test "enables session token auth and disables cookie auth when --with-cookie-authentication is not set" do
+    run_generator
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match "config.embedded_app = true", shopify_app
+      assert_match 'config.allow_jwt_authentication = true', shopify_app
+      assert_match 'config.allow_cookie_authentication = false', shopify_app
+    end
+  end
+
+  test "disables session token auth and enables cookie auth when --with-cookie-authentication is set" do
+    run_generator %w(--with-cookie-authentication)
+    assert_file "config/initializers/shopify_app.rb" do |shopify_app|
+      assert_match "config.embedded_app = true", shopify_app
+      assert_match 'config.allow_jwt_authentication = false', shopify_app
+      assert_match 'config.allow_cookie_authentication = true', shopify_app
     end
   end
 end
