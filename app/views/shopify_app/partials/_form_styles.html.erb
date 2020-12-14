@@ -1,0 +1,56 @@
+<style>
+  .Polaris-Label {
+    margin-bottom:.4rem;
+  }
+
+  .Polaris-Label__Text {
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .Polaris-TextField {
+    position:relative;
+    margin-bottom:1.6rem;
+  }
+
+  .Polaris-TextField--InlineError {
+    margin-bottom:.4rem;
+  }
+
+  .Polaris-TextField__Input {
+    width:100%;
+    padding:.5rem 1.2rem;
+    border:1px solid #c9cccf;
+    border-top-color:#aeb4b9;
+    border-radius:4px;
+    box-shadow:none;
+    line-height:2.4rem;
+  }
+
+  .Polaris-TextField__Input:focus {
+    outline:none;
+  }
+
+  .Polaris-TextField__Backdrop:after {
+    content:'';
+    position:absolute;
+    z-index:1;
+    top:-.2rem;
+    right:-.2rem;
+    bottom:-.2rem;
+    left:-.2rem;
+    display:block;
+    pointer-events:none;
+    box-shadow:0 0 0 -.2rem #448fff;
+    transition:box-shadow .1s cubic-bezier(0.64, 0, 0.35, 1);
+    border-radius:5px;
+  }
+
+  .Polaris-TextField__Input:focus~.Polaris-TextField__Backdrop:after {
+    box-shadow:0 0 0 .2rem #448fff;
+  }
+
+ .Polaris-InlineError {
+   color:#d72c0d;
+   margin-bottom:1.6rem;
+ }
+</style>
