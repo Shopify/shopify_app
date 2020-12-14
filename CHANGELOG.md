@@ -1,3 +1,8 @@
+16.1.0
+------
+* Use Session Token auth strategy by default for new embedded apps [#1111](https://github.com/Shopify/shopify_app/pull/1111)
+* Create optional `EnsureAuthenticatedLinks` concern to authenticate deep links using Turbolinks [#1118](https://github.com/Shopify/shopify_app/pull/1118)
+
 16.0.0
 ------
 * Update all `html.erb` and `css` files to correspond with updated store admin design language [#1102](https://github.com/Shopify/shopify_app/pull/1102)

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (16.0.0)
+    shopify_app (16.1.0)
       browser_sniffer (~> 1.2.2)
       jwt (~> 2.2.1)
       omniauth-shopify-oauth2 (~> 2.2.2)
