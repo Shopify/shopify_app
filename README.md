@@ -279,6 +279,21 @@ The engine provides a `ShopifyApp::Authenticated` concern which should be includ
 
 For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
 
+### EnsureAuthenticatedLinks
+
+The `ShopifyApp::EnsureAuthenticatedLinks` concern helps authenticate users that access protected pages of your app directly.
+
+Include this concern in your app's `AuthenticatedController` if your app uses session tokens with [Turbolinks](https://shopify.dev/tutorials/authenticate-server-side-rendered-apps-with-session-tokens-app-bridge-turbolinks). It adds a `before_action` filter that detects whether a session token is present or not. If a session is not found, the user is redirected to your app's splash page path (`root_path`) along with `return_to` and `shop` parameters.
+
+Example `AuthenticatedController`:
+
+```rb
+class AuthenticatedController < ApplicationController
+  include ShopifyApp::EnsureAuthenticatedLinks
+  include ShopifyApp::Authenticated
+end
+```
+
 ### AfterAuthenticate Job
 
 If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job, update your initializer as follows:
