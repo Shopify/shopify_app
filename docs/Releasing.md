@@ -5,6 +5,7 @@
 1. Create a pull request with the following changes:
     - Update the version of ShopifyApp in lib/shopify_app/version.rb
     - Update the version of shopify_app in package.json
+    - Run `bundle` to update `Gemfile.lock`
     - Add a CHANGELOG entry for the new release with the date
     - Change the title of the PR to something like: "Packaging for release X.Y.Z"
 1. Merge your pull request
