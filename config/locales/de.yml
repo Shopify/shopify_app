@@ -4,19 +4,19 @@ de:
   could_not_log_in: Shopify Store Login fehlgeschlagen
   invalid_shop_url: Ungültige Shop-Domain
   enable_cookies_heading: Cookies von %{app} aktivieren
-  enable_cookies_body: Sie müssen Cookies in diesem Browser manuell aktivieren, um
-    %{app} in Shopify verwenden zu können.
-  enable_cookies_footer: Mithilfe von Cookies kann die App Sie authentifizieren, indem
-    Ihre Einstellungen und personenbezogenen Daten vorübergehend gespeichert werden.
-    Sie laufen nach 30 Tagen ab.
+  enable_cookies_body: Du musst Cookies in diesem Browser manuell aktivieren, um %{app}
+    in Shopify verwenden zu können.
+  enable_cookies_footer: Mithilfe von Cookies kann die App dich authentifizieren,
+    indem deine Einstellungen und personenbezogenen Daten vorübergehend gespeichert
+    werden. Sie laufen nach 30 Tagen ab.
   enable_cookies_action: Cookies aktivieren
-  top_level_interaction_heading: Ihr Browser muss %{app} authentifizieren
-  top_level_interaction_body: Ihr Browser verlangt, dass Apps wie %{app} Sie um Zugriff
-    auf Cookies bitten, bevor Shopify sie für Sie öffnen kann.
+  top_level_interaction_heading: Dein Browser muss %{app} authentifizieren
+  top_level_interaction_body: Dein Browser verlangt, dass Apps wie %{app} dich um
+    Zugriff auf Cookies bitten, bevor Shopify sie für dich öffnen kann.
   top_level_interaction_action: Weiter
   request_storage_access_heading: "%{app} braucht Zugriff auf Cookies"
-  request_storage_access_body: Damit kann die App Sie authentifizieren, indem Ihre
-    Einstellungen und personenbezogenen Daten vorübergehend gespeichert werden. Klicken
-    Sie auf "Weiter" und erlauben Sie den Cookies, die App zu verwenden.
+  request_storage_access_body: Damit kann die App dich authentifizieren, indem deine
+    Einstellungen und personenbezogenen Daten vorübergehend gespeichert werden. Klicke
+    auf "Weiter" und erlaube Cookies, um die App zu verwenden.
   request_storage_access_footer: Cookies laufen nach 30 Tagen ab.
   request_storage_access_action: Weiter
