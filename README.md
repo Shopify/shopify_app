@@ -72,6 +72,19 @@ The latest version of shopify_app is compatible with Rails `>= 5`. Use version `
 Generators
 ----------
 
+### API Keys
+
+Before running the generators, you'll need to ensure your app can read the Shopify environment variables `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET`.
+
+A common approach is to use the [dotenv-rails](https://github.com/bkeepers/dotenv) gem, along with an `.env` file in the following format:
+
+```
+SHOPIFY_API_KEY=your api key
+SHOPIFY_API_SECRET=your api secret
+```
+
+These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
+
 ### Default Generator
 
 The default generator will run the `install`, `shop`, `authenticated_controller`, and `home_controller` generators. This is the recommended way to start a new app from scratch:
@@ -82,18 +95,6 @@ $ rails generate shopify_app
 
 After running the generator, you will need to run `rails db:migrate` to add new tables to your database. You can start your app with `bundle exec rails server` and install your app by visiting `http://localhost` in your web browser.
 
-### API Keys
-
-The default and install generators have been updated to source Shopify API key and secret from an Environment (`.env`) variables file, which you will need to create with the following format:
-
-```
-SHOPIFY_API_KEY=your api key
-SHOPIFY_API_SECRET=your api secret
-```
-
-These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
-
-**You will need to load the ENV variables into your environment, you can do this with the [dot-env](https://github.com/bkeepers/dotenv) gem or any other method you wish to.**
 
 ### Install Generator
 
