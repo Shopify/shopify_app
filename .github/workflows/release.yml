@@ -1,0 +1,20 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Extract tag name
+      id: tag
+      run: echo "::set-output name=value::${GITHUB_REF##*/}"
+    - uses: actions/checkout@v2
+
+    - name: Create Release # https://hub.github.com/hub-release.1.html
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: hub release create ${{ steps.tag.outputs.value }}
