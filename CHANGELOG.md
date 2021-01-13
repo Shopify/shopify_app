@@ -1,3 +1,7 @@
+Unreleased
+----------
+* Rails 6.1 is not yet supported [#1134](https://github.com/Shopify/shopify_app/pull/1134)
+
 16.1.0
 ------
 * Use Session Token auth strategy by default for new embedded apps [#1111](https://github.com/Shopify/shopify_app/pull/1111)
