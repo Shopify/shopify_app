@@ -76,16 +76,18 @@ Generators
 
 ### API Keys
 <!-- This anchor name `#api-keys` is linked to from user output in `templates/shopify_app.rb.tt` so beware of changing -->
-Before running the generators, you'll need to ensure your app can read the Shopify environment variables `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET`.
+Before starting the app, you'll need to ensure it can read the Shopify environment variables `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET`.
 
-A common approach is to use the [dotenv-rails](https://github.com/bkeepers/dotenv) gem, along with an `.env` file in the following format:
+In a development environment, a common approach is to use the [dotenv-rails](https://github.com/bkeepers/dotenv) gem, along with an `.env` file in the following format:
 
 ```
 SHOPIFY_API_KEY=your api key
 SHOPIFY_API_SECRET=your api secret
 ```
 
-These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard]. If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
+These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard].
+(If you are using [shopify-app-cli](https://github.com/Shopify/) this `.env` file will be created automatically).
+If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
 
 ### Default Generator
 
