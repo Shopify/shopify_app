@@ -75,7 +75,7 @@ Generators
 ----------
 
 ### API Keys
-
+<!-- This anchor name is linked to from  `templates/shopify_app.rb.tt` so beware of changing -->
 Before running the generators, you'll need to ensure your app can read the Shopify environment variables `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET`.
 
 A common approach is to use the [dotenv-rails](https://github.com/bkeepers/dotenv) gem, along with an `.env` file in the following format:
