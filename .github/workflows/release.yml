@@ -14,7 +14,11 @@ jobs:
       run: echo "::set-output name=value::${GITHUB_REF##*/}"
     - uses: actions/checkout@v2
 
-    - name: Create Release # https://hub.github.com/hub-release.1.html
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: hub release create ${{ steps.tag.outputs.value }}
+      with:
+        tag_name: ${{ steps.tag.outputs.value }}
+        release_name: ${{ steps.tag.outputs.value }}
