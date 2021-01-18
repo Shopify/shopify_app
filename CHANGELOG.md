@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Don't attempt to read Shopify environment variables when the generators are running, since they may not be present yet [#1144](https://github.com/Shopify/shopify_app/pull/1144)
+
 17.0.0 (January 13, 2021)
 ------
 * Rails 6.1 is not yet supported [#1134](https://github.com/Shopify/shopify_app/pull/1134)

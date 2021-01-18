@@ -1,16 +1,18 @@
-ShopifyApp.configure do |config|
-  config.application_name = "<%= @application_name %>"
-  config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence || raise('Missing SHOPIFY_API_KEY')
-  config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence || raise('Missing SHOPIFY_API_SECRET')
-  config.old_secret = "<%= @old_secret %>"
-  config.scope = "<%= @scope %>" # Consult this page for more scope options:
-                                 # https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes
-  config.embedded_app = <%= embedded_app? %>
-  config.after_authenticate_job = false
-  config.api_version = "<%= @api_version %>"
-  config.shop_session_repository = 'Shop'
-  config.allow_jwt_authentication = <%= !with_cookie_authentication? %>
-  config.allow_cookie_authentication = <%= with_cookie_authentication? %>
+unless defined? Rails::Generators
+  ShopifyApp.configure do |config|
+    config.application_name = "<%= @application_name %>"
+    config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence || raise('Missing SHOPIFY_API_KEY. See https://github.com/Shopify/shopify_app#api-keys')
+    config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence || raise('Missing SHOPIFY_API_SECRET. See https://github.com/Shopify/shopify_app#api-keys')
+    config.old_secret = "<%= @old_secret %>"
+    config.scope = "<%= @scope %>" # Consult this page for more scope options:
+                                   # https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes
+    config.embedded_app = <%= embedded_app? %>
+    config.after_authenticate_job = false
+    config.api_version = "<%= @api_version %>"
+    config.shop_session_repository = 'Shop'
+    config.allow_jwt_authentication = <%= !with_cookie_authentication? %>
+    config.allow_cookie_authentication = <%= with_cookie_authentication? %>
+  end
 end
 
 # ShopifyApp::Utils.fetch_known_api_versions                        # Uncomment to fetch known api versions from shopify servers on boot
