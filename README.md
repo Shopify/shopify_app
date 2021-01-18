@@ -86,7 +86,7 @@ SHOPIFY_API_SECRET=your api secret
 ```
 
 These values can be found on the "App Setup" page in the [Shopify Partners Dashboard][dashboard].
-(If you are using [shopify-app-cli](https://github.com/Shopify/) this `.env` file will be created automatically).
+(If you are using [shopify-app-cli](https://github.com/Shopify/shopify-app-cli) this `.env` file will be created automatically).
 If you are checking your code into a code repository, ensure your `.gitignore` prevents your `.env` file from being checked into any publicly accessible code.
 
 ### Default Generator
