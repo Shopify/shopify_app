@@ -1,6 +1,6 @@
 {
   "name": "shopify_app",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "repository": "git@github.com:Shopify/shopify_app.git",
   "author": "Shopify",
   "license": "MIT",
