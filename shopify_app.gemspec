@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.author      = "Shopify"
   s.summary     = 'This gem is used to get quickly started with the Shopify API'
 
-  s.required_ruby_version = ">= 2.5"
+  s.required_ruby_version = "~> 2.5"
 
   s.metadata['allowed_push_host'] = 'https://rubygems.org'
 
