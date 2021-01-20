@@ -3,7 +3,7 @@ Unreleased
 
 17.0.2 (January 20, 2021)
 ------
-* Fix failing script tags and webhooks installs after performing OAuth [#1151](https://github.com/Shopify/shopify_app/pull/1151)
+* Fix failing script tags and webhooks installs after completing OAuth [#1151](https://github.com/Shopify/shopify_app/pull/1151)
 
 17.0.1 (January 18, 2021)
 ------
