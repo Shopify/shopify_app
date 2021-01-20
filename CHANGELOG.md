@@ -1,6 +1,10 @@
 Unreleased
 ----------
 
+17.0.2 (January 20, 2021)
+------
+* Fix failing script tags and webhooks installs after performing OAuth [#1151](https://github.com/Shopify/shopify_app/pull/1151)
+
 17.0.1 (January 18, 2021)
 ------
 * Don't attempt to read Shopify environment variables when the generators are running, since they may not be present yet [#1144](https://github.com/Shopify/shopify_app/pull/1144)

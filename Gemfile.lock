@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (17.0.1)
+    shopify_app (17.0.2)
       browser_sniffer (~> 1.2.2)
       jwt (~> 2.2.1)
       omniauth-shopify-oauth2 (~> 2.2.2)
@@ -96,7 +96,7 @@ GEM
     faraday-net_http (1.0.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    graphql (1.11.6)
+    graphql (1.11.7)
     graphql-client (0.16.0)
       activesupport (>= 3.0)
       graphql (~> 1.8)
@@ -207,7 +207,7 @@ GEM
     rubocop-shopify (1.0.7)
       rubocop (~> 1.4)
     ruby-progressbar (1.10.1)
-    ruby2_keywords (0.0.2)
+    ruby2_keywords (0.0.4)
     shopify_api (9.2.0)
       activeresource (>= 4.1.0, < 6.0.0)
       graphql-client
