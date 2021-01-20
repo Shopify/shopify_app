@@ -199,7 +199,9 @@ module ShopifyApp
 
     test '#install_webhooks uses the shop token for shop strategy' do
       shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(shop_session)
+      ShopifyApp::SessionRepository
+        .expects(:retrieve_shop_session_by_shopify_domain)
+        .returns(shop_session)
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
@@ -212,7 +214,9 @@ module ShopifyApp
 
     test '#install_webhooks still uses the shop token for user strategy' do
       shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
-      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('135').returns(shop_session)
+      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain)
+        .with(TEST_SHOPIFY_DOMAIN)
+        .returns(shop_session)
 
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
@@ -227,7 +231,8 @@ module ShopifyApp
 
     test '#install_webhooks falls back to user token for user strategy if shop is not in session' do
       user_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
-      ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(user_session).times(2)
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(nil)
+      ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).returns(user_session)
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
