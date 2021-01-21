@@ -119,4 +119,23 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.allow_cookie_authentication = true', shopify_app
     end
   end
+
+  test "generates javascript assets required when embedded" do
+    ShopifyApp.stubs(:use_webpacker?).returns(false)
+
+    run_generator %w(--embedded)
+    assert_file "app/assets/javascripts/shopify_app.js"
+    assert_file "app/assets/javascripts/flash_messages.js"
+  end
+
+  test "generates javascript assets required for Webpacker if Webpacker is configured when embedded" do
+    ShopifyApp.stubs(:use_webpacker?).returns(true)
+    provide_application_js_file
+
+    run_generator %w(--embedded)
+    assert_file "app/javascript/shopify_app/shopify_app_turbolinks.js"
+    assert_file "app/javascript/shopify_app/shopify_app.js"
+    assert_file "app/javascript/shopify_app/flash_messages.js"
+    assert_file "app/javascript/shopify_app/index.js"
+  end
 end

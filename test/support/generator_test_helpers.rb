@@ -30,6 +30,10 @@ module GeneratorTestHelpers
     copy_to_generator_root("config/environments", "development.rb")
   end
 
+  def provide_application_js_file
+    copy_to_generator_root("app/javascript/packs", "application.js")
+  end
+
   private
 
   def copy_to_generator_root(destination, template, rename: nil)
