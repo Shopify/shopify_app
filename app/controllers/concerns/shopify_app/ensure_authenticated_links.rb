@@ -13,6 +13,8 @@ module ShopifyApp
     def redirect_to_splash_page
       splash_page_path = root_path(return_to: request.fullpath, shop: current_shopify_domain)
       redirect_to(splash_page_path)
+    rescue ShopifyApp::LoginProtection::ShopifyDomainNotFound
+      redirect_to(ShopifyApp.configuration.login_url)
     end
 
     def missing_expected_jwt?
