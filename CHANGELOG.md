@@ -1,5 +1,8 @@
 Unreleased
 ----------
+
+17.0.3 (January 22, 2021)
+----------
 * Amend fix for #1144 to raise on missing API keys only when running the server [#1155](https://github.com/Shopify/shopify_app/pull/1155)
 
 17.0.2 (January 20, 2021)
