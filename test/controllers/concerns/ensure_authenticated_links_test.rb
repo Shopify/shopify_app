@@ -55,4 +55,20 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
 
     assert_response :ok
   end
+
+  test 'redirects to login page if current shopify domain is not found' do
+    @controller.expects(:current_shopify_domain).raises(ShopifyApp::LoginProtection::ShopifyDomainNotFound)
+    expect_redirect_error(ShopifyApp::LoginProtection::ShopifyDomainNotFound, "Could not determine current shop domain")
+
+    get :some_link
+
+    assert_redirected_to ShopifyApp.configuration.login_url
+  end
+
+  private
+
+  def expect_redirect_error(klass, message)
+    expected_message = "[ShopifyApp::EnsureAuthenticatedLinks] Redirecting to login: [#{klass}] #{message}"
+    Rails.logger.expects(:warn).once.with(expected_message)
+  end
 end
