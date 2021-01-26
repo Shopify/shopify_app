@@ -113,7 +113,9 @@ module ShopifyApp
       assert_equal 'valid-shop-id', session[:shop_id]
     end
 
-    test '#callback clears a stale shop_id if user session is for a different shop' do
+    test '#callback clears a stale shop_id if user session is for a different shop when using cookie auth' do
+      ShopifyApp.configuration.allow_jwt_authentication = false
+      ShopifyApp.configuration.allow_cookie_authentication = true
       mock_shopify_user_omniauth
       session[:shop_id] = 'valid-shop-id'
       other_shop_session = ShopifyAPI::Session.new(
@@ -311,6 +313,9 @@ module ShopifyApp
     end
 
     test "#callback redirects to the root_url when not using JWT authentication" do
+      ShopifyApp.configuration.allow_jwt_authentication = false
+      ShopifyApp.configuration.allow_cookie_authentication = true
+
       mock_shopify_omniauth
 
       get :callback, params: { shop: 'shop' }

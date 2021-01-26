@@ -12,8 +12,6 @@ module ShopifyApp
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      ShopifyApp.configuration = nil
-      ShopifyApp.configuration.embedded_app = true
 
       I18n.locale = :en
 
@@ -147,6 +145,31 @@ module ShopifyApp
       get :new, params: { shop: non_shop_address }
       assert_response :ok
       assert_match(/Shopify App — Installation/, response.body)
+    end
+
+    test "#new sets session[:user_tokens] to true if online tokens are expected" do
+      session[:shop_id] = 1
+      shop_session = ShopifyAPI::Session.new(
+        domain: 'my-shop',
+        token: '1234',
+        api_version: nil,
+      )
+      ShopifyApp::SessionRepository.user_storage.stubs(:present?).returns(true)
+      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with(session[:shop_id]).returns(shop_session)
+
+      get :new, params: { shop: 'my-shop' }
+
+      assert session[:user_tokens]
+    end
+
+    test "#new sets session[:user_tokens] to false if there is no existing offline token" do
+      session[:shop_id] = 1
+      ShopifyApp::SessionRepository.user_storage.stubs(:present?).returns(true)
+      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with(session[:shop_id]).returns(nil)
+
+      get :new, params: { shop: 'my-shop' }
+
+      refute session[:user_tokens]
     end
 
     ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com',
