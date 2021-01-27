@@ -254,17 +254,19 @@ module ShopifyApp
       assert_redirected_to "#{ShopifyApp.configuration.root_url}?shop=shop.myshopify.com"
     end
 
-    test "#destroy should clear shopify from session and redirect to login with notice" do
+    test "#destroy should reset rails session and redirect to login with notice" do
       shop_id = 1
       session[:shopify] = shop_id
       session[:shopify_domain] = 'shop1.myshopify.com'
       session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+      session[:foo] = 'bar'
 
       get :destroy
 
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
       assert_nil session[:shopify_user]
+      assert_nil session[:foo]
       assert_redirected_to login_path
       assert_equal 'Successfully logged out', flash[:notice]
     end
