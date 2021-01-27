@@ -1,6 +1,10 @@
 Unreleased
 ----------
 
+17.0.5 (January 27, 2021)
+----------
+* Fix omniauth strategy not being set correctly for apps using session tokens [#1164](https://github.com/Shopify/shopify_app/pull/1164)
+
 17.0.4 (January 25, 2021)
 ----------
 * Redirect user to login page if shopify domain is not found in the `EnsureAuthenticatedLinks` concern [#1158](https://github.com/Shopify/shopify_app/pull/1158) 
