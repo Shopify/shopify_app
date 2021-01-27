@@ -526,10 +526,10 @@ With `lib/shopify_app/test_helpers/all'` more tests can be added and will only n
 Testing an embedded app outside the Shopify admin
 -------------------------------------------------
 
-By default, loading your embedded app will redirect to the Shopify admin, with the app view loaded in an `iframe`. If you need to load your app outside of the Shopify admin (e.g., for performance testing), you can change `forceRedirect: true` to `false` in `ShopifyApp.init` block in the `embedded_app` view. To keep the redirect on in production but off in your `development` and `test` environments, you can use:
+By default, loading your embedded app will redirect to the Shopify admin, with the app view loaded in an `iframe`. If you need to load your app outside of the Shopify admin (e.g., for performance testing), you can change `force_redirect: true` to `false` in `<%= content_tag(:div, nil, id: 'shopify-app-init') %>` block in the `embedded_app` view. To keep the redirect on in production but off in your `development` and `test` environments, you can use:
 
 ```javascript
-forceRedirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
+force_redirect: <%= Rails.env.development? || Rails.env.test? ? 'false' : 'true' %>
 ```
 
 Migrating to 13.0.0
