@@ -273,9 +273,6 @@ module ShopifyApp
 
     test '#destroy should redirect with notice in spanish' do
       I18n.locale = :es
-      shop_id = 1
-      session[:shopify] = shop_id
-      session[:shopify_domain] = 'shop1.myshopify.com'
 
       get :destroy
 
