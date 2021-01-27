@@ -92,9 +92,18 @@ module ShopifyApp
       end
     end
 
+    # Override shop_session_by_cookie from LoginProtection to bypass allow_cookie_authentication
+    # setting check because session cookies are justified at top level
+    def shop_session_by_cookie
+      return unless session[:shop_id].present?
+      ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
+    end
+
     # rubocop:disable Lint/SuppressedException
     def set_user_tokens_option
-      if shop_session.blank?
+      current_shop_session = shop_session
+
+      if current_shop_session.blank?
         session[:user_tokens] = false
         return
       end
@@ -102,9 +111,9 @@ module ShopifyApp
       session[:user_tokens] = ShopifyApp::SessionRepository.user_storage.present?
 
       ShopifyAPI::Session.temp(
-        domain: shop_session.domain,
-        token: shop_session.token,
-        api_version: shop_session.api_version
+        domain: current_shop_session.domain,
+        token: current_shop_session.token,
+        api_version: current_shop_session.api_version
       ) do
         ShopifyAPI::Metafield.find(:token_validity_bogus_check)
       end

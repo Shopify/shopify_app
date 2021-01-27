@@ -48,11 +48,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
                                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   end
 
-  teardown do
-    ShopifyApp.configuration.allow_jwt_authentication = false
-    ShopifyApp.configuration.allow_cookie_authentication = true
-  end
-
   test '#index sets test cookie if embedded app and user agent can partition cookies' do
     with_application_test_routes do
       request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
@@ -132,7 +127,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session retrieves using session user_id" do
+  test "#current_shopify_session retrieves using session user_id when allow_cookie_authentication is enabled" do
+    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
       session[:user_id] = '145'
       get :index
@@ -141,7 +137,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session retrieves using shop_id when shopify_user not present" do
+  test "#current_shopify_session retrieves using session[:shop_id] when shopify_user not present and allow_cookie_authentication" do
+    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
       session[:shop_id] = "shopify_id"
       get :index
@@ -162,20 +159,16 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session retreives the session from storage" do
+  test "#current_shopify_session is memoized and does not retrieve session twice" do
+    shop_session_record = ShopifyAPI::Session.new(
+      domain: 'my-shop',
+      token: '1234',
+      api_version: nil,
+    )
     with_application_test_routes do
-      session[:shop_id] = "foobar"
+      request.env['jwt.shopify_domain'] = 'foobar'
       get :index
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
-      assert @controller.current_shopify_session
-    end
-  end
-
-  test "#current_shopify_session is memoized and does not retreive session twice" do
-    with_application_test_routes do
-      session[:shop_id] = "foobar"
-      get :index
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
+      ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(shop_session_record).once
       assert @controller.current_shopify_session
     end
   end
@@ -225,6 +218,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#login_again_if_different_user_or_shop removes current session and redirects to login url" do
+    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
       session[:shop_id] = "foobar"
       session[:user_id] = 123
@@ -242,6 +236,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#login_again_if_different_user_or_shop ignores non-String shop params so that Rails params for Shop model can be accepted" do
+    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
       session[:shop_id] = "foobar"
       session[:shopify_domain] = "foobar"
@@ -362,6 +357,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test '#activate_shopify_session with shop_session and no user_session when \
         user_session expected returns an HTTP 401 when the request is an XHR' do
+    ShopifyApp.configuration.allow_cookie_authentication = true
     # Set up a shop_session
     with_application_test_routes do
       session[:shop_id] = 'foobar'
@@ -374,6 +370,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test '#activate_shopify_session with shop_session and no user_session when \
         user_session expected redirect to login when the request is not an XHR' do
+    ShopifyApp.configuration.allow_cookie_authentication = true
     # Set up a shop_session
     with_application_test_routes do
       session[:shop_id] = 'foobar'

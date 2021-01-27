@@ -65,6 +65,13 @@ module ShopifyApp
       end
     end
 
+    # Override user_session_by_cookie from LoginProtection to bypass allow_cookie_authentication
+    # setting check because session cookies are justified at top level
+    def user_session_by_cookie
+      return unless session[:user_id].present?
+      ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
+    end
+
     def start_user_token_flow?
       if jwt_request?
         false
