@@ -125,15 +125,6 @@ module ShopifyApp
       assert_nil session['shopify.top_level_oauth']
     end
 
-    test "#new should trust the shop param over the current session" do
-      previously_logged_in_shop_id = 1
-      session[:shopify] = previously_logged_in_shop_id
-      session['shopify.granted_storage_access'] = true
-      new_shop_domain = "new-shop.myshopify.com"
-      get :new, params: { shop: new_shop_domain }
-      assert_redirected_to_top_level(new_shop_domain)
-    end
-
     test "#new should render a full-page if the shop param doesn't exist" do
       get :new
       assert_response :ok
