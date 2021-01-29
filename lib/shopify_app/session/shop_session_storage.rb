@@ -12,6 +12,11 @@ module ShopifyApp
       def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.domain)
         shop.shopify_token = auth_session.token
+
+        if ActiveRecord::Base.connection.column_exists?(:shops, :scopes)
+          shop.scopes = auth_session.extra[:scopes]
+        end
+
         shop.save!
         shop.id
       end
@@ -28,6 +33,12 @@ module ShopifyApp
 
       private
 
+      def shop_scopes(shop)
+        shop.scopes
+      rescue
+        nil
+      end
+
       def construct_session(shop)
         return unless shop
 
@@ -35,6 +46,7 @@ module ShopifyApp
           domain: shop.shopify_domain,
           token: shop.shopify_token,
           api_version: shop.api_version,
+          extra: { scopes: shop_scopes(shop) }
         )
       end
     end
