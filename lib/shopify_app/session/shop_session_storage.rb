@@ -12,10 +12,7 @@ module ShopifyApp
       def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.domain)
         shop.shopify_token = auth_session.token
-
-        if ActiveRecord::Base.connection.column_exists?(:shops, :scopes)
-          shop.scopes = auth_session.extra[:scopes]
-        end
+        update_scopes(shop, auth_session.extra[:scopes])
 
         shop.save!
         shop.id
@@ -29,6 +26,11 @@ module ShopifyApp
       def retrieve_by_shopify_domain(domain)
         shop = find_by(shopify_domain: domain)
         construct_session(shop)
+      end
+
+      def update_scopes(shop, scopes)
+        Rails.logger.warn("#update_scopes must be overriden to handle how scopes should be stored")
+        return
       end
 
       private

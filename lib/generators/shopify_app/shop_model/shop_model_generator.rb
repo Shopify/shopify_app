@@ -17,6 +17,7 @@ module ShopifyApp
 
         if yes?("Do you want to add scopes column to the shop model? [y/n]")
           migration_template('db/migrate/add_scopes_column.erb', 'db/migrate/add_scopes_column.rb')
+          copy_file('shop_with_scopes.rb', 'app/models/shop.rb')
         end
       end
 
