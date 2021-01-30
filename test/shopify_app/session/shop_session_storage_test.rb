@@ -9,16 +9,19 @@ module ShopifyApp
   class ShopSessionStorageTest < ActiveSupport::TestCase
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
+    TEST_MERCHANT_SCOPES = 'read_products, write_orders'
 
     test ".retrieve can retrieve shop session records by ID" do
       ShopMockSessionStore.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_TOKEN
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        scopes: TEST_MERCHANT_SCOPES
       ))
 
       session = ShopMockSessionStore.retrieve(1)
       assert_equal TEST_SHOPIFY_DOMAIN, session.domain
       assert_equal TEST_SHOPIFY_TOKEN, session.token
+      assert_equal TEST_MERCHANT_SCOPES, session.extra[:scopes]
     end
 
     test ".retrieve_by_shopify_domain can retrieve shop session records by JWT" do
@@ -26,6 +29,7 @@ module ShopifyApp
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
         api_version: '2020-01',
+        scopes: TEST_MERCHANT_SCOPES
       )
       ShopMockSessionStore.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
 
@@ -33,6 +37,7 @@ module ShopifyApp
         domain: instance.shopify_domain,
         token: instance.shopify_token,
         api_version: instance.api_version,
+        extra: { scopes: instance.scopes }
       )
       shopify_domain = TEST_SHOPIFY_DOMAIN
 
@@ -40,6 +45,7 @@ module ShopifyApp
       assert_equal expected_session.domain, session.domain
       assert_equal expected_session.token, session.token
       assert_equal expected_session.api_version, session.api_version
+      assert_equal expected_session.extra, session.extra
     end
 
     test ".store can store shop session records" do
@@ -51,6 +57,7 @@ module ShopifyApp
       mock_auth_hash = mock
       mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
       mock_auth_hash.stubs(:token).returns("a-new-token!")
+      mock_auth_hash.stubs(:extra).returns({scopes: nil})
       saved_id = ShopMockSessionStore.store(mock_auth_hash)
 
       assert_equal "a-new-token!", mock_shop_instance.shopify_token
