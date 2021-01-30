@@ -3,6 +3,14 @@ require 'test_helper'
 
 class ShopMockSessionStore < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorage
+
+  def self.update_scopes(shop, scopes)
+    shop.scopes = scopes
+  end
+
+  def self.merchant_scopes(shop)
+    shop.scopes
+  end
 end
 
 module ShopifyApp

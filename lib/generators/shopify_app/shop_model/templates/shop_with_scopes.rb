@@ -6,6 +6,10 @@ class Shop < ActiveRecord::Base
     shop.scopes = scopes
   end
 
+  def self.merchant_scopes(shop)
+    shop.scopes
+  end
+
   def api_version
     ShopifyApp.configuration.api_version
   end

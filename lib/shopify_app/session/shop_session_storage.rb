@@ -32,13 +32,12 @@ module ShopifyApp
         Rails.logger.warn("#{shop.class}.update_scopes must be overriden to handle storing scopes: #{scopes}")
       end
 
-      private
-
-      def shop_scopes(shop)
-        shop.scopes
-      rescue
+      def merchant_scopes(shop)
+        Rails.logger.warn("Scopes are not stored for #{shop.class}")
         nil
       end
+
+      private
 
       def construct_session(shop)
         return unless shop
@@ -47,7 +46,7 @@ module ShopifyApp
           domain: shop.shopify_domain,
           token: shop.shopify_token,
           api_version: shop.api_version,
-          extra: { scopes: shop_scopes(shop) }
+          extra: { scopes: merchant_scopes(shop) }
         )
       end
     end
