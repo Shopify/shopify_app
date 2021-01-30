@@ -57,7 +57,7 @@ module ShopifyApp
       mock_auth_hash = mock
       mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
       mock_auth_hash.stubs(:token).returns("a-new-token!")
-      mock_auth_hash.stubs(:extra).returns({scopes: nil})
+      mock_auth_hash.stubs(:extra).returns({ scopes: TEST_MERCHANT_SCOPES })
       saved_id = ShopMockSessionStore.store(mock_auth_hash)
 
       assert_equal "a-new-token!", mock_shop_instance.shopify_token

@@ -29,8 +29,7 @@ module ShopifyApp
       end
 
       def update_scopes(shop, scopes)
-        Rails.logger.warn("#update_scopes must be overriden to handle how scopes should be stored")
-        return
+        Rails.logger.warn("#{shop.class}.update_scopes must be overriden to handle storing scopes: #{scopes}")
       end
 
       private
