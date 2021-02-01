@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Update omniauth initializers to allow `GET`
 
 17.2.1 (April 1, 2021)
 ----------
