@@ -59,6 +59,21 @@ class ScopesMismatchTest < ActionController::TestCase
 
     assert_redirected_to redirect_url.to_s
   end
+
+  test '#login_on_scope_changes redirects to login when current_merchant_scopes are nil' do
+    shopify_domain = 'test-shop.myshopify.com'
+    @controller.stubs(:current_merchant_scopes).returns(nil)
+
+    get :index, params: { shop: shopify_domain }
+
+    redirect_url = URI(ShopifyApp.configuration.login_url)
+    redirect_url.query = URI.encode_www_form(
+      shop: shopify_domain,
+      return_to: request.fullpath,
+    )
+
+    assert_redirected_to redirect_url.to_s
+  end
 end
 
 class ScopesMatchTest < ActionController::TestCase
