@@ -95,6 +95,7 @@ module ShopifyApp
 
     protected
 
+
     def jwt_shopify_domain
       request.env['jwt.shopify_domain']
     end
@@ -131,6 +132,7 @@ module ShopifyApp
       session[:shopify_domain] = nil
       session[:shopify_user] = nil
       session[:user_session] = nil
+      session[:shopify_host] = nil
     end
 
     def login_url_with_optional_shop(top_level: false)
@@ -170,10 +172,18 @@ module ShopifyApp
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
         render('shopify_app/shared/redirect', layout: false,
-               locals: { url: url, current_shopify_domain: current_shopify_domain })
+               locals: { url: url, current_shopify_host: current_shopify_host })
       else
         redirect_to(url)
       end
+    end
+
+    def current_shopify_host
+      shopify_host = host || session[:shopify_host]
+
+      return Base64.urlsafe_decode64(shopify_host) if shopify_host.present?
+
+      raise ShopifyHostNotFound
     end
 
     def current_shopify_domain
@@ -188,6 +198,10 @@ module ShopifyApp
 
     def sanitized_shop_name
       @sanitized_shop_name ||= sanitize_shop_param(params)
+    end
+
+    def host
+      @host ||= params[:host]
     end
 
     def referer_sanitized_shop_name

@@ -287,7 +287,7 @@ module ShopifyApp
 
       assert_template('shared/redirect')
       assert_select '[id=redirection-target]', 1 do |elements|
-        assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{expected_url}\"}",
+        assert_equal "{\"host\":\"https://#{shop_domain}/admin\",\"url\":\"#{expected_url}\"}",
           elements.first['data-target']
       end
     end

@@ -23,6 +23,10 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
     def current_shopify_domain
       'test-shop.myshopify.com'
     end
+
+    def current_shopify_host
+      'test-shop.myshopify.com/admin'
+    end
   end
 
   tests TurbolinksTestController
