@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  module ScopesVerification
+  module ScopeUtilities
     def login_on_scope_changes(current_merchant_scopes, configuration_scopes)
       redirect_to(shop_login) if scopes_configuration_mismatch?(current_merchant_scopes, configuration_scopes)
     end
