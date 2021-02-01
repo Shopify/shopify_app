@@ -4,10 +4,6 @@ require 'test_helper'
 class ScopesMismatchController < ActionController::Base
   include ShopifyApp::ScopesVerification
 
-  before_action do
-    login_on_scope_changes(current_merchant_scopes, configuration_scopes)
-  end
-
   def index
     render(plain: "OK")
   end
@@ -23,10 +19,6 @@ end
 
 class ScopesMatchController < ActionController::Base
   include ShopifyApp::ScopesVerification
-
-  before_action do
-    login_on_scope_changes(current_merchant_scopes, configuration_scopes)
-  end
 
   def index
     render(plain: "OK")
