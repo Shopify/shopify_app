@@ -459,7 +459,7 @@ App Tunneling
 
 Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](#app-proxy-controller-generator) or receive Webhooks.
 
-Use a tunneling service like [ngrok](https://ngrok.com/), [Forward](https://forwardhq.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+Use a tunneling service like [ngrok](https://ngrok.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
 
 For example with [ngrok](https://ngrok.com/), run this command to set up a tunnel proxy to Rails' default port:
 
