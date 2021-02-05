@@ -386,20 +386,13 @@ module ShopifyApp
         token: '1234',
         domain: TEST_SHOPIFY_DOMAIN,
         api_version: ShopifyApp.configuration.api_version,
-        extra: { scopes: ShopifyAPI::ApiAccess.new("read_products") }
       )
     end
 
     def mock_shopify_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
-      OmniAuth.config.add_mock(
-        :shopify,
-        provider: :shopify,
-        uid: TEST_SHOPIFY_DOMAIN,
-        credentials: { token: '1234' },
-        extra: { scope: "read_products" }
-      )
+      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: TEST_SHOPIFY_DOMAIN, credentials: { token: '1234' })
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
     end

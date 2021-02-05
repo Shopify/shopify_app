@@ -32,10 +32,6 @@ module ShopifyApp
         user_storage.store(session, user)
       end
 
-      def retrieve_shop_scopes(domain)
-        shop_storage.retrieve_scopes_by_shopify_domain(domain)
-      end
-
       def shop_storage
         load_shop_storage || raise(ConfigurationError, "ShopifySessionRepository.shop_storage is not configured!")
       end
