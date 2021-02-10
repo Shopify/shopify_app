@@ -132,6 +132,22 @@ This generator creates an example home controller and view which fetches and dis
 Options include:
 * __[Not recommended for embedded apps]__ `with-cookie-authentication` - This flag generates an authenticated home_controller, where the authentication strategy relies on cookies. By default, this generator creates an unauthenticated home_controller and protected sample products_controller.
 
+### Scopes Storage Generator
+```sh
+$ rails generate shopify_app:scopes_storage
+```
+
+This generator does the following:
+
+- Creates a database migration to add a `scopes` attribute to the `Shop` model.
+- Modifies the `Shop` model to override template methods to store and read access scopes for a shop.
+- For embedded apps using session tokens, the `HomeController` is modified to include the `ShopifyApp::ScopesVerification` concern so that changes in scopes requested by the app cause the merchant to go through the OAuth grant flow.
+
+Options include:
+* __[Not recommended for embedded apps]__ `with-cookie-authentication` - This flag causes the `HomeController` to remain unmodified.
+
+After running the generator, you will need to run `rails db:migrate` to add the new `scopes` attribute to the database.
+
 ### Products Controller Generator
 
 ```sh
