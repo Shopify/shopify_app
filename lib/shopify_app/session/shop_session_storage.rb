@@ -12,7 +12,7 @@ module ShopifyApp
       def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.domain)
         shop.shopify_token = auth_session.token
-        update_merchant_scopes(shop, auth_session.extra[:scopes])
+        shop.scopes = auth_session.extra[:scopes]
 
         shop.save!
         shop.id
@@ -30,7 +30,7 @@ module ShopifyApp
 
       def retrieve_scopes_by_shopify_domain(domain)
         shop = find_by(shopify_domain: domain)
-        merchant_scopes(shop)
+        shop.scopes
       end
 
       def update_merchant_scopes(shop, scopes)
@@ -46,7 +46,7 @@ module ShopifyApp
       def construct_session(shop)
         return unless shop
         begin
-          scopes = merchant_scopes(shop)
+          scopes = shop.scopes
         rescue NotImplementedError
           scopes = nil
         end
@@ -57,6 +57,22 @@ module ShopifyApp
           api_version: shop.api_version,
           extra: { scopes: scopes }
         )
+      end
+    end
+
+    def scopes=(scopes)
+      begin
+        super(scopes)
+      rescue NotImplementedError
+        Rails.logger.warn("#scopes= must be overriden to handle storing scopes: #{scopes}")
+      end
+    end
+
+    def scopes
+      begin
+        super
+      rescue
+        raise NotImplementedError, "#scopes must be defined to hook into stored scopes"
       end
     end
   end

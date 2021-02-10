@@ -2,12 +2,12 @@
 class Shop < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorage
 
-  def self.update_merchant_scopes(shop, scopes)
-    shop.scopes = scopes
+  def scopes=(scopes)
+    super(scopes)
   end
 
-  def self.merchant_scopes(shop)
-    shop.scopes
+  def scopes
+    super
   end
 
   def api_version
