@@ -18,7 +18,7 @@ module ShopifyApp
     end
 
     def current_merchant_access_scopes
-      ShopifyApp::SessionRepository.retrieve_shop_scopes(current_shopify_domain)
+      ShopifyApp::SessionRepository.retrieve_shop_access_scopes(current_shopify_domain)
     end
 
     def configuration_access_scopes

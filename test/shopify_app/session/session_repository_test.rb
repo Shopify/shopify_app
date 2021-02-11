@@ -104,5 +104,23 @@ module ShopifyApp
 
       SessionRepository.store_user_session(session, user)
     end
+
+    test '.retrieve_shop_access_scopes retrieves access scopes for an offline/shop token' do
+      SessionRepository.shop_storage = InMemoryShopSessionStore
+
+      shopify_domain = 'abc-shop'
+      InMemoryShopSessionStore.expects(:retrieve_scopes_by_shopify_domain).with(shopify_domain)
+
+      SessionRepository.retrieve_shop_access_scopes(shopify_domain)
+    end
+
+    test '.retrieve_user_access_scopes retrieves access scopes for an online/user token' do
+      SessionRepository.user_storage = InMemoryUserSessionStore
+
+      user_id = 'abra'
+      InMemoryUserSessionStore.expects(:retrieve_access_scopes_by_shopify_user_id).with(user_id)
+
+      SessionRepository.retrieve_user_access_scopes(user_id)
+    end
   end
 end

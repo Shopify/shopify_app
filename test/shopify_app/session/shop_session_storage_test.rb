@@ -86,5 +86,17 @@ module ShopifyApp
 
       refute ShopMockSessionStore.retrieve_by_shopify_domain(shop_domain)
     end
+
+    test '.retrieve_scopes_by_shopify_domain returns access scopes for shop record' do
+      instance = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        api_version: '2020-01',
+        scopes: TEST_MERCHANT_SCOPES
+      )
+      ShopMockSessionStore.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
+
+      assert_equal TEST_MERCHANT_SCOPES, ShopMockSessionStore.retrieve_scopes_by_shopify_domain(TEST_SHOPIFY_DOMAIN)
+    end
   end
 end
