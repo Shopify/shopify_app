@@ -16,6 +16,20 @@ module ShopifyApp
         migration_template('db/migrate/create_users.erb', 'db/migrate/create_users.rb')
       end
 
+      def create_scopes_storage_in_user_model
+        scopes_column_prompt = <<~PROMPT
+          It is highly recommended that apps record the access scopes granted by\
+          merchants during app installation.
+          
+          The following migration will add an `access_scopes` column to the User model. Do you want to add this migration? [y/n]
+        PROMPT
+
+        if yes?(scopes_column_prompt)
+          migration_template('db/migrate/add_user_access_scopes_column.erb', 'db/migrate/add_user_access_scopes_column.rb')
+          copy_file('user_with_scopes.rb', 'app/models/user.rb')
+        end
+      end
+
       def update_shopify_app_initializer
         gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryUserSessionStore', 'User')
       end
