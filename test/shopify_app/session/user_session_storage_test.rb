@@ -94,5 +94,18 @@ module ShopifyApp
 
       refute UserMockSessionStore.retrieve_by_shopify_user_id(user_id)
     end
+
+    test '.retrieve_scopes_by_shopify_domain returns access scopes for shop record' do
+      UserMockSessionStore.stubs(:find_by).returns(MockUserInstance.new(
+        shopify_user_id: TEST_SHOPIFY_USER_ID,
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_USER_TOKEN,
+        scopes: TEST_MERCHANT_SCOPES
+      ))
+
+      user_scopes = UserMockSessionStore.retrieve_access_scopes_by_shopify_user_id(TEST_SHOPIFY_USER_ID)
+
+      assert_equal TEST_MERCHANT_SCOPES, user_scopes
+    end
   end
 end
