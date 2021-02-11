@@ -3,6 +3,14 @@ require 'test_helper'
 
 class UserMockSessionStore < ActiveRecord::Base
   include ShopifyApp::UserSessionStorage
+
+  def access_scopes=(shop, scopes)
+    shop.access_scopes = scopes
+  end
+
+  def access_scopes(shop)
+    shop.access_scopes
+  end
 end
 
 module ShopifyApp
@@ -10,18 +18,21 @@ module ShopifyApp
     TEST_SHOPIFY_USER_ID = 42
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
+    TEST_MERCHANT_SCOPES = "read_orders, write_products"
 
     test ".retrieve returns user session by id" do
       UserMockSessionStore.stubs(:find_by).returns(MockUserInstance.new(
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_USER_TOKEN
+        shopify_token: TEST_SHOPIFY_USER_TOKEN,
+        scopes: TEST_MERCHANT_SCOPES
       ))
 
       session = UserMockSessionStore.retrieve(shopify_user_id: TEST_SHOPIFY_USER_ID)
 
       assert_equal TEST_SHOPIFY_DOMAIN, session.domain
       assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
+      assert_equal TEST_MERCHANT_SCOPES, session.extra[:scopes]
     end
 
     test ".retrieve_by_shopify_user_id returns user session by shopify_user_id" do
@@ -30,6 +41,7 @@ module ShopifyApp
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
         api_version: '2020-01',
+        scopes: TEST_MERCHANT_SCOPES
       )
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
@@ -37,6 +49,7 @@ module ShopifyApp
         domain: instance.shopify_domain,
         token: instance.shopify_token,
         api_version: instance.api_version,
+        extra: { scopes: TEST_MERCHANT_SCOPES }
       )
 
       user_id = TEST_SHOPIFY_USER_ID
@@ -44,6 +57,7 @@ module ShopifyApp
       assert_equal expected_session.domain, session.domain
       assert_equal expected_session.token, session.token
       assert_equal expected_session.api_version, session.api_version
+      assert_equal expected_session.extra, session.extra
     end
 
     test ".store can store user session record" do
@@ -55,6 +69,7 @@ module ShopifyApp
       mock_auth_hash = mock
       mock_auth_hash.stubs(:domain).returns(mock_user_instance.shopify_domain)
       mock_auth_hash.stubs(:token).returns("a-new-user_token!")
+      mock_auth_hash.stubs(:extra).returns({ scopes: TEST_MERCHANT_SCOPES })
 
       associated_user = {
         id: 100,
