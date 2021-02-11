@@ -2,11 +2,11 @@
 class Shop < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorage
 
-  def scopes=(scopes)
+  def access_scopes=(scopes)
     super(scopes)
   end
 
-  def scopes
+  def access_scopes
     super
   end
 

@@ -12,14 +12,21 @@ module ShopifyApp
       class_option :embedded, type: :string, default: 'true'
 
       def create_scopes_storage_in_shop_model
-        if yes?("Do you want to add scopes column to the Shop model? [y/n]")
+        scopes_column_prompt = <<~PROMPT
+          It is highly recommended that apps record the access scopes granted by\
+          merchants during app installation.
+          
+          The following migration will add an `access_scopes` column to the Shop model. Do you want to add this migration? [y/n]
+        PROMPT
+
+        if yes?(scopes_column_prompt)
           migration_template('db/migrate/add_scopes_column.erb', 'db/migrate/add_scopes_column.rb')
           copy_file('shop_with_scopes.rb', 'app/models/shop.rb')
         end
       end
 
       def include_scopes_verification_in_home_controller
-        template('home_controller.rb', 'app/controllers/home_controller.rb') unless with_cookie_authentication?
+        template(home_controller_template, 'app/controllers/home_controller.rb')
       end
 
       private
@@ -34,6 +41,16 @@ module ShopifyApp
 
       def with_cookie_authentication?
         options['with_cookie_authentication']
+      end
+
+      def home_controller_template
+        return 'unauthenticated_home_controller.rb' unless authenticated_home_controller_required?
+
+        'home_controller.rb'
+      end
+
+      def authenticated_home_controller_required?
+        with_cookie_authentication? || !embedded? || !embedded_app?
       end
 
       def rails_migration_version

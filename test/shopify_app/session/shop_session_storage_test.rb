@@ -4,12 +4,12 @@ require 'test_helper'
 class ShopMockSessionStore < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorage
 
-  def self.update_scopes(shop, scopes)
-    shop.scopes = scopes
+  def access_scopes=(shop, scopes)
+    shop.access_scopes = scopes
   end
 
-  def self.merchant_scopes(shop)
-    shop.scopes
+  def access_scopes(shop)
+    shop.access_scopes
   end
 end
 
@@ -45,7 +45,7 @@ module ShopifyApp
         domain: instance.shopify_domain,
         token: instance.shopify_token,
         api_version: instance.api_version,
-        extra: { scopes: instance.scopes }
+        extra: { scopes: instance.access_scopes }
       )
       shopify_domain = TEST_SHOPIFY_DOMAIN
 
