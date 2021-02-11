@@ -15,7 +15,7 @@ module ShopifyApp
         scopes_column_prompt = <<~PROMPT
           It is highly recommended that apps record the access scopes granted by\
           merchants during app installation.
-          
+
           The following migration will add an `access_scopes` column to the Shop model. Do you want to add this migration? [y/n]
         PROMPT
 
