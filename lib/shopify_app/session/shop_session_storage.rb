@@ -33,14 +33,6 @@ module ShopifyApp
         shop.access_scopes
       end
 
-      def update_merchant_scopes(shop, scopes)
-        Rails.logger.warn("#{shop.class}.update_scopes must be overriden to handle storing scopes: #{scopes}")
-      end
-
-      def merchant_scopes(shop)
-        raise NotImplementedError, "#{shop.class}.merchant_scopes must be defined to hook into stored scopes"
-      end
-
       private
 
       def construct_session(shop)
@@ -58,18 +50,6 @@ module ShopifyApp
           extra: { scopes: scopes }
         )
       end
-    end
-
-    def access_scopes=(scopes)
-        super(scopes)
-      rescue NotImplementedError
-        Rails.logger.warn("#scopes= must be overriden to handle storing scopes: #{scopes}")
-    end
-
-    def access_scopes
-        super
-      rescue NotImplementedError
-        raise NotImplementedError, "#scopes must be defined to hook into stored scopes"
     end
   end
 end
