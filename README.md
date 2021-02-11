@@ -319,38 +319,38 @@ end
 ### ScopesVerification
 The `ShopifyApp::ScopesVerification` concern helps merchant grant new access scopes requested by the app. The concern compares the current access scopes granted by the merchant and compares it with the scopes requested by the app. If there is a mismatch in configuration, the merchant is redirected to login via OAuth and grant the net new scopes.
 
-This requires the app to maintain a record of the current access scopes per merchant. This can be done by defining the template class methods in the model that includes `ShopifyApp::ShopSessionStorage`:
+This requires the app to maintain a record of the current access scopes per shop. This can be done by defining the template class methods in the model that includes `ShopifyApp::ShopSessionStorage`:
 ```ruby
 class Shop < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorage
 
-  def self.update_merchant_scopes(shop, scopes)
+  def access_scopes=(scopes)
     # Store access scopes
   end
 
-  def self.merchant_scopes(shop)
+  def access_scopes
     # Find access scopes
   end
 end
 ```
 
-#### `self.update_merchant_scopes(shop, scopes)`
-Define how the current access scopes of a merchant will be stored. `ShopifyApp::ShopSessionStorage` will invoke `self.update_merchant_scopes` to store the access scopes tied to an access token after successful completion of the OAuth grant flow.
+#### `access_scopes=(scopes)`
+Define how the current access scopes of a merchant will be stored. `ShopifyApp::ShopSessionStorage` will invoke `access_scopes=` to store the access scopes tied to an access token after successful completion of the OAuth grant flow.
 
-By default, the Scopes Storage generator will create a migration to add the `scopes` attribute to the `Shop` model with access scopes stored as follows:
+By default, the Scopes Storage generator will create a migration to add the `access_scopes` attribute to the `Shop` model with access scopes stored as follows:
 ```ruby
-def self.update_merchant_scopes(shop, scopes)
-  shop.scopes = scopes
+def access_scopes=(scopes)
+  super(scopes)
 end
 ```
 
-#### `self.merchant_scopes(shop)`
-Define the lookup for access scopes for a shop. `ShopifyApp::ShopSessionStorage` will invoke `self.merchant_scopes` whenever attempting to read access scopes for a merchant.
+#### `access_scopes`
+Define the lookup for access scopes for a shop. `ShopifyApp::ShopSessionStorage` will invoke `access_scopes` whenever attempting to read access scopes for a merchant.
 
-By default, the Scopes Storage generator will create a migration to add the `scopes` attribute to the `Shop` model with access scopes retrieved as follows:
+By default, the Scopes Storage generator will create a migration to add the `access_scopes` attribute to the `Shop` model with access scopes retrieved as follows:
 ```ruby
-def self.merchant_scopes(shop)
-  shop.scopes
+def access_scopes
+  super
 end
 ```
 
