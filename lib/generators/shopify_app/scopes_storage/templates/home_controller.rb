@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-class HomeController < ApplicationController
-  include ShopifyApp::EmbeddedApp
-  include ShopifyApp::RequireKnownShop
+class HomeController < AuthenticatedController
   include ShopifyApp::ScopesVerification
 
   def index
-    @shop_origin = current_shopify_domain
+    @products = ShopifyAPI::Product.find(:all, params: { limit: 10 })
+    @webhooks = ShopifyAPI::Webhook.find(:all)
   end
 end

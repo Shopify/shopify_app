@@ -6,22 +6,22 @@ module ShopifyApp
     include ScopeUtilities
 
     included do
-      before_action do
-        login_on_scope_changes(current_merchant_scopes, configuration_scopes)
-      end
+      before_action :login_on_scope_changes
     end
 
     protected
 
-    def login_on_scope_changes(current_merchant_scopes, configuration_scopes)
-      redirect_to(shop_login) if scopes_configuration_mismatch?(current_merchant_scopes, configuration_scopes)
+    def login_on_scope_changes
+      if scopes_configuration_mismatch?(current_merchant_access_scopes, configuration_access_scopes)
+        redirect_to(shop_login)
+      end
     end
 
-    def current_merchant_scopes
+    def current_merchant_access_scopes
       ShopifyApp::SessionRepository.retrieve_shop_scopes(current_shopify_domain)
     end
 
-    def configuration_scopes
+    def configuration_access_scopes
       ShopifyApp.configuration.scope
     end
 

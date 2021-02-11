@@ -21,8 +21,8 @@ class ScopesVerificationControllertest < ActionController::TestCase
   end
 
   test '#login_on_scope_changes verifies that scopes match before continuing' do
-    @controller.stubs(:current_merchant_scopes).returns('read_products, read_orders')
-    @controller.stubs(:configuration_scopes).returns('read_products, read_orders')
+    @controller.stubs(:current_merchant_access_scopes).returns('read_products, read_orders')
+    @controller.stubs(:configuration_access_scopes).returns('read_products, read_orders')
 
     get :index, params: { shop: @shopify_domain }
 
@@ -30,8 +30,8 @@ class ScopesVerificationControllertest < ActionController::TestCase
   end
 
   test '#login_on_scope_changes redirects to login when scopes do not match' do
-    @controller.stubs(:current_merchant_scopes).returns('read_products, read_orders')
-    @controller.stubs(:configuration_scopes).returns('read_products, write_orders')
+    @controller.stubs(:current_merchant_access_scopes).returns('read_products, read_orders')
+    @controller.stubs(:configuration_access_scopes).returns('read_products, write_orders')
 
     get :index, params: { shop: @shopify_domain }
 
@@ -39,7 +39,7 @@ class ScopesVerificationControllertest < ActionController::TestCase
   end
 
   test '#login_on_scope_changes redirects to login when current_merchant_scopes are nil' do
-    @controller.stubs(:current_merchant_scopes).returns(nil)
+    @controller.stubs(:current_merchant_access_scopes).returns(nil)
 
     get :index, params: { shop: @shopify_domain }
 
