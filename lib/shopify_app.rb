@@ -25,6 +25,7 @@ module ShopifyApp
 
   # utils
   require 'shopify_app/utils'
+  require 'shopify_app/scope_utilities'
 
   # controller concerns
   require 'shopify_app/controller_concerns/csrf_protection'
