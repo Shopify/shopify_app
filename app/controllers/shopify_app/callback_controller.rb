@@ -84,7 +84,7 @@ module ShopifyApp
     def update_user_access_scopes?
       begin
         # TODO
-        configuration_access_scopes = ShopifyApp.configuration.scope
+        configuration_access_scopes = ShopifyApp.configuration.user_access_scopes
         ShopifyApp::ScopeUtilities.access_scopes_mismatch?(user_access_scopes, configuration_access_scopes)
       rescue NotImplementedError
         false

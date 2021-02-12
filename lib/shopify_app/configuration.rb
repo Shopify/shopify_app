@@ -9,6 +9,8 @@ module ShopifyApp
     attr_accessor :secret
     attr_accessor :old_secret
     attr_accessor :scope
+    attr_accessor :shop_access_scopes
+    attr_accessor :user_access_scopes
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
     attr_accessor :webhooks
@@ -80,6 +82,14 @@ module ShopifyApp
 
     def enable_same_site_none
       !Rails.env.test? && (@enable_same_site_none.nil? ? embedded_app? : @enable_same_site_none)
+    end
+
+    def shop_access_scopes
+      @shop_access_scopes || scope
+    end
+
+    def user_access_scopes
+      @user_access_scopes || scope
     end
   end
 
