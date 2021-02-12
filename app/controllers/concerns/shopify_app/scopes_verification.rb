@@ -21,7 +21,7 @@ module ShopifyApp
     end
 
     def configuration_access_scopes
-      ShopifyApp.configuration.scope
+      ShopifyApp.configuration.shop_access_scopes
     end
 
     def scopes_configuration_mismatch?(current_merchant_scopes, configuration_scopes)
