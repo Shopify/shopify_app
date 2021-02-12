@@ -76,7 +76,23 @@ module ShopifyApp
       if jwt_request?
         false
       else
-        ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+        return false unless user_storage_configured?
+        update_user_access_scopes?
+      end
+    end
+
+    def user_storage_configured?
+      ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+    end
+
+    def update_user_access_scopes?
+      begin
+        current_user_access_scopes = ShopifyApp::SessionRepository.retrieve_user_access_scopes(associated_user_id)
+        # TODO
+        configuration_access_scopes = ShopifyApp.configuration.scope
+        ShopifyAPI::ApiAccess.new(current_user_access_scopes) != ShopifyAPI::ApiAccess.new(configuration_access_scopes)
+      rescue NotImplementedError
+        false
       end
     end
 
@@ -118,7 +134,7 @@ module ShopifyApp
       auth_hash['credentials']['token']
     end
 
-    def shop_scopes
+    def access_scopes
       return unless auth_hash['extra']['scope']
       ShopifyAPI::ApiAccess.new(auth_hash['extra']['scope'])
     end
@@ -133,8 +149,10 @@ module ShopifyApp
         domain: shop_name,
         token: token,
         api_version: ShopifyApp.configuration.api_version,
-        extra: { scopes: shop_scopes }
+        extra: { scopes: access_scopes }
       )
+
+      byebug
 
       session[:shopify_user] = associated_user
       if session[:shopify_user].present?

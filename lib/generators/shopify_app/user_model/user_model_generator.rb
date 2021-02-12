@@ -18,11 +18,14 @@ module ShopifyApp
 
       def create_scopes_storage_in_user_model
         scopes_column_prompt = <<~PROMPT
-          It is highly recommended that apps record the access scopes granted by\
-          merchants during app installation.
+          It is highly recommended that apps record the access scopes granted by \
+          merchants during app installation. See app/models/user.rb to modify how \
+          access scopes are stored and retrieved.
+ 
+          [WARNING] Your app will fail the ScopeVerification concern if access scopes are not stored.
 
-          The following migration will add an `access_scopes` column to the User model.
-          Do you want to add this migration? [y/n]
+          The following migration will add an `access_scopes` column to the User model. \
+          Do you want to include this migration? [y/n]
         PROMPT
 
         if yes?(scopes_column_prompt)
@@ -30,7 +33,6 @@ module ShopifyApp
             'db/migrate/add_user_access_scopes_column.erb',
             'db/migrate/add_user_access_scopes_column.rb'
           )
-          copy_file('user_with_scopes.rb', 'app/models/user.rb')
         end
       end
 
