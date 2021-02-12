@@ -28,6 +28,11 @@ module ShopifyApp
         construct_session(user)
       end
 
+      def retrieve_access_scopes(id)
+        user = find_by(id: id)
+        user.access_scopes
+      end
+
       def retrieve_access_scopes_by_shopify_user_id(user_id)
         user = find_by(shopify_user_id: user_id)
         user.access_scopes

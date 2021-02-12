@@ -36,7 +36,11 @@ module ShopifyApp
         shop_storage.retrieve_scopes_by_shopify_domain(shopify_domain)
       end
 
-      def retrieve_user_access_scopes(shopify_user_id)
+      def retrieve_user_access_scopes(user_id)
+        user_storage.retrieve_access_scopes(user_id)
+      end
+
+      def retrieve_user_access_scopes_by_shopify_user_id(shopify_user_id)
         user_storage.retrieve_access_scopes_by_shopify_user_id(shopify_user_id)
       end
 
