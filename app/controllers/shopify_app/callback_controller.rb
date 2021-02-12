@@ -76,14 +76,14 @@ module ShopifyApp
       if jwt_request?
         false
       else
-        return false unless user_storage_configured?
+        return false unless ShopifyApp::SessionRepository.user_storage.present?
+        return true if user_session.blank?
         update_user_access_scopes?
       end
     end
 
     def update_user_access_scopes?
       begin
-        # TODO
         configuration_access_scopes = ShopifyApp.configuration.user_access_scopes
         ShopifyApp::ScopeUtilities.access_scopes_mismatch?(user_access_scopes, configuration_access_scopes)
       rescue NotImplementedError
@@ -97,10 +97,6 @@ module ShopifyApp
       else
         ShopifyApp::SessionRepository.retrieve_user_access_scopes(session[:user_id])
       end
-    end
-
-    def user_storage_configured?
-      ShopifyApp::SessionRepository.user_storage.present? && !user_session.blank?
     end
 
     def jwt_request?
