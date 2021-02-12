@@ -3,7 +3,6 @@
 module ShopifyApp
   module ScopesVerification
     extend ActiveSupport::Concern
-    include ScopeUtilities
 
     included do
       before_action :login_on_scope_changes
@@ -23,6 +22,11 @@ module ShopifyApp
 
     def configuration_access_scopes
       ShopifyApp.configuration.scope
+    end
+
+    def scopes_configuration_mismatch?(current_merchant_scopes, configuration_scopes)
+      return true if current_merchant_scopes.nil?
+      ShopifyAPI::ApiAccess.new(current_merchant_scopes) != ShopifyAPI::ApiAccess.new(configuration_scopes)
     end
 
     private
