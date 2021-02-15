@@ -83,20 +83,17 @@ module ShopifyApp
     end
 
     def update_user_access_scopes?
-      begin
-        configuration_access_scopes = ShopifyApp.configuration.user_access_scopes
-        ShopifyApp::ScopeUtilities.access_scopes_mismatch?(user_access_scopes, configuration_access_scopes)
-      rescue NotImplementedError
-        false
+      if jwt_request?
+        user_access_scopes_strategy.scopes_mismatch_by_shopify_user_id?(jwt_shopify_user_id)
+      else
+        user_access_scopes_strategy.scopes_mismatch_by_user_id?(session[:user_id])
       end
+    rescue NotImplementedError
+      false
     end
 
-    def user_access_scopes
-      if jwt_request?
-        ShopifyApp::SessionRepository.retrieve_user_access_scopes_by_shopify_user_id(jwt_shopify_user_id)
-      else
-        ShopifyApp::SessionRepository.retrieve_user_access_scopes(session[:user_id])
-      end
+    def user_access_scopes_strategy
+      ShopifyApp.configuration.user_access_scopes_strategy
     end
 
     def jwt_request?

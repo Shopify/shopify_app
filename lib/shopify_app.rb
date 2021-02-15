@@ -62,4 +62,8 @@ module ShopifyApp
 
   # omniauth_configuration
   require 'shopify_app/omniauth/omniauth_configuration'
+
+  # scopes
+  require 'shopify_app/scopes/shop_access_scopes_strategy'
+  require 'shopify_app/scopes/user_access_scopes_strategy'
 end

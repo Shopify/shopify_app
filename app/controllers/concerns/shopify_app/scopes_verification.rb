@@ -11,25 +11,14 @@ module ShopifyApp
     protected
 
     def login_on_scope_changes
-      if scopes_configuration_mismatch?(current_merchant_access_scopes, configuration_access_scopes)
-        redirect_to(shop_login)
-      end
-    end
-
-    def current_merchant_access_scopes
-      ShopifyApp::SessionRepository.retrieve_shop_access_scopes(current_shopify_domain)
-    end
-
-    def configuration_access_scopes
-      ShopifyApp.configuration.shop_access_scopes
-    end
-
-    def scopes_configuration_mismatch?(current_merchant_scopes, configuration_scopes)
-      return true if current_merchant_scopes.nil?
-      ShopifyAPI::ApiAccess.new(current_merchant_scopes) != ShopifyAPI::ApiAccess.new(configuration_scopes)
+      redirect_to(shop_login) if scopes_mismatch?
     end
 
     private
+
+    def scopes_mismatch?
+      ShopifyApp.configuration.shop_access_scopes_strategy.scopes_mismatch?(current_shopify_domain)
+    end
 
     def current_shopify_domain
       return if params[:shop].blank?

@@ -21,7 +21,7 @@ module ShopifyApp
           It is highly recommended that apps record the access scopes granted by \
           merchants during app installation. See app/models/shop.rb to modify how \
           access scopes are stored and retrieved.
- 
+
           [WARNING] Your app will fail the ScopeVerification concern if access scopes are not stored.
 
           The following migration will add an `access_scopes` column to the Shop model. \

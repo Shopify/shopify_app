@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ShopifyApp
   class ScopeUtilities
     def self.access_scopes_mismatch?(current_access_scopes, configuration_access_scopes)
