@@ -66,4 +66,7 @@ module ShopifyApp
   # scopes
   require 'shopify_app/scopes/shop_access_scopes_strategy'
   require 'shopify_app/scopes/user_access_scopes_strategy'
+
+  # omniauth_configuration
+  require 'shopify_app/omniauth_configuration'
 end
