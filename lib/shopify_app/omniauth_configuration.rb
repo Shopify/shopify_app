@@ -41,6 +41,13 @@ module ShopifyApp
       strategy.session[:user_tokens] && !update_shop_scopes?
     end
 
+    def build_options
+      strategy.options[:client_options][:site] = client_options_site
+      strategy.options[:scope] = scopes
+      strategy.options[:old_client_secret] = OmniAuthConfiguration.old_secret
+      strategy.options[:per_user_permissions] = request_online_tokens?
+    end
+
     private
 
     def update_shop_scopes?
