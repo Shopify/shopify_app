@@ -51,7 +51,7 @@ module ShopifyApp
     private
 
     def update_shop_scopes?
-      ShopifyApp::ShopAccessScopesStrategy.scopes_mismatch?(shop_domain)
+      ShopifyApp.configuration.shop_access_scopes_strategy.scopes_mismatch?(shop_domain)
     rescue NotImplementedError
       false
     end
