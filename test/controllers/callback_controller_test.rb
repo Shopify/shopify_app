@@ -9,6 +9,30 @@ module Shopify
 end
 
 module ShopifyApp
+  class MockUserScopesMatchStrategy
+    class << self
+      def scopes_mismatch_by_shopify_user_id?(*args)
+        false
+      end
+
+      def scopes_mismatch_by_user_id?(*args)
+        false
+      end
+    end
+  end
+
+  class MockUserScopesMismatchStrategy
+    class << self
+      def scopes_mismatch_by_shopify_user_id?(*args)
+        true
+      end
+
+      def scopes_mismatch_by_user_id?(*args)
+        true
+      end
+    end
+  end
+
   class CallbackControllerTest < ActionController::TestCase
     TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
     TEST_ASSOCIATED_USER = { 'id' => 'test-shopify-user' }
@@ -20,6 +44,7 @@ module ShopifyApp
       @routes = ShopifyApp::Engine.routes
       ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
+      ShopifyApp.configuration.user_access_scopes_strategy = MockUserScopesMatchStrategy
 
       I18n.locale = :en
 
@@ -372,6 +397,16 @@ module ShopifyApp
 
       get :callback
       assert_response :ok
+    end
+
+    test "#callback redirects to login for user token flow if user session access scopes mismatch by user_id" do
+      ShopifyApp.configuration.user_access_scopes_strategy = MockUserScopesMismatchStrategy
+      mock_shopify_user_omniauth
+      session = mock_user_session
+
+      get :callback
+
+      assert_redirected_to ShopifyApp.configuration.login_url
     end
 
     private

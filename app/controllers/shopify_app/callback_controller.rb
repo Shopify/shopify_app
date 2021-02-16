@@ -77,17 +77,13 @@ module ShopifyApp
         false
       else
         return false unless ShopifyApp::SessionRepository.user_storage.present?
-        return true if user_session.blank?
         update_user_access_scopes?
       end
     end
 
     def update_user_access_scopes?
-      if jwt_request?
-        user_access_scopes_strategy.scopes_mismatch_by_shopify_user_id?(jwt_shopify_user_id)
-      else
-        user_access_scopes_strategy.scopes_mismatch_by_user_id?(session[:user_id])
-      end
+      return true if user_session.blank?
+      user_access_scopes_strategy.scopes_mismatch_by_user_id?(session[:user_id])
     rescue NotImplementedError
       false
     end
