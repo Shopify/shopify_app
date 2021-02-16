@@ -54,8 +54,8 @@ module ShopifyApp
       @disable_webpacker = ENV['SHOPIFY_APP_DISABLE_WEBPACKER'].present?
       @allow_cookie_authentication = true
 
-      @shop_access_scopes_strategy = ShopifyApp::ShopAccessScopesStrategy
-      @user_access_scopes_strategy = ShopifyApp::UserAccessScopesStrategy
+      @shop_access_scopes_strategy = ShopifyApp::AccessScopes::ShopStrategy
+      @user_access_scopes_strategy = ShopifyApp::AccessScopes::UserStrategy
     end
 
     def login_url
