@@ -5,6 +5,6 @@ provider :shopify,
   ShopifyApp.configuration.secret,
   scope: ShopifyApp.configuration.scope,
   setup: lambda { |env|
-    configuration = ShopifyApp::OmniAuth::Configuration.new(env['omniauth.strategy'], Rack::Request.new(env))
+    configuration = ShopifyApp::OmniauthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
     configuration.build_options
   }
