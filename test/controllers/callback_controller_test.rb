@@ -378,7 +378,9 @@ module ShopifyApp
     test "#callback redirects to login for user token flow if user session access scopes mismatch by user_id" do
       ShopifyApp.configuration.user_access_scopes_strategy = AccessScopesStrategyHelpers::MockUserScopesMismatchStrategy
       mock_shopify_user_omniauth
+      # rubocop:disable Lint/UselessAssignment
       session = mock_user_session
+      # rubocop:enable Lint/UselessAssignment
 
       get :callback
 
