@@ -107,20 +107,37 @@ module ShopifyApp
 
     test '.retrieve_shop_access_scopes retrieves access scopes for an offline/shop token' do
       SessionRepository.shop_storage = InMemoryShopSessionStore
+      shopify_domain = 'shop.myshopify.com'
+      session = ShopifyAPI::Session.new(
+        domain: shopify_domain,
+        token: 'abracadabra',
+        api_version: :unstable,
+        extra: {
+          scopes: 'read_products',
+        }
+      )
+      SessionRepository.store_shop_session(session)
 
-      shopify_domain = 'abc-shop'
-      InMemoryShopSessionStore.expects(:retrieve_scopes_by_shopify_domain).with(shopify_domain)
-
-      SessionRepository.retrieve_shop_access_scopes(shopify_domain)
+      scopes = SessionRepository.retrieve_shop_access_scopes(shopify_domain)
+      assert_equal 'read_products', scopes
     end
 
     test '.retrieve_user_access_scopes retrieves access scopes for an online/user token' do
       SessionRepository.user_storage = InMemoryUserSessionStore
+      shopify_user_id = 'abra'
+      session = ShopifyAPI::Session.new(
+        domain: 'shop.myshopify.com',
+        token: 'abracadabra',
+        api_version: :unstable,
+        extra: {
+          scopes: 'read_products',
+        }
+      )
+      user = { 'shopify_user_id' => shopify_user_id }
+      SessionRepository.store_user_session(session, OpenStruct.new(user))
 
-      user_id = 'abra'
-      InMemoryUserSessionStore.expects(:retrieve_access_scopes_by_shopify_user_id).with(user_id)
-
-      SessionRepository.retrieve_user_access_scopes(user_id)
+      scopes = SessionRepository.retrieve_user_access_scopes_by_shopify_user_id(shopify_user_id)
+      assert_equal 'read_products', scopes
     end
   end
 end

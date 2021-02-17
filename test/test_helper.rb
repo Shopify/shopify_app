@@ -18,6 +18,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 class ActiveSupport::TestCase
   include GeneratorTestHelpers
   include SessionStoreStrategyTestHelpers
+  include AccessScopesStrategyHelpers
 
   API_META_TEST_RESPONSE = <<~JSON
     {
