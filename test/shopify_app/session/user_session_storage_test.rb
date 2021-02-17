@@ -107,5 +107,35 @@ module ShopifyApp
 
       assert_equal TEST_MERCHANT_SCOPES, user_scopes
     end
+
+    test '.retrieve returns user session with nil scopes if access_scopes attribute throws NoMethodError' do
+      mock_user = MockUserInstance.new(
+        shopify_user_id: TEST_SHOPIFY_USER_ID,
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_USER_TOKEN,
+        )
+      mock_user.stubs(:access_scopes).raises(NoMethodError)
+      UserMockSessionStore.stubs(:find_by).returns(mock_user)
+
+      session = UserMockSessionStore.retrieve(1)
+      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+      assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
+      assert_nil session.extra[:scopes]
+    end
+
+    test '.retrieve returns user session with nil scopes if access_scopes attribute throws NotImplementedError' do
+      mock_user = MockUserInstance.new(
+        shopify_user_id: TEST_SHOPIFY_USER_ID,
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_USER_TOKEN,
+      )
+      mock_user.stubs(:access_scopes).raises(NotImplementedError)
+      UserMockSessionStore.stubs(:find_by).returns(mock_user)
+
+      session = UserMockSessionStore.retrieve(1)
+      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+      assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
+      assert_nil session.extra[:scopes]
+    end
   end
 end

@@ -98,5 +98,33 @@ module ShopifyApp
 
       assert_equal TEST_MERCHANT_SCOPES, ShopMockSessionStore.retrieve_scopes_by_shopify_domain(TEST_SHOPIFY_DOMAIN)
     end
+
+    test '.construct_session sets scopes to nil by handling NotImplementedError' do
+      mock_shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN
+      )
+      mock_shop.stubs(:access_scopes).raises(NoMethodError)
+      ShopMockSessionStore.stubs(:find_by).returns(mock_shop)
+
+      session = ShopMockSessionStore.retrieve(1)
+      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+      assert_equal TEST_SHOPIFY_TOKEN, session.token
+      assert_nil session.extra[:scopes]
+    end
+
+    test '.construct_session sets scopes to nil by handling NoMethodError' do
+      mock_shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN
+      )
+      mock_shop.stubs(:access_scopes).raises(NotImplementedError)
+      ShopMockSessionStore.stubs(:find_by).returns(mock_shop)
+
+      session = ShopMockSessionStore.retrieve(1)
+      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
+      assert_equal TEST_SHOPIFY_TOKEN, session.token
+      assert_nil session.extra[:scopes]
+    end
   end
 end

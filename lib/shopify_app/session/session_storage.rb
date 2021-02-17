@@ -25,8 +25,8 @@ module ShopifyApp
 
     def access_scopes
       super
-    rescue NotImplementedError
-      raise NotImplementedError, "#scopes must be defined to hook into stored scopes"
+    rescue NotImplementedError, NoMethodError => exception
+      raise exception.class, "#scopes must be defined to hook into stored scopes"
     end
   end
 end

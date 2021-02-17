@@ -39,7 +39,7 @@ module ShopifyApp
         return unless shop
         begin
           scopes = shop.access_scopes
-        rescue NotImplementedError
+        rescue NotImplementedError, NoMethodError
           scopes = nil
         end
 
