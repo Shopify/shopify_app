@@ -113,7 +113,7 @@ module ShopifyApp
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
-        )
+      )
       mock_user.stubs(:access_scopes).raises(NoMethodError)
       UserMockSessionStore.stubs(:find_by).returns(mock_user)
 
