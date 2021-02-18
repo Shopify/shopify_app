@@ -34,7 +34,7 @@ module ShopifyApp
 
         inject_into_file(
           'config/initializers/omniauth.rb',
-          File.read(File.expand_path(find_in_source_paths('shopify_provider.rb'))),
+          File.read(File.expand_path(find_in_source_paths('shopify_provider.rb.tt'))),
           after: "Rails.application.config.middleware.use(OmniAuth::Builder) do\n"
         )
       end
@@ -98,7 +98,7 @@ module ShopifyApp
       end
 
       def shopify_provider_template
-        File.read(File.expand_path(find_in_source_paths('shopify_provider.rb')))
+        File.read(File.expand_path(find_in_source_paths('shopify_provider.rb.tt')))
       end
 
       def embedded_app?
