@@ -34,7 +34,7 @@ module ShopifyApp
 
         inject_into_file(
           'config/initializers/omniauth.rb',
-          File.read(File.expand_path(find_in_source_paths('shopify_provider.rb.tt'))),
+          shopify_provider_template,
           after: "Rails.application.config.middleware.use(OmniAuth::Builder) do\n"
         )
       end
