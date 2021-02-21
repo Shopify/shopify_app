@@ -263,6 +263,8 @@ $ rails generate shopify_app:shop_model
 ```
 This will generate a shop model which will be the storage for the tokens necessary for authentication.
 
+This will also generate a database migration for storing and accessing access scopes for shops. If you already have access scopes stored, you can decline this option.
+
 #### User-based token storage
 A more granular control over the level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained if you are running background jobs so that you can make use of them when necessary.
 ```sh
@@ -275,6 +277,63 @@ The current Shopify user will be stored in the rails session at `session[:shopif
 
 Read more about Online vs. Offline access [here](https://help.shopify.com/api/getting-started/authentication/oauth).
 
+### Access Scopes
+
+Storing and reading access scopes for shops and users can be done by defining the template class methods in the models that include the following modules:
+ 
+#### `ShopifyApp::ShopSessionStorage`
+```ruby
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorage
+
+  def access_scopes=(scopes)
+    # Store access scopes
+  end
+
+  def access_scopes
+    # Find access scopes
+  end
+end
+```
+
+#### `ShopifyApp::UserSessionStorage`
+```ruby
+class User < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorage
+
+  def access_scopes=(scopes)
+    # Store access scopes
+  end
+
+  def access_scopes
+    # Find access scopes
+  end
+end
+```
+
+#### `access_scopes=(scopes)`
+Define how the current access scopes for shops and users will be stored. `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage` will invoke `access_scopes=` to store the access scopes tied to an access token after successful completion of the OAuth grant flow.
+
+By default, the shop_model and user_model generators will create a migration to add the `access_scopes` attribute to the `Shop` and `User` models with access scopes stored as follows:
+```ruby
+def access_scopes=(scopes)
+  super(scopes)
+end
+```
+
+#### `access_scopes`
+Define the lookup for access scopes for a shop and/or user. `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage` will invoke `access_scopes` whenever attempting to read access scopes for a merchant.
+
+By default, the shop_model and user_model generators will create a migration to add the `access_scopes` attribute to the `Shop` and `User` models with access scopes retrieved as follows:
+```ruby
+def access_scopes
+  super
+end
+```
+
+### Access Scopes Strategies
+The Shopify App gem now provides handling changes to scopes for both shop/offline and user/online tokens. By default, the `ShopifyApp::AccessScopes::ShopStrategy` and `ShopifyApp::AccessScopes::UserStrategy` strategies are used on app loads and during OAuth.
+
 #### Migrating from shop-based to user-based token strategy
 1. Run the `user_model` generator as mentioned above.
 2. Ensure that both your `Shop` model and `User` model includes the necessary concerns `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage`.
@@ -284,10 +343,8 @@ Read more about Online vs. Offline access [here](https://help.shopify.com/api/ge
 provider :shopify,
   ...
   setup: lambda { |env|
-    ...
-    # Add this line
-    strategy.options[:per_user_permissions] = strategy.session[:user_tokens]
-    ...
+    configuration = ShopifyApp::OmniauthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
+    configuration.build_options
   }
 
 # In the `shopify_app.rb` initializer:
@@ -318,41 +375,6 @@ end
 
 ### ScopesVerification
 The `ShopifyApp::ScopesVerification` concern helps merchant grant new access scopes requested by the app. The concern compares the current access scopes granted by the merchant and compares it with the scopes requested by the app. If there is a mismatch in configuration, the merchant is redirected to login via OAuth and grant the net new scopes.
-
-This requires the app to maintain a record of the current access scopes per shop. This can be done by defining the template class methods in the model that includes `ShopifyApp::ShopSessionStorage`:
-```ruby
-class Shop < ActiveRecord::Base
-  include ShopifyApp::ShopSessionStorage
-
-  def access_scopes=(scopes)
-    # Store access scopes
-  end
-
-  def access_scopes
-    # Find access scopes
-  end
-end
-```
-
-#### `access_scopes=(scopes)`
-Define how the current access scopes of a merchant will be stored. `ShopifyApp::ShopSessionStorage` will invoke `access_scopes=` to store the access scopes tied to an access token after successful completion of the OAuth grant flow.
-
-By default, the Scopes Storage generator will create a migration to add the `access_scopes` attribute to the `Shop` model with access scopes stored as follows:
-```ruby
-def access_scopes=(scopes)
-  super(scopes)
-end
-```
-
-#### `access_scopes`
-Define the lookup for access scopes for a shop. `ShopifyApp::ShopSessionStorage` will invoke `access_scopes` whenever attempting to read access scopes for a merchant.
-
-By default, the Scopes Storage generator will create a migration to add the `access_scopes` attribute to the `Shop` model with access scopes retrieved as follows:
-```ruby
-def access_scopes
-  super
-end
-```
 
 ### AfterAuthenticate Job
 
