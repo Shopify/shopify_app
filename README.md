@@ -132,22 +132,6 @@ This generator creates an example home controller and view which fetches and dis
 Options include:
 * __[Not recommended for embedded apps]__ `with-cookie-authentication` - This flag generates an authenticated home_controller, where the authentication strategy relies on cookies. By default, this generator creates an unauthenticated home_controller and protected sample products_controller.
 
-### Scopes Storage Generator
-```sh
-$ rails generate shopify_app:scopes_storage
-```
-
-This generator does the following:
-
-- Creates a database migration to add a `scopes` attribute to the `Shop` model.
-- Modifies the `Shop` model to override template methods to store and read access scopes for a shop.
-- For embedded apps using session tokens, the `HomeController` is modified to include the `ShopifyApp::ScopesVerification` concern so that changes in scopes requested by the app cause the merchant to go through the OAuth grant flow.
-
-Options include:
-* __[Not recommended for embedded apps]__ `with-cookie-authentication` - This flag causes the `HomeController` to remain unmodified.
-
-After running the generator, you will need to run `rails db:migrate` to add the new `scopes` attribute to the database.
-
 ### Products Controller Generator
 
 ```sh
@@ -333,6 +317,38 @@ end
 
 ### Access Scopes Strategies
 The Shopify App gem now provides handling changes to scopes for both shop/offline and user/online tokens. By default, the `ShopifyApp::AccessScopes::ShopStrategy` and `ShopifyApp::AccessScopes::UserStrategy` strategies are used on app loads and during OAuth.
+
+To add custom strategies, the signatures for shop and user strategies can be constructed as follows:
+
+#### Custom shop access scopes strategy
+
+```ruby
+class CustomShopStrategy
+  class << self
+    def scopes_mismatch?(shop_domain)
+      # Define what consitutes a mismatch between expected and current access scopes for shop
+    end
+  end
+end
+```
+
+#### Custom user access scopes strategy
+
+```ruby
+class UserStrategy
+  class << self
+    def scopes_mismatch_by_user_id?(user_id)
+      # Based on DB generated user_id, define what constitutes a mismatch between
+      # expected and current access scopes for user 
+    end
+
+    def scopes_mismatch_by_shopify_user_id?(shopify_user_id)
+      # Based on shopify_user_id, define what constitutes a mismatch between
+      # expected and current access scopes for user 
+    end
+  end
+end
+```
 
 #### Migrating from shop-based to user-based token strategy
 1. Run the `user_model` generator as mentioned above.
