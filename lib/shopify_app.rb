@@ -57,7 +57,9 @@ module ShopifyApp
   require 'shopify_app/session/session_repository'
   require 'shopify_app/session/session_storage'
   require 'shopify_app/session/shop_session_storage'
+  require 'shopify_app/session/shop_session_storage_with_scopes'
   require 'shopify_app/session/user_session_storage'
+  require 'shopify_app/session/user_session_storage_with_scopes'
 
   # omniauth_configuration
   require 'shopify_app/omniauth/omniauth_configuration'
