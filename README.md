@@ -247,6 +247,8 @@ $ rails generate shopify_app:shop_model
 ```
 This will generate a shop model which will be the storage for the tokens necessary for authentication.
 
+This will also generate a database migration for storing and accessing access scopes for shops. If you already have access scopes for shops stored, you can decline this option.
+
 #### User-based token storage
 A more granular control over the level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained if you are running background jobs so that you can make use of them when necessary.
 ```sh
@@ -254,6 +256,8 @@ $ rails generate shopify_app:shop_model
 $ rails generate shopify_app:user_model
 ```
 This will generate a shop model and user model, which will be the storage for the tokens necessary for authentication.
+
+This will also generate a database migration for storing and accessing access scopes for users. If you already have access scopes for users stored, you can decline this option.
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 

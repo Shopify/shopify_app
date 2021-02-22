@@ -27,6 +27,13 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "create shop with access_scopes migration in a test environment" do
+    run_generator
+    assert_migration "db/migrate/add_shop_access_scopes_column.rb" do |migration|
+      assert_match "add_column :shops, :access_scopes, :string", migration
+    end
+  end
+
   test "updates the shopify_app initializer" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|

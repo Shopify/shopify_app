@@ -1,0 +1,5 @@
+class AddShopAccessScopesColumn < ActiveRecord::Migration[<%= rails_migration_version %>]
+  def change
+    add_column :shops, :access_scopes, :string
+  end
+end
