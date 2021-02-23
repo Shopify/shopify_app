@@ -27,6 +27,13 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "create access_scopes migration for User model" do
+    run_generator
+    assert_migration "db/migrate/add_user_access_scopes_column.rb" do |migration|
+      assert_match "add_column :users, :access_scopes, :string", migration
+    end
+  end
+
   test "updates the shopify_app initializer to use User to store session" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|
