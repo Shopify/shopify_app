@@ -34,6 +34,17 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "create User with access_scopes migration with --new-shopify-cli-app flag provided" do
+    Rails.env = 'mock_environment'
+
+    run_generator %w(--new-shopify-cli-app)
+    Rails.env = 'test' # Change this back for subsequent tests
+
+    assert_migration "db/migrate/add_user_access_scopes_column.rb" do |migration|
+      assert_match "add_column :users, :access_scopes, :string", migration
+    end
+  end
+
   test "updates the shopify_app initializer to use User to store session" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|
