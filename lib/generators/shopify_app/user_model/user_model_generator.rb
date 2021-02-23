@@ -8,7 +8,7 @@ module ShopifyApp
       include Rails::Generators::Migration
       source_root File.expand_path('../templates', __FILE__)
 
-      class_option :force_access_scopes_migration, type: :boolean, default: false
+      class_option :new_shopify_cli_app, type: :boolean, default: false
 
       def create_user_model
         copy_file('user.rb', 'app/models/user.rb')
@@ -31,7 +31,7 @@ module ShopifyApp
           Do you want to include this migration? [y/n]
         PROMPT
 
-        if force_access_scopes_migration? || Rails.env.test? || yes?(scopes_column_prompt)
+        if new_shopify_cli_app? || Rails.env.test? || yes?(scopes_column_prompt)
           migration_template(
             'db/migrate/add_user_access_scopes_column.erb',
             'db/migrate/add_user_access_scopes_column.rb'
@@ -49,8 +49,8 @@ module ShopifyApp
 
       private
 
-      def force_access_scopes_migration?
-        options['force_access_scopes_migration']
+      def new_shopify_cli_app?
+        options['new_shopify_cli_app']
       end
 
       def rails_migration_version
