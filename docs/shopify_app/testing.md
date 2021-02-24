@@ -1,6 +1,6 @@
 # Testing
 
-#### Table of content
+#### Table of contents
 
 [Using test helpers inside your application](#using-test-helpers-inside-your-application)
 

@@ -2,7 +2,7 @@
 
 This file documents important changes needed to upgrade your app's Shopify App version to a new major version.
 
-#### Table of content
+#### Table of contents
 
 [Upgrading to `v13.0.0`](#upgrading-to-v1300)
 

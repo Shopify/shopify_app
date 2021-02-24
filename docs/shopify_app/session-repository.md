@@ -1,6 +1,6 @@
 # Session repository
 
-#### Table of content
+#### Table of contents
 
 [`ShopifyApp::SessionRepository`](#shopifyappsessionrepository)
   * [Shop-based token storage](#shop-based-token-storage)

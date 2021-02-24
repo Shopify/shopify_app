@@ -1,6 +1,6 @@
 # Webhooks
 
-#### Table of content
+#### Table of contents
 
 [Manage webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
 

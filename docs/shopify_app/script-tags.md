@@ -1,6 +1,6 @@
 # ScriptTags
 
-#### Table of content
+#### Table of contents
 
 [Manage ScriptTags using the Shopify App initializer](#manage-scripttags-using-the-shopify-app-initializer)
 

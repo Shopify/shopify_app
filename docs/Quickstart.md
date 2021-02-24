@@ -2,7 +2,7 @@
 
 This guide assumes you have completed the steps to create a new Rails app using the Shopify App gem found in the [*Usage*](/README.md#usage) section of the project's [*README*](/README.md).
 
-#### Table of content
+#### Table of contents
 
 [Make your app available to the internet](#make-your-app-available-to-the-internet)
 

@@ -1,6 +1,6 @@
 # Engine
 
-#### Table of content
+#### Table of contents
 
 [Customize the app login URL](#customize-the-app-login-url)
 
