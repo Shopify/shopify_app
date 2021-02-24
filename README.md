@@ -12,9 +12,8 @@ This gem builds Rails applications that can be embedded in the Shopify Admin.
 [Requirements](#requirements) | 
 [Usage](#usage) | 
 [Documentation](#documentation) | 
+[Contributing](/CONTRIBUTING.md) |
 [License](/LICENSE)
-
-<!-- TODO: Introduce CONTRIBUTING.md -->
 
 ## Introduction
 
