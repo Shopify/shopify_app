@@ -118,6 +118,11 @@ module ShopifyApp
       auth_hash['credentials']['token']
     end
 
+    def access_scopes
+      return unless auth_hash['extra']['scope']
+      auth_hash['extra']['scope']
+    end
+
     def reset_session_options
       request.session_options[:renew] = true
       session.delete(:_csrf_token)
@@ -127,7 +132,8 @@ module ShopifyApp
       session_store = ShopifyAPI::Session.new(
         domain: shop_name,
         token: token,
-        api_version: ShopifyApp.configuration.api_version
+        api_version: ShopifyApp.configuration.api_version,
+        access_scopes: access_scopes
       )
 
       session[:shopify_user] = associated_user

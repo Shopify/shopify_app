@@ -263,6 +263,38 @@ The current Shopify user will be stored in the rails session at `session[:shopif
 
 Read more about Online vs. Offline access [here](https://help.shopify.com/api/getting-started/authentication/oauth).
 
+### Access Scopes
+
+If you want to customize how access scopes are stored for shops and users, you can implement the `access_scopes` getters and setters in the models that include `ShopifyApp::ShopSessionStorageWithScopes` and `ShopifyApp::UserSessionStorageWithScopes` as shown:
+
+#### `ShopifyApp::ShopSessionStorageWithScopes`
+```ruby
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorageWithScopes
+
+  def access_scopes=(scopes)
+    # Store access scopes
+  end
+  def access_scopes
+    # Find access scopes
+  end
+end
+```
+
+#### `ShopifyApp::UserSessionStorageWithScopes`
+```ruby
+class User < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorageWithScopes
+
+  def access_scopes=(scopes)
+    # Store access scopes
+  end
+  def access_scopes
+    # Find access scopes
+  end
+end
+```
+
 #### Migrating from shop-based to user-based token strategy
 1. Run the `user_model` generator as mentioned above.
 2. Ensure that both your `Shop` model and `User` model includes the necessary concerns `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage`.
