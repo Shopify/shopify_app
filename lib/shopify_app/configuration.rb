@@ -18,6 +18,8 @@ module ShopifyApp
     attr_accessor :after_authenticate_job
     attr_accessor :api_version
 
+    attr_accessor :reauth_on_access_scope_changes
+
     # customise urls
     attr_accessor :root_url
     attr_writer :login_url
@@ -70,6 +72,16 @@ module ShopifyApp
 
     def shop_session_repository
       ShopifyApp::SessionRepository.shop_storage
+    end
+
+    def shop_access_scopes_strategy
+      return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+      ShopifyApp::AccessScopes::ShopStrategy
+    end
+
+    def user_access_scopes_strategy
+      return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+      ShopifyApp::AccessScopes::UserStrategy
     end
 
     def has_webhooks?

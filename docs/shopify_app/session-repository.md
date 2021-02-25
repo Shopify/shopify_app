@@ -78,10 +78,8 @@ end
 provider :shopify,
   ...
   setup: lambda { |env|
-    ...
-    # Add this line
-    strategy.options[:per_user_permissions] = strategy.session[:user_tokens]
-    ...
+    configuration = ShopifyApp::OmniauthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
+    configuration.build_options
   }
 
 # In the `shopify_app.rb` initializer:

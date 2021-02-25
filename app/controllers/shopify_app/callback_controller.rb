@@ -76,8 +76,18 @@ module ShopifyApp
       if jwt_request?
         false
       else
-        ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+        return false unless ShopifyApp::SessionRepository.user_storage.present?
+        update_user_access_scopes?
       end
+    end
+
+    def update_user_access_scopes?
+      return true if user_session.blank?
+      user_access_scopes_strategy.update_access_scopes?(user_id: session[:user_id])
+    end
+
+    def user_access_scopes_strategy
+      ShopifyApp.configuration.user_access_scopes_strategy
     end
 
     def jwt_request?

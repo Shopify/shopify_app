@@ -20,14 +20,22 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
   test "creates the default unauthenticated home controller with home index view" do
     run_generator
 
-    assert_file "app/controllers/home_controller.rb", /HomeController < ApplicationController/
+    assert_file "app/controllers/home_controller.rb" do |file|
+      assert_match "HomeController < ApplicationController", file
+      assert_match "include ShopifyApp::ShopAccessScopesVerification", file
+      assert_match "include ShopifyApp::EmbeddedApp", file
+      assert_match "include ShopifyApp::RequireKnownShop", file
+    end
     assert_file "app/views/home/index.html.erb"
   end
 
   test "creates authenticated home controller with home index view given --with_cookie_authentication option" do
     run_generator %w(--with_cookie_authentication)
 
-    assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
+    assert_file "app/controllers/home_controller.rb" do |file|
+      assert_match "HomeController < AuthenticatedController", file
+      assert_match "include ShopifyApp::ShopAccessScopesVerification", file
+    end
     assert_file "app/views/home/index.html.erb"
     assert_no_file "app/controllers/products_controller.rb"
   end
@@ -36,7 +44,10 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     ShopifyApp.configuration.embedded_app = nil
     run_generator %w(--embedded false)
 
-    assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
+    assert_file "app/controllers/home_controller.rb" do |file|
+      assert_match "HomeController < AuthenticatedController", file
+      assert_match "include ShopifyApp::ShopAccessScopesVerification", file
+    end
     assert_file "app/views/home/index.html.erb"
     assert_no_file "app/controllers/products_controller.rb"
   end
@@ -45,7 +56,10 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     ShopifyApp.configuration.embedded_app = false
     run_generator
 
-    assert_file "app/controllers/home_controller.rb", /HomeController < AuthenticatedController/
+    assert_file "app/controllers/home_controller.rb" do |file|
+      assert_match "HomeController < AuthenticatedController", file
+      assert_match "include ShopifyApp::ShopAccessScopesVerification", file
+    end
     assert_file "app/views/home/index.html.erb"
   end
 
