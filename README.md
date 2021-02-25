@@ -77,7 +77,7 @@ See the [Shopify API gem README](https://github.com/Shopify/shopify_api/) for mo
 > * Rails 6.1 or above is not yet supported due to the new `cookies_same_site_protection` setting. 
 > * Use Shopify App `<= v7.2.8` if you need to work with Rails 4.
 
-To become a Shopify app developer, you will need a [Shopify Partners](https://www.shopify.com/partners) account. Explore the [Shopify dev docs](https://shopify.dev/concepts/shopify-introduction) to learn more about [*building Shopify apps*](https://shopify.dev/concepts/apps).
+To become a Shopify app developer, you will need a [Shopify Partners](https://www.shopify.com/partners) account. Explore the [Shopify dev docs](https://shopify.dev/concepts/shopify-introduction) to learn more about [building Shopify apps](https://shopify.dev/concepts/apps).
 
 This gem requires that you have the following credentials:
 

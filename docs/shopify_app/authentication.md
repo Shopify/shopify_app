@@ -121,4 +121,4 @@ class AuthenticatedController < ApplicationController
 end
 ```
 
-See [*Authenticate server-side rendered apps with session tokens using App Bridge and Turbolinks*](https://shopify.dev/tutorials/authenticate-server-side-rendered-apps-with-session-tokens-app-bridge-turbolinks) for more information.
+See [Authenticate server-side rendered embedded apps using Rails and Turbolinks](https://shopify.dev/tutorials/authenticate-server-side-rendered-embedded-apps-using-rails-and-turbolinks) for more information.
