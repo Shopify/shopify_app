@@ -6,11 +6,11 @@
   * [Shop-based token storage](#shop-based-token-storage)
   * [User-based token storage](#user-based-token-storage)
 
-[Access scopes](#migrating-from-shop-based-to-user-based-token-strategy)
+[Access scopes](#access-scopes)
   * [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyappshopsessionstoragewithscopes)
   * [``ShopifyApp::UserSessionStorageWithScopes``](#shopifyappusersessionstoragewithscopes)
 
-[Migration from shop-based to user-based token strategy](#migrating-from-shop-based-to-user-based-token-strategy)
+[Migrating from shop-based to user-based token strategy](#migrating-from-shop-based-to-user-based-token-strategy)
 
 ## ShopifyApp::SessionRepository
 

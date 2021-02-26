@@ -10,7 +10,7 @@ This guide assumes you have completed the steps to create a new Rails app using 
 
 ## Make your app available to the internet
 
-Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](/README.md#-rails-generate-shopifyappapp-proxy-controller) or receive [webhooks](/docs/shopify_app/webhooks.md).
+Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
 
 Use a tunneling service like [ngrok](https://ngrok.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
 

@@ -33,13 +33,11 @@ You can find documentation on gem usage, concepts, mixins, installation, and mor
 
 [Quickstart](/docs/Quickstart.md)
 
-[Releasing](/docs/Releasing.md)
-
 [Troubleshooting](/docs/Troubleshooting.md)
 
 [Upgrading](/docs/Upgrading.md)
 
-[shopify_app](/docs/shopify_app)
+[Shopify App](/docs/shopify_app)
   * [Authentication](/docs/shopify_app/authentication.md)
   * [Engine](/docs/shopify_app/engine.md)
   * [Generators](/docs/shopify_app/generators.md)
@@ -60,9 +58,9 @@ Mounting the Shopify App Rails Engine provides the following routes. These route
 | `GET`  | `/logout`                | Logout             |
 | `POST` | `/webhooks/:type`        | Webhook callback   |
 
-These routes are configurable. See [`/docs/shopify_app/engine.md`](/docs/shopify_app/engine.md) to learn how you can customize the login URL or mount the Shopify App Rails engine at nested routes.
+These routes are configurable. See the more detailed [*Engine*](/docs/shopify_app/engine.md) documentation to learn how you can customize the login URL or mount the Shopify App Rails engine at nested routes.
 
-To learn more about how this gem authenticates with Shopify, see [`/docs/shopify_app/authentication.md`](/docs/shopify_app/authentication.md).
+To learn more about how this gem authenticates with Shopify, see [*Authentication*](/docs/shopify_app/authentication.md).
 
 ### API Versioning
 
