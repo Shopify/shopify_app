@@ -9,9 +9,9 @@
 This gem builds Rails applications that can be embedded in the Shopify Admin.
 
 [Introduction](#introduction) | 
-[Documentation](#documentation) | 
 [Requirements](#requirements) | 
 [Usage](#usage) | 
+[Documentation](#documentation) | 
 [License](/LICENSE)
 
 <!-- TODO: Introduce CONTRIBUTING.md -->
@@ -19,54 +19,6 @@ This gem builds Rails applications that can be embedded in the Shopify Admin.
 ## Introduction
 
 This gem includes a Rails engine, generators, modules, and mixins that help create Rails applications that work with Shopify APIs. The [Shopify App Rails engine](/docs/shopify_app/engine.md) provides all the code required to implement OAuth with Shopify. The [default Shopify App generator](/docs/shopify_app/generators.md#-environment-rails-generate-shopify_app) builds an app that can be embedded in the Shopify Admin and secures it with [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens).
-
-## Documentation
-
-You can find documentation on gem usage, concepts, mixins, installation, and more in [`/docs`](/docs).
-
-* Start with the [*Generators*](/docs/shopify_app/generators.md) document to learn more about the generators this gem offers.
-* Check out the [*Changelog*](/CHANGELOG.md) for notes on the latest gem releases.
-* See [*Troubleshooting*](/docs/Troubleshooting.md) for tips on common issues.
-* If you are looking to upgrade your Shopify App version to a new major release, see [*Upgrading*](/docs/Upgrading.md) for important notes on breaking changes.
-
-### Overview
-
-[Quickstart](/docs/Quickstart.md)
-
-[Troubleshooting](/docs/Troubleshooting.md)
-
-[Upgrading](/docs/Upgrading.md)
-
-[Shopify App](/docs/shopify_app)
-  * [Authentication](/docs/shopify_app/authentication.md)
-  * [Engine](/docs/shopify_app/engine.md)
-  * [Generators](/docs/shopify_app/generators.md)
-  * [ScriptTags](/docs/shopify_app/script-tags.md)
-  * [Session repository](/docs/shopify_app/session-repository.md)
-  * [Testing](/docs/shopify_app/testing.md)
-  * [Webhooks](/docs/shopify_app/webhooks.md)
-
-### Engine
-
-Mounting the Shopify App Rails Engine provides the following routes. These routes are configured to help install your application on shops and implement OAuth.
-
-| Verb   | Route                    | Action             |
-|   ---: | :---                     | :---               |
-| `GET`  | `/login`                 | Login              |
-| `POST` | `/login`                 | Login              |
-| `GET`  | `/auth/shopify/callback` | OAuth redirect URI |
-| `GET`  | `/logout`                | Logout             |
-| `POST` | `/webhooks/:type`        | Webhook callback   |
-
-These routes are configurable. See the more detailed [*Engine*](/docs/shopify_app/engine.md) documentation to learn how you can customize the login URL or mount the Shopify App Rails engine at nested routes.
-
-To learn more about how this gem authenticates with Shopify, see [*Authentication*](/docs/shopify_app/authentication.md).
-
-### API Versioning
-
-[Shopify's API is versioned](https://shopify.dev/concepts/about-apis/versioning). With Shopify App `v1.11.0`, the included Shopify API gem allows developers to specify and update the Shopify API version they want their app or service to use. The Shopify API gem also surfaces warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).
-
-See the [Shopify API gem README](https://github.com/Shopify/shopify_api/) for more information.
 
 <!-- This section is linked to in `templates/shopify_app.rb.tt`. Be careful renaming this heading. -->
 ## Requirements
@@ -128,3 +80,51 @@ See [*Quickstart*](/docs/Quickstart.md) to learn how to install your app on a sh
 This app implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
 
 See [*Generators*](/docs/shopify_app/generators.md) for a complete list of generators available to Shopify App.
+
+## Documentation
+
+You can find documentation on gem usage, concepts, mixins, installation, and more in [`/docs`](/docs).
+
+* Start with the [*Generators*](/docs/shopify_app/generators.md) document to learn more about the generators this gem offers.
+* Check out the [*Changelog*](/CHANGELOG.md) for notes on the latest gem releases.
+* See [*Troubleshooting*](/docs/Troubleshooting.md) for tips on common issues.
+* If you are looking to upgrade your Shopify App version to a new major release, see [*Upgrading*](/docs/Upgrading.md) for important notes on breaking changes.
+
+### Overview
+
+[Quickstart](/docs/Quickstart.md)
+
+[Troubleshooting](/docs/Troubleshooting.md)
+
+[Upgrading](/docs/Upgrading.md)
+
+[Shopify App](/docs/shopify_app)
+  * [Authentication](/docs/shopify_app/authentication.md)
+  * [Engine](/docs/shopify_app/engine.md)
+  * [Generators](/docs/shopify_app/generators.md)
+  * [ScriptTags](/docs/shopify_app/script-tags.md)
+  * [Session repository](/docs/shopify_app/session-repository.md)
+  * [Testing](/docs/shopify_app/testing.md)
+  * [Webhooks](/docs/shopify_app/webhooks.md)
+
+### Engine
+
+Mounting the Shopify App Rails Engine provides the following routes. These routes are configured to help install your application on shops and implement OAuth.
+
+| Verb   | Route                    | Action             |
+|   ---: | :---                     | :---               |
+| `GET`  | `/login`                 | Login              |
+| `POST` | `/login`                 | Login              |
+| `GET`  | `/auth/shopify/callback` | OAuth redirect URI |
+| `GET`  | `/logout`                | Logout             |
+| `POST` | `/webhooks/:type`        | Webhook callback   |
+
+These routes are configurable. See the more detailed [*Engine*](/docs/shopify_app/engine.md) documentation to learn how you can customize the login URL or mount the Shopify App Rails engine at nested routes.
+
+To learn more about how this gem authenticates with Shopify, see [*Authentication*](/docs/shopify_app/authentication.md).
+
+### API Versioning
+
+[Shopify's API is versioned](https://shopify.dev/concepts/about-apis/versioning). With Shopify App `v1.11.0`, the included Shopify API gem allows developers to specify and update the Shopify API version they want their app or service to use. The Shopify API gem also surfaces warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).
+
+See the [Shopify API gem README](https://github.com/Shopify/shopify_api/) for more information.
