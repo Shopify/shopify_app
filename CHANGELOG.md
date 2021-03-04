@@ -1,6 +1,11 @@
 Unreleased
 ----------
 
+17.1.0 (March 5, 2021)
+----------
+* Create OmniAuthConfiguration object to build future OmniAuth strategies [#1190](https://github.com/Shopify/shopify_app/pull/1190)
+* Added access scopes to Shop and User models, added checks to handle scope changes [#1192](https://github.com/Shopify/shopify_app/pull/1192) [#1197](https://github.com/Shopify/shopify_app/pull/1197)
+
 17.0.5 (January 27, 2021)
 ----------
 * Fix omniauth strategy not being set correctly for apps using session tokens [#1164](https://github.com/Shopify/shopify_app/pull/1164)
