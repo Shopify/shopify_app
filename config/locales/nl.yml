@@ -1,7 +1,7 @@
 ---
 nl:
   logged_out: Je bent afgemeld
-  could_not_log_in: Kon niet aanmelden bij Shopify-winkel
+  could_not_log_in: Kon niet inloggen bij Shopify-winkel
   invalid_shop_url: Ongeldig winkeldomein
   enable_cookies_heading: Schakel cookies in van %{app}
   enable_cookies_body: Je moet cookies in deze browser handmatig inschakelen om %{app}
