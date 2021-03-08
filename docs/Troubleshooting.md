@@ -10,6 +10,7 @@
 
 [JWT session tokens](#jwt-session-tokens)
   * [My app is still using cookies to authenticate](#my-app-is-still-using-cookies-to-authenticate)
+  * [My app can't make requests to the Shopify API](#my-app-cant-make-requests-to-the-shopify-api)
 
 ## Generators
 
@@ -75,3 +76,33 @@ In this case, check the server logs to see if the session token was invalid:
 - gem 'shopify_app', '~> 14.2'
 + gem 'shopify_app', path: '/path/to/shopify_app'
 ```
+
+### My app can't make requests to the Shopify API
+
+> **Note:** Session tokens cannot be used to make authenticated requests to the Shopify API. Learn more about authenticating your backend requests to Shopify APIs at [Shopify API authentication](https://shopify.dev/concepts/about-apis/authentication).
+
+#### The Shopify API returns `401 Unauthorized`
+
+If your app uses [user-based token storage](/docs/shopify_app/session-repository.md#user-based-token-storage), then your app is configured to use **online** access tokens (see [API access modes](https://shopify.dev/concepts/about-apis/authentication#api-access-modes) to learn the difference between "online" and "offline" access tokens ). Unlike offline access tokens, online access tokens expire daily and cannot be used to make authenticated requests to the Shopify API once they expire.
+
+Converting your app to use session tokens means that your app will most likely not go through the OAuth flow as often as it did when relying on cookie sessions. Since the online access tokens stored in your app's database are refreshed during OAuth, this may cause your app's user session repository to use expired online access tokens.
+
+If the Shopify API  returns `401 Unauthorized`, handle this error on your app by redirecting the user to your login path to start the OAuth flow. As a result, your app will be given a new online access token for the current user.
+
+> **Note:** The following are examples to common app configurations. Your specific use-case may differ.
+
+##### Example solution
+
+Add the following line to your app's unauthorized response handler:
+
+```diff
++ redirect_to(ShopifyApp.configuration.login_url, shop: current_shopify_domain)
+```
+
+_Example:_ If your embedded app cannot handle server-side XHR redirects, then configure your app's unauthorized response handler to set a response header:
+
+```
+X-Shopify-API-Request-Failure-Unauthorized: true
+```
+
+Then, use the [Shopify App Bridge Redirect](https://shopify.dev/tools/app-bridge/actions/navigation/redirect) action to redirect your app frontend to the app login URL if this header is set.
