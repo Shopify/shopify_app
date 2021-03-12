@@ -1,6 +1,10 @@
 Unreleased
 ----------
 
+17.1.1 (March 12, 2021)
+----------
+* Fix issues with mocking OmniAuth callback controller tests [#1210](https://github.com/Shopify/shopify_app/pull/1210)
+
 17.1.0 (March 5, 2021)
 ----------
 * Create OmniAuthConfiguration object to build future OmniAuth strategies [#1190](https://github.com/Shopify/shopify_app/pull/1190)
