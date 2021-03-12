@@ -129,8 +129,7 @@ module ShopifyApp
     end
 
     def access_scopes
-      return unless auth_hash['extra']['scope']
-      auth_hash['extra']['scope']
+      auth_hash.dig('extra', 'scope')
     end
 
     def reset_session_options
