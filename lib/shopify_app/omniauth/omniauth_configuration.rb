@@ -50,7 +50,7 @@ module ShopifyApp
     end
 
     def update_shop_scopes?
-      false
+      ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_domain)
     end
 
     def shop_domain

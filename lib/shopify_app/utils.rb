@@ -20,5 +20,17 @@ module ShopifyApp
     rescue ActiveResource::ConnectionError
       logger.error("[ShopifyAPI::ApiVersion] Unable to fetch api_versions from Shopify")
     end
+
+    def self.shop_login_url(shop:, return_to:)
+      return ShopifyApp.configuration.login_url unless shop
+      url = URI(ShopifyApp.configuration.login_url)
+
+      url.query = URI.encode_www_form(
+        shop: shop,
+        return_to: return_to,
+      )
+
+      url.to_s
+    end
   end
 end
