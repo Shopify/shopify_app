@@ -5,8 +5,12 @@
 [Generators](#generators)
   * [The `shopify_app:install` generator hangs](#the-shopifyappinstall-generator-hangs)
 
+[Rails](#rails)
+  * [Known issues with Rails `v6.1`](#known-issues-with-rails-v61)
+
 [App installation](#app-installation)
   * [My app won't install](#my-app-wont-install)
+  * [My app keeps redirecting to login](#my-app-keeps-redirecting-to-login)
 
 [JWT session tokens](#jwt-session-tokens)
   * [My app is still using cookies to authenticate](#my-app-is-still-using-cookies-to-authenticate)
@@ -23,6 +27,33 @@ $ bundle exec spring stop
 ```
 
 Run shopify_app generator again.
+
+## Rails
+
+### Known issues with Rails `v6.1`
+
+If you recently upgraded your application's `Rails::Application` configuration to load the default configuration for Rails `v6.1`, then you will need to update the following `cookies_same_site_protection` ActionDispatch configuration.
+
+```diff
+# config/application.rb
+
+require_relative 'boot'
+
+require 'rails/all'
+
+Bundler.require(*Rails.groups)
+
+module AppName
+  class Application < Rails::Application
++    config.load_defaults 6.1
+
++    config.action_dispatch.cookies_same_site_protection = :none
+    ...
+  end
+end
+```
+
+As of Rails `v6.1`, the same-site cookie protection setting defaults  to `Lax`. This does not allow an embedded app to make cross-domain requests in the Shopify Admin.
 
 ## App installation
 

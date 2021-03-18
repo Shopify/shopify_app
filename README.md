@@ -4,7 +4,7 @@
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
 [gem_url]: https://rubygems.org/gems/shopify_app
-[supported_rails_version]: https://img.shields.io/badge/rails-%3C6.1.0-orange
+[supported_rails_version]: https://img.shields.io/badge/rails-%3C6.2.0-orange
 
 This gem builds Rails applications that can be embedded in the Shopify Admin.
 
