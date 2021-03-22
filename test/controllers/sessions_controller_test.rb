@@ -10,6 +10,7 @@ end
 module ShopifyApp
   class SessionsControllerTest < ActionController::TestCase
     setup do
+      Rails.application.reload_routes!
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
 

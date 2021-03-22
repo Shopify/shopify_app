@@ -10,6 +10,7 @@ module ShopifyApp
     include ActiveJob::TestHelper
 
     setup do
+      Rails.application.reload_routes!
       WebhooksController.any_instance.stubs(:verify_request).returns(true)
       WebhooksController.any_instance.stubs(:webhook_namespace).returns(nil)
     end
