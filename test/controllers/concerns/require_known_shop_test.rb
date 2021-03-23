@@ -17,10 +17,6 @@ class RequireKnownShopTest < ActionController::TestCase
     end
   end
 
-  teardown do
-    Rails.application.reload_routes!
-  end
-
   test 'redirects to login if no shop param is present' do
     get :index
 
