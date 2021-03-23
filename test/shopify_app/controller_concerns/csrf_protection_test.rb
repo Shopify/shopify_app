@@ -25,7 +25,6 @@ class CsrfProtectionTest < ActionDispatch::IntegrationTest
 
   teardown do
     ActionController::Base.allow_forgery_protection = @authenticity_protection
-    Rails.application.reload_routes!
   end
 
   test 'it raises an invalid authenticity token error if a valid session token or csrf token is not provided' do

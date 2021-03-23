@@ -36,10 +36,6 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
     end
   end
 
-  teardown do
-    Rails.application.reload_routes!
-  end
-
   test 'redirects to splash page with a return_to and shop param if no session token is present' do
     get :some_link, params: { shop: @shop_domain }
 
