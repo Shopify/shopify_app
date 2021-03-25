@@ -14,7 +14,18 @@ Gem::Specification.new do |s|
   s.metadata['allowed_push_host'] = 'https://rubygems.org'
 
   s.add_runtime_dependency('browser_sniffer', '~> 1.2.2')
-  s.add_runtime_dependency('rails', '> 5.2.1', '< 6.1')
+  # s.add_runtime_dependency('rails', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('actioncable', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('actionmailer', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('actionpack', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('actionview', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('activejob', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('activerecord', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('activesupport', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('railties', '> 5.2.1', '< 6.1')
+  s.add_runtime_dependency('sprockets-rails', '~> 3.2.2')
+
+
   s.add_runtime_dependency('shopify_api', '~> 9.4')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 2.2.2')
   s.add_runtime_dependency('jwt', '~> 2.2.1')
