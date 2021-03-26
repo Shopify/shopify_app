@@ -95,6 +95,14 @@ module ShopifyApp
       auth_hash.uid
     end
 
+    def offline_access_token
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(shop_name)&.token
+    end
+
+    def online_access_token
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(associated_user_id)&.token
+    end
+
     def associated_user
       return unless auth_hash.dig('extra', 'associated_user').present?
 
@@ -138,7 +146,7 @@ module ShopifyApp
 
       WebhooksManager.queue(
         shop_name,
-        shop_session&.token || user_session.token,
+        offline_access_token || online_access_token,
         ShopifyApp.configuration.webhooks
       )
     end
@@ -148,7 +156,7 @@ module ShopifyApp
 
       ScripttagsManager.queue(
         shop_name,
-        shop_session&.token || user_session.token,
+        offline_access_token || online_access_token,
         ShopifyApp.configuration.scripttags
       )
     end
