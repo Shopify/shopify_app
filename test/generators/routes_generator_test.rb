@@ -15,11 +15,11 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/routes.rb" do |routes|
-      assert_match "get 'login' => :new, :as => :login", routes
-      assert_match "post 'login' => :create, :as => :authenticate", routes
-      assert_match "get 'auth/shopify/callback' => :callback", routes
-      assert_match "get 'logout' => :destroy, :as => :logout", routes
-      refute_match "mount ShopifyApp::Engine, at: '/'", routes
+      assert_match 'get "login" => :new, :as => :login', routes
+      assert_match 'post "login" => :create, :as => :authenticate', routes
+      assert_match 'get "auth/shopify/callback" => :callback', routes
+      assert_match 'get "logout" => :destroy, :as => :logout', routes
+      refute_match 'mount ShopifyApp::Engine, at: "/"', routes
     end
   end
 end
