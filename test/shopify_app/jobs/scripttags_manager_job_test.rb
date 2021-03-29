@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 module ShopifyApp
   class ScripttagsManagerJobTest < ActiveSupport::TestCase
     test "#perform creates scripttags" do
-      token = 'token'
-      domain = 'example-app.com'
+      token = "token"
+      domain = "example-app.com"
       api_version = :unstable
 
       ShopifyAPI::Session
@@ -13,7 +13,7 @@ module ShopifyApp
         .with(domain: domain, token: token, api_version: api_version)
         .yields
 
-      manager = mock('manager')
+      manager = mock("manager")
       manager.expects(:create_scripttags)
       ShopifyApp::ScripttagsManager.expects(:new).with([], domain).returns(manager)
 

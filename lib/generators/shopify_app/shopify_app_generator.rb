@@ -8,10 +8,10 @@ module ShopifyApp
       end
 
       def run_all_generators
-        generate("shopify_app:install #{@opts.join(' ')}")
-        generate("shopify_app:shop_model #{@opts.join(' ')}")
+        generate("shopify_app:install #{@opts.join(" ")}")
+        generate("shopify_app:shop_model #{@opts.join(" ")}")
         generate("shopify_app:authenticated_controller")
-        generate("shopify_app:home_controller #{@opts.join(' ')}")
+        generate("shopify_app:home_controller #{@opts.join(" ")}")
       end
     end
   end

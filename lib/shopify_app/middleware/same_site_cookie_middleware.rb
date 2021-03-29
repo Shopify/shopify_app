@@ -9,23 +9,23 @@ module ShopifyApp
 
     def call(env)
       status, headers, body = @app.call(env)
-      user_agent = env['HTTP_USER_AGENT']
+      user_agent = env["HTTP_USER_AGENT"]
 
-      if headers && headers['Set-Cookie'] &&
+      if headers && headers["Set-Cookie"] &&
           BrowserSniffer.new(user_agent).same_site_none_compatible? &&
           ShopifyApp.configuration.enable_same_site_none &&
           Rack::Request.new(env).ssl?
 
-        set_cookies = headers['Set-Cookie']
+        set_cookies = headers["Set-Cookie"]
           .split(COOKIE_SEPARATOR)
           .compact
           .map do |cookie|
-            cookie << '; Secure' unless cookie =~ /;\s*secure/i
-            cookie << '; SameSite=None' if ShopifyApp.configuration.embedded_app?
+            cookie << "; Secure" unless cookie =~ /;\s*secure/i
+            cookie << "; SameSite=None" if ShopifyApp.configuration.embedded_app?
             cookie
           end
 
-        headers['Set-Cookie'] = set_cookies.join(COOKIE_SEPARATOR)
+        headers["Set-Cookie"] = set_cookies.join(COOKIE_SEPARATOR)
       end
 
       [status, headers, body]

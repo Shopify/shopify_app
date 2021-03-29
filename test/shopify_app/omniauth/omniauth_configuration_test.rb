@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 module ShopifyApp
   class OmniAuthConfigurationTest < Minitest::Test
@@ -7,9 +7,9 @@ module ShopifyApp
 
     def setup
       mock_shop_scopes_match_strategy
-      ShopifyApp.configuration.old_secret = 'old_secret'
-      ShopifyApp.configuration.user_access_scopes = 'read_products, read_orders'
-      ShopifyApp.configuration.shop_access_scopes = 'write_products, write_themes'
+      ShopifyApp.configuration.old_secret = "old_secret"
+      ShopifyApp.configuration.user_access_scopes = "read_products, read_orders"
+      ShopifyApp.configuration.shop_access_scopes = "write_products, write_themes"
       ShopifyApp.configuration.reauth_on_access_scope_changes = true
       @strategy = mock_strategy
       @request = mock_request
@@ -40,7 +40,7 @@ module ShopifyApp
 
     def test_configuration_configures_client_options_site_to_specified_value
       configuration = OmniAuthConfiguration.new(strategy, request)
-      configuration.client_options_site = 'something.entirely.made.up'
+      configuration.client_options_site = "something.entirely.made.up"
 
       configuration.build_options
 
@@ -52,12 +52,12 @@ module ShopifyApp
 
     def test_configuration_configures_scope_to_specified_value
       configuration = OmniAuthConfiguration.new(strategy, request)
-      configuration.scopes = 'write_customers'
+      configuration.scopes = "write_customers"
 
       configuration.build_options
 
       assert_equal "https://shop.myshopify.com", strategy.options[:client_options][:site]
-      assert_equal 'write_customers', strategy.options[:scope]
+      assert_equal "write_customers", strategy.options[:scope]
       assert_equal ShopifyApp.configuration.old_secret, strategy.options[:old_client_secret]
       assert strategy.options[:per_user_permissions]
     end
@@ -113,8 +113,8 @@ module ShopifyApp
       OpenStruct.new(
         session: {
           user_tokens: true,
-          'shopify.omniauth_params' => {
-            shop: 'shop.myshopify.com',
+          "shopify.omniauth_params" => {
+            shop: "shop.myshopify.com",
           }.with_indifferent_access,
         }.with_indifferent_access,
         options: {
@@ -126,7 +126,7 @@ module ShopifyApp
     def mock_request
       OpenStruct.new(
         params: {
-          shop: 'shop.myshopify.com',
+          shop: "shop.myshopify.com",
         }.with_indifferent_access
       )
     end

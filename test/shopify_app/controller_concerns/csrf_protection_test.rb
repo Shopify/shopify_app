@@ -18,8 +18,8 @@ class CsrfProtectionTest < ActionDispatch::IntegrationTest
     @authenticity_protection = ActionController::Base.allow_forgery_protection
     ActionController::Base.allow_forgery_protection = true
     Rails.application.routes.draw do
-      get '/authenticity_token', to: 'csrf_protection#authenticity_token'
-      post '/csrf_protection_test', to: 'csrf_protection#csrf_test'
+      get "/authenticity_token", to: "csrf_protection#authenticity_token"
+      post "/csrf_protection_test", to: "csrf_protection#csrf_test"
     end
   end
 
@@ -27,24 +27,24 @@ class CsrfProtectionTest < ActionDispatch::IntegrationTest
     ActionController::Base.allow_forgery_protection = @authenticity_protection
   end
 
-  test 'it raises an invalid authenticity token error if a valid session token or csrf token is not provided' do
+  test "it raises an invalid authenticity token error if a valid session token or csrf token is not provided" do
     assert_raises ActionController::InvalidAuthenticityToken do
-      post '/csrf_protection_test'
+      post "/csrf_protection_test"
     end
   end
 
-  test 'it does not raise if a valid CSRF token was provided' do
-    get '/authenticity_token'
+  test "it does not raise if a valid CSRF token was provided" do
+    get "/authenticity_token"
 
-    csrf_token = JSON.parse(response.body)['authenticity_token']
+    csrf_token = JSON.parse(response.body)["authenticity_token"]
 
-    post '/csrf_protection_test', headers: { 'X-CSRF-Token': csrf_token }
+    post "/csrf_protection_test", headers: { 'X-CSRF-Token': csrf_token }
 
     assert_response :ok
   end
 
-  test 'it does not raise if a valid session token was provided' do
-    post '/csrf_protection_test', env: { 'jwt.shopify_domain': "exampleshop.myshopify.com" }
+  test "it does not raise if a valid session token was provided" do
+    post "/csrf_protection_test", env: { 'jwt.shopify_domain': "exampleshop.myshopify.com" }
 
     assert_response :ok
   end

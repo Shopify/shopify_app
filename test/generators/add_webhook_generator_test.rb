@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/add_webhook/add_webhook_generator'
+require "test_helper"
+require "generators/shopify_app/add_webhook/add_webhook_generator"
 
 class AddWebhookGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AddWebhookGenerator
@@ -17,7 +17,7 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/initializers/shopify_app.rb" do |config|
-      assert_match 'config.webhooks = [', config
+      assert_match "config.webhooks = [", config
       assert_match new_webhook, config
     end
   end
@@ -28,7 +28,7 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/initializers/shopify_app.rb" do |config|
-      assert_match 'config.webhooks = [', config
+      assert_match "config.webhooks = [", config
       assert_match exisiting_webhook, config
       assert_match new_webhook, config
     end
@@ -41,7 +41,7 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
 
     assert_directory "app/jobs"
     assert_file "app/jobs/product_update_job.rb" do |job|
-      assert_match 'class ProductUpdateJob < ActiveJob::Base', job
+      assert_match "class ProductUpdateJob < ActiveJob::Base", job
     end
   end
 

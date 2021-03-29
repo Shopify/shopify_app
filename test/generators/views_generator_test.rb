@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/views/views_generator'
+require "test_helper"
+require "generators/shopify_app/views/views_generator"
 
 class ViewsGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::ViewsGenerator

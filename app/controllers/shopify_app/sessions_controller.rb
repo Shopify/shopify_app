@@ -6,7 +6,7 @@ module ShopifyApp
     layout false, only: :new
 
     after_action only: [:new, :create] do |controller|
-      controller.response.headers.except!('X-Frame-Options')
+      controller.response.headers.except!("X-Frame-Options")
     end
 
     def new
@@ -42,7 +42,7 @@ module ShopifyApp
     def granted_storage_access
       return unless validate_shop_presence
 
-      session['shopify.granted_storage_access'] = true
+      session["shopify.granted_storage_access"] = true
 
       copy_return_to_param_to_session
 
@@ -51,7 +51,7 @@ module ShopifyApp
 
     def destroy
       reset_session
-      flash[:notice] = I18n.t('.logged_out')
+      flash[:notice] = I18n.t(".logged_out")
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -59,7 +59,7 @@ module ShopifyApp
 
     def authenticate
       return render_invalid_shop_error unless sanitized_shop_name.present?
-      session['shopify.omniauth_params'] = { shop: sanitized_shop_name }
+      session["shopify.omniauth_params"] = { shop: sanitized_shop_name }
 
       copy_return_to_param_to_session
 
@@ -83,7 +83,7 @@ module ShopifyApp
     end
 
     def authenticate_with_partitioning
-      if session['shopify.cookies_persist']
+      if session["shopify.cookies_persist"]
         clear_top_level_oauth_cookie
         authenticate_in_context
       else
@@ -134,11 +134,11 @@ module ShopifyApp
     end
 
     def copy_return_to_param_to_session
-      session[:return_to] = RedirectSafely.make_safe(params[:return_to], '/') if params[:return_to]
+      session[:return_to] = RedirectSafely.make_safe(params[:return_to], "/") if params[:return_to]
     end
 
     def render_invalid_shop_error
-      flash[:error] = I18n.t('invalid_shop_url')
+      flash[:error] = I18n.t("invalid_shop_url")
       redirect_to(return_address)
     end
 
@@ -168,7 +168,7 @@ module ShopifyApp
       return false if user_agent_is_mobile
       return false if user_agent_is_pos
 
-      !session['shopify.granted_storage_access']
+      !session["shopify.granted_storage_access"]
     end
 
     def redirect_to_request_storage_access

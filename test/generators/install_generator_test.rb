@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/install/install_generator'
+require "test_helper"
+require "generators/shopify_app/install/install_generator"
 
 class InstallGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::InstallGenerator
@@ -42,7 +42,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.api_key = ENV.fetch('SHOPIFY_API_KEY', '')", shopify_app
       assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
-      assert_match 'config.embedded_app = true', shopify_app
+      assert_match "config.embedded_app = true", shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
       assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
@@ -55,7 +55,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.api_key = ENV.fetch('SHOPIFY_API_KEY', '')", shopify_app
       assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
-      assert_match 'config.embedded_app = true', shopify_app
+      assert_match "config.embedded_app = true", shopify_app
       assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
   end
@@ -70,8 +70,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "uses cookie based auth strategy for non embedded app" do
     run_generator %w(--embedded false)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
-      assert_match 'config.allow_jwt_authentication = false', shopify_app
-      assert_match 'config.allow_cookie_authentication = true', shopify_app
+      assert_match "config.allow_jwt_authentication = false", shopify_app
+      assert_match "config.allow_cookie_authentication = true", shopify_app
     end
   end
 
@@ -106,8 +106,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match "config.embedded_app = true", shopify_app
-      assert_match 'config.allow_jwt_authentication = true', shopify_app
-      assert_match 'config.allow_cookie_authentication = false', shopify_app
+      assert_match "config.allow_jwt_authentication = true", shopify_app
+      assert_match "config.allow_cookie_authentication = false", shopify_app
     end
   end
 
@@ -115,8 +115,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator %w(--with-cookie-authentication)
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match "config.embedded_app = true", shopify_app
-      assert_match 'config.allow_jwt_authentication = false', shopify_app
-      assert_match 'config.allow_cookie_authentication = true', shopify_app
+      assert_match "config.allow_jwt_authentication = false", shopify_app
+      assert_match "config.allow_cookie_authentication = true", shopify_app
     end
   end
 end

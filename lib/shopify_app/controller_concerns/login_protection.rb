@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'browser_sniffer'
+require "browser_sniffer"
 
 module ShopifyApp
   module LoginProtection
@@ -14,7 +14,7 @@ module ShopifyApp
       rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
     end
 
-    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
+    ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
 
     def activate_shopify_session
       if user_session_expected? && user_session.blank?
@@ -35,9 +35,7 @@ module ShopifyApp
     end
 
     def current_shopify_session
-      @current_shopify_session ||= begin
-        user_session || shop_session
-      end
+      @current_shopify_session ||= user_session || shop_session
     end
 
     def user_session
@@ -96,11 +94,11 @@ module ShopifyApp
     protected
 
     def jwt_shopify_domain
-      request.env['jwt.shopify_domain']
+      request.env["jwt.shopify_domain"]
     end
 
     def jwt_shopify_user_id
-      request.env['jwt.shopify_user_id']
+      request.env["jwt.shopify_user_id"]
     end
 
     def redirect_to_login
@@ -164,12 +162,12 @@ module ShopifyApp
 
     def return_to_param_required?
       native_params = %i[shop hmac timestamp locale protocol return_to]
-      request.path != '/' || sanitized_params.except(*native_params).any?
+      request.path != "/" || sanitized_params.except(*native_params).any?
     end
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render('shopify_app/shared/redirect', layout: false,
+        render("shopify_app/shared/redirect", layout: false,
                locals: { url: url, current_shopify_domain: current_shopify_domain })
       else
         redirect_to(url)

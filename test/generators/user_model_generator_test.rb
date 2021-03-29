@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/user_model/user_model_generator'
+require "test_helper"
+require "generators/shopify_app/user_model/user_model_generator"
 
 class UserModelGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::UserModelGenerator
@@ -35,10 +35,10 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
   end
 
   test "create User with access_scopes migration with --new-shopify-cli-app flag provided" do
-    Rails.env = 'mock_environment'
+    Rails.env = "mock_environment"
 
     run_generator %w(--new-shopify-cli-app)
-    Rails.env = 'test' # Change this back for subsequent tests
+    Rails.env = "test" # Change this back for subsequent tests
 
     assert_migration "db/migrate/add_user_access_scopes_column.rb" do |migration|
       assert_match "add_column :users, :access_scopes, :string", migration

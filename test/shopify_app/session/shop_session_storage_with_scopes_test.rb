@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 class ShopMockSessionStoreWithScopes < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorageWithScopes
@@ -10,7 +10,7 @@ module ShopifyApp
   class ShopSessionStorageWithScopesTest < ActiveSupport::TestCase
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
-    TEST_MERCHANT_SCOPES = 'read_products, write_orders'
+    TEST_MERCHANT_SCOPES = "read_products, write_orders"
 
     test ".retrieve can retrieve shop session records by ID" do
       ShopMockSessionStoreWithScopes.stubs(:find_by).returns(MockShopInstance.new(
@@ -29,7 +29,7 @@ module ShopifyApp
       instance = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
-        api_version: '2020-01',
+        api_version: "2020-01",
         scopes: TEST_MERCHANT_SCOPES
       )
       ShopMockSessionStoreWithScopes.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
@@ -65,22 +65,22 @@ module ShopifyApp
       assert_equal mock_shop_instance.id, saved_id
     end
 
-    test '.retrieve returns nil for non-existent shop' do
-      shop_id = 'non-existent-id'
+    test ".retrieve returns nil for non-existent shop" do
+      shop_id = "non-existent-id"
       ShopMockSessionStoreWithScopes.stubs(:find_by).with(id: shop_id).returns(nil)
 
       refute ShopMockSessionStoreWithScopes.retrieve(shop_id)
     end
 
-    test '.retrieve_by_shopify_domain returns nil for non-existent shop' do
-      shop_domain = 'non-existent-id'
+    test ".retrieve_by_shopify_domain returns nil for non-existent shop" do
+      shop_domain = "non-existent-id"
 
       ShopMockSessionStoreWithScopes.stubs(:find_by).with(shopify_domain: shop_domain).returns(nil)
 
       refute ShopMockSessionStoreWithScopes.retrieve_by_shopify_domain(shop_domain)
     end
 
-    test '.retrieve throws NotImplementedError when access_scopes getter is not implemented' do
+    test ".retrieve throws NotImplementedError when access_scopes getter is not implemented" do
       mock_shop = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN

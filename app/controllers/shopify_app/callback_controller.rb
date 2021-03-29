@@ -60,7 +60,7 @@ module ShopifyApp
       if jwt_request?
         head(:unauthorized)
       else
-        flash[:error] = I18n.t('could_not_log_in')
+        flash[:error] = I18n.t("could_not_log_in")
         redirect_to(login_url_with_optional_shop)
       end
     end
@@ -99,7 +99,7 @@ module ShopifyApp
     end
 
     def auth_hash
-      request.env['omniauth.auth']
+      request.env["omniauth.auth"]
     end
 
     def shop_name
@@ -115,21 +115,21 @@ module ShopifyApp
     end
 
     def associated_user
-      return unless auth_hash.dig('extra', 'associated_user').present?
+      return unless auth_hash.dig("extra", "associated_user").present?
 
-      auth_hash['extra']['associated_user'].merge('scope' => auth_hash['extra']['associated_user_scope'])
+      auth_hash["extra"]["associated_user"].merge("scope" => auth_hash["extra"]["associated_user_scope"])
     end
 
     def associated_user_id
-      associated_user && associated_user['id']
+      associated_user && associated_user["id"]
     end
 
     def token
-      auth_hash['credentials']['token']
+      auth_hash["credentials"]["token"]
     end
 
     def access_scopes
-      auth_hash.dig('extra', 'scope')
+      auth_hash.dig("extra", "scope")
     end
 
     def reset_session_options

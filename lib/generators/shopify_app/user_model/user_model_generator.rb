@@ -1,21 +1,21 @@
 # frozen_string_literal: true
-require 'rails/generators/base'
-require 'rails/generators/active_record'
+require "rails/generators/base"
+require "rails/generators/active_record"
 
 module ShopifyApp
   module Generators
     class UserModelGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path("../templates", __FILE__)
 
       class_option :new_shopify_cli_app, type: :boolean, default: false
 
       def create_user_model
-        copy_file('user.rb', 'app/models/user.rb')
+        copy_file("user.rb", "app/models/user.rb")
       end
 
       def create_user_migration
-        migration_template('db/migrate/create_users.erb', 'db/migrate/create_users.rb')
+        migration_template("db/migrate/create_users.erb", "db/migrate/create_users.rb")
       end
 
       def create_scopes_storage_in_user_model
@@ -33,24 +33,24 @@ module ShopifyApp
 
         if new_shopify_cli_app? || Rails.env.test? || yes?(scopes_column_prompt)
           migration_template(
-            'db/migrate/add_user_access_scopes_column.erb',
-            'db/migrate/add_user_access_scopes_column.rb'
+            "db/migrate/add_user_access_scopes_column.erb",
+            "db/migrate/add_user_access_scopes_column.rb"
           )
         end
       end
 
       def update_shopify_app_initializer
-        gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryUserSessionStore', 'User')
+        gsub_file("config/initializers/shopify_app.rb", "ShopifyApp::InMemoryUserSessionStore", "User")
       end
 
       def create_user_fixtures
-        copy_file('users.yml', 'test/fixtures/users.yml')
+        copy_file("users.yml", "test/fixtures/users.yml")
       end
 
       private
 
       def new_shopify_cli_app?
-        options['new_shopify_cli_app']
+        options["new_shopify_cli_app"]
       end
 
       def rails_migration_version

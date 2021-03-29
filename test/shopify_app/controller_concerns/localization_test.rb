@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'action_controller'
-require 'action_controller/base'
+require "test_helper"
+require "action_controller"
+require "action_controller/base"
 
 class LocalizationController < ActionController::Base
   include ShopifyApp::Localization
@@ -31,7 +31,7 @@ class LocalizationTest < ActionController::TestCase
 
   test "set I18n.locale to passed locale param" do
     with_test_routes do
-      get :index, params: { locale: 'de' }
+      get :index, params: { locale: "de" }
       assert_equal :de, I18n.locale
     end
   end
@@ -40,7 +40,7 @@ class LocalizationTest < ActionController::TestCase
     I18n.default_locale = :en
 
     with_test_routes do
-      get :index, params: { locale: 'invalid_locale' }
+      get :index, params: { locale: "invalid_locale" }
       assert_equal :en, I18n.locale
     end
   end
@@ -50,7 +50,7 @@ class LocalizationTest < ActionController::TestCase
   def with_test_routes
     with_routing do |set|
       set.draw do
-        get '/locale' => 'localization#index'
+        get "/locale" => "localization#index"
       end
       yield
     end

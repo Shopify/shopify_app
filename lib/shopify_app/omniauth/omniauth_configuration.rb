@@ -41,7 +41,7 @@ module ShopifyApp
     end
 
     def default_client_options_site
-      return '' unless shop_domain.present?
+      return "" unless shop_domain.present?
       "https://#{shopify_auth_params[:shop]}"
     end
 
@@ -54,11 +54,11 @@ module ShopifyApp
     end
 
     def shop_domain
-      request.params['shop'] || (shopify_auth_params && shopify_auth_params['shop'])
+      request.params["shop"] || (shopify_auth_params && shopify_auth_params["shop"])
     end
 
     def shopify_auth_params
-      strategy.session['shopify.omniauth_params']&.with_indifferent_access
+      strategy.session["shopify.omniauth_params"]&.with_indifferent_access
     end
   end
 end

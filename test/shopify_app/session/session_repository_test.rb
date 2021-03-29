@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 module ShopifyApp
   class SessionRepositoryTest < ActiveSupport::TestCase
@@ -20,8 +20,8 @@ module ShopifyApp
       assert_kind_of NullUserSessionStore.class, SessionRepository.user_storage
     end
 
-    test '.user_storage accepts a String as argument' do
-      SessionRepository.user_storage = 'ShopifyApp::InMemoryUserSessionStore'
+    test ".user_storage accepts a String as argument" do
+      SessionRepository.user_storage = "ShopifyApp::InMemoryUserSessionStore"
       assert_kind_of InMemoryUserSessionStore.class, SessionRepository.user_storage
     end
 
@@ -37,12 +37,12 @@ module ShopifyApp
       assert_raises(SessionRepository::ConfigurationError) { SessionRepository.shop_storage }
     end
 
-    test '.shop_storage accepts a String as argument' do
-      SessionRepository.shop_storage = 'ShopifyApp::InMemoryShopSessionStore'
+    test ".shop_storage accepts a String as argument" do
+      SessionRepository.shop_storage = "ShopifyApp::InMemoryShopSessionStore"
       assert_kind_of InMemoryShopSessionStore.class, SessionRepository.shop_storage
     end
 
-    test '.retrieve_user_session_by_shopify_user_id retrieves a user session by JWT' do
+    test ".retrieve_user_session_by_shopify_user_id retrieves a user session by JWT" do
       SessionRepository.user_storage = InMemoryUserSessionStore
 
       InMemoryUserSessionStore.expects(:retrieve_by_shopify_user_id).with(mock_shopify_user_id)
@@ -50,7 +50,7 @@ module ShopifyApp
       SessionRepository.retrieve_user_session_by_shopify_user_id(mock_shopify_user_id)
     end
 
-    test '.retrieve_shop_session_by_shopify_domain retrieves a shop session by JWT' do
+    test ".retrieve_shop_session_by_shopify_domain retrieves a shop session by JWT" do
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
       InMemoryShopSessionStore.expects(:retrieve_by_shopify_domain).with(mock_shopify_domain)
@@ -58,7 +58,7 @@ module ShopifyApp
       SessionRepository.retrieve_shop_session_by_shopify_domain(mock_shopify_domain)
     end
 
-    test '.retrieve_user_session retrieves a user session' do
+    test ".retrieve_user_session retrieves a user session" do
       SessionRepository.user_storage = InMemoryUserSessionStore
 
       InMemoryUserSessionStore.expects(:retrieve).with(mock_shopify_user_id)
@@ -66,16 +66,16 @@ module ShopifyApp
       SessionRepository.retrieve_user_session(mock_shopify_user_id)
     end
 
-    test '.retrieve_shop_session retrieves a shop session' do
+    test ".retrieve_shop_session retrieves a shop session" do
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
-      mock_shop_id = 'abra-shop'
+      mock_shop_id = "abra-shop"
       InMemoryShopSessionStore.expects(:retrieve).with(mock_shop_id)
 
       SessionRepository.retrieve_shop_session(mock_shop_id)
     end
 
-    test '.store_shop_session stores a shop session' do
+    test ".store_shop_session stores a shop session" do
       SessionRepository.shop_storage = InMemoryShopSessionStore
 
       session = mock_shopify_session
@@ -84,11 +84,11 @@ module ShopifyApp
       SessionRepository.store_shop_session(session)
     end
 
-    test '.store_user_session stores a user session' do
+    test ".store_user_session stores a user session" do
       SessionRepository.user_storage = InMemoryUserSessionStore
 
       session = mock_shopify_session
-      user = { 'id' => 'abra' }
+      user = { "id" => "abra" }
       InMemoryUserSessionStore.expects(:store).with(session, user)
 
       SessionRepository.store_user_session(session, user)
@@ -97,19 +97,19 @@ module ShopifyApp
     private
 
     def mock_shopify_domain
-      'shop.myshopify.com'
+      "shop.myshopify.com"
     end
 
     def mock_shopify_user_id
-      'abra'
+      "abra"
     end
 
     def mock_shopify_session
       ShopifyAPI::Session.new(
         domain: mock_shopify_domain,
-        token: 'abracadabra',
+        token: "abracadabra",
         api_version: :unstable,
-        access_scopes: 'read_products'
+        access_scopes: "read_products"
       )
     end
   end

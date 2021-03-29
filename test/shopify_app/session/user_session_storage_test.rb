@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 class UserMockSessionStore < ActiveRecord::Base
   include ShopifyApp::UserSessionStorage
@@ -29,7 +29,7 @@ module ShopifyApp
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
-        api_version: '2020-01',
+        api_version: "2020-01",
       )
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
@@ -66,15 +66,15 @@ module ShopifyApp
       assert_equal mock_user_instance.id, saved_id
     end
 
-    test '.retrieve returns nil for non-existent user' do
-      user_id = 'non-existent-user'
+    test ".retrieve returns nil for non-existent user" do
+      user_id = "non-existent-user"
       UserMockSessionStore.stubs(:find_by).with(id: user_id).returns(nil)
 
       refute UserMockSessionStore.retrieve(user_id)
     end
 
-    test '.retrieve_by_user_id returns nil for non-existent user' do
-      user_id = 'non-existent-user'
+    test ".retrieve_by_user_id returns nil for non-existent user" do
+      user_id = "non-existent-user"
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: user_id).returns(nil)
 
       refute UserMockSessionStore.retrieve_by_shopify_user_id(user_id)

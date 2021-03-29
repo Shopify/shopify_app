@@ -1,12 +1,12 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   setup do
     @webhooks = [
-      { topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled" },
-      { topic: 'orders/create', address: "https://example-app.com/webhooks/order_create" },
-      { topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated" },
+      { topic: "app/uninstalled", address: "https://example-app.com/webhooks/app_uninstalled" },
+      { topic: "orders/create", address: "https://example-app.com/webhooks/order_create" },
+      { topic: "orders/updated", address: "https://example-app.com/webhooks/order_updated" },
     ]
 
     @manager = ShopifyApp::WebhooksManager.new(@webhooks)
@@ -15,9 +15,9 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   test "#create_webhooks makes calls to create webhooks" do
     ShopifyAPI::Webhook.stubs(all: [])
 
-    expect_webhook_creation('app/uninstalled', "https://example-app.com/webhooks/app_uninstalled")
-    expect_webhook_creation('orders/create', "https://example-app.com/webhooks/order_create")
-    expect_webhook_creation('orders/updated', "https://example-app.com/webhooks/order_updated")
+    expect_webhook_creation("app/uninstalled", "https://example-app.com/webhooks/app_uninstalled")
+    expect_webhook_creation("orders/create", "https://example-app.com/webhooks/order_create")
+    expect_webhook_creation("orders/updated", "https://example-app.com/webhooks/order_updated")
 
     @manager.create_webhooks
   end
@@ -25,23 +25,23 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   test "#create_webhooks handles no webhooks present as nil" do
     ShopifyAPI::Webhook.stubs(all: nil)
 
-    expect_webhook_creation('app/uninstalled', "https://example-app.com/webhooks/app_uninstalled")
-    expect_webhook_creation('orders/create', "https://example-app.com/webhooks/order_create")
-    expect_webhook_creation('orders/updated', "https://example-app.com/webhooks/order_updated")
+    expect_webhook_creation("app/uninstalled", "https://example-app.com/webhooks/app_uninstalled")
+    expect_webhook_creation("orders/create", "https://example-app.com/webhooks/order_create")
+    expect_webhook_creation("orders/updated", "https://example-app.com/webhooks/order_updated")
 
     @manager.create_webhooks
   end
 
   test "#create_webhooks when creating a webhook fails, raises an error" do
     ShopifyAPI::Webhook.stubs(all: [])
-    webhook = stub(persisted?: false, errors: stub(full_messages: ['topic already taken']))
+    webhook = stub(persisted?: false, errors: stub(full_messages: ["topic already taken"]))
     ShopifyAPI::Webhook.stubs(create: webhook)
 
     e = assert_raise ShopifyApp::WebhooksManager::CreationFailed do
       @manager.create_webhooks
     end
 
-    assert_equal 'topic already taken', e.message
+    assert_equal "topic already taken", e.message
   end
 
   test "#create_webhooks doesn't create webhooks that are already created" do
@@ -72,7 +72,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   end
 
   test "#destroy_webhooks does not destroy webhooks that do not have a matching address" do
-    ShopifyAPI::Webhook.stubs(:all).returns([stub(address: 'http://something-or-the-other.com/webhooks/product_update',
+    ShopifyAPI::Webhook.stubs(:all).returns([stub(address: "http://something-or-the-other.com/webhooks/product_update",
                                                   id: 7214109)])
     ShopifyAPI::Webhook.expects(:delete).never
 
@@ -83,18 +83,18 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
 
   def expect_webhook_creation(topic, address)
     stub_webhook = stub(persisted?: true)
-    ShopifyAPI::Webhook.expects(:create).with(topic: topic, address: address, format: 'json').returns(stub_webhook)
+    ShopifyAPI::Webhook.expects(:create).with(topic: topic, address: address, format: "json").returns(stub_webhook)
   end
 
   def all_webhook_topics
-    @webhooks ||= ['app/uninstalled', 'orders/create', 'orders/updated']
+    @webhooks ||= ["app/uninstalled", "orders/create", "orders/updated"]
   end
 
   def all_mock_webhooks
     [
-      stub(id: 1, address: "https://example-app.com/webhooks/app_uninstalled", topic: 'app/uninstalled'),
-      stub(id: 2, address: "https://example-app.com/webhooks/order_create", topic: 'orders/create'),
-      stub(id: 3, address: "https://example-app.com/webhooks/order_updated", topic: 'orders/updated'),
+      stub(id: 1, address: "https://example-app.com/webhooks/app_uninstalled", topic: "app/uninstalled"),
+      stub(id: 2, address: "https://example-app.com/webhooks/order_create", topic: "orders/create"),
+      stub(id: 3, address: "https://example-app.com/webhooks/order_updated", topic: "orders/updated"),
     ]
   end
 end

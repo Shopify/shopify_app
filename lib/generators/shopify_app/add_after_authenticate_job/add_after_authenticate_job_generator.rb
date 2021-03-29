@@ -1,10 +1,10 @@
 # frozen_string_literal: true
-require 'rails/generators/base'
+require "rails/generators/base"
 
 module ShopifyApp
   module Generators
     class AddAfterAuthenticateJobGenerator < Rails::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path("../templates", __FILE__)
 
       hook_for :test_framework, as: :job, in: :rails do |instance, generator|
         instance.invoke(generator, [instance.send(:job_file_name)])
@@ -18,9 +18,9 @@ module ShopifyApp
           "{ job: \"Shopify::AfterAuthenticateJob\", inline: false }\n"
 
         inject_into_file(
-          'config/initializers/shopify_app.rb',
+          "config/initializers/shopify_app.rb",
           after_authenticate_job_config,
-          before: 'end'
+          before: "end"
         )
 
         unless initializer.include?(after_authenticate_job_config)
@@ -30,17 +30,17 @@ module ShopifyApp
       end
 
       def add_after_authenticate_job
-        template('after_authenticate_job.rb', "app/jobs/#{job_file_name}_job.rb")
+        template("after_authenticate_job.rb", "app/jobs/#{job_file_name}_job.rb")
       end
 
       private
 
       def load_initializer
-        File.read(File.join(destination_root, 'config/initializers/shopify_app.rb'))
+        File.read(File.join(destination_root, "config/initializers/shopify_app.rb"))
       end
 
       def job_file_name
-        'shopify/after_authenticate'
+        "shopify/after_authenticate"
       end
     end
   end

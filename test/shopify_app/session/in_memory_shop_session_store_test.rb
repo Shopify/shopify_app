@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 module ShopifyApp
   class InMemoryShopSessionStoreTest < ActiveSupport::TestCase
@@ -8,10 +8,10 @@ module ShopifyApp
     end
 
     test "retrieving a session by JWT" do
-      InMemoryShopSessionStore.repo['abra'] = 'something'
+      InMemoryShopSessionStore.repo["abra"] = "something"
 
-      shopify_domain = 'abra'
-      assert_equal 'something', InMemoryShopSessionStore.retrieve_by_shopify_domain(shopify_domain)
+      shopify_domain = "abra"
+      assert_equal "something", InMemoryShopSessionStore.retrieve_by_shopify_domain(shopify_domain)
     end
   end
 end

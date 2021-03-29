@@ -23,7 +23,7 @@ module ShopifyApp
     end
 
     def webhook_job_klass_name(type = webhook_type)
-      [webhook_namespace, "#{type}_job"].compact.join('/').classify
+      [webhook_namespace, "#{type}_job"].compact.join("/").classify
     end
 
     def webhook_type

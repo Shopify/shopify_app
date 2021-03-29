@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 module ShopifyApp
   module AccessScopes
@@ -15,7 +15,7 @@ module ShopifyApp
         ShopifyApp::SessionRepository
           .stubs(:retrieve_shop_session_by_shopify_domain)
           .with(shopify_domain)
-          .returns(mock_shop_session('read_products'))
+          .returns(mock_shop_session("read_products"))
 
         refute ShopifyApp::AccessScopes::ShopStrategy.update_access_scopes?(shopify_domain)
       end
@@ -25,7 +25,7 @@ module ShopifyApp
         ShopifyApp::SessionRepository
           .stubs(:retrieve_shop_session_by_shopify_domain)
           .with(shopify_domain)
-          .returns(mock_shop_session('read_products'))
+          .returns(mock_shop_session("read_products"))
 
         assert ShopifyApp::AccessScopes::ShopStrategy.update_access_scopes?(shopify_domain)
       end
@@ -35,8 +35,8 @@ module ShopifyApp
       def mock_shop_session(scopes)
         ShopifyAPI::Session.new(
           domain: shopify_domain,
-          token: 'access_token',
-          api_version: '2021-02',
+          token: "access_token",
+          api_version: "2021-02",
           access_scopes: scopes
         )
       end

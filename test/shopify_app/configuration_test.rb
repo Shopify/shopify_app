@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 class ConfigurationTest < ActiveSupport::TestCase
   setup do
@@ -46,14 +46,14 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "can set myshopify_domain" do
     ShopifyApp.configure do |config|
-      config.myshopify_domain = 'myshopify.io'
+      config.myshopify_domain = "myshopify.io"
     end
 
     assert_equal "myshopify.io", ShopifyApp.configuration.myshopify_domain
   end
 
   test "can configure webhooks for creation" do
-    webhook = { topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json' }
+    webhook = { topic: "carts/update", address: "example-app.com/webhooks", format: "json" }
 
     ShopifyApp.configure do |config|
       config.webhooks = [webhook]
@@ -66,7 +66,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     refute ShopifyApp.configuration.has_webhooks?
 
     ShopifyApp.configure do |config|
-      config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks', format: 'json' }]
+      config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks", format: "json" }]
     end
 
     assert ShopifyApp.configuration.has_webhooks?
@@ -100,28 +100,28 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "webhook_jobs_namespace handles default" do
-    assert_equal "TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+    assert_equal "TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, "test")
   end
 
   test "webhook_jobs_namespace handles single plural value" do
     ShopifyApp.configure do |config|
-      config.webhook_jobs_namespace = 'webhooks'
+      config.webhook_jobs_namespace = "webhooks"
     end
 
-    assert_equal "Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+    assert_equal "Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, "test")
   end
 
   test "webhook_jobs_namespace handles nested values" do
     ShopifyApp.configure do |config|
-      config.webhook_jobs_namespace = 'shopify/webhooks'
+      config.webhook_jobs_namespace = "shopify/webhooks"
     end
 
-    assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+    assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, "test")
   end
 
   test "can set shop_session_repository with a string" do
     ShopifyApp.configure do |config|
-      config.shop_session_repository = 'ShopifyApp::InMemoryShopSessionStore'
+      config.shop_session_repository = "ShopifyApp::InMemoryShopSessionStore"
     end
 
     assert_equal ShopifyApp::InMemoryShopSessionStore, ShopifyApp.configuration.shop_session_repository
@@ -139,7 +139,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "can set user_session_repository with a string" do
     ShopifyApp.configure do |config|
-      config.user_session_repository = 'ShopifyApp::InMemoryUserSessionStore'
+      config.user_session_repository = "ShopifyApp::InMemoryUserSessionStore"
     end
 
     assert_equal ShopifyApp::InMemoryUserSessionStore, ShopifyApp.configuration.user_session_repository
@@ -204,7 +204,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "user_access_scopes resolves to scope if user_access_scopes are undefined" do
     ShopifyApp.configure do |config|
-      config.scope = 'read_products'
+      config.scope = "read_products"
     end
 
     assert_equal ShopifyApp.configuration.scope, ShopifyApp.configuration.user_access_scopes
@@ -212,7 +212,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "shop_access_scopes resolves to scope if shop_access_scopes are undefined" do
     ShopifyApp.configure do |config|
-      config.scope = 'write_orders'
+      config.scope = "write_orders"
     end
 
     assert_equal ShopifyApp.configuration.scope, ShopifyApp.configuration.shop_access_scopes
@@ -220,22 +220,22 @@ class ConfigurationTest < ActiveSupport::TestCase
 
   test "shop_access_scopes are set correctly" do
     ShopifyApp.configure do |config|
-      config.scope = 'write_orders'
-      config.shop_access_scopes = 'read_orders'
+      config.scope = "write_orders"
+      config.shop_access_scopes = "read_orders"
     end
 
-    assert_equal ShopifyApp.configuration.shop_access_scopes, 'read_orders'
-    assert_equal ShopifyApp.configuration.scope, 'write_orders'
+    assert_equal ShopifyApp.configuration.shop_access_scopes, "read_orders"
+    assert_equal ShopifyApp.configuration.scope, "write_orders"
   end
 
   test "user_access_scopes are set correctly" do
     ShopifyApp.configure do |config|
-      config.scope = 'write_orders'
-      config.user_access_scopes = 'read_orders'
+      config.scope = "write_orders"
+      config.user_access_scopes = "read_orders"
     end
 
-    assert_equal ShopifyApp.configuration.user_access_scopes, 'read_orders'
-    assert_equal ShopifyApp.configuration.scope, 'write_orders'
+    assert_equal ShopifyApp.configuration.user_access_scopes, "read_orders"
+    assert_equal ShopifyApp.configuration.scope, "write_orders"
   end
 
   test "noop access scope strategies defined when reauth_on_access_scope_changes is false" do

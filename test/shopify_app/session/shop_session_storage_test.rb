@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 class ShopMockSessionStore < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorage
@@ -25,7 +25,7 @@ module ShopifyApp
       instance = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
-        api_version: '2020-01',
+        api_version: "2020-01",
       )
       ShopMockSessionStore.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
 
@@ -57,15 +57,15 @@ module ShopifyApp
       assert_equal mock_shop_instance.id, saved_id
     end
 
-    test '.retrieve returns nil for non-existent shop' do
-      shop_id = 'non-existent-id'
+    test ".retrieve returns nil for non-existent shop" do
+      shop_id = "non-existent-id"
       ShopMockSessionStore.stubs(:find_by).with(id: shop_id).returns(nil)
 
       refute ShopMockSessionStore.retrieve(shop_id)
     end
 
-    test '.retrieve_by_shopify_domain returns nil for non-existent shop' do
-      shop_domain = 'non-existent-id'
+    test ".retrieve_by_shopify_domain returns nil for non-existent shop" do
+      shop_domain = "non-existent-id"
 
       ShopMockSessionStore.stubs(:find_by).with(shopify_domain: shop_domain).returns(nil)
 

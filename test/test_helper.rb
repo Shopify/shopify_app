@@ -3,11 +3,11 @@
 ENV["RAILS_ENV"] = "test"
 
 require File.expand_path("../../test/dummy/config/environment.rb", __FILE__)
-require 'rails/test_help'
-require 'mocha/minitest'
-require 'webmock/minitest'
-require 'byebug'
-require 'pry'
+require "rails/test_help"
+require "mocha/minitest"
+require "webmock/minitest"
+require "byebug"
+require "pry"
 
 # Filter out Minitest backtrace while allowing backtrace from other libraries
 # to be shown.

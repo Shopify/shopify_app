@@ -1,25 +1,25 @@
 # frozen_string_literal: true
-require 'test_helper'
+require "test_helper"
 
 class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
 
   setup do
     @scripttags = [
-      { event: 'onload', src: 'https://example-app.com/fancy.js' },
-      { event: 'onload', src: 'https://example-app.com/foobar.js' },
-      { event: 'onload', src: ->(domain) { "https://example-app.com/#{domain}-123.js" } },
+      { event: "onload", src: "https://example-app.com/fancy.js" },
+      { event: "onload", src: "https://example-app.com/foobar.js" },
+      { event: "onload", src: ->(domain) { "https://example-app.com/#{domain}-123.js" } },
     ]
 
-    @manager = ShopifyApp::ScripttagsManager.new(@scripttags, 'example-app.com')
+    @manager = ShopifyApp::ScripttagsManager.new(@scripttags, "example-app.com")
   end
 
   test "#create_scripttags makes calls to create scripttags" do
     ShopifyAPI::ScriptTag.stubs(all: [])
 
-    expect_scripttag_creation('onload', 'https://example-app.com/fancy.js')
-    expect_scripttag_creation('onload', 'https://example-app.com/foobar.js')
-    expect_scripttag_creation('onload', "https://example-app.com/example-app.com-123.js")
+    expect_scripttag_creation("onload", "https://example-app.com/fancy.js")
+    expect_scripttag_creation("onload", "https://example-app.com/foobar.js")
+    expect_scripttag_creation("onload", "https://example-app.com/example-app.com-123.js")
     @manager.create_scripttags
   end
 
@@ -42,18 +42,18 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
       @manager.create_scripttags
     end
 
-    assert_equal 'Source needs to be https', e.message
+    assert_equal "Source needs to be https", e.message
   end
 
   test "#create_scripttags when a script src raises an exception, it's propagated" do
     ShopifyAPI::ScriptTag.stubs(:all).returns(all_mock_scripttags[0..1])
-    @manager.required_scripttags.last[:src] = -> (_domain) { raise 'oops!' }
+    @manager.required_scripttags.last[:src] = -> (_domain) { raise "oops!" }
 
     e = assert_raise do
       @manager.create_scripttags
     end
 
-    assert_equal 'oops!', e.message
+    assert_equal "oops!", e.message
   end
 
   test "#recreate_scripttags! destroys all scripttags and recreates" do
@@ -86,7 +86,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   end
 
   test "#destroy_scripttags does not destroy scripttags that do not have a matching address" do
-    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: 'http://something-or-the-other.com/badscript.js',
+    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: "http://something-or-the-other.com/badscript.js",
                                                     id: 7214109)])
     ShopifyAPI::ScriptTag.expects(:delete).never
 
@@ -95,9 +95,9 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   test ".queue enqueues a ScripttagsManagerJob" do
     args = {
-      shop_domain: 'example-app.com',
-      shop_token: 'token',
-      scripttags: [event: 'onload', src: 'https://example-app.com/example-app.com-123.js'],
+      shop_domain: "example-app.com",
+      shop_token: "token",
+      scripttags: [event: "onload", src: "https://example-app.com/example-app.com-123.js"],
     }
 
     assert_enqueued_with(job: ShopifyApp::ScripttagsManagerJob, args: [args]) do
@@ -109,14 +109,14 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
 
   def expect_scripttag_creation(event, src)
     stub_scripttag = stub(persisted?: true)
-    ShopifyAPI::ScriptTag.expects(:create).with(event: event, src: src, format: 'json').returns(stub_scripttag)
+    ShopifyAPI::ScriptTag.expects(:create).with(event: event, src: src, format: "json").returns(stub_scripttag)
   end
 
   def all_mock_scripttags
     [
-      stub(id: 1, src: "https://example-app.com/fancy.js", event: 'onload'),
-      stub(id: 2, src: "https://example-app.com/foobar.js", event: 'onload'),
-      stub(id: 3, src: "https://example-app.com/example-app.com-123.js", event: 'onload'),
+      stub(id: 1, src: "https://example-app.com/fancy.js", event: "onload"),
+      stub(id: 2, src: "https://example-app.com/foobar.js", event: "onload"),
+      stub(id: 3, src: "https://example-app.com/example-app.com-123.js", event: "onload"),
     ]
   end
 end

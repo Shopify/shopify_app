@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/app_proxy_controller/app_proxy_controller_generator'
+require "test_helper"
+require "generators/shopify_app/app_proxy_controller/app_proxy_controller_generator"
 
 class AppProxyControllerGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AppProxyControllerGenerator

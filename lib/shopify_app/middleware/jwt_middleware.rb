@@ -24,7 +24,7 @@ module ShopifyApp
     end
 
     def authorization_header(env)
-      env['HTTP_AUTHORIZATION']
+      env["HTTP_AUTHORIZATION"]
     end
 
     def extract_token(env)
@@ -35,8 +35,8 @@ module ShopifyApp
     def set_env_variables(token, env)
       jwt = ShopifyApp::JWT.new(token)
 
-      env['jwt.shopify_domain'] = jwt.shopify_domain
-      env['jwt.shopify_user_id'] = jwt.shopify_user_id
+      env["jwt.shopify_domain"] = jwt.shopify_domain
+      env["jwt.shopify_user_id"] = jwt.shopify_user_id
     end
   end
 end
