@@ -55,7 +55,7 @@ end
 
 As of Rails `v6.1`, the same-site cookie protection setting defaults  to `Lax`. This does not allow an embedded app to make cross-domain requests in the Shopify Admin.
 
-Alternatively, you can upgrade to [`v17.2.0` of the shopify_app gem](/docs/Upgrading.md##upgrading-to-v1720).
+Alternatively, you can upgrade to [`v17.2.0` of the shopify_app gem](/docs/Upgrading.md#upgrading-to-v1720).
 
 ## App installation
 
