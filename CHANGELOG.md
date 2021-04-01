@@ -1,6 +1,11 @@
 Unreleased
 ----------
 
+17.2.0 (April 1, 2021)
+----------
+* Support Rails `v6.1` [#1221](https://github.com/Shopify/shopify_app/pull/1221)
+  * Check out [Upgrading to `v17.2.0`](/docs/Upgrading.md#upgrading-to-v1720) in the Upgrading.md guide for the changes needed to support Rails `v6.1`
+
 17.1.1 (March 12, 2021)
 ----------
 * Fix issues with mocking OmniAuth callback controller tests [#1210](https://github.com/Shopify/shopify_app/pull/1210)
