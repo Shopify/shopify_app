@@ -78,7 +78,7 @@ end
 provider :shopify,
   ...
   setup: lambda { |env|
-    configuration = ShopifyApp::OmniauthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
+    configuration = ShopifyApp::OmniAuthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
     configuration.build_options
   }
 
