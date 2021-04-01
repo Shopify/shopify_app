@@ -24,7 +24,7 @@
 
     <%= render 'layouts/flash_messages' %>
 
-    <script src="https://unpkg.com/@shopify/app-bridge"></script>
+    <script src="https://unpkg.com/@shopify/app-bridge@1"></script>
 
     <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
       api_key: ShopifyApp.configuration.api_key,
