@@ -21,7 +21,7 @@ module ShopifyApp
           .compact
           .map do |cookie|
             cookie << '; Secure' unless cookie =~ /;\s*secure/i
-            cookie << '; SameSite=None' unless cookie =~ /;\s*samesite=/i
+            cookie << '; SameSite=None' if ShopifyApp.configuration.embedded_app?
             cookie
           end
 

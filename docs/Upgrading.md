@@ -4,11 +4,27 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `v17.2.0`](#upgrading-to-v1720)
+
 [Upgrading to `v13.0.0`](#upgrading-to-v1300)
 
 [Upgrading to `v11.7.0`](#upgrading-to-v1170)
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
+
+## Upgrading to `v17.2.0`
+
+### Different SameSite cookie attribute behaviour
+
+To support Rails  `v6.1`, the [`SameSiteCookieMiddleware`](/lib/shopify_app/middleware/same_site_cookie_middleware.rb) was updated to configure cookies to `SameSite=None` if the app is embedded. Before this release, cookies were configured to `SameSite=None` only if this attribute had not previously been set before.
+
+```diff
+# same_site_cookie_middleware.rb
+- cookie << '; SameSite=None' unless cookie =~ /;\s*samesite=/i
++ cookie << '; SameSite=None' if ShopifyApp.configuration.embedded_app?
+```
+
+By default, Rails `v6.1` configures `SameSite=Lax` on all cookies that don't specify this attribute.
 
 ## Upgrading to `v13.0.0`
 
