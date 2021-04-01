@@ -1,6 +1,12 @@
 Unreleased
 ----------
 
+17.2.1 (April 1, 2021)
+----------
+* Bug fix: Lock the CDN App Bridge version to `v1.X.Y` in the Embedded App layout [#1238](https://github.com/Shopify/shopify_app/pull/1238)
+  * App Bridge `v2.0` is a non-backwards compatible release
+  * A future major shopify_app gem release will support only App Bridge `v2.0`
+
 17.2.0 (April 1, 2021)
 ----------
 * Support Rails `v6.1` [#1221](https://github.com/Shopify/shopify_app/pull/1221)
