@@ -18,7 +18,7 @@
 
         // Save a session token for future requests
         window.sessionToken = await new Promise((resolve) => {
-          app.subscribe(SessionToken.ActionType.RESPOND, (data) => {
+          app.subscribe(SessionToken.Action.RESPOND, (data) => {
             resolve(data.sessionToken || "");
           });
         });
