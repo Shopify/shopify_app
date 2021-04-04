@@ -37,6 +37,9 @@ module ShopifyApp
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
+    # allow switching between REST and GraphQL API for webhooks
+    attr_accessor :webhook_api_adapter
+
     # allow enabling of same site none on cookies
     attr_writer :enable_same_site_none
 
@@ -52,6 +55,7 @@ module ShopifyApp
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV['SHOPIFY_APP_DISABLE_WEBPACKER'].present?
       @allow_cookie_authentication = true
+      @webhook_api_adapter = :rest
     end
 
     def login_url
@@ -102,6 +106,10 @@ module ShopifyApp
 
     def user_access_scopes
       @user_access_scopes || scope
+    end
+
+    def webhook_api_adapter
+      "ShopifyApp::Webhooks::#{@webhook_api_adapter.to_s.camelize}Adapter".constantize
     end
   end
 

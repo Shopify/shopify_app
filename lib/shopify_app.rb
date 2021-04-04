@@ -40,6 +40,11 @@ module ShopifyApp
   require 'shopify_app/jobs/webhooks_manager_job'
   require 'shopify_app/jobs/scripttags_manager_job'
 
+  # adapters
+  require 'shopify_app/adapters/webhooks/base_adapter'
+  require 'shopify_app/adapters/webhooks/rest_adapter'
+  require 'shopify_app/adapters/webhooks/graphql_adapter'
+
   # managers
   require 'shopify_app/managers/webhooks_manager'
   require 'shopify_app/managers/scripttags_manager'

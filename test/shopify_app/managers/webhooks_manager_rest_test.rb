@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'test_helper'
 
-class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
+class ShopifyApp::WebhooksManagerRestTest < ActiveSupport::TestCase
   setup do
     @webhooks = [
       { topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled" },
@@ -9,7 +9,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       { topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated" },
     ]
 
-    @manager = ShopifyApp::WebhooksManager.new(@webhooks)
+    @manager = ShopifyApp::WebhooksManager.new(@webhooks, adapter: ShopifyApp::Webhooks::RestAdapter)
   end
 
   test "#create_webhooks makes calls to create webhooks" do

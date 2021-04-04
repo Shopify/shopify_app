@@ -88,6 +88,16 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal :default, ShopifyApp.configuration.scripttags_manager_queue_name
   end
 
+  test "can switch between REST and GraphQL adapters for webhooks" do
+    ShopifyApp.configuration = nil
+    assert_equal ShopifyApp::Webhooks::RestAdapter, ShopifyApp.configuration.webhook_api_adapter
+
+    ShopifyApp.configure do |config|
+      config.webhook_api_adapter = :graphql
+    end
+    assert_equal ShopifyApp::Webhooks::GraphqlAdapter, ShopifyApp.configuration.webhook_api_adapter
+  end
+
   test "can override queue names" do
     Rails.application.config.active_job.queue_name = :'custom-queue-name'
     ShopifyApp.configure do |config|

@@ -21,6 +21,12 @@ When the [OAuth callback](/docs/shopify_app/authentication.md#oauth-callback) is
 
 ShopifyApp also provides a [WebhooksController](/app/controllers/shopify_app/webhooks_controller.rb) that receives webhooks and queues a job based on the received topic. For example, if you register the webhook from above, then all you need to do is create a job called `CartsUpdateJob`. The job will be queued with 2 params: `shop_domain` and `webhook` (which is the webhook body).
 
+You can switch between `REST` and `GraphQL` adapters for webhooks. Some webhook topic are available only in `GraphQL API` (for example `app_subscriptions/update`). Check [REST API](https://shopify.dev/docs/admin-api/rest/reference/events/webhook#list-of-supported-webhook-events-and-topics) and [GraphQL API](https://shopify.dev/docs/admin-api/graphql/reference/events/webhooksubscriptiontopic) documentation for the list of available webhook topics.
+```ruby
+config.webhook_api_adapter = :rest # default
+config.webhook_api_adapter = :graphql
+```
+
 If you would like to namespace your jobs, you may set `webhook_jobs_namespace` in the config. For example, if your app handles webhooks from other ecommerce applications as well, and you want Shopify cart update webhooks to be processed by a job living in `jobs/shopify/webhooks/carts_update_job.rb` rather than `jobs/carts_update_job.rb`):
 
 ```ruby
