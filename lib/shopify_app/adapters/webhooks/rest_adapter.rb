@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   module Webhooks
     class RestAdapter < BaseAdapter
@@ -26,7 +27,9 @@ module ShopifyApp
       def create_webhook(attributes)
         attributes.reverse_merge!(format: 'json')
         webhook = ShopifyAPI::Webhook.create(attributes)
-        raise ShopifyApp::WebhooksManager::CreationFailed, webhook.errors.full_messages.to_sentence unless webhook.persisted?
+        unless webhook.persisted?
+          raise ShopifyApp::WebhooksManager::CreationFailed, webhook.errors.full_messages.to_sentence
+        end
         webhook
       end
 

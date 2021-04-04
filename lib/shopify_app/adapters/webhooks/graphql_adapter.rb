@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ShopifyApp
   module Webhooks
     class GraphqlAdapter < BaseAdapter
@@ -103,14 +104,16 @@ module ShopifyApp
         webhook = client.query(query,
           variables: {
             topic: topic,
-            webhookSubscription: { callbackUrl: address, format: 'JSON' }
-          }
-        )
+            webhookSubscription: { callbackUrl: address, format: 'JSON' },
+          })
         if webhook.errors.any?
           raise ShopifyApp::WebhooksManager::CreationFailed, webhook.errors.messages.to_json
         end
         if webhook.data.webhook_subscription_create.user_errors.any?
-          raise ShopifyApp::WebhooksManager::CreationFailed, webhook.data.webhook_subscription_create.user_errors.map(&:message).to_sentence
+          raise(
+            ShopifyApp::WebhooksManager::CreationFailed,
+            webhook.data.webhook_subscription_create.user_errors.map(&:message).to_sentence
+          )
         end
       end
 
@@ -122,7 +125,10 @@ module ShopifyApp
           raise ShopifyApp::WebhooksManager::DeletionFailed, webhook.errors.messages.to_json
         end
         if webhook.data.webhook_subscription_delete.user_errors.any?
-          raise ShopifyApp::WebhooksManager::DeletionFailed, webhook.data.webhook_subscription_delete.user_errors.map(&:message).to_sentence
+          raise(
+            ShopifyApp::WebhooksManager::DeletionFailed,
+            webhook.data.webhook_subscription_delete.user_errors.map(&:message).to_sentence
+          )
         end
       end
     end

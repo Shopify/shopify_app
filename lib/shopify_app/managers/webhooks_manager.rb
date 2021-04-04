@@ -2,6 +2,7 @@
 module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
+
     class DeletionFailed < StandardError; end
 
     def self.queue(shop_domain, shop_token, webhooks)

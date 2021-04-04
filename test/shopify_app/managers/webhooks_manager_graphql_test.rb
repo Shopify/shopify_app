@@ -23,16 +23,16 @@ class ShopifyApp::WebhooksManagerGraphqlTest < ActiveSupport::TestCase
   test "#create_webhooks makes calls to create webhooks" do
     current_webhooks_stub = stub_current_webhooks([])
 
-    webhook_creation_stub1 = stub_webhook_creation('APP_UNINSTALLED', "https://example-app.com/webhooks/app_uninstalled")
-    webhook_creation_stub2 = stub_webhook_creation('ORDERS_CREATE', "https://example-app.com/webhooks/order_create")
-    webhook_creation_stub3 = stub_webhook_creation('ORDERS_UPDATED', "https://example-app.com/webhooks/order_updated")
+    creation_stub1 = stub_webhook_creation('APP_UNINSTALLED', "https://example-app.com/webhooks/app_uninstalled")
+    creation_stub2 = stub_webhook_creation('ORDERS_CREATE', "https://example-app.com/webhooks/order_create")
+    creation_stub3 = stub_webhook_creation('ORDERS_UPDATED', "https://example-app.com/webhooks/order_updated")
 
     @manager.create_webhooks
 
     assert_requested current_webhooks_stub
-    assert_requested webhook_creation_stub1
-    assert_requested webhook_creation_stub2
-    assert_requested webhook_creation_stub3
+    assert_requested creation_stub1
+    assert_requested creation_stub2
+    assert_requested creation_stub3
   end
 
   test "#create_webhooks when creating a webhook fails, raises an error" do
@@ -49,21 +49,33 @@ class ShopifyApp::WebhooksManagerGraphqlTest < ActiveSupport::TestCase
 
   test "#create_webhooks doesn't create webhooks that are already created" do
     current_webhooks_stub = stub_current_webhooks([
-      { "node": { "topic": "APP_UNINSTALLED", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/app_uninstalled" } } },
-      { "node": { "topic": "ORDERS_CREATE", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_create" } } },
-      { "node": { "topic": "ORDERS_UPDATED", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_updated" } } },
+      {
+        "node": {
+          "topic": "APP_UNINSTALLED", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/app_uninstalled" }
+        },
+      },
+      {
+        "node": {
+          "topic": "ORDERS_CREATE", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_create" }
+        },
+      },
+      {
+        "node": {
+          "topic": "ORDERS_UPDATED", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_updated" }
+        },
+      },
     ])
 
-    webhook_creation_stub1 = stub_webhook_creation('APP_UNINSTALLED', "https://example-app.com/webhooks/app_uninstalled")
-    webhook_creation_stub2 = stub_webhook_creation('ORDERS_CREATE', "https://example-app.com/webhooks/order_create")
-    webhook_creation_stub3 = stub_webhook_creation('ORDERS_UPDATED', "https://example-app.com/webhooks/order_updated")
+    creation_stub1 = stub_webhook_creation('APP_UNINSTALLED', "https://example-app.com/webhooks/app_uninstalled")
+    creation_stub2 = stub_webhook_creation('ORDERS_CREATE', "https://example-app.com/webhooks/order_create")
+    creation_stub3 = stub_webhook_creation('ORDERS_UPDATED', "https://example-app.com/webhooks/order_updated")
 
     assert_nothing_raised { @manager.create_webhooks }
 
     assert_requested current_webhooks_stub
-    assert_not_requested webhook_creation_stub1
-    assert_not_requested webhook_creation_stub2
-    assert_not_requested webhook_creation_stub3
+    assert_not_requested creation_stub1
+    assert_not_requested creation_stub2
+    assert_not_requested creation_stub3
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
@@ -81,9 +93,27 @@ class ShopifyApp::WebhooksManagerGraphqlTest < ActiveSupport::TestCase
 
   test "#destroy_webhooks makes calls to destroy webhooks" do
     current_webhooks_stub = stub_current_webhooks([
-      { "node": { "id": "APP_UNINSTALLED_WEBHOOK", "topic": "APP_UNINSTALLED", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/app_uninstalled" } } },
-      { "node": { "id": "ORDERS_CREATE_WEBHOOK", "topic": "ORDERS_CREATE", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_create" } } },
-      { "node": { "id": "ORDERS_UPDATED_WEBHOOK", "topic": "ORDERS_UPDATED", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_updated" } } },
+      {
+        "node": {
+          "id": "APP_UNINSTALLED_WEBHOOK",
+          "topic": "APP_UNINSTALLED",
+          "endpoint": { "callbackUrl": "https://example-app.com/webhooks/app_uninstalled" },
+        },
+      },
+      {
+        "node": {
+          "id": "ORDERS_CREATE_WEBHOOK",
+          "topic": "ORDERS_CREATE",
+          "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_create" },
+        },
+      },
+      {
+        "node": {
+          "id": "ORDERS_UPDATED_WEBHOOK",
+          "topic": "ORDERS_UPDATED",
+          "endpoint": { "callbackUrl": "https://example-app.com/webhooks/order_updated" },
+        },
+      },
     ])
 
     webhook_deletion_stub1 = stub_webhook_deletion('APP_UNINSTALLED_WEBHOOK')
@@ -100,7 +130,13 @@ class ShopifyApp::WebhooksManagerGraphqlTest < ActiveSupport::TestCase
 
   test "#destroy_webhooks does not destroy webhooks that do not have a matching address" do
     current_webhooks_stub = stub_current_webhooks([
-      { "node": { "id": "NON_EXISTING_WEBHOOK", "topic": "PRODUCT_UPDATE", "endpoint": { "callbackUrl": "https://example-app.com/webhooks/product_update" } } },
+      {
+        "node": {
+          "id": "NON_EXISTING_WEBHOOK",
+          "topic": "PRODUCT_UPDATE",
+          "endpoint": { "callbackUrl": "https://example-app.com/webhooks/product_update" },
+        },
+      },
     ])
     webhook_deletion_stub = stub_webhook_deletion('NON_EXISTING_WEBHOOK')
 
@@ -119,14 +155,16 @@ class ShopifyApp::WebhooksManagerGraphqlTest < ActiveSupport::TestCase
   end
 
   def stub_webhook_creation(topic, address, errors = [])
+    result = { webhookSubscription: {}, userErrors: errors }
     stub_request(:post, @graphql_path)
-      .with(body: %r{webhookSubscriptionCreate.*#{topic}.*#{address}})
-      .to_return(body: { data: { webhookSubscriptionCreate: { webhookSubscription: {}, userErrors: errors } } }.to_json)
+      .with(body: /webhookSubscriptionCreate.*#{topic}.*#{address}/)
+      .to_return(body: { data: { webhookSubscriptionCreate: result } }.to_json)
   end
 
   def stub_webhook_deletion(id)
+    result = { deletedWebhookSubscriptionId: id, userErrors: [] }
     stub_request(:post, @graphql_path)
-      .with(body: %r{webhookSubscriptionDelete.*#{id}})
-      .to_return(body: { data: { webhookSubscriptionDelete: { deletedWebhookSubscriptionId: id, userErrors: [] } } }.to_json)
+      .with(body: /webhookSubscriptionDelete.*#{id}/)
+      .to_return(body: { data: { webhookSubscriptionDelete: result } }.to_json)
   end
 end

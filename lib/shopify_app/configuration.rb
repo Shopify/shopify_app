@@ -38,7 +38,7 @@ module ShopifyApp
     attr_accessor :webhook_jobs_namespace
 
     # allow switching between REST and GraphQL API for webhooks
-    attr_accessor :webhook_api_adapter
+    attr_writer :webhook_api_adapter
 
     # allow enabling of same site none on cookies
     attr_writer :enable_same_site_none
