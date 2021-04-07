@@ -16,6 +16,7 @@ module ShopifyApp
 
     initializer "shopify_app.assets.precompile" do |app|
       app.config.assets.precompile += %w[
+        shopify_app/app_bridge_redirect_1.30.0.js
         shopify_app/redirect.js
         shopify_app/post_redirect.js
         shopify_app/top_level.js
