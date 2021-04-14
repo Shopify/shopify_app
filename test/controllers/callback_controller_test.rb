@@ -329,9 +329,9 @@ module ShopifyApp
       ShopifyApp.configuration.allow_jwt_authentication = true
       mock_shopify_omniauth
 
-      get :callback, params: { shop: 'shop' }
+      get :callback, params: { shop: 'shop', host: 'test-host' } # host is required for App Bridge 2.0
 
-      assert_redirected_to "/?shop=#{TEST_SHOPIFY_DOMAIN}"
+      assert_redirected_to "/?host=test-host&shop=#{TEST_SHOPIFY_DOMAIN}"
     end
 
     test "#callback performs install_webhook job after JWT authentication" do
