@@ -6,8 +6,12 @@
   <base target="_top">
   <title>Redirecting…</title>
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
+  <script>
+    window.apiKey = "<%= ShopifyApp.configuration.api_key %>";
+    window.shopOrigin = "<%= current_shopify_domain %>";
+  </script>
 </head>
-<body data-api-key="<%= ShopifyApp.configuration.api_key %>">
+<body>
   <%=
   content_tag(:div, nil,
     id: 'redirection-target',
