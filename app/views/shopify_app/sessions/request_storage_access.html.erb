@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
+  <script>
+    window.shopifyData = {
+      apiKey: '<%= ShopifyApp.configuration.api_key %>',
+      shopOrigin: '<%= @shop %>',
+      returnTo: '<%= params[:return_to] %>','
+    };
+  </script>
   <%= render 'shopify_app/partials/layout_styles' %>
   <%= render 'shopify_app/partials/typography_styles' %>
   <%= render 'shopify_app/partials/card_styles' %>
@@ -18,16 +25,16 @@
 <body>
 <%=
   content_tag(:div, nil,
-              id: 'redirection-target',
-              data: {
-                  target: {
-                      myshopifyUrl: "https://#{current_shopify_domain}",
-                      hasStorageAccessUrl: "#{has_storage_access_url}",
-                      doesNotHaveStorageAccessUrl: "#{does_not_have_storage_access_url}",
-                      appTargetUrl: "#{app_target_url}"
-                  },
-              },
-              )
+    id: 'redirection-target',
+    data: {
+      target: {
+        myshopifyUrl: "https://#{current_shopify_domain}",
+        hasStorageAccessUrl: "#{has_storage_access_url}",
+        doesNotHaveStorageAccessUrl: "#{does_not_have_storage_access_url}",
+        appTargetUrl: "#{app_target_url}"
+      },
+    },
+  )
 %>
 <main id="RequestStorageAccess">
   <div class="Polaris-Page">
