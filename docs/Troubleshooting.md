@@ -16,6 +16,8 @@
   * [My app is still using cookies to authenticate](#my-app-is-still-using-cookies-to-authenticate)
   * [My app can't make requests to the Shopify API](#my-app-cant-make-requests-to-the-shopify-api)
 
+[Migrating to App Bridge 2.0](#migrating-to-app-bridge-2.0)
+
 ## Generators
 
 ### The shopify_app:install generator hangs
@@ -139,3 +141,14 @@ X-Shopify-API-Request-Failure-Unauthorized: true
 ```
 
 Then, use the [Shopify App Bridge Redirect](https://shopify.dev/tools/app-bridge/actions/navigation/redirect) action to redirect your app frontend to the app login URL if this header is set.
+
+## Migrating to App Bridge 2.0
+
+In order to upgrade your embedded app to the latest App Bridge 2.0 version, please refer to the [migration guide](https://shopify.dev/tutorials/migrate-your-app-to-app-bridge-2).
+
+To ensure that your app's embedded layout doesn't import App Bridge 2.0 before fully migrating, make the following change to bind it to v1.x.
+
+```diff
+ - <script src="https://unpkg.com/@shopify/app-bridge"></script>
+ + <script src="https://unpkg.com/@shopify/app-bridge@1"></script>
+``` 

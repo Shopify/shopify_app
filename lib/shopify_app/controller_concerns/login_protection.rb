@@ -9,6 +9,8 @@ module ShopifyApp
 
     class ShopifyDomainNotFound < StandardError; end
 
+    class ShopifyHostNotFound < StandardError; end
+
     included do
       after_action :set_test_cookie
       rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
@@ -101,6 +103,12 @@ module ShopifyApp
 
     def jwt_shopify_user_id
       request.env['jwt.shopify_user_id']
+    end
+
+    def host
+      return params[:host] if params[:host].present?
+
+      raise ShopifyHostNotFound
     end
 
     def redirect_to_login
@@ -216,8 +224,8 @@ module ShopifyApp
 
     def return_address
       return base_return_address unless ShopifyApp.configuration.allow_jwt_authentication
-      return_address_with_params(shop: current_shopify_domain)
-    rescue ShopifyDomainNotFound
+      return_address_with_params(shop: current_shopify_domain, host: host)
+    rescue ShopifyDomainNotFound, ShopifyHostNotFound
       base_return_address
     end
 
