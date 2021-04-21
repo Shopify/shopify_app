@@ -62,6 +62,14 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal webhook, ShopifyApp.configuration.webhooks.first
   end
 
+  test "can configure webhook processing delay" do
+    ShopifyApp.configure do |config|
+      config.webhook_job_delay = 90.seconds
+    end
+
+    assert_equal 90.seconds, ShopifyApp.configuration.webhook_job_delay
+  end
+
   test "has_webhooks? is true if webhooks have been configured" do
     refute ShopifyApp.configuration.has_webhooks?
 

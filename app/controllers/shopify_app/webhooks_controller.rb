@@ -8,7 +8,7 @@ module ShopifyApp
     def receive
       params.permit!
       job_args = { shop_domain: shop_domain, webhook: webhook_params.to_h }
-      webhook_job_klass.perform_later(job_args)
+      webhook_job_klass.set(wait: webhook_job_delay).perform_later(job_args)
       head(:ok)
     end
 
@@ -32,6 +32,10 @@ module ShopifyApp
 
     def webhook_namespace
       ShopifyApp.configuration.webhook_jobs_namespace
+    end
+
+    def webhook_job_delay
+      ShopifyApp.configuration.webhook_job_delay || 0
     end
   end
 end

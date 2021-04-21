@@ -29,6 +29,14 @@ ShopifyApp.configure do |config|
 end
 ```
 
+If you would like to have the processing of your jobs delayed by a certain amount of time, you may set `webhook_job_delay` in the config. For example, if you wanted to delay the processing of your Shopify webhooks by 5 minutes:
+
+```ruby
+ShopifyApp.configure do |config|
+  config.webhook_job_delay = 5.minutes
+end
+```
+
 If you are only interested in particular fields, you can optionally filter the data sent by Shopify by specifying the `fields` parameter in `config/webhooks`. Note that you will still receive a webhook request from Shopify every time the resource is updated, but only the specified fields will be sent.
 
 ```ruby

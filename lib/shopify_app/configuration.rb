@@ -28,6 +28,9 @@ module ShopifyApp
     attr_accessor :scripttags_manager_queue_name
     attr_accessor :webhooks_manager_queue_name
 
+    # customize ActiveJob delay when processing webhooks
+    attr_accessor :webhook_job_delay
+
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 

@@ -24,7 +24,23 @@ module ShopifyApp
       webhook = { 'foo' => 'bar' }
       job_args = { shop_domain: "test.myshopify.com", webhook: webhook }
 
-      OrderUpdateJob.expects(:perform_later).with(job_args)
+      perform_later_stub = mock('perform_later')
+      perform_later_stub.expects(:perform_later).with(job_args)
+      OrderUpdateJob.expects(:set).with(wait: 0).returns(perform_later_stub)
+
+      send_webhook 'order_update', webhook
+      assert_response :ok
+    end
+
+    test "sets a job timeout if the configuration is set" do
+      WebhooksController.any_instance.stubs(:webhook_job_delay).returns(10)
+
+      webhook = { 'foo' => 'bar' }
+      job_args = { shop_domain: 'test.myshopify.com', webhook: webhook }
+
+      perform_later_stub = mock('perform_later')
+      perform_later_stub.expects(:perform_later).with(job_args)
+      OrderUpdateJob.expects(:set).with(wait: 10).returns(perform_later_stub)
 
       send_webhook 'order_update', webhook
       assert_response :ok
