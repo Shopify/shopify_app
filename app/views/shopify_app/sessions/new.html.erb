@@ -25,20 +25,24 @@
                 </h1>
               </div>
               <div class="Polaris-Card__Section">
-                <%= form_tag login_path do %>
-                  <div class="Polaris-Label">
-                    <label class="Polaris-Label__Text" for="shop">Enter your shop domain to log in or install this app.</label>
-                  </div>
-                  <div class="Polaris-TextField <%= 'Polaris-TextField--InlineError' if flash[:error]%>">
-                    <input id="shop" name="shop" type="text" autofocus="autofocus" placeholder="example.myshopify.com" class="Polaris-TextField__Input">
-                    <div class="Polaris-TextField__Backdrop"></div>
-                  </div>
+                <%= form_tag "#{main_app.root_path}auth/shopify", target: "_parent" do %>
+                  <% if @sanitized_shop_name.present? %>
+                    <%= hidden_field_tag "shop", @sanitized_shop_name %>
+                  <% else %>
+                    <div class="Polaris-Label">
+                      <label class="Polaris-Label__Text" for="shop">Enter your shop domain to log in or install this app.</label>
+                    </div>
+                    <div class="Polaris-TextField <%= 'Polaris-TextField--InlineError' if flash[:error]%>">
+                      <input id="shop" name="shop" type="text" autofocus="autofocus" placeholder="example.myshopify.com" class="Polaris-TextField__Input">
+                      <div class="Polaris-TextField__Backdrop"></div>
+                    </div>
+                  <% end %>
                   <% if flash[:error] %>
                     <div class="Polaris-InlineError"><%= flash[:error] %></div>
                   <% end %>
                   <button type="submit" class="Polaris-Button Polaris-Button--primary Polaris-Button--sizeLarge">
-                    <span class="Polaris-Button__Content"><span>Install app</span>
-                  </button>
+                  <span class="Polaris-Button__Content"><span>Install app</span>
+                    </button>
                 <% end %>
               </div>
             </div>

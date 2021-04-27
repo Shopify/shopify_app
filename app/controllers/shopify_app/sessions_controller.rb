@@ -10,7 +10,7 @@ module ShopifyApp
     end
 
     def new
-      authenticate if sanitized_shop_name.present?
+      @sanitized_shop_name = sanitized_shop_name
     end
 
     def create

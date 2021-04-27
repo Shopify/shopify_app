@@ -4,6 +4,7 @@ PATH
     shopify_app (17.2.1)
       browser_sniffer (~> 1.2.2)
       jwt (~> 2.2.1)
+      omniauth (>= 2.0)
       omniauth-shopify-oauth2 (~> 2.3)
       rails (> 5.2.1, < 6.2)
       redirect_safely (~> 1.0)
