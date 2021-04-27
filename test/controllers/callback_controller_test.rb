@@ -20,6 +20,8 @@ module ShopifyApp
       @routes = ShopifyApp::Engine.routes
       ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
+      ShopifyApp.configuration.reauth_on_access_scope_changes = true
+      mock_user_scopes_match_strategy
 
       I18n.locale = :en
 
@@ -327,9 +329,9 @@ module ShopifyApp
       ShopifyApp.configuration.allow_jwt_authentication = true
       mock_shopify_omniauth
 
-      get :callback, params: { shop: 'shop' }
+      get :callback, params: { shop: 'shop', host: 'test-host' } # host is required for App Bridge 2.0
 
-      assert_redirected_to "/?shop=#{TEST_SHOPIFY_DOMAIN}"
+      assert_redirected_to "/?host=test-host&shop=#{TEST_SHOPIFY_DOMAIN}"
     end
 
     test "#callback performs install_webhook job after JWT authentication" do
@@ -374,6 +376,16 @@ module ShopifyApp
       assert_response :ok
     end
 
+    test "#callback redirects to login for user token flow if user session access scopes mismatch by user_id" do
+      mock_user_scopes_mismatch_strategy
+      mock_shopify_user_omniauth
+      _session = mock_user_session
+
+      get :callback
+
+      assert_redirected_to ShopifyApp.configuration.login_url
+    end
+
     private
 
     def mock_shopify_jwt
@@ -386,13 +398,20 @@ module ShopifyApp
         token: '1234',
         domain: TEST_SHOPIFY_DOMAIN,
         api_version: ShopifyApp.configuration.api_version,
+        access_scopes: "read_products"
       )
     end
 
     def mock_shopify_omniauth
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
-      OmniAuth.config.add_mock(:shopify, provider: :shopify, uid: TEST_SHOPIFY_DOMAIN, credentials: { token: '1234' })
+      OmniAuth.config.add_mock(
+        :shopify,
+        provider: :shopify,
+        uid: TEST_SHOPIFY_DOMAIN,
+        credentials: { token: '1234' },
+        extra: { scope: "read_products" }
+      )
       request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
       request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
     end

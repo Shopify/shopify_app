@@ -18,6 +18,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 class ActiveSupport::TestCase
   include GeneratorTestHelpers
   include SessionStoreStrategyTestHelpers
+  include AccessScopesStrategyHelpers
 
   API_META_TEST_RESPONSE = <<~JSON
     {
@@ -43,5 +44,6 @@ class ActiveSupport::TestCase
     WebMock.disable_net_connect!
     WebMock.stub_request(:get, "https://app.shopify.com/services/apis.json").to_return(body: API_META_TEST_RESPONSE)
     ShopifyAppConfigurer.call
+    Rails.application.reload_routes!
   end
 end

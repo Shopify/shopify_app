@@ -2,6 +2,26 @@ Unreleased
 ----------
 * Update omniauth initializers to allow `GET`
 
+17.2.1 (April 1, 2021)
+----------
+* Bug fix: Lock the CDN App Bridge version to `v1.X.Y` in the Embedded App layout [#1238](https://github.com/Shopify/shopify_app/pull/1238)
+  * App Bridge `v2.0` is a non-backwards compatible release
+  * A future major shopify_app gem release will support only App Bridge `v2.0`
+
+17.2.0 (April 1, 2021)
+----------
+* Support Rails `v6.1` [#1221](https://github.com/Shopify/shopify_app/pull/1221)
+  * Check out [Upgrading to `v17.2.0`](/docs/Upgrading.md#upgrading-to-v1720) in the Upgrading.md guide for the changes needed to support Rails `v6.1`
+
+17.1.1 (March 12, 2021)
+----------
+* Fix issues with mocking OmniAuth callback controller tests [#1210](https://github.com/Shopify/shopify_app/pull/1210)
+
+17.1.0 (March 5, 2021)
+----------
+* Create OmniAuthConfiguration object to build future OmniAuth strategies [#1190](https://github.com/Shopify/shopify_app/pull/1190)
+* Added access scopes to Shop and User models, added checks to handle scope changes [#1192](https://github.com/Shopify/shopify_app/pull/1192) [#1197](https://github.com/Shopify/shopify_app/pull/1197)
+
 17.0.5 (January 27, 2021)
 ----------
 * Fix omniauth strategy not being set correctly for apps using session tokens [#1164](https://github.com/Shopify/shopify_app/pull/1164)

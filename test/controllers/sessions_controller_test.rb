@@ -125,15 +125,6 @@ module ShopifyApp
       assert_nil session['shopify.top_level_oauth']
     end
 
-    test "#new should trust the shop param over the current session" do
-      previously_logged_in_shop_id = 1
-      session[:shopify] = previously_logged_in_shop_id
-      session['shopify.granted_storage_access'] = true
-      new_shop_domain = "new-shop.myshopify.com"
-      get :new, params: { shop: new_shop_domain }
-      assert_redirected_to_top_level(new_shop_domain)
-    end
-
     test "#new should render a full-page if the shop param doesn't exist" do
       get :new
       assert_response :ok
@@ -254,26 +245,25 @@ module ShopifyApp
       assert_redirected_to "#{ShopifyApp.configuration.root_url}?shop=shop.myshopify.com"
     end
 
-    test "#destroy should clear shopify from session and redirect to login with notice" do
+    test "#destroy should reset rails session and redirect to login with notice" do
       shop_id = 1
       session[:shopify] = shop_id
       session[:shopify_domain] = 'shop1.myshopify.com'
       session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
+      session[:foo] = 'bar'
 
       get :destroy
 
       assert_nil session[:shopify]
       assert_nil session[:shopify_domain]
       assert_nil session[:shopify_user]
+      assert_nil session[:foo]
       assert_redirected_to login_path
       assert_equal 'Successfully logged out', flash[:notice]
     end
 
     test '#destroy should redirect with notice in spanish' do
       I18n.locale = :es
-      shop_id = 1
-      session[:shopify] = shop_id
-      session[:shopify_domain] = 'shop1.myshopify.com'
 
       get :destroy
 

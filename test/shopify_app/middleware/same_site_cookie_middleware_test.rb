@@ -2,6 +2,13 @@
 require 'test_helper'
 
 class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
+  attr_reader :non_ssl_env, :ssl_env
+
+  def setup
+    @non_ssl_env = env_for_url("http://test.com/")
+    @ssl_env = env_for_url("https://test.com/")
+  end
+
   def app
     Rack::Lint.new(lambda { |env|
       Rack::Request.new(env)
@@ -26,18 +33,22 @@ class ShopifyApp::SameSiteCookieMiddlewareTest < ActiveSupport::TestCase
     ShopifyApp::SameSiteCookieMiddleware.new(app)
   end
 
-  test 'SameSite cookie attributes should be added on SSL' do
-    env = env_for_url("https://test.com/")
+  test 'SameSite cookie attributes should be added on SSL requests if app is embedded' do
+    _status, headers, _body = middleware.call(ssl_env)
 
-    _status, headers, _body = middleware.call(env)
+    assert_includes headers['Set-Cookie'], 'SameSite=None'
+  end
 
-    assert_includes headers['Set-Cookie'], 'SameSite'
+  test 'SameSite cookie attributes should not be added on SSL requests if app is not embedded' do
+    ShopifyApp.configuration.stubs(:embedded_app?).returns(false)
+
+    _status, headers, _body = middleware.call(ssl_env)
+
+    assert_not_includes headers['Set-Cookie'], 'SameSite'
   end
 
   test 'SameSite cookie attributes should not be added on non SSL requests' do
-    env = env_for_url("http://test.com/")
-
-    _status, headers, _body = middleware.call(env)
+    _status, headers, _body = middleware.call(non_ssl_env)
 
     assert_not_includes headers['Set-Cookie'], 'SameSite'
   end

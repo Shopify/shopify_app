@@ -76,8 +76,18 @@ module ShopifyApp
       if jwt_request?
         false
       else
-        ShopifyApp::SessionRepository.user_storage.present? && user_session.blank?
+        return false unless ShopifyApp::SessionRepository.user_storage.present?
+        update_user_access_scopes?
       end
+    end
+
+    def update_user_access_scopes?
+      return true if user_session.blank?
+      user_access_scopes_strategy.update_access_scopes?(user_id: session[:user_id])
+    end
+
+    def user_access_scopes_strategy
+      ShopifyApp.configuration.user_access_scopes_strategy
     end
 
     def jwt_request?
@@ -118,6 +128,10 @@ module ShopifyApp
       auth_hash['credentials']['token']
     end
 
+    def access_scopes
+      auth_hash.dig('extra', 'scope')
+    end
+
     def reset_session_options
       request.session_options[:renew] = true
       session.delete(:_csrf_token)
@@ -127,7 +141,8 @@ module ShopifyApp
       session_store = ShopifyAPI::Session.new(
         domain: shop_name,
         token: token,
-        api_version: ShopifyApp.configuration.api_version
+        api_version: ShopifyApp.configuration.api_version,
+        access_scopes: access_scopes
       )
 
       session[:shopify_user] = associated_user

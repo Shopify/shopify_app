@@ -7,14 +7,17 @@ ShopifyApp.configure do |config|
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'Shop'
+
+  config.reauth_on_access_scope_changes = true
+
   config.allow_jwt_authentication = <%= !with_cookie_authentication? %>
   config.allow_cookie_authentication = <%= with_cookie_authentication? %>
 
   config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence
   config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence
   if defined? Rails::Server
-    raise('Missing SHOPIFY_API_KEY. See https://github.com/Shopify/shopify_app#api-keys') unless config.api_key
-    raise('Missing SHOPIFY_API_SECRET. See https://github.com/Shopify/shopify_app#api-keys') unless config.secret
+    raise('Missing SHOPIFY_API_KEY. See https://github.com/Shopify/shopify_app#requirements') unless config.api_key
+    raise('Missing SHOPIFY_API_SECRET. See https://github.com/Shopify/shopify_app#requirements') unless config.secret
   end
 end
 

@@ -201,4 +201,58 @@ class ConfigurationTest < ActiveSupport::TestCase
     Rails.env.expects(:test?).returns(false)
     assert ShopifyApp.configuration.enable_same_site_none
   end
+
+  test "user_access_scopes resolves to scope if user_access_scopes are undefined" do
+    ShopifyApp.configure do |config|
+      config.scope = 'read_products'
+    end
+
+    assert_equal ShopifyApp.configuration.scope, ShopifyApp.configuration.user_access_scopes
+  end
+
+  test "shop_access_scopes resolves to scope if shop_access_scopes are undefined" do
+    ShopifyApp.configure do |config|
+      config.scope = 'write_orders'
+    end
+
+    assert_equal ShopifyApp.configuration.scope, ShopifyApp.configuration.shop_access_scopes
+  end
+
+  test "shop_access_scopes are set correctly" do
+    ShopifyApp.configure do |config|
+      config.scope = 'write_orders'
+      config.shop_access_scopes = 'read_orders'
+    end
+
+    assert_equal ShopifyApp.configuration.shop_access_scopes, 'read_orders'
+    assert_equal ShopifyApp.configuration.scope, 'write_orders'
+  end
+
+  test "user_access_scopes are set correctly" do
+    ShopifyApp.configure do |config|
+      config.scope = 'write_orders'
+      config.user_access_scopes = 'read_orders'
+    end
+
+    assert_equal ShopifyApp.configuration.user_access_scopes, 'read_orders'
+    assert_equal ShopifyApp.configuration.scope, 'write_orders'
+  end
+
+  test "noop access scope strategies defined when reauth_on_access_scope_changes is false" do
+    ShopifyApp.configure do |config|
+      config.reauth_on_access_scope_changes = false
+    end
+
+    assert_equal ShopifyApp::AccessScopes::NoopStrategy, ShopifyApp.configuration.shop_access_scopes_strategy
+    assert_equal ShopifyApp::AccessScopes::NoopStrategy, ShopifyApp.configuration.user_access_scopes_strategy
+  end
+
+  test "shop and user access scope strategies defined when reauth_on_access_scope_changes is true" do
+    ShopifyApp.configure do |config|
+      config.reauth_on_access_scope_changes = true
+    end
+
+    assert_equal ShopifyApp::AccessScopes::ShopStrategy, ShopifyApp.configuration.shop_access_scopes_strategy
+    assert_equal ShopifyApp::AccessScopes::UserStrategy, ShopifyApp.configuration.user_access_scopes_strategy
+  end
 end

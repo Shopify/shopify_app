@@ -9,12 +9,16 @@ module ShopifyApp
     attr_accessor :secret
     attr_accessor :old_secret
     attr_accessor :scope
+    attr_writer :shop_access_scopes
+    attr_writer :user_access_scopes
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
     attr_accessor :webhooks
     attr_accessor :scripttags
     attr_accessor :after_authenticate_job
     attr_accessor :api_version
+
+    attr_accessor :reauth_on_access_scope_changes
 
     # customise urls
     attr_accessor :root_url
@@ -70,6 +74,16 @@ module ShopifyApp
       ShopifyApp::SessionRepository.shop_storage
     end
 
+    def shop_access_scopes_strategy
+      return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+      ShopifyApp::AccessScopes::ShopStrategy
+    end
+
+    def user_access_scopes_strategy
+      return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+      ShopifyApp::AccessScopes::UserStrategy
+    end
+
     def has_webhooks?
       webhooks.present?
     end
@@ -80,6 +94,14 @@ module ShopifyApp
 
     def enable_same_site_none
       !Rails.env.test? && (@enable_same_site_none.nil? ? embedded_app? : @enable_same_site_none)
+    end
+
+    def shop_access_scopes
+      @shop_access_scopes || scope
+    end
+
+    def user_access_scopes
+      @user_access_scopes || scope
     end
   end
 
