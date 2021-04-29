@@ -1,6 +1,7 @@
 Unreleased
 ----------
-* Support omniauth 2.x
+* Support OmniAuth 2.x 
+  * If your app has custom OmniAuth configuration, please refer to the [OmniAuth 2.0 upgrade guide](https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0).
 
 17.2.1 (April 1, 2021)
 ----------

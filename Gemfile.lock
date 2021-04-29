@@ -3,7 +3,7 @@ PATH
   specs:
     shopify_app (17.2.1)
       browser_sniffer (~> 1.2.2)
-      jwt (~> 2.2.1)
+      jwt (>= 2.2.3)
       omniauth-rails_csrf_protection
       omniauth-shopify-oauth2 (~> 2.3)
       rails (> 5.2.1, < 6.2)
