@@ -223,7 +223,6 @@ module ShopifyApp
     end
 
     def return_address
-      return base_return_address unless ShopifyApp.configuration.allow_jwt_authentication
       return_address_with_params(shop: current_shopify_domain, host: host)
     rescue ShopifyDomainNotFound, ShopifyHostNotFound
       base_return_address
