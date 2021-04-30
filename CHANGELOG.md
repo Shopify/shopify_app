@@ -1,6 +1,10 @@
 Unreleased
 ----------
 
+17.2.2 (April 30, 2021)
+----------
+* Bug fix: Pass host param into return address regardless of apps's auth config [#1259](https://github.com/Shopify/shopify_app/pull/1259)
+
 17.2.1 (April 1, 2021)
 ----------
 * Bug fix: Lock the CDN App Bridge version to `v1.X.Y` in the Embedded App layout [#1238](https://github.com/Shopify/shopify_app/pull/1238)
