@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (17.2.1)
+    shopify_app (18.0.0)
       browser_sniffer (~> 1.2.2)
       jwt (>= 2.2.3)
       omniauth-rails_csrf_protection

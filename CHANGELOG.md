@@ -1,7 +1,11 @@
 Unreleased
 ----------
+
+18.0.0 (May 3, 2021)
+----------
 * Support OmniAuth 2.x 
   * If your app has custom OmniAuth configuration, please refer to the [OmniAuth 2.0 upgrade guide](https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0).
+* Support App Bridge version 2.x in the Embedded App layout. [#1241](https://github.com/Shopify/shopify_app/pull/1241)
 
 17.2.1 (April 1, 2021)
 ----------
