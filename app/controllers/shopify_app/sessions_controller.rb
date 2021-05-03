@@ -150,7 +150,11 @@ module ShopifyApp
     end
 
     def authenticate_in_context
-      redirect_to("#{main_app.root_path}auth/shopify")
+      post_redirect_to_auth_shopify
+    end
+
+    def post_redirect_to_auth_shopify
+      render('shopify_app/shared/post_redirect_to_auth_shopify', layout: false)
     end
 
     def authenticate_at_top_level

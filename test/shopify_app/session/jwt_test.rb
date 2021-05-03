@@ -50,7 +50,7 @@ module ShopifyApp
 
     test "#shopify_domain and #shopify_user_id are nil if the jwt is unsigned" do
       # The library expects there to be a 3rd segment if we want to verify signature
-      expect_jwt_error(::JWT::DecodeError, 'Not enough or too many segments')
+      expect_jwt_error(::JWT::IncorrectAlgorithm, 'Expected a different algorithm')
 
       t = ::JWT.encode(payload, nil, 'none')
       jwt = JWT.new(t)

@@ -325,7 +325,18 @@ module ShopifyApp
       assert_redirected_to '/'
     end
 
-    test "#callback redirects to the root_url with shop parameter when using JWT authentication" do
+    test "#callback redirects to the root_url with shop and host parameter when not using JWT authentication" do
+      ShopifyApp.configuration.allow_jwt_authentication = false
+      ShopifyApp.configuration.allow_cookie_authentication = true
+
+      mock_shopify_omniauth
+
+      get :callback, params: { shop: 'shop', host: 'test-host' }
+
+      assert_redirected_to "/?host=test-host&shop=#{TEST_SHOPIFY_DOMAIN}"
+    end
+
+    test "#callback redirects to the root_url with shop and host parameter when using JWT authentication" do
       ShopifyApp.configuration.allow_jwt_authentication = true
       mock_shopify_omniauth
 
