@@ -5,15 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
-  <script>
-    function redirect() {
-      var form = document.getElementById("redirect-form");
-      if (form) {
-        form.submit();
-      }
-    }
-    document.addEventListener("DOMContentLoaded", redirect);
-  </script>
+  <%= javascript_include_tag('shopify_app/post_redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
 <body>
   <%= form_tag '/auth/shopify', id: 'redirect-form' %>
