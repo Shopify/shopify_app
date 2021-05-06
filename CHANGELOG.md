@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fix bug causing oauth flow to fail due to CSP violation
 
 18.0.0 (May 3, 2021)
 ----------
