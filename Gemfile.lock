@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (18.0.0)
+    shopify_app (18.0.1)
       browser_sniffer (~> 1.2.2)
       jwt (>= 2.2.3)
       omniauth-rails_csrf_protection
@@ -105,7 +105,7 @@ GEM
     faraday-net_http_persistent (1.1.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    graphql (1.12.8)
+    graphql (1.12.9)
     graphql-client (0.16.0)
       activesupport (>= 3.0)
       graphql (~> 1.8)
