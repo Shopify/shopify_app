@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fix bug causing OAuth flow to fail due to CSP violation. [#1265](https://github.com/Shopify/shopify_app/pull/1265)
 
 18.0.0 (May 3, 2021)
 ----------
