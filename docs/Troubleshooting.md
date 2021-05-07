@@ -70,7 +70,7 @@ This issue can occur when the session (the model you set as `ShopifyApp::Session
 
 ### My app returns 401 during oauth
 
-If your local dev env uses the `cookie_store` session storage strategy, you may encounter 401 errors during oauth due to a race condition between asset requests and `/auth/shopify`. You should be able to work around for local testing by using a different browser or session storage strategy.
+If your local dev env uses the `cookie_store` session storage strategy, you may encounter 401 errors during oauth due to a race condition between asset requests and `/auth/shopify`. You should be able to work around for local testing by using a different browser or session storage strategy.  [Read more about the status of this issue](https://github.com/Shopify/shopify_app/issues/1269).
 
 ## JWT session tokens
 
