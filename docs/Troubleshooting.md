@@ -11,6 +11,7 @@
 [App installation](#app-installation)
   * [My app won't install](#my-app-wont-install)
   * [My app keeps redirecting to login](#my-app-keeps-redirecting-to-login)
+  * [My app returns 401 during oauth](#my-app-returns-401-during-oauth)
 
 [JWT session tokens](#jwt-session-tokens)
   * [My app is still using cookies to authenticate](#my-app-is-still-using-cookies-to-authenticate)
@@ -66,6 +67,10 @@ Alternatively, you can upgrade to [`v17.2.0` of the shopify_app gem](/docs/Upgra
 #### App installation fails with 'The page you’re looking for could not be found' if the app was installed before
 
 This issue can occur when the session (the model you set as `ShopifyApp::SessionRepository.storage`) isn't deleted when the user uninstalls your app. A possible fix for this is listening to the `app/uninstalled` webhook and deleting the corresponding session in the webhook handler.
+
+### My app returns 401 during oauth
+
+If your local dev env uses the `cookie_store` session storage strategy, you may encounter 401 errors during oauth due to a race condition between asset requests and `/auth/shopify`. You should be able to work around for local testing by using a different browser or session storage strategy.
 
 ## JWT session tokens
 
