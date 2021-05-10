@@ -105,7 +105,7 @@ GEM
     faraday-net_http_persistent (1.1.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    graphql (1.12.9)
+    graphql (1.12.8)
     graphql-client (0.16.0)
       activesupport (>= 3.0)
       graphql (~> 1.8)
