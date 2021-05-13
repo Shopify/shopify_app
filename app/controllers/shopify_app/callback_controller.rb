@@ -154,6 +154,7 @@ module ShopifyApp
         session[:user_id] = nil if user_session && user_session.domain != shop_name
       end
       session[:shopify_domain] = shop_name
+      session[:shopify_host] = request.parameters[:host]
       session[:user_session] = auth_hash&.extra&.session
     end
 
