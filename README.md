@@ -1,5 +1,7 @@
 # Shopify App
 
+**Shopify is doubling our engineering staff in 2021! [Join our team and work on libraries like this one.](https://smrtr.io/5GGrc)**
+
 [![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI) ![Supported Rails version][supported_rails_version]
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
