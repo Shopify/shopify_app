@@ -8,7 +8,11 @@ module ShopifyApp
     def receive
       params.permit!
       job_args = { shop_domain: shop_domain, webhook: webhook_params.to_h }
-      webhook_job_klass.perform_later(job_args)
+      if Gem::Version.new(RUBY_VERSION) < Gem::Version.new("3.0.0")
+        webhook_job_klass.perform_later(job_args)
+      else
+        webhook_job_klass.perform_later(**job_args)
+      end
       head(:ok)
     end
 
