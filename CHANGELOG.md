@@ -1,6 +1,6 @@
 18.0.2 (Jun 15, 2021)
 ----------
-* Added careers link to readme. [#1274](https://github.com/Shopify/shopify_app/pull/12274)
+* Added careers link to readme. [#1274](https://github.com/Shopify/shopify_app/pull/1274)
 
 18.0.1 (May 7, 2021)
 ----------
