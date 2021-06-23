@@ -32,14 +32,29 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
 
     Rails.application.routes.draw do
       root to: 'ensure_authenticated_links_test/turbolinks_test#root'
+      namespace :app do
+        root to: 'ensure_authenticated_links_test/turbolinks_test#root'
+      end
       get '/some_link', to: 'ensure_authenticated_links_test/turbolinks_test#some_link'
     end
   end
 
   test 'redirects to splash page with a return_to and shop param if no session token is present' do
+    ShopifyApp.configuration.root_url = '/'
+
     get :some_link, params: { shop: @shop_domain }
 
     expected_path = root_path(return_to: request.fullpath, shop: @shop_domain)
+
+    assert_redirected_to expected_path
+  end
+
+  test 'redirects to nested splash page with a return_to and shop param if no session token is present' do
+    ShopifyApp.configuration.root_url = '/app'
+
+    get :some_link, params: { shop: @shop_domain }
+
+    expected_path = app_root_path(return_to: request.fullpath, shop: @shop_domain)
 
     assert_redirected_to expected_path
   end

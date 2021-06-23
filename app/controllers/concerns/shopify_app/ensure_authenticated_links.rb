@@ -11,8 +11,9 @@ module ShopifyApp
     private
 
     def redirect_to_splash_page
-      splash_page_path = root_path(return_to: request.fullpath, shop: current_shopify_domain)
-      redirect_to(splash_page_path)
+      splash_page_path = URI(ShopifyApp.configuration.root_url)
+      splash_page_path.query = URI.encode_www_form(return_to: request.fullpath, shop: current_shopify_domain)
+      redirect_to(splash_page_path.to_s)
     rescue ShopifyApp::LoginProtection::ShopifyDomainNotFound => error
       Rails.logger.warn("[ShopifyApp::EnsureAuthenticatedLinks] Redirecting to login: [#{error.class}] "\
                          "Could not determine current shop domain")
