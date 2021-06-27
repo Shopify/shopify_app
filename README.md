@@ -1,5 +1,7 @@
 # Shopify App
 
+**Shopify is doubling our engineering staff in 2021! [Join our team and work on libraries like this one.](https://smrtr.io/5GGrK)**
+
 [![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI) ![Supported Rails version][supported_rails_version]
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
@@ -23,7 +25,6 @@ This gem includes a Rails engine, generators, modules, and mixins that help crea
 ## Requirements
 
 > **Rails compatibility** 
-> * Rails 6.1 or above is not yet supported due to the new `cookies_same_site_protection` setting. 
 > * Use Shopify App `<= v7.2.8` if you need to work with Rails 4.
 
 To become a Shopify app developer, you will need a [Shopify Partners](https://www.shopify.com/partners) account. Explore the [Shopify dev docs](https://shopify.dev/concepts/shopify-introduction) to learn more about [building Shopify apps](https://shopify.dev/concepts/apps).
