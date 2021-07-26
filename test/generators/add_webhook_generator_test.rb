@@ -22,6 +22,18 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "adds new webhook to config without exisiting webhooks only once" do
+    provide_existing_initializer_file
+
+    run_generator
+    
+    assert_file "config/initializers/shopify_app.rb" do |config|
+      webhooks_added = config.scan(/config.webhooks/).length
+      assert_equal 1, webhooks_added
+      assert_match new_webhook, config
+    end
+  end
+
   test "adds new webhook to config exisiting webhooks" do
     provide_existing_initializer_file_with_webhooks
 

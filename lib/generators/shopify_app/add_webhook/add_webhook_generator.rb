@@ -19,7 +19,7 @@ module ShopifyApp
         inject_into_file(
           'config/initializers/shopify_app.rb',
           "  config.webhooks = [\n  ]\n",
-          before: 'end'
+          before: /^end/
         )
       end
 
