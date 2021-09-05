@@ -8,7 +8,7 @@ module ShopifyApp
     def receive
       params.permit!
       job_args = { shop_domain: shop_domain, webhook: webhook_params.to_h }
-      webhook_job_klass.perform_later(job_args)
+      (RUBY_VERSION.to_i >= 3) ? webhook_job_klass.perform_later(**job_args) : webhook_job_klass.perform_later(job_args)
       head(:ok)
     end
 
