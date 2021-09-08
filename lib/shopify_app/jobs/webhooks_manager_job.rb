@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'active_job'
+
 module ShopifyApp
   class WebhooksManagerJob < ActiveJob::Base
     queue_as do

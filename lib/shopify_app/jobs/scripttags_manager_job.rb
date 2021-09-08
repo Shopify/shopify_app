@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'active_job'
+
 module ShopifyApp
   class ScripttagsManagerJob < ActiveJob::Base
     queue_as do
