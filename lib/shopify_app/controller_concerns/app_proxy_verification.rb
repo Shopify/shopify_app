@@ -20,17 +20,20 @@ module ShopifyApp
       return false if signature.nil?
 
       ActiveSupport::SecurityUtils.secure_compare(
-        calculated_signature(query_hash),
+        calculated_signature(query_hash, ShopifyApp.configuration.secret),
+        signature
+      ) || ActiveSupport::SecurityUtils.secure_compare(
+        calculated_signature(query_hash, ShopifyApp.configuration.old_secret),
         signature
       )
     end
 
-    def calculated_signature(query_hash_without_signature)
+    def calculated_signature(query_hash_without_signature, secret)
       sorted_params = query_hash_without_signature.collect { |k, v| "#{k}=#{Array(v).join(',')}" }.sort.join
 
       OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest.new('sha256'),
-        ShopifyApp.configuration.secret,
+        secret,
         sorted_params
       )
     end
