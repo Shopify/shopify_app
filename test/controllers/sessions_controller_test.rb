@@ -69,6 +69,14 @@ module ShopifyApp
       assert_template 'shared/redirect'
     end
 
+    test '#new renders the redirect layout if user agent is Shopify POS (Android React Native)' do
+      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS/4.24.0-mal+30112/Android/9/google/Android SDK ' \
+                   'built for x86/development MobileMiddlewareSupported'
+
+      get :new, params: { shop: 'my-shop' }
+      assert_template 'shared/redirect'
+    end
+
     test '#new renders the redirect layout if user agent is Shopify POS (iOS)' do
       request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS/4.7 (iPad; iOS 11.0.1; Scale/2.00)'
       get :new, params: { shop: 'my-shop' }
