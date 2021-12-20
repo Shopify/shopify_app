@@ -15,7 +15,7 @@ While you can customize the login view by creating a `/app/views/shopify_app/ses
 
 ```ruby
 ShopifyApp.configure do |config|
-  config.login_url = 'https://my.domain.com/nested/login'
+  config.login_url = 'https://example.com/nested/login'
 end
 ```
 
@@ -77,6 +77,6 @@ class ReviewsController < ApplicationController
 end
 ```
 
-Create your app proxy URL in the [Shopify Partners dashboard](https://partners.shopify.com/organizations), making sure to point it to `https://your_app_website.com/app_proxy`.
+Create your app proxy URL in the [Shopify Partners dashboard](https://partners.shopify.com/organizations), making sure to point it to `https://example.com/app_proxy`.
 
 ![Creating an App Proxy](/images/app-proxy-screenshot.png)
