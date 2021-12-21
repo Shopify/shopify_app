@@ -12,7 +12,7 @@ ShopifyApp can manage your app's webhooks for you if you set which webhooks you 
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'carts/update', address: 'https://example-app.com/webhooks/carts_update'}
+    {topic: 'carts/update', address: 'https://example.com/webhooks/carts_update'}
   ]
 end
 ```
@@ -34,7 +34,7 @@ If you are only interested in particular fields, you can optionally filter the d
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'products/update', address: 'https://example-app.com/webhooks/products_update', fields: ['title', 'vendor']}
+    {topic: 'products/update', address: 'https://example.com/webhooks/products_update', fields: ['title', 'vendor']}
   ]
 end
 ```
