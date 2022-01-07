@@ -27,9 +27,10 @@ module ShopifyApp
 
     initializer "shopify_app.middleware" do |app|
       app.config.middleware.insert_after(::Rack::Runtime, ShopifyApp::SameSiteCookieMiddleware)
+      app.config.middleware.insert_after(ShopifyApp::SameSiteCookieMiddleware, ShopifyApp::AppBridgeMiddleware)
 
       if ShopifyApp.configuration.allow_jwt_authentication
-        app.config.middleware.insert_after(ShopifyApp::SameSiteCookieMiddleware, ShopifyApp::JWTMiddleware)
+        app.config.middleware.insert_after(ShopifyApp::AppBridgeMiddleware, ShopifyApp::JWTMiddleware)
       end
     end
 
