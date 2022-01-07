@@ -1,3 +1,9 @@
+18.0.3 (Jan 7, 2022)
+----------
+* Change regexp to match standard ngrok URLs. [#1311](https://github.com/Shopify/shopify_app/pull/1311)
+* Make `EnsureAuthenticatedLinks` compatible with AppBridge 2.0. [#1277](https://github.com/Shopify/shopify_app/pull/1277)
+  * Includes the `host` parameter when redirecting to the splash page in an unauthenticated state.
+
 18.0.2 (Jun 15, 2021)
 ----------
 * Added careers link to readme. [#1274](https://github.com/Shopify/shopify_app/pull/1274)
