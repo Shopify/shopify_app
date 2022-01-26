@@ -1,3 +1,7 @@
+Unreleased
+----------
+* Support Rails 7 [#1354](https://github.com/Shopify/shopify_app/pull/1354)
+
 18.0.3 (Jan 7, 2022)
 ----------
 * Change regexp to match standard ngrok URLs. [#1311](https://github.com/Shopify/shopify_app/pull/1311)
