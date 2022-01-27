@@ -16,7 +16,7 @@ module ShopifyApp
       def create_shopify_app_initializer
         @application_name = format_array_argument(options['application_name'])
         @scope = format_array_argument(options['scope'])
-        @api_version = options['api_version'] || ShopifyAPI::Meta.admin_versions.find(&:latest_supported).handle
+        @api_version = options['api_version'] || ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
 
         template('shopify_app.rb', 'config/initializers/shopify_app.rb')
       end

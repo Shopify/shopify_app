@@ -15,9 +15,9 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('browser_sniffer', '~> 1.4.0')
   s.add_runtime_dependency('omniauth-rails_csrf_protection')
-  s.add_runtime_dependency('rails', '> 5.2.1')
-  s.add_runtime_dependency('shopify_api', '~> 9.4')
   s.add_runtime_dependency('omniauth-shopify-oauth2', '~> 2.3')
+  s.add_runtime_dependency('rails', '> 5.2.1', '< 6.2') # TODO: Remove this upperbound before merging back to main
+  # s.add_runtime_dependency('shopify_api', '~> 9.4') # TODO: Replace this with new gem version when released
   s.add_runtime_dependency('jwt', '>= 2.2.3')
   s.add_runtime_dependency('redirect_safely', '~> 1.0')
 

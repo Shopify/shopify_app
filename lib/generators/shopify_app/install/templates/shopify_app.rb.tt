@@ -21,5 +21,15 @@ ShopifyApp.configure do |config|
   end
 end
 
-# ShopifyApp::Utils.fetch_known_api_versions                        # Uncomment to fetch known api versions from shopify servers on boot
-# ShopifyAPI::ApiVersion.version_lookup_mode = :raise_on_unknown    # Uncomment to raise an error if attempting to use an api version that was not previously known
+ShopifyAPI::Context.setup(
+  api_key: ShopifyApp.configuration.api_key,
+  api_secret_key: ShopifyApp.configuration.secret,
+  api_version: ShopifyApp.configuration.api_version,
+  host_name: ENV.fetch('SHOPIFY_APP_HOST_NAME', ''),
+  scope: ShopifyApp.configuration.scope,
+  is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
+  is_embedded: ShopifyApp.configuration.embedded_app,
+  session_storage: ShopifyAPI::Auth::FileSessionStorage.new, # TODO: replace with shopify_app implementation
+  logger: Rails.logger,
+  private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil)
+)

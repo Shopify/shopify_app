@@ -15,10 +15,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     provide_development_config_file
   end
 
-  teardown do
-    ShopifyAPI::ApiVersion.clear_known_versions
-  end
-
   test "creates the ShopifyApp initializer" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
@@ -27,10 +23,25 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
-      assert_match 'config.api_version = "2019-10"', shopify_app
+      assert_match "config.api_version = \"#{ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION}\"", shopify_app
       assert_match "config.after_authenticate_job = false", shopify_app
-      assert_match "# ShopifyApp::Utils.fetch_known_api_versions", shopify_app
-      assert_match "# ShopifyAPI::ApiVersion.version_lookup_mode = :raise_on_unknown ", shopify_app
+
+      context_setup = <<~CONTEXT_SETUP
+        ShopifyAPI::Context.setup(
+          api_key: ShopifyApp.configuration.api_key,
+          api_secret_key: ShopifyApp.configuration.secret,
+          api_version: ShopifyApp.configuration.api_version,
+          host_name: ENV.fetch('SHOPIFY_APP_HOST_NAME', ''),
+          scope: ShopifyApp.configuration.scope,
+          is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
+          is_embedded: ShopifyApp.configuration.embedded_app,
+          session_storage: ShopifyAPI::Auth::FileSessionStorage.new, \# TODO: replace with shopify_app implementation
+          logger: Rails.logger,
+          private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil)
+        )
+      CONTEXT_SETUP
+
+      assert_match context_setup, shopify_app
     end
   end
 
