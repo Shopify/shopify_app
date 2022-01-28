@@ -80,10 +80,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
     dest = 'shopify_domain'
     sub = 'shopify_user'
 
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: token,
-      api_version: '2020-01',
+    expected_session = ShopifyAPI::Auth::Session.new(
+      shop: domain,
+      access_token: token,
     )
 
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
@@ -107,10 +106,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
     token = 'admin_api_token'
     dest = 'test.shopify.com'
 
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: token,
-      api_version: '2020-01',
+    expected_session = ShopifyAPI::Auth::Session.new(
+      shop: domain,
+      access_token: token,
     )
 
     ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
@@ -160,10 +158,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session is memoized and does not retrieve session twice" do
-    shop_session_record = ShopifyAPI::Session.new(
-      domain: 'my-shop',
-      token: '1234',
-      api_version: nil,
+    shop_session_record = ShopifyAPI::Auth::Session.new(
+      shop: 'my-shop',
+      access_token: '1234',
     )
     with_application_test_routes do
       request.env['jwt.shopify_domain'] = 'foobar'
@@ -224,7 +221,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       session[:user_id] = 123
       session[:shopify_domain] = "foobar"
       session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      sess = stub(domain: 'https://foobar.myshopify.com')
+      sess = stub(shop: 'foobar.myshopify.com')
       ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(sess).once
       get :second_login, params: { shop: 'other-shop' }
       assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com'\
@@ -253,9 +250,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
       ShopifyApp::SessionRepository.user_storage = nil
 
       session['shopify.top_level_oauth'] = true
-      sess = stub(domain: 'https://foobar.myshopify.com')
+      sess = stub(shop: 'foobar.myshopify.com')
       @controller.expects(:current_shopify_session).returns(sess).at_least_once
-      ShopifyAPI::Base.expects(:activate_session).with(sess)
+      ShopifyAPI::Context.expects(:activate_session).with(sess)
 
       get :index, params: { shop: 'foobar' }
       assert_nil session['shopify.top_level_oauth']

@@ -99,7 +99,6 @@ module ShopifyApp
       ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
     end
 
-    # rubocop:disable Lint/SuppressedException
     def set_user_tokens_option
       current_shop_session = shop_session
 
@@ -110,18 +109,12 @@ module ShopifyApp
 
       session[:user_tokens] = ShopifyApp::SessionRepository.user_storage.present?
 
-      ShopifyAPI::Session.temp(
-        domain: current_shop_session.domain,
-        token: current_shop_session.token,
-        api_version: current_shop_session.api_version
-      ) do
-        ShopifyAPI::Metafield.find(:token_validity_bogus_check)
+      current_shop_session.temp do
+        ShopifyAPI::Clients::Rest::Admin.new.get(path: "metafields/boguscheck.json")
       end
-    rescue ActiveResource::UnauthorizedAccess
-      session[:user_tokens] = false
-    rescue StandardError
+    rescue ShopifyAPI::Errors::HttpResponseError => e
+      session[:user_tokens] = false if e.code == 401
     end
-    # rubocop:enable Lint/SuppressedException
 
     def validate_shop_presence
       @shop = sanitized_shop_name

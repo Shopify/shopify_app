@@ -22,9 +22,9 @@ module ShopifyApp
 
       session = UserMockSessionStoreWithScopes.retrieve(shopify_user_id: TEST_SHOPIFY_USER_ID)
 
-      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
-      assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
-      assert_equal ShopifyAPI::ApiAccess.new(TEST_MERCHANT_SCOPES), session.access_scopes
+      assert_equal TEST_SHOPIFY_DOMAIN, session.shop
+      assert_equal TEST_SHOPIFY_USER_TOKEN, session.access_token
+      assert_equal ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES), session.scope
     end
 
     test ".retrieve_by_shopify_user_id returns user session by shopify_user_id" do
@@ -37,19 +37,17 @@ module ShopifyApp
       )
       UserMockSessionStoreWithScopes.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
-      expected_session = ShopifyAPI::Session.new(
-        domain: instance.shopify_domain,
-        token: instance.shopify_token,
-        api_version: instance.api_version,
-        access_scopes: TEST_MERCHANT_SCOPES
+      expected_session = ShopifyAPI::Auth::Session.new(
+        shop: instance.shopify_domain,
+        access_token: instance.shopify_token,
+        scope: TEST_MERCHANT_SCOPES
       )
 
       user_id = TEST_SHOPIFY_USER_ID
       session = UserMockSessionStoreWithScopes.retrieve_by_shopify_user_id(user_id)
-      assert_equal expected_session.domain, session.domain
-      assert_equal expected_session.token, session.token
-      assert_equal expected_session.api_version, session.api_version
-      assert_equal expected_session.access_scopes, session.access_scopes
+      assert_equal expected_session.shop, session.shop
+      assert_equal expected_session.access_token, session.access_token
+      assert_equal expected_session.scope, session.scope
     end
 
     test ".store can store user session record" do
@@ -59,9 +57,9 @@ module ShopifyApp
       UserMockSessionStoreWithScopes.stubs(:find_or_initialize_by).returns(mock_user_instance)
 
       mock_auth_hash = mock
-      mock_auth_hash.stubs(:domain).returns(mock_user_instance.shopify_domain)
-      mock_auth_hash.stubs(:token).returns("a-new-user_token!")
-      mock_auth_hash.stubs(:access_scopes).returns(ShopifyAPI::ApiAccess.new(TEST_MERCHANT_SCOPES))
+      mock_auth_hash.stubs(:shop).returns(mock_user_instance.shopify_domain)
+      mock_auth_hash.stubs(:access_token).returns("a-new-user_token!")
+      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES))
 
       associated_user = {
         id: 100,

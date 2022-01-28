@@ -107,11 +107,11 @@ module ShopifyApp
     end
 
     def offline_access_token
-      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(shop_name)&.token
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(shop_name)&.access_token
     end
 
     def online_access_token
-      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(associated_user_id)&.token
+      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(associated_user_id)&.access_token
     end
 
     def associated_user
@@ -138,20 +138,19 @@ module ShopifyApp
     end
 
     def set_shopify_session
-      session_store = ShopifyAPI::Session.new(
-        domain: shop_name,
-        token: token,
-        api_version: ShopifyApp.configuration.api_version,
-        access_scopes: access_scopes
+      session_store = ShopifyAPI::Auth::Session.new(
+        shop: shop_name,
+        access_token: token,
+        scope: access_scopes
       )
 
       session[:shopify_user] = associated_user
       if session[:shopify_user].present?
-        session[:shop_id] = nil if shop_session && shop_session.domain != shop_name
+        session[:shop_id] = nil if shop_session && shop_session.shop != shop_name
         session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
       else
         session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
-        session[:user_id] = nil if user_session && user_session.domain != shop_name
+        session[:user_id] = nil if user_session && user_session.shop != shop_name
       end
       session[:shopify_domain] = shop_name
       session[:user_session] = auth_hash&.extra&.session

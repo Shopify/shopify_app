@@ -2,6 +2,9 @@
 
 require 'browser_sniffer'
 
+# TODO: Remove once all UnauthorizedAccess errors are handled 
+require 'active_resource'
+
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
@@ -29,10 +32,10 @@ module ShopifyApp
       clear_top_level_oauth_cookie
 
       begin
-        ShopifyAPI::Base.activate_session(current_shopify_session)
+        ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
       ensure
-        ShopifyAPI::Base.clear_session
+        ShopifyAPI::Context.deactivate_session
       end
     end
 
@@ -81,7 +84,7 @@ module ShopifyApp
 
       if current_shopify_session &&
         params[:shop] && params[:shop].is_a?(String) &&
-        (current_shopify_session.domain != params[:shop])
+        (current_shopify_session.shop != params[:shop])
         clear_session = true
       end
 

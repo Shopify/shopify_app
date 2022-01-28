@@ -17,29 +17,26 @@ module ShopifyApp
       ))
 
       session = ShopMockSessionStore.retrieve(1)
-      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
-      assert_equal TEST_SHOPIFY_TOKEN, session.token
+      assert_equal TEST_SHOPIFY_DOMAIN, session.shop
+      assert_equal TEST_SHOPIFY_TOKEN, session.access_token
     end
 
     test ".retrieve_by_shopify_domain can retrieve shop session records by JWT" do
       instance = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
-        api_version: '2020-01',
       )
       ShopMockSessionStore.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
 
-      expected_session = ShopifyAPI::Session.new(
-        domain: instance.shopify_domain,
-        token: instance.shopify_token,
-        api_version: instance.api_version,
+      expected_session = ShopifyAPI::Auth::Session.new(
+        shop: instance.shopify_domain,
+        access_token: instance.shopify_token,
       )
       shopify_domain = TEST_SHOPIFY_DOMAIN
 
       session = ShopMockSessionStore.retrieve_by_shopify_domain(shopify_domain)
-      assert_equal expected_session.domain, session.domain
-      assert_equal expected_session.token, session.token
-      assert_equal expected_session.api_version, session.api_version
+      assert_equal expected_session.shop, session.shop
+      assert_equal expected_session.access_token, session.access_token
     end
 
     test ".store can store shop session records" do
@@ -49,8 +46,8 @@ module ShopifyApp
       ShopMockSessionStore.stubs(:find_or_initialize_by).returns(mock_shop_instance)
 
       mock_auth_hash = mock
-      mock_auth_hash.stubs(:domain).returns(mock_shop_instance.shopify_domain)
-      mock_auth_hash.stubs(:token).returns("a-new-token!")
+      mock_auth_hash.stubs(:shop).returns(mock_shop_instance.shopify_domain)
+      mock_auth_hash.stubs(:access_token).returns("a-new-token!")
       saved_id = ShopMockSessionStore.store(mock_auth_hash)
 
       assert_equal "a-new-token!", mock_shop_instance.shopify_token

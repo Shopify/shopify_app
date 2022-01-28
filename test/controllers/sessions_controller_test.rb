@@ -148,13 +148,16 @@ module ShopifyApp
 
     test "#new sets session[:user_tokens] to true if online tokens are expected" do
       session[:shop_id] = 1
-      shop_session = ShopifyAPI::Session.new(
-        domain: 'my-shop',
-        token: '1234',
-        api_version: nil,
+      shop_session = ShopifyAPI::Auth::Session.new(
+        shop: 'my-shop',
+        access_token: '1234',
       )
       ShopifyApp::SessionRepository.user_storage.stubs(:present?).returns(true)
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with(session[:shop_id]).returns(shop_session)
+
+      client = ShopifyAPI::Clients::Rest::Admin.new(session: shop_session)
+      ShopifyAPI::Clients::Rest::Admin.stubs(:new).returns(client)
+      client.expects(:get).with(path: "metafields/boguscheck.json").raises(ShopifyAPI::Errors::HttpResponseError.new(code: 404))
 
       get :new, params: { shop: 'my-shop' }
 

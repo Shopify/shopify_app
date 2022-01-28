@@ -6,11 +6,9 @@ module ShopifyApp
     test "#perform creates scripttags" do
       token = 'token'
       domain = 'example-app.com'
-      api_version = :unstable
 
-      ShopifyAPI::Session
-        .expects(:temp)
-        .with(domain: domain, token: token, api_version: api_version)
+      ShopifyAPI::Auth::Session.expects(:temp)
+        .with(shop: domain, access_token: token)
         .yields
 
       manager = mock('manager')

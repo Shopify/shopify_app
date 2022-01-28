@@ -33,11 +33,10 @@ module ShopifyApp
       private
 
       def mock_shop_session(scopes)
-        ShopifyAPI::Session.new(
-          domain: shopify_domain,
-          token: 'access_token',
-          api_version: '2021-02',
-          access_scopes: scopes
+        ShopifyAPI::Auth::Session.new(
+          shop: shopify_domain,
+          access_token: 'access_token',
+          scope: scopes
         )
       end
     end

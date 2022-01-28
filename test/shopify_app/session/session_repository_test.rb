@@ -105,11 +105,10 @@ module ShopifyApp
     end
 
     def mock_shopify_session
-      ShopifyAPI::Session.new(
-        domain: mock_shopify_domain,
-        token: 'abracadabra',
-        api_version: :unstable,
-        access_scopes: 'read_products'
+      ShopifyAPI::Auth::Session.new(
+        shop: mock_shopify_domain,
+        access_token: 'abracadabra',
+        scope: 'read_products'
       )
     end
   end

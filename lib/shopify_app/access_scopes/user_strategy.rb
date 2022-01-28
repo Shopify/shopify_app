@@ -25,15 +25,15 @@ module ShopifyApp
         end
 
         def user_access_scopes_by_user_id(user_id)
-          ShopifyApp::SessionRepository.retrieve_user_session(user_id)&.access_scopes
+          ShopifyApp::SessionRepository.retrieve_user_session(user_id)&.scope
         end
 
         def user_access_scopes_by_shopify_user_id(shopify_user_id)
-          ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(shopify_user_id)&.access_scopes
+          ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(shopify_user_id)&.scope
         end
 
         def configuration_access_scopes
-          ShopifyAPI::ApiAccess.new(ShopifyApp.configuration.user_access_scopes)
+          ShopifyAPI::Auth::AuthScopes.new(ShopifyApp.configuration.user_access_scopes)
         end
       end
     end

@@ -73,10 +73,9 @@ module ShopifyApp
     test '#callback keeps the user_id if shop session is for the same shop' do
       mock_shopify_omniauth
       session[:user_id] = 'valid-user-id'
-      user_shop_session = ShopifyAPI::Session.new(
-        domain: TEST_SHOPIFY_DOMAIN,
-        token: '1234',
-        api_version: nil,
+      user_shop_session = ShopifyAPI::Auth::Session.new(
+        shop: TEST_SHOPIFY_DOMAIN,
+        access_token: '1234',
       )
       ShopifyApp::SessionRepository.stubs(:retrieve_user_session).with('valid-user-id').returns(user_shop_session)
 
@@ -88,10 +87,9 @@ module ShopifyApp
     test '#callback clears stale user_id if shop session is for a different shop' do
       mock_shopify_omniauth
       session[:user_id] = 'valid-user-id'
-      user_shop_session = ShopifyAPI::Session.new(
-        domain: 'other-shop.myshopify.io',
-        token: '1234',
-        api_version: nil,
+      user_shop_session = ShopifyAPI::Auth::Session.new(
+        shop: 'other-shop.myshopify.io',
+        access_token: '1234',
       )
       ShopifyApp::SessionRepository.stubs(:retrieve_user_session).with('valid-user-id').returns(user_shop_session)
 
@@ -103,10 +101,9 @@ module ShopifyApp
     test '#callback keeps shop_id if user session is for the same shop' do
       mock_shopify_user_omniauth
       session[:shop_id] = 'valid-shop-id'
-      shop_session = ShopifyAPI::Session.new(
-        domain: TEST_SHOPIFY_DOMAIN,
-        token: '1234',
-        api_version: nil,
+      shop_session = ShopifyAPI::Auth::Session.new(
+        shop: TEST_SHOPIFY_DOMAIN,
+        access_token: '1234',
       )
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(shop_session)
 
@@ -120,10 +117,9 @@ module ShopifyApp
       ShopifyApp.configuration.allow_cookie_authentication = true
       mock_shopify_user_omniauth
       session[:shop_id] = 'valid-shop-id'
-      other_shop_session = ShopifyAPI::Session.new(
-        domain: 'other-domain.myshopify.io',
-        token: '1234',
-        api_version: nil,
+      other_shop_session = ShopifyAPI::Auth::Session.new(
+        shop: 'other-domain.myshopify.io',
+        access_token: '1234',
       )
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(other_shop_session)
 
@@ -170,6 +166,9 @@ module ShopifyApp
       mock_shopify_jwt
       session = mock_user_session
 
+      ShopifyAPI::Auth::Session.stubs(:new)
+        .with(shop: session.shop, access_token: session.access_token, scope: session.scope.to_s)
+        .returns(session)
       ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER_WITH_SCOPE)
 
       get :callback
@@ -202,7 +201,7 @@ module ShopifyApp
     end
 
     test '#install_webhooks uses the shop token for shop strategy' do
-      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
+      shop_session = ShopifyAPI::Auth::Session.new(shop: 'shop', access_token: '1234')
       ShopifyApp::SessionRepository
         .expects(:retrieve_shop_session_by_shopify_domain)
         .returns(shop_session)
@@ -217,7 +216,7 @@ module ShopifyApp
     end
 
     test '#install_webhooks still uses the shop token for user strategy' do
-      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
+      shop_session = ShopifyAPI::Auth::Session.new(shop: 'shop', access_token: '4321')
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain)
         .with(TEST_SHOPIFY_DOMAIN)
         .returns(shop_session)
@@ -234,7 +233,7 @@ module ShopifyApp
     end
 
     test '#install_webhooks falls back to user token for user strategy if shop is not in session' do
-      user_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
+      user_session = ShopifyAPI::Auth::Session.new(shop: 'shop', access_token: '4321')
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(nil)
       ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).returns(user_session)
       ShopifyApp.configure do |config|
@@ -405,11 +404,10 @@ module ShopifyApp
     end
 
     def mock_user_session
-      ShopifyAPI::Session.new(
-        token: '1234',
-        domain: TEST_SHOPIFY_DOMAIN,
-        api_version: ShopifyApp.configuration.api_version,
-        access_scopes: "read_products"
+      ShopifyAPI::Auth::Session.new(
+        access_token: '1234',
+        shop: TEST_SHOPIFY_DOMAIN,
+        scope: "read_products"
       )
     end
 

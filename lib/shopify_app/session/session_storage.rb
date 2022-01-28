@@ -9,12 +9,9 @@ module ShopifyApp
     end
 
     def with_shopify_session(&block)
-      ShopifyAPI::Session.temp(
-        domain: shopify_domain,
-        token: shopify_token,
-        api_version: api_version,
-        &block
-      )
+      ShopifyAPI::Auth::Session.temp(shop: shopify_domain, access_token: shopify_token) do
+        yield block
+      end
     end
   end
 end

@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   # s.add_runtime_dependency('shopify_api', '~> 9.4') # TODO: Replace this with new gem version when released
   s.add_runtime_dependency('jwt', '>= 2.2.3')
   s.add_runtime_dependency('redirect_safely', '~> 1.0')
+  s.add_runtime_dependency('activeresource') # TODO: Remove this once all active resource dependencies are removed
 
   s.add_development_dependency('rake')
   s.add_development_dependency('byebug')
