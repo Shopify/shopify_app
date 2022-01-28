@@ -1,12 +1,12 @@
 PATH
   remote: .
   specs:
-    shopify_app (18.0.3)
+    shopify_app (18.0.4)
       browser_sniffer (~> 1.4.0)
       jwt (>= 2.2.3)
       omniauth-rails_csrf_protection
       omniauth-shopify-oauth2 (~> 2.3)
-      rails (> 5.2.1, < 6.2)
+      rails (> 5.2.1)
       redirect_safely (~> 1.0)
       shopify_api (~> 9.4)
 
@@ -281,4 +281,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.2.22
+   2.2.29

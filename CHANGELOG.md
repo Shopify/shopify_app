@@ -1,3 +1,12 @@
+Unreleased
+----------
+* Support Rails 7 [#1354](https://github.com/Shopify/shopify_app/pull/1354)
+
+18.0.4 (Jan 27, 2022)
+----------
+* Use App Bridge client for redirect [#1247](https://github.com/Shopify/shopify_app/pull/1247)
+  * Replaces deprecated EASDK with App Bridge when redirecting out of an embedded iframe.
+
 18.0.3 (Jan 7, 2022)
 ----------
 * Change regexp to match standard ngrok URLs. [#1311](https://github.com/Shopify/shopify_app/pull/1311)

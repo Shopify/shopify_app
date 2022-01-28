@@ -50,6 +50,10 @@ module ShopifyApp
           copy_file('flash_messages.js', 'app/javascript/shopify_app/flash_messages.js')
           copy_file('shopify_app_index.js', 'app/javascript/shopify_app/index.js')
           append_to_file('app/javascript/packs/application.js', "require(\"shopify_app\")\n")
+        elsif ShopifyApp.use_importmap?
+          copy_file('shopify_app_importmap.js', 'app/javascript/lib/shopify_app.js')
+          copy_file('flash_messages.js', 'app/javascript/lib/flash_messages.js')
+          append_to_file('config/importmap.rb', "pin_all_from \"app/javascript/lib\", under: \"lib\"\n")
         else
           copy_file('shopify_app.js', 'app/assets/javascripts/shopify_app.js')
           copy_file('flash_messages.js', 'app/assets/javascripts/flash_messages.js')
@@ -67,7 +71,7 @@ module ShopifyApp
       def insert_hosts_into_development_config
         inject_into_file(
           'config/environments/development.rb',
-          "  config.hosts = (config.hosts rescue []) << /\[-\w]+\\.ngrok\\.io/\n",
+          "  config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.ngrok\\.io/\n",
           after: "Rails.application.configure do\n"
         )
       end
