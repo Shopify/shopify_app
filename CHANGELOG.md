@@ -3,6 +3,7 @@ Unreleased
 * Support Rails 7 [#1354](https://github.com/Shopify/shopify_app/pull/1354)
 * Fix webhooks handling in Ruby 3 [#1342](https://github.com/Shopify/shopify_app/pull/1342) 
 * Update to Ruby 3 and drop support to Ruby 2.5 [#1359](https://github.com/Shopify/shopify_app/pull/1359)
+* Support `spin.dev` domain URLs [#1358](https://github.com/Shopify/shopify_app/pull/1358)
 
 18.0.4 (Jan 27, 2022)
 ----------
