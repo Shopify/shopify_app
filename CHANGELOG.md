@@ -1,3 +1,7 @@
+Unreleased
+----------
+* Support Rails 7 [#1354](https://github.com/Shopify/shopify_app/pull/1354)
+
 18.0.4 (Jan 27, 2022)
 ----------
 * Use App Bridge client for redirect [#1247](https://github.com/Shopify/shopify_app/pull/1247)

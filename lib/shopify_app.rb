@@ -12,6 +12,14 @@ module ShopifyApp
     Rails::VERSION::MAJOR >= 6
   end
 
+  def self.rails7?
+    Rails::VERSION::MAJOR >= 7
+  end
+
+  def self.use_importmap?
+    rails7? && File.exist?("config/importmap.rb")
+  end
+
   def self.use_webpacker?
     rails6? &&
       defined?(Webpacker) == 'constant' &&
