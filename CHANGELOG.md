@@ -1,4 +1,4 @@
-Unreleased
+18.1.0 (Jan 28, 2022)
 ----------
 * Support Rails 7 [#1354](https://github.com/Shopify/shopify_app/pull/1354)
 
