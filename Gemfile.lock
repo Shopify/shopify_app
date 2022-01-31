@@ -219,7 +219,7 @@ GEM
     redirect_safely (1.0.0)
       activemodel
     regexp_parser (2.0.0)
-    rexml (3.2.4)
+    rexml (3.2.5)
     rubocop (1.5.2)
       parallel (~> 1.10)
       parser (>= 2.7.1.5)
