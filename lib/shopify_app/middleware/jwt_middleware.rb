@@ -37,6 +37,7 @@ module ShopifyApp
 
       env['jwt.shopify_domain'] = jwt.shopify_domain
       env['jwt.shopify_user_id'] = jwt.shopify_user_id
+      env['jwt.expire_at'] = jwt.expire_at
     end
   end
 end
