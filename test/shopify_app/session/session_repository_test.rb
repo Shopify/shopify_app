@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 require 'test_helper'
+require_relative '../../../lib/generators/shopify_app/shop_model/templates/shop.rb'
+require_relative '../../../lib/generators/shopify_app/user_model/templates/user.rb'
 
 module ShopifyApp
   class SessionRepositoryTest < ActiveSupport::TestCase
@@ -93,6 +95,66 @@ module ShopifyApp
 
       SessionRepository.store_user_session(session, user)
     end
+    
+    test '.store_session stores a user session' do
+      SessionRepository.user_storage = InMemoryUserSessionStore
+
+      session = mock_shopify_session
+      session.stubs(:online?).returns(true)
+
+      user = mock_associated_user
+      session.stubs(:associated_user).returns(user)
+
+      InMemoryUserSessionStore.expects(:store).with(session, user.id.to_s)
+
+      SessionRepository.store_session(session)
+    end
+
+    test '.store_session stores a shop session' do
+      SessionRepository.shop_storage = InMemoryUserSessionStore
+
+      session = mock_shopify_session
+
+      InMemoryUserSessionStore.expects(:store).with(session)
+
+      SessionRepository.store_session(session)
+    end
+
+    test '.load_session loads a user session' do
+      SessionRepository.user_storage = InMemoryShopSessionStore
+
+      mock_session_id = 'test_shop.myshopify.com_1234'
+      InMemoryShopSessionStore.expects(:retrieve_by_shopify_user_id).with("1234")
+
+      SessionRepository.load_session(mock_session_id)
+    end
+
+    test '.load_session loads a shop session' do
+      SessionRepository.shop_storage = InMemoryShopSessionStore
+
+      mock_session_id = 'offline_abra-shop'
+      InMemoryShopSessionStore.expects(:retrieve_by_shopify_domain).with("abra-shop")
+
+      SessionRepository.load_session(mock_session_id)
+    end
+
+    test(".delete_session destroys a shop record") do
+      shop = MockShopInstance.new(shopify_domain: "shop", shopify_token: "token")
+
+      Shop.expects(:find_by).with(shopify_domain: "shop").returns(shop)
+      shop.expects(:destroy)
+
+      SessionRepository.delete_session("offline_shop")
+    end
+
+    test(".delete_session destroys a user record") do
+      user = MockUserInstance.new(shopify_domain: "shop", shopify_token: "token")
+
+      User.expects(:find_by).with(shopify_user_id: "1234").returns(user)
+      user.expects(:destroy)
+
+      SessionRepository.delete_session("shop_1234")
+    end
 
     private
 
@@ -109,6 +171,19 @@ module ShopifyApp
         shop: mock_shopify_domain,
         access_token: 'abracadabra',
         scope: 'read_products'
+      )
+    end
+
+    def mock_associated_user
+      ShopifyAPI::Auth::AssociatedUser.new(
+        id: 1234,
+        first_name: "John",
+        last_name: "Doe",
+        email: "johndoe@email.com",
+        email_verified: true,
+        account_owner: false,
+        locale: "en",
+        collaborator: true
       )
     end
   end
