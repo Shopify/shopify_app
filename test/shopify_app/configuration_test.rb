@@ -25,19 +25,15 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "can set root_url which affects login_url" do
-    # TODO: drop `rubocop:todo Style/RedundantBegin` together with Ruby 2.4 support
-    #   As this style is supported since Ruby 2.5 (see https://bugs.ruby-lang.org/issues/12906)
-    begin # rubocop:todo Style/RedundantBegin
-      original_root = ShopifyApp.configuration.root_url
+    original_root = ShopifyApp.configuration.root_url
 
-      ShopifyApp.configure do |config|
-        config.root_url = "/nested"
-      end
-
-      assert_equal("/nested/login", ShopifyApp.configuration.login_url)
-    ensure
-      ShopifyApp.configuration.root_url = original_root
+    ShopifyApp.configure do |config|
+      config.root_url = "/nested"
     end
+
+    assert_equal("/nested/login", ShopifyApp.configuration.login_url)
+  ensure
+    ShopifyApp.configuration.root_url = original_root
   end
 
   test "defaults to myshopify_domain" do
