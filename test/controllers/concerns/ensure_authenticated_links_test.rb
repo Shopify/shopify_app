@@ -44,6 +44,14 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
     assert_redirected_to expected_path
   end
 
+  test 'redirects to splash page with a return_to, shop and host params if no session token is present' do
+    get :some_link, params: { shop: @shop_domain, host: 'test-host' }
+
+    expected_path = "/?host=test-host&return_to=#{CGI.escape(request.fullpath)}&shop=#{@shop_domain}"
+
+    assert_redirected_to expected_path
+  end
+
   test 'returns the requested resource if a valid session token exists' do
     request.env['jwt.shopify_domain'] = @shop_domain
 

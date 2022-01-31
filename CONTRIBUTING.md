@@ -74,3 +74,8 @@ Please follow these steps to have your contribution considered by the maintainer
 
       While the prerequisites above must be satisfied prior to having your pull request reviewed, the reviewer(s) may ask you to complete additional design work, tests, or other changes before your pull request can be ultimately accepted.
     </details>
+    
+### App Bridge client
+
+This gem ships with a UMD version of the App Bridge client. It lives inside the assets folder: `app/assets/javascripts/shopify_app/`. To update the client, simply download the UMD build from [unpkg.com](https://unpkg.com/@shopify/app-bridge) and save it into the folder.
+Please follow the convention of including the client version number in the filename. Finally, change the reference to the new App Bridge client inside `app/assets/javascripts/shopify_app/app_bridge_redirect.js`.
