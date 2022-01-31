@@ -30,7 +30,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
   end
 
   test 'does not add the shop to the env if nil shop value' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new(nil, 1)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new(nil, 1, nil)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
@@ -40,10 +40,11 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_nil env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
+    assert_nil env['jwt.expire_at']
   end
 
   test 'does not add the user to the env if nil user value' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', nil)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new('example.myshopify.com', nil, nil)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
@@ -53,10 +54,12 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_nil env['jwt.shopify_user_id']
+    assert_nil env['jwt.expire_at']
   end
 
-  test 'sets shopify_domain and shopify_user_id if non-nil values' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', 1)
+  test 'sets shopify_domain, shopify_user_id and expire_at if non-nil values' do
+    expire_at = 2.hours.from_now.to_i
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new('example.myshopify.com', 1, expire_at)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
@@ -66,10 +69,11 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_equal 'example.myshopify.com', env['jwt.shopify_domain']
     assert_equal 1, env['jwt.shopify_user_id']
+    assert_equal expire_at, env['jwt.expire_at']
   end
 
   test 'sets the jwt values before calling the next middleware' do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id).new('example.myshopify.com', 1)
+    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new('example.myshopify.com', 1, nil)
     ShopifyApp::JWT.stubs(:new).with('abc').returns(jwt_mock)
 
     env = Rack::MockRequest.env_for('https://example.com')
