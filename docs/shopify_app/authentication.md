@@ -1,10 +1,10 @@
 # Authentication
 
-The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) to get [access tokens](https://shopify.dev/concepts/about-apis/authentication#api-access-modes). These are used to authenticate requests made by the app to the Shopify API. 
+The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) to get [access tokens](https://shopify.dev/concepts/about-apis/authentication#api-access-modes). These are used to authenticate requests made by the app to the Shopify API.
 
-By default, the gem generates an embedded app frontend that uses [Shopify App Bridge](https://shopify.dev/tools/app-bridge) to fetch [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens). Session tokens are used by the embedded app to make authenticated requests to the app backend. 
+By default, the gem generates an embedded app frontend that uses [Shopify App Bridge](https://shopify.dev/tools/app-bridge) to fetch [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens). Session tokens are used by the embedded app to make authenticated requests to the app backend.
 
-See [*Authenticate an embedded app using session tokens*](https://shopify.dev/tutorials/authenticate-your-app-using-session-tokens) to learn more. 
+See [*Authenticate an embedded app using session tokens*](https://shopify.dev/tutorials/authenticate-your-app-using-session-tokens) to learn more.
 
 > ⚠️ Be sure you understand the differences between the types of authentication schemes before reading this guide.
 
@@ -122,3 +122,19 @@ end
 ```
 
 See [Authenticate server-side rendered embedded apps using Rails and Turbolinks](https://shopify.dev/tutorials/authenticate-server-side-rendered-embedded-apps-using-rails-and-turbolinks) for more information.
+
+### `ShopifyApp::ShopHost`
+
+The [`ShopifyApp::ShopHost`](/app/controllers/concerns/shopify_app/shop_host.rb) concern handles fetching and caching `host` param in App Bridge 2.0 apps.
+
+Include this concern in yours app's `SplashPageController` and `AuthenticatedController` if your app uses App Bridge 2.0. It adds `before_action` that sets `@host` variable from params or cookies and saves existing host into cookies. If host is missing in both params and cookies then `ShopifyHostNotFound` exception is raised.
+
+*Example:*
+
+```rb
+class AuthenticatedController < ApplicationController
+  include ShopifyApp::ShopHost
+  include ShopifyApp::EnsureAuthenticatedLinks
+  include ShopifyApp::Authenticated
+end
+```
