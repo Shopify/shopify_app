@@ -9,6 +9,10 @@
       />
 <% unless with_cookie_authentication? %>    <script>
       document.addEventListener("DOMContentLoaded", async function() {
+        <% if ShopifyApp.use_importmap? %>
+          await import("lib/shopify_app")
+        <% end %>
+
         var SessionToken = window["app-bridge"].actions.SessionToken
         var app = window.app;
 

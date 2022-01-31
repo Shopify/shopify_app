@@ -1,3 +1,5 @@
+//= require ./app_bridge_redirect.js
+
 (function() {
   var ACCESS_GRANTED_STATUS = 'storage_access_granted';
   var ACCESS_DENIED_STATUS = 'storage_access_denied';
@@ -13,15 +15,7 @@
   StorageAccessHelper.prototype.redirectToAppTLD = function(storageAccessStatus) {
     var normalizedLink = document.createElement('a');
 
-    normalizedLink.href = this.setNormalizedLink(storageAccessStatus);
-
-    data = JSON.stringify({
-      message: 'Shopify.API.remoteRedirect',
-      data: {
-        location: normalizedLink.href,
-      }
-    });
-    window.parent.postMessage(data, this.redirectData.myshopifyUrl);
+    window.appBridgeRedirect(this.setNormalizedLink(storageAccessStatus));
   }
 
   StorageAccessHelper.prototype.redirectToAppsIndex = function() {
@@ -132,8 +126,8 @@
 
   /* ITP 2.0 solution: handles cookie partitioning */
   StorageAccessHelper.prototype.setUpHelper = function() {
-    var shopifyData = document.body.dataset;
-    return new ITPHelper({redirectUrl: shopifyData.shopOrigin + "/admin/apps/" + shopifyData.apiKey + shopifyData.returnTo});
+    var shopifyData = window.shopifyData;
+    return new ITPHelper({redirectUrl: "https://" + shopifyData.shopOrigin + "/admin/apps/" + shopifyData.apiKey + shopifyData.returnTo});
   }
 
   StorageAccessHelper.prototype.setCookieAndRedirect = function() {

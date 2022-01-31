@@ -12,8 +12,6 @@ suite('StorageAccessHelper', () => {
   let button;
 
   setup(() => {
-    storageAccessHelperSandbox.stub(window.parent, 'postMessage');
-
     contentContainer = document.createElement('div');
     button = document.createElement('button');
 
@@ -30,6 +28,21 @@ suite('StorageAccessHelper', () => {
   teardown(() => {
     document.body.removeChild(contentContainer);
     storageAccessHelperSandbox.restore();
+  });
+
+  suite('redirectToAppTLD', () => {
+    test('calls appBridgeRedirect with the normalized storage access link', () => {
+      const normalizedLink = 'some_link';
+      storageAccessHelperSandbox.stub(window, 'appBridgeRedirect').callsFake(() => {});
+      storageAccessHelperSandbox.stub(storageAccessHelper, 'setNormalizedLink').callsFake(() => normalizedLink);
+
+      storageAccessHelper.redirectToAppTLD('storage_access_granted');
+
+      sinon.assert.calledWith(
+          appBridgeRedirect,
+          normalizedLink,
+      );
+    });
   });
 
   suite('execute', () => {
@@ -283,8 +296,10 @@ suite('StorageAccessHelper', () => {
 
   suite('setUpHelper', () => {
     test('passes the correct redirectUrl to the ITPHelper constructor', () => {
-      document.body.dataset.shopOrigin = 'https://test-shop.myshopify.io';
-      document.body.dataset.apiKey = '123';
+      window.shopifyData = {
+        apiKey: '123',
+        shopOrigin: 'test-shop.myshopify.io',
+      };
 
       const itpHelper = storageAccessHelper.setUpHelper();
       sinon.assert.match(itpHelper.redirectUrl, 'https://test-shop.myshopify.io/admin/apps/123');

@@ -7,6 +7,8 @@
     <%= stylesheet_link_tag 'application' %>
     <% if ShopifyApp.use_webpacker? %>
       <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <% elsif ShopifyApp.use_importmap? %>
+      <%= javascript_importmap_tags %>
     <% else %>
       <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
     <% end %>
