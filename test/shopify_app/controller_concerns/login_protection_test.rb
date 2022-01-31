@@ -7,7 +7,7 @@ require 'action_view/testing/resolvers'
 class LoginProtectionController < ActionController::Base
   include ShopifyApp::EmbeddedApp
   include ShopifyApp::LoginProtection
-  helper_method :current_shopify_session
+  helper_method :current_shopify_session, :jwt_expire_at
 
   around_action :activate_shopify_session, only: [:index]
   before_action :login_again_if_different_user_or_shop, only: [:second_login]
@@ -469,6 +469,18 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       get :index_with_headers
       assert_equal 'Mock-Value', response.get_header('Mock-Header')
+    end
+  end
+
+  test "#jwt_expire_at returns jwt expire at with 5s gap" do
+    ShopifyApp.configuration.allow_jwt_authentication = true
+    expire_at = 2.hours.from_now.to_i
+
+    with_application_test_routes do
+      request.env['jwt.expire_at'] = expire_at
+      get :index
+
+      assert_equal expire_at - 5.seconds, @controller.jwt_expire_at
     end
   end
 
