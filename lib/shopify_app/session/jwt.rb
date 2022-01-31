@@ -30,6 +30,10 @@ module ShopifyApp
       @payload['sub'].to_i if @payload && @payload['sub']
     end
 
+    def expire_at
+      @payload['exp'].to_i if @payload && @payload['exp']
+    end
+
     private
 
     def set_payload
