@@ -4,6 +4,7 @@ require 'test_helper'
 
 class EnsureAuthenticatedLinksTest < ActionController::TestCase
   class TurbolinksTestController < ActionController::Base
+    include ShopifyApp::ShopHost
     include ShopifyApp::EnsureAuthenticatedLinks
 
     def root

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module ShopifyApp
   class SessionsController < ActionController::Base
+    include ShopifyApp::ShopHost
     include ShopifyApp::LoginProtection
 
     layout false, only: :new

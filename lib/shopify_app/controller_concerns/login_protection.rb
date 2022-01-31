@@ -112,7 +112,7 @@ module ShopifyApp
     end
 
     def host
-      return params[:host] if params[:host].present?
+      return @host if @host.present?
 
       raise ShopifyHostNotFound
     end
