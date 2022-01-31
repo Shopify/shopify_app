@@ -7,8 +7,7 @@ module ShopifyApp
 
     def receive
       params.permit!
-      job_args = { shop_domain: shop_domain, webhook: webhook_params.to_h }
-      webhook_job_klass.perform_later(job_args)
+      webhook_job_klass.perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h)
       head(:ok)
     end
 
