@@ -6,6 +6,7 @@ module ShopifyApp
     TEST_SHOPIFY_DOMAIN = 'https://test.myshopify.io'
     TEST_SANITIZED_SHOPIFY_DOMAIN = 'test.myshopify.io'
     TEST_USER_ID = '121'
+    TEST_JWT_EXPIRE_AT = 1.day.from_now
 
     setup do
       ShopifyApp.configuration.api_key = 'api_key'
@@ -14,12 +15,13 @@ module ShopifyApp
       ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
     end
 
-    test "#shopify_domain and #shopify_user_id are returned from jwt payload" do
+    test "#shopify_domain, #shopify_user_id and #expire_at are returned from jwt payload" do
       p = payload
       jwt = JWT.new(token(p))
 
       assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
       assert_equal TEST_USER_ID.to_i, jwt.shopify_user_id
+      assert_equal TEST_JWT_EXPIRE_AT.to_i, jwt.expire_at
     end
 
     test "#shopify_domain and #shopify_user_id are returned using the old secret" do
@@ -150,7 +152,7 @@ module ShopifyApp
       api_key: 'api_key',
       iss_host: TEST_SHOPIFY_DOMAIN,
       dest: iss_host,
-      exp: 1.day.from_now,
+      exp: TEST_JWT_EXPIRE_AT,
       nbf: 1.day.ago,
       sub: TEST_USER_ID
     )
