@@ -95,6 +95,12 @@ module ShopifyApp
       response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, "true")
     end
 
+    def jwt_expire_at
+      expire_at = request.env['jwt.expire_at']
+      return unless expire_at
+      expire_at - 5.seconds # 5s gap to start fetching new token in advance
+    end
+
     protected
 
     def jwt_shopify_domain
