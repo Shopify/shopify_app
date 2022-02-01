@@ -296,10 +296,8 @@ suite('StorageAccessHelper', () => {
 
   suite('setUpHelper', () => {
     test('passes the correct redirectUrl to the ITPHelper constructor', () => {
-      window.shopifyData = {
-        apiKey: '123',
-        shopOrigin: 'test-shop.myshopify.io',
-      };
+      document.body.dataset.apiKey = '123';
+      document.body.dataset.shopOrigin = 'test-shop.myshopify.io';
 
       const itpHelper = storageAccessHelper.setUpHelper();
       sinon.assert.match(itpHelper.redirectUrl, 'https://test-shop.myshopify.io/admin/apps/123');
