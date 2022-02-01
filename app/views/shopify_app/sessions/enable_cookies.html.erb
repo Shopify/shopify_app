@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
-  <script>
-    window.shopifyData = {
-      apiKey: '<%= ShopifyApp.configuration.api_key %>',
-      shopOrigin: '<%= @shop %>',
-      returnTo: '<%= params[:return_to] %>',
-    };
-  </script>
   <%= render 'shopify_app/partials/layout_styles' %>
   <%= render 'shopify_app/partials/typography_styles' %>
   <%= render 'shopify_app/partials/card_styles' %>
@@ -24,7 +17,7 @@
 
   <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body data-redirect-url="<%= @url %>">
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= @shop %>" data-redirect-url="<%= @url %>" data-retutn-to="<%= params[:return_to] %>">
   <%=
     content_tag(
       :div, nil,

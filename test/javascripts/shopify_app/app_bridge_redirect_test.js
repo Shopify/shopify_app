@@ -18,10 +18,8 @@ suite('appBridgeRedirect', () => {
         },
       },
     };
-    window.shopifyData = {
-      apiKey: '123',
-      shopOrigin: 'myshop.com',
-    }
+    document.body.dataset.apiKey = '123';
+    document.body.dataset.shopOrigin = 'myshop.com';
   });
 
   teardown(() => {

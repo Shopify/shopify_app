@@ -5,7 +5,7 @@
     var AppBridge = window['app-bridge'];
     var createApp = AppBridge.default;
     var Redirect = AppBridge.actions.Redirect;
-    var shopifyData = window.shopifyData;
+    var shopifyData = document.body.dataset;
 
     var app = createApp({
       apiKey: shopifyData.apiKey,
