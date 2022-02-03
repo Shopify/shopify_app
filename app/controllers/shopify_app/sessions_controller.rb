@@ -56,7 +56,7 @@ module ShopifyApp
         value: auth_response[:cookie].value
       }
 
-      redirect_to(auth_response[:auth_route])
+      redirect_to(auth_response[:auth_route], allow_other_host: true)
     end
 
     def validate_shop_presence

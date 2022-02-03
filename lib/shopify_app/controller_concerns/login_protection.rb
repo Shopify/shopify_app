@@ -2,9 +2,6 @@
 
 require 'browser_sniffer'
 
-# TODO: Remove once all UnauthorizedAccess errors are handled 
-require 'active_resource'
-
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
@@ -16,20 +13,24 @@ module ShopifyApp
 
     included do
       after_action :set_test_cookie
-      rescue_from ActiveResource::UnauthorizedAccess, with: :close_session
+      rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
     ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
 
     def activate_shopify_session
-      if user_session_expected? && user_session.blank?
+      # TODO: This will now signal_access_token_required for shop and user sessions, is that okay?
+      if current_shopify_session.blank?
         signal_access_token_required
         return redirect_to_login
       end
 
-      return redirect_to_login if current_shopify_session.blank?
+      unless current_shopify_session.scope.to_a.empty? ||
+        current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
 
-      clear_top_level_oauth_cookie
+        clear_shopify_session
+        return redirect_to_login
+      end
 
       begin
         ShopifyAPI::Context.activate_session(current_shopify_session)
@@ -41,45 +42,22 @@ module ShopifyApp
 
     def current_shopify_session
       @current_shopify_session ||= begin
-        user_session || shop_session
+        ShopifyAPI::Utils::SessionUtils.load_current_session(
+          auth_header: request.headers['HTTP_AUTHORIZATION'],
+          cookies: cookies.to_h,
+          is_online: user_session_expected?
+        )
+      rescue ShopifyAPI::Errors::CookieNotFoundError => e
+        nil
+      rescue ShopifyAPI::Errors::InvalidJwtTokenError => e
+        nil
       end
     end
 
-    def user_session
-      user_session_by_jwt || user_session_by_cookie
-    end
-
-    def user_session_by_jwt
-      return unless ShopifyApp.configuration.allow_jwt_authentication
-      return unless jwt_shopify_user_id
-      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(jwt_shopify_user_id)
-    end
-
-    def user_session_by_cookie
-      return unless ShopifyApp.configuration.allow_cookie_authentication
-      return unless session[:user_id].present?
-      ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
-    end
-
-    def shop_session
-      shop_session_by_jwt || shop_session_by_cookie
-    end
-
-    def shop_session_by_jwt
-      return unless ShopifyApp.configuration.allow_jwt_authentication
-      return unless jwt_shopify_domain
-      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(jwt_shopify_domain)
-    end
-
-    def shop_session_by_cookie
-      return unless ShopifyApp.configuration.allow_cookie_authentication
-      return unless session[:shop_id].present?
-      ShopifyApp::SessionRepository.retrieve_shop_session(session[:shop_id])
-    end
-
     def login_again_if_different_user_or_shop
-      if session[:user_session].present? && params[:session].present? # session data was sent/stored correctly
-        clear_session = session[:user_session] != params[:session] # current user is different from stored user
+      # TODO: When is a session passed as a param? Does it represent a user ID?
+      if current_shopify_session&.associated_user&.id&.present? && params[:session].present? # session data was sent/stored correctly
+        clear_session = current_shopify_session.associated_user.id != params[:session].to_i # current user is different from stored user
       end
 
       if current_shopify_session &&
@@ -142,12 +120,16 @@ module ShopifyApp
       redirect_to(login_url_with_optional_shop)
     end
 
+    def handle_http_error(error)
+      if error.code == 401
+        close_session
+      else
+        raise error
+      end
+    end
+
     def clear_shopify_session
-      session[:shop_id] = nil
-      session[:user_id] = nil
-      session[:shopify_domain] = nil
-      session[:shopify_user] = nil
-      session[:user_session] = nil
+      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = nil
     end
 
     def login_url_with_optional_shop(top_level: false)
@@ -194,9 +176,7 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      shopify_domain = sanitized_shop_name ||
-        jwt_shopify_domain ||
-        session[:shopify_domain]
+      shopify_domain = sanitized_shop_name || current_shopify_session&.shop
 
       return shopify_domain if shopify_domain.present?
 
