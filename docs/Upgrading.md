@@ -130,4 +130,4 @@ is changed to
 You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with API versioning.
 
 [dashboard]:https://partners.shopify.com
-[app-bridge]:https://help.shopify.com/api/embedded-apps/app-bridge
+[app-bridge]:https://shopify.dev/apps/tools/app-bridge
