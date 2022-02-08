@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `v18.1.1`](#upgrading-to-v1811)
+
 [Upgrading to `v17.2.0`](#upgrading-to-v1720)
 
 [Upgrading to `v13.0.0`](#upgrading-to-v1300)
@@ -11,6 +13,11 @@ This file documents important changes needed to upgrade your app's Shopify App v
 [Upgrading to `v11.7.0`](#upgrading-to-v1170)
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
+
+
+## Upgrading to `v18.1.1`
+
+Version 18.1.1 replaces the deprecated EASDK redirect with an App Bridge redirect when attempting to break out of an iframe. This happens when an app is installed, requires new access scopes, or re-authentication because the login session is expired.
 
 ## Upgrading to `v17.2.0`
 
@@ -75,7 +82,7 @@ If you override `def self.store(auth_session)` method in your session storage mo
 ### Configuration change
 
 Add an API version configuration in `config/initializers/shopify_app.rb`
-Set this to the version you want to run against by default. See [Shopify API docs](https://help.shopify.com/en/api/versioning) for versions available.
+Set this to the version you want to run against by default. See [Shopify API docs](https://help.shopify.com/api/versioning) for versions available.
 ```ruby
 config.api_version = '2019-04'
 ```
@@ -120,7 +127,7 @@ is changed to
 
 ### ShopifyAPI changes
 
-You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with API versioning.
+You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with API versioning. 
 
 [dashboard]:https://partners.shopify.com
-[app-bridge]:https://help.shopify.com/en/api/embedded-apps/app-bridge
+[app-bridge]:https://shopify.dev/apps/tools/app-bridge
