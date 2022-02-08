@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `v18.1.1`](#upgrading-to-v1811)
+
 [Upgrading to `v17.2.0`](#upgrading-to-v1720)
 
 [Upgrading to `v13.0.0`](#upgrading-to-v1300)
@@ -11,6 +13,11 @@ This file documents important changes needed to upgrade your app's Shopify App v
 [Upgrading to `v11.7.0`](#upgrading-to-v1170)
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
+
+
+## Upgrading to `v18.1.1`
+
+Version 18.1.1 replaces the deprecated EASDK redirect with an App Bridge redirect when attempting to break out of an iframe. This happens when an app is installed or requires new access scopes. It also happens when an app is installed on a shop, but somehow the shop's record is lost on the app's side, and requires re-authentication. 
 
 ## Upgrading to `v17.2.0`
 
