@@ -6,8 +6,8 @@ class HomeController < AuthenticatedController
   before_action :set_host
 
   def index
-    @products = ShopifyAPI::Product.find(:all, params: { limit: 10 })
-    @webhooks = ShopifyAPI::Webhook.find(:all)
+    @products = ShopifyAPI::Product.all(session: ShopifyAPI::Context.active_session, limit: 10)
+    @webhooks = ShopifyAPI::Webhook.all(session: ShopifyAPI::Context.active_session)
   end
 
   private

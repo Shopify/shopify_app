@@ -54,7 +54,7 @@
 <% if embedded_app? %>    <div id="products"><br>Loading...</div><% else %>
     <ul>
       <%% @products.each do |product| %>
-        <li><%%= link_to product.title, "https://#{@current_shopify_session.domain}/admin/products/#{product.id}", target: "_top" %></li>
+        <li><%%= link_to product.title, "https://#{@current_shopify_session.shop}/admin/products/#{product.id}", target: "_top" %></li>
       <%% end %>
     </ul>
 
