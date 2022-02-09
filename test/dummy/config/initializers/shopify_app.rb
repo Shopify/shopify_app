@@ -8,8 +8,6 @@ class ShopifyAppConfigurer
       config.embedded_app = true
       config.myshopify_domain = 'myshopify.com'
       config.api_version = :unstable
-      config.allow_jwt_authentication = true
-      config.allow_cookie_authentication = false
     end
   end
 end

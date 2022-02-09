@@ -155,8 +155,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#login_again_if_different_user_or_shop removes current session and redirects to login url" do
-    ShopifyApp.configuration.allow_cookie_authentication = true
-
     with_application_test_routes do
       cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
 
@@ -221,7 +219,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   # TODO: What is the purpose of this? Should we still be supporting this?
   test "#login_again_if_different_user_or_shop ignores non-String shop params so that Rails params for Shop model can be accepted" do
-    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
       cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
 
@@ -410,7 +407,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#jwt_expire_at returns jwt expire at with 5s gap" do
-    ShopifyApp.configuration.allow_jwt_authentication = true
     expire_at = 2.hours.from_now.to_i
 
     with_application_test_routes do
