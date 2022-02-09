@@ -79,13 +79,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "creates and injects into omniauth initializer" do
-    run_generator
-    assert_file "config/initializers/omniauth.rb" do |omniauth|
-      assert_match "provider :shopify", omniauth
-    end
-  end
-
   test "creates the embedded_app layout" do
     run_generator
     assert_file "app/views/layouts/embedded_app.html.erb"

@@ -24,20 +24,6 @@ module ShopifyApp
         copy_file('session_store.rb', 'config/initializers/session_store.rb')
       end
 
-      def create_and_inject_into_omniauth_initializer
-        unless File.exist?("config/initializers/omniauth.rb")
-          copy_file('omniauth.rb', 'config/initializers/omniauth.rb')
-        end
-
-        return if !Rails.env.test? && shopify_provider_exists?
-
-        inject_into_file(
-          'config/initializers/omniauth.rb',
-          shopify_provider_template,
-          after: "Rails.application.config.middleware.use(OmniAuth::Builder) do\n"
-        )
-      end
-
       def create_embedded_app_layout
         return unless embedded_app?
 
@@ -72,33 +58,6 @@ module ShopifyApp
       end
 
       private
-
-      def shopify_provider_exists?
-        File.open("config/initializers/omniauth.rb") do |file|
-          file.each_line do |line|
-            if line =~ /provider :shopify/
-              puts "\e[33m#{omniauth_warning}\e[0m"
-              return true
-            end
-          end
-        end
-        false
-      end
-
-      def omniauth_warning
-        <<~OMNIAUTH
-          \n[WARNING] The Shopify App generator attempted to add the following Shopify Omniauth \
-          provider 'config/initializers/omniauth.rb':
-
-          \e[0m#{shopify_provider_template}\e[33m
-
-          Consider updating 'config/initializers/omniauth.rb' to match the configuration above.
-        OMNIAUTH
-      end
-
-      def shopify_provider_template
-        File.read(File.expand_path(find_in_source_paths('shopify_provider.rb.tt')))
-      end
 
       def embedded_app?
         options['embedded'] == 'true'
