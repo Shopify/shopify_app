@@ -11,6 +11,8 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
       { event: 'onload', src: ->(domain) { "https://example-app.com/#{domain}-123.js" } },
     ]
 
+    ShopifyAPI::Context.load_rest_wrappers(api_version: "unstable")
+    ShopifyAPI::Context.activate_session(ShopifyAPI::Auth::Session.new(shop: "some-shop.myshopify.com"))
     @manager = ShopifyApp::ScripttagsManager.new(@scripttags, 'example-app.com')
   end
 
@@ -26,23 +28,26 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   test "#create_scripttags when creating a dynamic src, does not overwrite the src with its result" do
     ShopifyAPI::ScriptTag.stubs(all: [])
 
-    stub_scripttag = stub(persisted?: true)
-    ShopifyAPI::ScriptTag.expects(:create).returns(stub_scripttag).times(3)
+    scripttags = [saveable_scripttag, saveable_scripttag, saveable_scripttag] 
+    ShopifyAPI::ScriptTag.expects(:new).returns(scripttags[0], scripttags[1], scripttags[2]).times(3)
 
     @manager.create_scripttags
+
+    assert_equal 3, @manager.required_scripttags.length 
     assert_respond_to @manager.required_scripttags.last[:src], :call
   end
 
   test "#create_scripttags when creating a scripttag fails, raises an error" do
     ShopifyAPI::ScriptTag.stubs(all: [])
-    scripttag = stub(persisted?: false, errors: stub(full_messages: ["Source needs to be https"]))
-    ShopifyAPI::ScriptTag.stubs(create: scripttag)
+    scripttag = ShopifyAPI::ScriptTag.new
+    ShopifyAPI::ScriptTag.stubs(:new).returns(scripttag)
+    scripttag.stubs(:save!).raises(ShopifyAPI::Errors::HttpResponseError.new(code: 401), "Error message")
 
     e = assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
       @manager.create_scripttags
     end
 
-    assert_equal 'Source needs to be https', e.message
+    assert_equal 'Error message', e.message
   end
 
   test "#create_scripttags when a script src raises an exception, it's propagated" do
@@ -64,31 +69,35 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   end
 
   test "#destroy_scripttags makes calls to destroy scripttags" do
-    ShopifyAPI::ScriptTag.stubs(:all).returns(Array.wrap(all_mock_scripttags.first))
-    ShopifyAPI::ScriptTag.expects(:delete).with(all_mock_scripttags.first.id)
+    scripttag = all_mock_scripttags.first
+    ShopifyAPI::ScriptTag.stubs(:all).returns(Array.wrap(scripttag))
+    scripttag.expects(:delete)
 
     @manager.destroy_scripttags
   end
 
   test "#destroy_scripttags makes calls to destroy scripttags with a dynamic src" do
-    ShopifyAPI::ScriptTag.stubs(:all).returns(Array.wrap(all_mock_scripttags.last))
-    ShopifyAPI::ScriptTag.expects(:delete).with(all_mock_scripttags.last.id)
+    scripttag = all_mock_scripttags.last
+    ShopifyAPI::ScriptTag.stubs(:all).returns(Array.wrap(scripttag))
+    scripttag.expects(:delete)
 
     @manager.destroy_scripttags
   end
 
   test "#destroy_scripttags when deleting a dynamic src, does not overwrite the src with its result" do
-    ShopifyAPI::ScriptTag.stubs(all: Array.wrap(all_mock_scripttags.last))
-    ShopifyAPI::ScriptTag.expects(:delete).with(all_mock_scripttags.last.id)
+    scripttag = all_mock_scripttags.last
+    ShopifyAPI::ScriptTag.stubs(all: Array.wrap(scripttag))
+    scripttag.expects(:delete)
 
     @manager.destroy_scripttags
     assert_respond_to @manager.required_scripttags.last[:src], :call
   end
 
   test "#destroy_scripttags does not destroy scripttags that do not have a matching address" do
-    ShopifyAPI::ScriptTag.stubs(:all).returns([stub(src: 'http://something-or-the-other.com/badscript.js',
-                                                    id: 7214109)])
-    ShopifyAPI::ScriptTag.expects(:delete).never
+    scripttag = stub(src: 'http://something-or-the-other.com/badscript.js', id: 7214109)
+
+    ShopifyAPI::ScriptTag.stubs(:all).returns([scripttag])
+    scripttag.expects(:delete).never
 
     @manager.destroy_scripttags
   end
@@ -108,8 +117,12 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   private
 
   def expect_scripttag_creation(event, src)
-    stub_scripttag = stub(persisted?: true)
-    ShopifyAPI::ScriptTag.expects(:create).with(event: event, src: src, format: 'json').returns(stub_scripttag)
+    scripttag = ShopifyAPI::ScriptTag.new()
+    ShopifyAPI::ScriptTag.stubs(:new).returns(scripttag)
+
+    scripttag.expects(:event=).with(event)
+    scripttag.expects(:src=).with(src)
+    scripttag.expects(:save!)
   end
 
   def all_mock_scripttags
@@ -118,5 +131,11 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
       stub(id: 2, src: "https://example-app.com/foobar.js", event: 'onload'),
       stub(id: 3, src: "https://example-app.com/example-app.com-123.js", event: 'onload'),
     ]
+  end
+
+  def saveable_scripttag
+    scripttag = ShopifyAPI::ScriptTag.new
+    scripttag.stubs(:save!)
+    scripttag
   end
 end
