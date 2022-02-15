@@ -109,9 +109,8 @@ module ShopifyApp
 
       session[:user_tokens] = ShopifyApp::SessionRepository.user_storage.present?
 
-      current_shop_session.temp do
-        ShopifyAPI::Clients::Rest::Admin.new.get(path: "metafields/boguscheck.json")
-      end
+      client = ShopifyAPI::Clients::Rest::Admin.new(session: current_shop_session)
+      client.get(path: "metafields/boguscheck.json")
     rescue ShopifyAPI::Errors::HttpResponseError => e
       session[:user_tokens] = false if e.code == 401
     end
