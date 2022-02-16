@@ -161,8 +161,7 @@ module ShopifyApp
 
       WebhooksManager.queue(
         shop_name,
-        offline_access_token || online_access_token,
-        ShopifyApp.configuration.webhooks
+        offline_access_token || online_access_token
       )
     end
 

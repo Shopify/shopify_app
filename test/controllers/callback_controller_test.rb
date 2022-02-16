@@ -8,6 +8,18 @@ module Shopify
   end
 end
 
+class CartsUpdateJob < ActiveJob::Base
+  extend ShopifyAPI::Webhooks::Handler
+
+  class << self
+    def handle(topic:, shop:, body:)
+      perform_later(topic: topic, shop_domain: shop, webhook: body)
+    end
+  end
+
+  def perform; end
+end
+
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
@@ -154,6 +166,7 @@ module ShopifyApp
       ShopifyApp.configure do |config|
         config.webhooks = []
       end
+      ShopifyApp::WebhooksManager.add_registrations
 
       ShopifyApp::WebhooksManager.expects(:queue).never
 
@@ -206,10 +219,11 @@ module ShopifyApp
         .expects(:retrieve_shop_session_by_shopify_domain)
         .returns(shop_session)
       ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+        config.webhooks = [{ topic: 'carts/update', address: '/webhooks' }]
       end
+      ShopifyApp::WebhooksManager.add_registrations
 
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '1234', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '1234')
 
       mock_shopify_omniauth
       get :callback, params: { shop: 'shop' }
@@ -222,10 +236,11 @@ module ShopifyApp
         .returns(shop_session)
 
       ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+        config.webhooks = [{ topic: 'carts/update', address: '/webhooks' }]
       end
+      ShopifyApp::WebhooksManager.add_registrations
 
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321')
 
       session[:shop_id] = '135'
       mock_shopify_user_omniauth
@@ -237,10 +252,11 @@ module ShopifyApp
       ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(nil)
       ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).returns(user_session)
       ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+        config.webhooks = [{ topic: 'carts/update', address: '/webhooks' }]
       end
+      ShopifyApp::WebhooksManager.add_registrations
 
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321', ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321')
 
       mock_shopify_user_omniauth
       get :callback, params: { shop: 'shop' }

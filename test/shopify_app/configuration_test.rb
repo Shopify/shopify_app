@@ -96,7 +96,7 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   test "webhook_jobs_namespace handles default" do
-    assert_equal "TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+    assert_equal "TestJob", ShopifyApp::WebhooksManager.send(:webhook_job_klass_name, 'test')
   end
 
   test "webhook_jobs_namespace handles single plural value" do
@@ -104,7 +104,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.webhook_jobs_namespace = 'webhooks'
     end
 
-    assert_equal "Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+    assert_equal "Webhooks::TestJob", ShopifyApp::WebhooksManager.send(:webhook_job_klass_name, 'test')
   end
 
   test "webhook_jobs_namespace handles nested values" do
@@ -112,7 +112,7 @@ class ConfigurationTest < ActiveSupport::TestCase
       config.webhook_jobs_namespace = 'shopify/webhooks'
     end
 
-    assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksController.new.send(:webhook_job_klass_name, 'test')
+    assert_equal "Shopify::Webhooks::TestJob", ShopifyApp::WebhooksManager.send(:webhook_job_klass_name, 'test')
   end
 
   test "can set shop_session_repository with a string" do
