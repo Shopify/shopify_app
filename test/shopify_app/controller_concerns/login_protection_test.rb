@@ -407,6 +407,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       example_shop = 'shop.myshopify.com'
       get :redirect, params: { shop: example_shop }
+      assert_equal 302, response.status
       assert_fullpage_redirected(example_shop, response)
     end
   end
@@ -446,6 +447,24 @@ class LoginProtectionControllerTest < ActionController::TestCase
       get :redirect, params: { shop: example_shop }
       rendered_templates = @_templates.keys
       assert_equal(['shopify_app/shared/redirect'], rendered_templates)
+    end
+  end
+
+  test '#fullpage_redirect_to redirects using 303 for post' do
+    with_application_test_routes do
+      example_shop = 'shop.myshopify.com'
+      post :redirect, params: { shop: example_shop }
+      assert_equal 303, response.status
+      assert_fullpage_redirected(example_shop, response)
+    end
+  end
+
+  test '#fullpage_redirect_to redirects using 303 for delete' do
+    with_application_test_routes do
+      example_shop = 'shop.myshopify.com'
+      delete :redirect, params: { shop: example_shop }
+      assert_equal 303, response.status
+      assert_fullpage_redirected(example_shop, response)
     end
   end
 
@@ -502,6 +521,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
         get '/' => 'login_protection#index'
         get '/second_login' => 'login_protection#second_login'
         get '/redirect' => 'login_protection#redirect'
+        post '/redirect' => 'login_protection#redirect'
+        delete '/redirect' => 'login_protection#redirect'
         get '/raise_unauthorized' => 'login_protection#raise_unauthorized'
         get '/index_with_headers' => 'login_protection#index_with_headers'
       end
