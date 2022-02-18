@@ -20,8 +20,12 @@ module Utils
     end
 
     def load_generated_classes(relative_path)
+      load_classes(File.join(destination, relative_path))
+    end
+
+    def load_classes(path)
       generates_classes do
-        load(File.join(destination, relative_path))
+        load(path)
       end
     end
 
