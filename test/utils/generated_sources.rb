@@ -30,12 +30,6 @@ module Utils
       end
     end
 
-    def eval_source(source)
-      generates_classes do
-        eval(source)
-      end
-    end
-
     def clear
       classes.each { |c| Object.send(:remove_const, c) }
       classes.clear
@@ -43,7 +37,7 @@ module Utils
 
     def controller(controller_class)
       controller_instance = controller_class.new
-      
+
       if controller_instance.respond_to?(:current_shopify_session)
         def controller_instance.current_shopify_session
           ShopifyAPI::Auth::Session.new(shop: "my-shop")
@@ -69,8 +63,8 @@ module Utils
     def suppress_output(&block)
       original_stderr = $stderr.clone
       original_stdout = $stdout.clone
-      $stderr.reopen(File.new('/dev/null', 'w'))
-      $stdout.reopen(File.new('/dev/null', 'w'))
+      $stderr.reopen(File.new("/dev/null", "w"))
+      $stdout.reopen(File.new("/dev/null", "w"))
       block.call
     ensure
       $stdout.reopen(original_stdout)
@@ -92,13 +86,13 @@ module Utils
           session_storage: TestHelpers::FakeSessionStorage.new,
           user_agent_prefix: nil
         )
- 
+
         sources = Utils::GeneratedSources.new
         block.call(sources)
       ensure
         WebMock.reset!
         WebMock.disable!
-        sources.clear    
+        sources.clear
       end
     end
   end

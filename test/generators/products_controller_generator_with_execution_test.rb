@@ -19,11 +19,11 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
       controller = sources.controller(ProductsController)
 
       def controller.render(json:)
-        raise "Invalid JSON provided: #{json}" unless json == {products: []}
+        raise "Invalid JSON provided: #{json}" unless json == { products: [] }
       end
 
       stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
-        .to_return(status: 200, body: "{\"products\":[]}", headers: {})    
+        .to_return(status: 200, body: "{\"products\":[]}", headers: {})
 
       controller.index
     end
@@ -37,7 +37,7 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
       sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
 
       refute(defined?(ProductsController))
-      
+
       sources.load_generated_classes("app/controllers/authenticated_controller.rb")
       sources.load_generated_classes("app/controllers/products_controller.rb")
 
