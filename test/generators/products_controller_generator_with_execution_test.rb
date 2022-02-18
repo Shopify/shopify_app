@@ -10,29 +10,13 @@ require "dummy/app/controllers/application_controller"
 class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   test "generates valid ProductController class" do
     with_products_controller do
-      assert(defined?(ProductsController))
       assert(ProductsController < AuthenticatedController)
     end
   end
 
   test "generates ProductController which fetches products" do
-    with_products_controller do
-      ShopifyAPI::Context.setup(
-        api_key: "API_KEY",
-        api_secret_key: "API_SECRET_KEY",
-        api_version: "unstable",
-        host_name: "app-address.com",
-        scope: ["scope1", "scope2"],
-        is_private: false,
-        is_embedded: false,
-        session_storage: TestHelpers::FakeSessionStorage.new,
-        user_agent_prefix: nil
-      )
-      controller = ProductsController.new
-
-      def controller.current_shopify_session
-        ShopifyAPI::Auth::Session.new(shop: "my-shop")
-      end
+    with_products_controller do |sources|
+      controller = sources.controller(ProductsController)
 
       def controller.render(json:)
         raise "Invalid JSON provided: #{json}" unless json == {products: []}
@@ -48,19 +32,18 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   private
 
   def with_products_controller(&block)
-    WebMock.enable!
-    sources = Utils::GeneratedSources.new
-    sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
-    sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
+    Utils::GeneratedSources.with_session do |sources|
+      sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
+      sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
 
-    refute(defined?(ProductsController))
-    
-    sources.load_generated_classes("app/controllers/authenticated_controller.rb")
-    sources.load_generated_classes("app/controllers/products_controller.rb")
-    block.call(sources)
-  ensure
-    WebMock.reset!
-    WebMock.disable!
-    sources.clear
+      refute(defined?(ProductsController))
+      
+      sources.load_generated_classes("app/controllers/authenticated_controller.rb")
+      sources.load_generated_classes("app/controllers/products_controller.rb")
+
+      assert(defined?(ProductsController))
+
+      block.call(sources)
+    end
   end
 end

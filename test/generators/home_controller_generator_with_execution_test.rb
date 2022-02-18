@@ -9,22 +9,14 @@ require "dummy/app/controllers/application_controller"
 
 class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   test "generates valid HomeController class" do
-    sources = Utils::GeneratedSources.new
-    sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator)
-  
-    refute(defined?(HomeController))
-  
-    sources.load_generated_classes("app/controllers/home_controller.rb")
-  
-    assert(defined?(HomeController))
-    assert(HomeController < ApplicationController)
-    assert(HomeController.include?(ShopifyApp::ShopAccessScopesVerification))
-  ensure
-    sources.clear
+    with_home_controller do
+      assert(HomeController < ApplicationController)
+      assert(HomeController.include?(ShopifyApp::ShopAccessScopesVerification))  
+    end
   end
 
   test "generates valid HomeController class with authentication" do
-    with_authenticated_home_controller do
+    with_home_controller(authenticated: true) do
       assert(defined?(HomeController))
       assert(HomeController < AuthenticatedController)
       assert(HomeController.include?(ShopifyApp::ShopAccessScopesVerification))
@@ -32,24 +24,8 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   test "generates HomeController which fetches products and webhooks" do
-    with_authenticated_home_controller do
-      assert(defined?(ShopifyAPI))
-      ShopifyAPI::Context.setup(
-        api_key: "API_KEY",
-        api_secret_key: "API_SECRET_KEY",
-        api_version: "unstable",
-        host_name: "app-address.com",
-        scope: ["scope1", "scope2"],
-        is_private: false,
-        is_embedded: false,
-        session_storage: TestHelpers::FakeSessionStorage.new,
-        user_agent_prefix: nil
-      )
-      controller = HomeController.new
-
-      def controller.current_shopify_session
-        ShopifyAPI::Auth::Session.new(shop: "my-shop")
-      end
+    with_home_controller(authenticated: true) do |sources|
+      controller = sources.controller(HomeController)
 
       stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
         .to_return(status: 200, body: "{\"products\":[]}", headers: {})    
@@ -63,21 +39,20 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
 
   private
 
-  def with_authenticated_home_controller(&block)
-    WebMock.enable!
-    sources = Utils::GeneratedSources.new
-    sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
-    sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator,
-      %w(--with_cookie_authentication))
+  def with_home_controller(authenticated: false, &block)
+    Utils::GeneratedSources.with_session do |sources|
+      sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
+      sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator,
+        authenticated ? %w(--with_cookie_authentication) : [])
 
-    refute(defined?(HomeController))
-    
-    sources.load_generated_classes("app/controllers/authenticated_controller.rb")
-    sources.load_generated_classes("app/controllers/home_controller.rb")
-    block.call(sources)
-  ensure
-    WebMock.reset!
-    WebMock.disable!
-    sources.clear
+      refute(defined?(HomeController))
+      
+      sources.load_generated_classes("app/controllers/authenticated_controller.rb") if authenticated
+      sources.load_generated_classes("app/controllers/home_controller.rb")
+
+      assert(defined?(HomeController))
+
+      block.call(sources)
+    end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "open3"
+require "test_helper"
+require "test_helpers/fake_session_storage"
 
 module Utils
   class GeneratedSources
@@ -40,6 +41,18 @@ module Utils
       classes.clear
     end
 
+    def controller(controller_class)
+      controller_instance = controller_class.new
+      
+      if controller_instance.respond_to?(:current_shopify_session)
+        def controller_instance.current_shopify_session
+          ShopifyAPI::Auth::Session.new(shop: "my-shop")
+        end
+      end
+
+      controller_instance
+    end
+
     private
 
     attr_reader :classes
@@ -62,6 +75,31 @@ module Utils
     ensure
       $stdout.reopen(original_stdout)
       $stderr.reopen(original_stderr)
+    end
+
+    class << self
+      def with_session(&block)
+        WebMock.enable!
+
+        ShopifyAPI::Context.setup(
+          api_key: "API_KEY",
+          api_secret_key: "API_SECRET_KEY",
+          api_version: "unstable",
+          host_name: "app-address.com",
+          scope: ["scope1", "scope2"],
+          is_private: false,
+          is_embedded: false,
+          session_storage: TestHelpers::FakeSessionStorage.new,
+          user_agent_prefix: nil
+        )
+ 
+        sources = Utils::GeneratedSources.new
+        block.call(sources)
+      ensure
+        WebMock.reset!
+        WebMock.disable!
+        sources.clear    
+      end
     end
   end
 end
