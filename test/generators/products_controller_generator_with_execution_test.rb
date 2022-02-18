@@ -34,6 +34,10 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
         ShopifyAPI::Auth::Session.new(shop: "my-shop")
       end
 
+      def controller.render(json:)
+        raise "Invalid JSON provided: #{json}" unless json == {products: []}
+      end
+
       stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
         .to_return(status: 200, body: "{\"products\":[]}", headers: {})    
 
