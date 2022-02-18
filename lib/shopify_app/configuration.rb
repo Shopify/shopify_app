@@ -40,18 +40,12 @@ module ShopifyApp
     # allow enabling of same site none on cookies
     attr_writer :enable_same_site_none
 
-    # allow enabling jwt headers for authentication
-    attr_accessor :allow_jwt_authentication
-
-    attr_accessor :allow_cookie_authentication
-
     def initialize
       @root_url = '/'
       @myshopify_domain = 'myshopify.com'
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV['SHOPIFY_APP_DISABLE_WEBPACKER'].present?
-      @allow_cookie_authentication = true
     end
 
     def login_url
