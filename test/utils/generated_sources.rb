@@ -10,9 +10,12 @@ module Utils
       FileUtils.rm_rf(destination)
     end
 
-    def run_generator(generator_class)
+    def run_generator(generator_class, additional_args = [])
       suppress_output do
-        generator_class.start(["--skip-bundle", "--skip-bootsnap"], { destination_root: destination })
+        generator_class.start(
+          additional_args + ["--skip-bundle", "--skip-bootsnap"],
+          { destination_root: destination }
+        )
       end
     end
 
