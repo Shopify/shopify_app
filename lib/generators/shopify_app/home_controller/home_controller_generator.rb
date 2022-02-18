@@ -13,8 +13,7 @@ module ShopifyApp
       end
 
       def create_products_controller
-        # TODO: should this be embedded? or embedded_app?
-        generate("shopify_app:products_controller") if embedded? || !embedded_app?
+        generate("shopify_app:products_controller") if embedded? || embedded_app?
       end
 
       def create_home_index_view
