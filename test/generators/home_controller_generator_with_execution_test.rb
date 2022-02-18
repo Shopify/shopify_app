@@ -4,17 +4,17 @@ require "test_helper"
 require "test_helpers/fake_session_storage"
 require "utils/generated_sources"
 require "generators/shopify_app/home_controller/home_controller_generator"
-require "generators/shopify_app/controllers/controllers_generator"
+require "generators/shopify_app/authenticated_controller/authenticated_controller_generator"
 
 class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   # test "generates valid HomeController class" do
   #   sources = Utils::GeneratedSources.new
   #   sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator)
-
+  #
   #   refute(defined?(HomeController))
-    
+  #
   #   sources.load_generated_classes("app/controllers/home_controller.rb")
-
+  #
   #   assert(defined?(HomeController))
   #   assert(HomeController < ApplicationController)
   #   assert(HomeController.include?(ShopifyApp::ShopAccessScopesVerification))
@@ -54,13 +54,13 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   def with_authenticated_home_controller(&block)
     WebMock.enable!
     sources = Utils::GeneratedSources.new
-    sources.run_generator(ShopifyApp::Generators::ControllersGenerator)
+    sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
     sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator,
       %w(--with_cookie_authentication))
 
     refute(defined?(HomeController))
     
-    sources.load_generated_classes("app/controllers/shopify_app/authenticated_controller.rb")
+    sources.load_generated_classes("app/controllers/authenticated_controller.rb")
     sources.load_generated_classes("app/controllers/home_controller.rb")
     block.call(sources)
   ensure
