@@ -22,8 +22,9 @@ PATH
       jwt (>= 2.2.3)
       omniauth-rails_csrf_protection
       omniauth-shopify-oauth2 (~> 2.3)
-      rails (> 5.2.1, < 6.2)
+      rails (> 5.2.1, <= 7.0.1)
       redirect_safely (~> 1.0)
+      sprockets-rails (>= 2.0.0)
 
 GEM
   remote: https://rubygems.org/
