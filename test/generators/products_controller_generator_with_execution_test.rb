@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "test_helpers/fake_session_storage"
 require "utils/generated_sources"
 require "generators/shopify_app/products_controller/products_controller_generator"
 require "generators/shopify_app/authenticated_controller/authenticated_controller_generator"

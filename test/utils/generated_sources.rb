@@ -77,7 +77,7 @@ module Utils
     class << self
       @initialized = false
 
-      def with_session(test_class, &block)
+      def with_session(test_class, is_embedded: false, is_private: false, &block)
         WebMock.enable!
 
         ShopifyAPI::Context.setup(
@@ -86,8 +86,8 @@ module Utils
           api_version: "unstable",
           host_name: "app-address.com",
           scope: ["scope1", "scope2"],
-          is_private: false,
-          is_embedded: false,
+          is_private: is_private,
+          is_embedded: is_embedded,
           session_storage: TestHelpers::FakeSessionStorage.new,
           user_agent_prefix: nil
         )
