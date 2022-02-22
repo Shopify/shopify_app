@@ -14,5 +14,15 @@ module Utils
       runtime.clear
       refute(defined?(HomeController))
     end
+
+    test "generates and clear classes in session" do
+      Utils::RailsGeneratorRuntime.with_session(self, is_embedded: true) do |runtime|
+        refute(defined?(HomeController))
+        runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator)
+        assert(defined?(HomeController))
+      end
+
+      refute(defined?(HomeController))
+    end
   end
 end

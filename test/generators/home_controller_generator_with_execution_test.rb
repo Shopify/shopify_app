@@ -52,10 +52,9 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
 
   def with_home_controller(authenticated:, is_embedded:, &block)
     Utils::RailsGeneratorRuntime.with_session(self, is_embedded: is_embedded) do |runtime|
-
       home_controller_generator_options = []
       home_controller_generator_options << "--with_cookie_authentication" if authenticated
-      home_controller_generator_options += %w(--embedded false) unless is_embedded
+      home_controller_generator_options += ["--embedded", "false"] unless is_embedded
 
       generates_authenticated_controller = authenticated || !is_embedded
 
