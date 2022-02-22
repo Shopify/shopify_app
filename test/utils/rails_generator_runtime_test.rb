@@ -8,9 +8,8 @@ module Utils
   class RailsGeneratorRuntimeTest < ActiveSupport::TestCase
     test "generates and clears classes" do
       runtime = Utils::RailsGeneratorRuntime.new(self)
-      runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator)
       refute(defined?(HomeController))
-      runtime.load_generated_classes("app/controllers/home_controller.rb")
+      runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator)
       assert(defined?(HomeController))
       runtime.clear
       refute(defined?(HomeController))

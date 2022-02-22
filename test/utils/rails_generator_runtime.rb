@@ -15,21 +15,17 @@ module Utils
     end
 
     def run_generator(generator_class, additional_args = [])
-      suppress_output do
-        generator_class.start(
-          additional_args + ["--skip-bundle", "--skip-bootsnap"],
-          { destination_root: destination }
-        )
+      new_files = generates_files do
+        suppress_output do
+          generator_class.start(
+            additional_args + ["--skip-bundle", "--skip-bootsnap"],
+            { destination_root: destination }
+          )
+        end
       end
-    end
 
-    def load_generated_classes(relative_path)
-      load_classes(File.join(destination, relative_path))
-    end
-
-    def load_classes(path)
       generates_classes do
-        load(path)
+        new_files.each { |file| load(file) }
       end
     end
 
@@ -61,6 +57,19 @@ module Utils
       after_block = Object.constants
       new_classes = after_block - before_block
       classes.concat(new_classes)
+    end
+
+    def generates_files(&block)
+      before_block = generated_files
+      block.call
+      after_block = generated_files
+      after_block - before_block
+    end
+
+    def generated_files
+      Dir.glob(File.join(destination, "**/*"))
+        .reject { |f| File.directory?(f) }
+        .select { |f| File.extname(f) == ".rb" }
     end
 
     def suppress_output(&block)

@@ -59,19 +59,13 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
 
       generates_authenticated_controller = authenticated || !is_embedded
 
+      refute(defined?(HomeController))
+
       if generates_authenticated_controller
         sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       end
 
       sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator, home_controller_generator_options)
-
-      refute(defined?(HomeController))
-
-      if generates_authenticated_controller
-        sources.load_generated_classes("app/controllers/authenticated_controller.rb")
-      end
-
-      sources.load_generated_classes("app/controllers/home_controller.rb")
 
       assert(defined?(HomeController))
 

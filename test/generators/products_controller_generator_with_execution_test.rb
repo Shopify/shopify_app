@@ -32,13 +32,10 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
 
   def with_products_controller(&block)
     Utils::RailsGeneratorRuntime.with_session(self) do |sources|
-      sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
-      sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
-
       refute(defined?(ProductsController))
 
-      sources.load_generated_classes("app/controllers/authenticated_controller.rb")
-      sources.load_generated_classes("app/controllers/products_controller.rb")
+      sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
+      sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
 
       assert(defined?(ProductsController))
 
