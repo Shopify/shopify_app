@@ -102,13 +102,13 @@ module Utils
           user_agent_prefix: nil
         )
 
-        sources = Utils::RailsGeneratorRuntime.new(test_class)
-        block.call(sources)
+        runtime = Utils::RailsGeneratorRuntime.new(test_class)
+        block.call(runtime)
       ensure
         WebMock.reset!
         WebMock.disable!
         ShopifyApp.configuration.embedded_app = original_embedded_app
-        sources&.clear
+        runtime&.clear
       end
 
       def clear_generated_source_folder_on_first_instance

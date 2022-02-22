@@ -14,8 +14,8 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   test "generates ProductController which fetches products" do
-    with_products_controller do |sources|
-      controller = sources.controller(ProductsController)
+    with_products_controller do |runtime|
+      controller = runtime.controller(ProductsController)
 
       def controller.render(json:)
         raise "Invalid JSON provided: #{json}" unless json == { products: [] }
@@ -31,15 +31,15 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   private
 
   def with_products_controller(&block)
-    Utils::RailsGeneratorRuntime.with_session(self) do |sources|
+    Utils::RailsGeneratorRuntime.with_session(self) do |runtime|
       refute(defined?(ProductsController))
 
-      sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
-      sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
+      runtime.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
+      runtime.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
 
       assert(defined?(ProductsController))
 
-      block.call(sources)
+      block.call(runtime)
     end
   end
 end

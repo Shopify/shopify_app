@@ -28,8 +28,8 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   test "generates HomeController which fetches products and webhooks" do
-    with_home_controller(authenticated: true, is_embedded: false) do |sources|
-      controller = sources.controller(HomeController)
+    with_home_controller(authenticated: true, is_embedded: false) do |runtime|
+      controller = runtime.controller(HomeController)
 
       stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
         .to_return(status: 200, body: "{\"products\":[]}", headers: {})
@@ -51,7 +51,7 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   def with_home_controller(authenticated:, is_embedded:, &block)
-    Utils::RailsGeneratorRuntime.with_session(self, is_embedded: is_embedded) do |sources|
+    Utils::RailsGeneratorRuntime.with_session(self, is_embedded: is_embedded) do |runtime|
 
       home_controller_generator_options = []
       home_controller_generator_options << "--with_cookie_authentication" if authenticated
@@ -62,14 +62,14 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
       refute(defined?(HomeController))
 
       if generates_authenticated_controller
-        sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
+        runtime.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       end
 
-      sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator, home_controller_generator_options)
+      runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator, home_controller_generator_options)
 
       assert(defined?(HomeController))
 
-      block.call(sources)
+      block.call(runtime)
     end
   end
 end
