@@ -79,7 +79,8 @@ module Utils
 
       def with_session(test_class, is_embedded: false, is_private: false, &block)
         WebMock.enable!
-
+        original_embedded_app = ShopifyApp.configuration.embedded_app
+        ShopifyApp.configuration.embedded_app = false unless is_embedded
         ShopifyAPI::Context.setup(
           api_key: "API_KEY",
           api_secret_key: "API_SECRET_KEY",
@@ -97,6 +98,7 @@ module Utils
       ensure
         WebMock.reset!
         WebMock.disable!
+        ShopifyApp.configuration.embedded_app = original_embedded_app
         sources&.clear
       end
 

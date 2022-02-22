@@ -46,6 +46,9 @@ module ShopifyApp
       end
 
       def authenticated_home_controller_required?
+        puts("with_cookie_authentication?=#{with_cookie_authentication?}")
+        puts("embedded?=#{embedded?}")
+        puts("embedded_app?=#{embedded_app?}")
         with_cookie_authentication? || !embedded? || !embedded_app?
       end
     end
