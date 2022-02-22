@@ -12,6 +12,5 @@ Rake::TestTask.new(:test) do |t|
   t.warning = false
 
   t.test_files = FileList["test/**/*_test.rb"]
-    .exclude("test/shopify_app/managers/webhooks_manager_test.rb")
     .exclude("test/shopify_app/managers/scripttags_manager_test.rb")
 end
