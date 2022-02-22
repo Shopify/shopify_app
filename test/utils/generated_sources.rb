@@ -5,13 +5,13 @@ require "test_helpers/fake_session_storage"
 
 module Utils
   class GeneratedSources
-    def initialize(
-      test_class = nil,
-      destination: test_class.nil? ? "test/tmp" : "test/tmp/#{test_class.class_name}/#{test_class.method_name}"
-    )
+    ROOT = "test/.generated"
+
+    def initialize(test_class)
+      raise "Caller must provide an instance of a test to Utils::GeneratedSources.new" if test_class.nil?
+      Utils::GeneratedSources.clear_generated_source_folder_on_first_instance
       @classes = []
-      @destination = destination
-      FileUtils.rm_rf(destination)
+      @destination = File.join(ROOT, "#{test_class.class_name}/#{test_class.method_name}")
     end
 
     def run_generator(generator_class, additional_args = [])
@@ -75,7 +75,9 @@ module Utils
     end
 
     class << self
-      def with_session(test_class = nil, &block)
+      @initialized = false
+
+      def with_session(test_class, &block)
         WebMock.enable!
 
         ShopifyAPI::Context.setup(
@@ -95,7 +97,15 @@ module Utils
       ensure
         WebMock.reset!
         WebMock.disable!
-        sources.clear
+        sources&.clear
+      end
+
+      def clear_generated_source_folder_on_first_instance
+        return if @initialized
+        @initialized = true
+        FileUtils.rm_rf(ROOT)
+        FileUtils.mkdir_p(ROOT)
+        FileUtils.touch(File.join(ROOT, ".keep"))
       end
     end
   end
