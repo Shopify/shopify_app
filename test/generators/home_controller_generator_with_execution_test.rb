@@ -40,7 +40,7 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   private
 
   def with_home_controller(authenticated: false, &block)
-    Utils::GeneratedSources.with_session do |sources|
+    Utils::GeneratedSources.with_session(self) do |sources|
       sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       sources.run_generator(ShopifyApp::Generators::HomeControllerGenerator,
         authenticated ? ["--with_cookie_authentication"] : [])

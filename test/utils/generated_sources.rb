@@ -5,7 +5,10 @@ require "test_helpers/fake_session_storage"
 
 module Utils
   class GeneratedSources
-    def initialize(destination: "test/tmp")
+    def initialize(
+      test_class = nil,
+      destination: test_class.nil? ? "test/tmp" : "test/tmp/#{test_class.class_name}/#{test_class.method_name}"
+    )
       @classes = []
       @destination = destination
       FileUtils.rm_rf(destination)
@@ -72,7 +75,7 @@ module Utils
     end
 
     class << self
-      def with_session(&block)
+      def with_session(test_class = nil, &block)
         WebMock.enable!
 
         ShopifyAPI::Context.setup(
@@ -87,7 +90,7 @@ module Utils
           user_agent_prefix: nil
         )
 
-        sources = Utils::GeneratedSources.new
+        sources = Utils::GeneratedSources.new(test_class)
         block.call(sources)
       ensure
         WebMock.reset!

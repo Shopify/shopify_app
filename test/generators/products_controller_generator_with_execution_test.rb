@@ -32,7 +32,7 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   private
 
   def with_products_controller(&block)
-    Utils::GeneratedSources.with_session do |sources|
+    Utils::GeneratedSources.with_session(self) do |sources|
       sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
 
