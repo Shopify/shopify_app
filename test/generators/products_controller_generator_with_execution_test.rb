@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "utils/generated_sources"
+require "utils/rails_generator_runtime"
 require "generators/shopify_app/products_controller/products_controller_generator"
 require "generators/shopify_app/authenticated_controller/authenticated_controller_generator"
 require "dummy/app/controllers/application_controller"
@@ -31,7 +31,7 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   private
 
   def with_products_controller(&block)
-    Utils::GeneratedSources.with_session(self) do |sources|
+    Utils::RailsGeneratorRuntime.with_session(self) do |sources|
       sources.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       sources.run_generator(ShopifyApp::Generators::ProductsControllerGenerator)
 

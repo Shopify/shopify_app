@@ -4,12 +4,12 @@ require "test_helper"
 require "test_helpers/fake_session_storage"
 
 module Utils
-  class GeneratedSources
+  class RailsGeneratorRuntime
     ROOT = "test/.generated"
 
     def initialize(test_class)
-      raise "Caller must provide an instance of a test to Utils::GeneratedSources.new" if test_class.nil?
-      Utils::GeneratedSources.clear_generated_source_folder_on_first_instance
+      raise "Caller must provide an instance of a test to Utils::RailsGeneratorRuntime.new" if test_class.nil?
+      Utils::RailsGeneratorRuntime.clear_generated_source_folder_on_first_instance
       @classes = []
       @destination = File.join(ROOT, "#{test_class.class_name}/#{test_class.method_name}")
     end
@@ -93,7 +93,7 @@ module Utils
           user_agent_prefix: nil
         )
 
-        sources = Utils::GeneratedSources.new(test_class)
+        sources = Utils::RailsGeneratorRuntime.new(test_class)
         block.call(sources)
       ensure
         WebMock.reset!

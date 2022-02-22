@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "utils/generated_sources"
+require "utils/rails_generator_runtime"
 require "generators/shopify_app/home_controller/home_controller_generator"
 require "generators/shopify_app/authenticated_controller/authenticated_controller_generator"
 require "dummy/app/controllers/application_controller"
@@ -51,7 +51,7 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   def with_home_controller(authenticated:, is_embedded:, &block)
-    Utils::GeneratedSources.with_session(self, is_embedded: is_embedded) do |sources|
+    Utils::RailsGeneratorRuntime.with_session(self, is_embedded: is_embedded) do |sources|
 
       home_controller_generator_options = []
       home_controller_generator_options << "--with_cookie_authentication" if authenticated
