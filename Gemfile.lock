@@ -17,7 +17,6 @@ PATH
   remote: .
   specs:
     shopify_app (18.1.1)
-      activeresource
       browser_sniffer (~> 1.4.0)
       jwt (>= 2.2.3)
       omniauth-rails_csrf_protection
@@ -71,17 +70,9 @@ GEM
       globalid (>= 0.3.6)
     activemodel (6.1.4.4)
       activesupport (= 6.1.4.4)
-    activemodel-serializers-xml (1.0.2)
-      activemodel (> 5.x)
-      activesupport (> 5.x)
-      builder (~> 3.1)
     activerecord (6.1.4.4)
       activemodel (= 6.1.4.4)
       activesupport (= 6.1.4.4)
-    activeresource (6.0.0)
-      activemodel (>= 6.0)
-      activemodel-serializers-xml (~> 1.0)
-      activesupport (>= 6.0)
     activestorage (6.1.4.4)
       actionpack (= 6.1.4.4)
       activejob (= 6.1.4.4)
