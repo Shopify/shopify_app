@@ -2,7 +2,7 @@
 
 class ProductsController < AuthenticatedController
   def index
-    products = ShopifyAPI::Clients::Rest::Admin.new.get(path: "products", query: { limit: 10 }).body
-    render(json: products)
+    @products = ShopifyAPI::Product.all(limit: 10, session: current_shopify_session)
+    render(json: { products: @products })
   end
 end

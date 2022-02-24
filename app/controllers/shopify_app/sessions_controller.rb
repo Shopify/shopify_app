@@ -48,7 +48,7 @@ module ShopifyApp
         redirect_path: "/auth/shopify/callback",
         is_online: user_session_expected?
       )
-  
+
       cookies[auth_response[:cookie].name] = {
         expires: auth_response[:cookie].expires,
         secure: true,
