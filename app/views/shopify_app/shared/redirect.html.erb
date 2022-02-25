@@ -7,7 +7,7 @@
   <title>Redirecting…</title>
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= current_shopify_domain %>">
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= current_shopify_domain %>" data-host="<%= host %>" >
   <%=
   content_tag(:div, nil,
     id: 'redirection-target',
