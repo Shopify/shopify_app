@@ -55,7 +55,6 @@ module ShopifyApp
 
   # middleware
   require 'shopify_app/middleware/jwt_middleware'
-  require 'shopify_app/middleware/same_site_cookie_middleware'
 
   # session
   require 'shopify_app/session/in_memory_session_store'
