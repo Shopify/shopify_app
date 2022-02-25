@@ -37,9 +37,6 @@ module ShopifyApp
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
-    # allow enabling of same site none on cookies
-    attr_writer :enable_same_site_none
-
     # allow enabling jwt headers for authentication
     attr_accessor :allow_jwt_authentication
 
@@ -90,10 +87,6 @@ module ShopifyApp
 
     def has_scripttags?
       scripttags.present?
-    end
-
-    def enable_same_site_none
-      !Rails.env.test? && (@enable_same_site_none.nil? ? embedded_app? : @enable_same_site_none)
     end
 
     def shop_access_scopes
