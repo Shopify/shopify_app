@@ -35,15 +35,7 @@ module Utils
     end
 
     def controller(controller_class)
-      controller_instance = controller_class.new
-
-      if controller_instance.respond_to?(:current_shopify_session)
-        def controller_instance.current_shopify_session
-          ShopifyAPI::Auth::Session.new(shop: "my-shop")
-        end
-      end
-
-      controller_instance
+      controller_class.new
     end
 
     private
@@ -101,6 +93,7 @@ module Utils
           session_storage: TestHelpers::FakeSessionStorage.new,
           user_agent_prefix: nil
         )
+        ShopifyAPI::Context.activate_session(ShopifyAPI::Auth::Session.new(shop: "my-shop"))
 
         runtime = Utils::RailsGeneratorRuntime.new(test_class)
         block.call(runtime)
@@ -108,6 +101,7 @@ module Utils
         WebMock.reset!
         WebMock.disable!
         ShopifyApp.configuration.embedded_app = original_embedded_app
+        ShopifyAPI::Context.deactivate_session
         runtime&.clear
       end
 
