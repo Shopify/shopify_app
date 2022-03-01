@@ -34,10 +34,6 @@ module Utils
       classes.clear
     end
 
-    def controller(controller_class)
-      controller_class.new
-    end
-
     private
 
     attr_reader :classes
