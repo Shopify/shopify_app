@@ -43,7 +43,7 @@ module ShopifyApp
 
     def destroy_scripttags
       scripttags = expanded_scripttags
-      ShopifyAPI::ScriptTag.all(session: ShopifyAPI::Context.active_session).each do |tag|
+      ShopifyAPI::ScriptTag.all.each do |tag|
         tag.delete if required_scripttag?(scripttags, tag)
       end
 
@@ -61,7 +61,7 @@ module ShopifyApp
     end
 
     def create_scripttag(attributes)
-      scripttag = ShopifyAPI::ScriptTag.new(session: ShopifyAPI::Context.active_session)
+      scripttag = ShopifyAPI::ScriptTag.new
       attributes.each { |key, value| scripttag.public_send("#{key.to_s}=", value) }
 
       begin
@@ -78,7 +78,7 @@ module ShopifyApp
     end
 
     def current_scripttags
-      @current_scripttags ||= ShopifyAPI::ScriptTag.all(session: ShopifyAPI::Context.active_session).index_by(&:src)
+      @current_scripttags ||= ShopifyAPI::ScriptTag.all.index_by(&:src)
     end
   end
 end
