@@ -10,14 +10,16 @@ module ShopifyApp
         filtered_params = request.parameters.symbolize_keys.slice(:code, :shop, :timestamp, :state, :host, :hmac)
 
         auth_result = ShopifyAPI::Auth::Oauth.validate_auth_callback(
-          cookies: cookies.to_h,
+          cookies: { 
+            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+          },
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params)
         )
       rescue => e
         return respond_with_error
       end
 
-      cookies[auth_result[:cookie].name] = {
+      cookies.signed[auth_result[:cookie].name] = {
         expires: auth_result[:cookie].expires,
         secure: true,
         http_only: true,

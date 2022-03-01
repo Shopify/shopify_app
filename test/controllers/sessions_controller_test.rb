@@ -122,16 +122,16 @@ module ShopifyApp
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
-
       ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
+        auth_route: '/auth-route',
         cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "nonce", expires: Time.now),
-        auth_route: '/auth-route'
       })
-
-      get :new, params: { shop: 'my-shop' }
-
-      assert_redirected_to '/auth-route'
-      assert_equal "nonce", cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      freeze_time do 
+        get :new, params: { shop: 'my-shop' }
+        
+        assert_redirected_to '/auth-route'
+        assert_equal "nonce", cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      end
     end
 
     test "#new should render a full-page if the shop param doesn't exist" do

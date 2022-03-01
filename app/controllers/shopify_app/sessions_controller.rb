@@ -48,8 +48,7 @@ module ShopifyApp
         redirect_path: "/auth/shopify/callback",
         is_online: user_session_expected?
       )
-
-      cookies[auth_attributes[:cookie].name] = {
+      cookies.signed[auth_attributes[:cookie].name] = {
         expires: auth_attributes[:cookie].expires,
         secure: true,
         http_only: true,
