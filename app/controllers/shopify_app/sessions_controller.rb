@@ -43,20 +43,20 @@ module ShopifyApp
     end
 
     def start_oauth
-      auth_response = ShopifyAPI::Auth::Oauth.begin_auth(
+      auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
         shop: sanitized_shop_name,
         redirect_path: "/auth/shopify/callback",
         is_online: user_session_expected?
       )
 
-      cookies[auth_response[:cookie].name] = {
-        expires: auth_response[:cookie].expires,
+      cookies[auth_attributes[:cookie].name] = {
+        expires: auth_attributes[:cookie].expires,
         secure: true,
         http_only: true,
-        value: auth_response[:cookie].value
+        value: auth_attributes[:cookie].value
       }
 
-      redirect_to(auth_response[:auth_route])
+      redirect_to(auth_attributes[:auth_route])
     end
 
     def validate_shop_presence
