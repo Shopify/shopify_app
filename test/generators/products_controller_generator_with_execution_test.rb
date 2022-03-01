@@ -14,8 +14,8 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   test "generates ProductController which fetches products" do
-    with_products_controller do |runtime|
-      controller = runtime.controller(ProductsController)
+    with_products_controller do
+      controller = ProductsController.new
 
       def controller.render(json:)
         raise "Invalid JSON provided: #{json}" unless json == { products: [] }

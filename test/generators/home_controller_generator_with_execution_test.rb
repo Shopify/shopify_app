@@ -28,8 +28,8 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   end
 
   test "generates HomeController which fetches products and webhooks" do
-    with_home_controller(authenticated: true, is_embedded: false) do |runtime|
-      controller = runtime.controller(HomeController)
+    with_home_controller(authenticated: true, is_embedded: false) do
+      controller = HomeController.new
 
       stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
         .to_return(status: 200, body: "{\"products\":[]}", headers: {})
