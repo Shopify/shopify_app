@@ -185,9 +185,12 @@ module ShopifyApp
       @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
       ShopifyAPI::Auth::Oauth::AuthQuery.stubs(:new).with(**@callback_params).returns(@auth_query)
 
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'nonce'
+      cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'nonce'
 
-      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(cookies: cookies.to_h, auth_query: @auth_query)
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(cookies: 
+        {
+          ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+        }, auth_query: @auth_query)
         .returns({
           cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
           session: ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token")
