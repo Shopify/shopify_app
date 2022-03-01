@@ -15,7 +15,7 @@
     }
   </style>
 </head>
-<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= current_shopify_domain %>" data-host="<%= @host %>" data-return-to="<%= params[:return_to] %>">
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= current_shopify_domain %>" data-host="<%= params[:host] %>" data-return-to="<%= params[:return_to] %>">
 <%=
   content_tag(:div, nil,
     id: 'redirection-target',

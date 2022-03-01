@@ -10,6 +10,11 @@
 
     var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
 
+    console.log('eeeeeeeee app-bridge v2', {
+      href: location.href,
+      'window.top === window.self': window.top === window.self,
+    });
+
     if (window.top == window.self) {
       // If the current window is the 'parent', change the URL by setting location.href
       window.top.location.href = targetInfo.url;

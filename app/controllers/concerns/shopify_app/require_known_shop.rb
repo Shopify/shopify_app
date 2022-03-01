@@ -30,6 +30,7 @@ module ShopifyApp
 
       url.query = URI.encode_www_form(
         shop: params[:shop],
+        host: params[:host],
         return_to: request.fullpath,
       )
 

@@ -26,7 +26,7 @@ module ShopifyApp
     end
 
     def shop_login
-      ShopifyApp::Utils.shop_login_url(shop: params[:shop], return_to: request.fullpath)
+      ShopifyApp::Utils.shop_login_url(shop: params[:shop], host: params[:host], return_to: request.fullpath)
     end
   end
 end
