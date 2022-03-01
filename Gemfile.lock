@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Shopify/shopify-ruby-api.git
-  revision: b3619ee214cada573551fd9765026b68ec146bf4
+  revision: f48757c429dbba00c54ad50df70a85278a711a2c
   specs:
     shopify_api (0.0.1)
       concurrent-ruby
