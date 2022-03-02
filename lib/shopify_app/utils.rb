@@ -21,12 +21,13 @@ module ShopifyApp
       logger.error("[ShopifyAPI::ApiVersion] Unable to fetch api_versions from Shopify")
     end
 
-    def self.shop_login_url(shop:, return_to:)
+    def self.shop_login_url(shop:, host:, return_to:)
       return ShopifyApp.configuration.login_url unless shop
       url = URI(ShopifyApp.configuration.login_url)
 
       url.query = URI.encode_www_form(
         shop: shop,
+        host: host,
         return_to: return_to,
       )
 

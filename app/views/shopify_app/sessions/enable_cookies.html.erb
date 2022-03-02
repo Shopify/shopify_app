@@ -17,7 +17,7 @@
 
   <%= javascript_include_tag('shopify_app/enable_cookies', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= @shop %>" data-redirect-url="<%= @url %>" data-retutn-to="<%= params[:return_to] %>">
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= @shop %>" data-redirect-url="<%= @url %>" data-host="<%= params[:host] %>" data-return-to="<%= params[:return_to] %>">
   <%=
     content_tag(
       :div, nil,

@@ -172,6 +172,10 @@ module ShopifyApp
         query_params[:shop] ||= referer_sanitized_shop_name
       end
 
+      if params[:host].present?
+        query_params[:host] ||= host
+      end
+
       query_params[:top_level] = true if top_level
       query_params
     end

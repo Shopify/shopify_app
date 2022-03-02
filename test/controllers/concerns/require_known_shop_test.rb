@@ -35,12 +35,14 @@ class RequireKnownShopTest < ActionController::TestCase
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(false)
 
     shopify_domain = 'shop1.myshopify.com'
+    host = 'mock-host'
 
-    get :index, params: { shop: shopify_domain }
+    get :index, params: { shop: shopify_domain, host: host }
 
     redirect_url = URI('/login')
     redirect_url.query = URI.encode_www_form(
       shop: shopify_domain,
+      host: host,
       return_to: request.fullpath,
     )
 

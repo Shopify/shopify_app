@@ -24,13 +24,13 @@ module ShopifyApp
     test '#new redirects to the enable_cookies page if we can\'t set cookies and the user agent supports cookie partitioning' do
       shopify_domain = 'my-shop.myshopify.com'
       request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-      get :new, params: { shop: 'my-shop' }
+      get :new, params: { shop: 'my-shop', host: 'test-host' }
       assert_redirected_to_top_level(shopify_domain, '/enable_cookies?shop=my-shop.myshopify.com')
     end
 
     test '#new renders the request_storage_access layout if we do not have storage access' do
       session.delete('shopify.granted_storage_access')
-      get :new, params: { shop: 'my-shop' }
+      get :new, params: { shop: 'my-shop', host: 'test-host' }
       assert_template 'sessions/request_storage_access'
     end
 
@@ -101,7 +101,7 @@ module ShopifyApp
 
     test '#new sets the top_level_oauth cookie if a valid shop param exists and user agent supports cookie partitioning' do
       request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-      get :new, params: { shop: 'my-shop' }
+      get :new, params: { shop: 'my-shop', host: 'test-host' }
       assert_equal true, session['shopify.top_level_oauth']
     end
 
@@ -214,7 +214,7 @@ module ShopifyApp
     end
 
     test '#enable_cookies renders the correct template' do
-      get :enable_cookies, params: { shop: 'shop' }
+      get :enable_cookies, params: { shop: 'shop', host: 'test-host' }
       assert_template 'sessions/enable_cookies'
     end
 
