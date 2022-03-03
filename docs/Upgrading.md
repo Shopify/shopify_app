@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `v18.1.2`](#upgrading-to-v1812)
+
 [Upgrading to `v18.1.1`](#upgrading-to-v1811)
 
 [Upgrading to `v17.2.0`](#upgrading-to-v1720)
@@ -14,6 +16,9 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
 
+## Upgrading to `v18.1.2`
+
+Version 18.1.2 updates to use App Bridge 2.0 redirect with `host` param when attempting to break out of an iframe. This happens when an app is installed, requires new access scopes, or re-authentication because the login session is expired.
 
 ## Upgrading to `v18.1.1`
 
