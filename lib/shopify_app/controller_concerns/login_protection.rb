@@ -19,7 +19,6 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
 
     def activate_shopify_session
-      # TODO: This will now signal_access_token_required for shop and user sessions, is that okay?
       if current_shopify_session.blank?
         signal_access_token_required
         return redirect_to_login
@@ -55,7 +54,6 @@ module ShopifyApp
     end
 
     def login_again_if_different_user_or_shop
-      # TODO: When is a session passed as a param? Does it represent a user ID?
       if current_shopify_session&.associated_user&.id&.present? && params[:session].present? # session data was sent/stored correctly
         clear_session = current_shopify_session.associated_user.id != params[:session].to_i # current user is different from stored user
       end
