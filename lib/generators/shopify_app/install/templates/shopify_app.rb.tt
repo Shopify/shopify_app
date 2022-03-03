@@ -35,6 +35,6 @@ if ShopifyApp.configuration.api_key.present? && ShopifyApp.configuration.secret.
     private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
     user_agent_prefix: "ShopifyApp/#{ShopifyApp::VERSION}"
   )
-end
 
-ShopifyApp::WebhooksManager.add_registrations
+  ShopifyApp::WebhooksManager.add_registrations
+end
