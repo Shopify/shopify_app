@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Shopify/shopify-ruby-api.git
-  revision: 9935a5c619a12cfa745993f75c5e3048fda492ad
+  revision: e5a93d14eada7563fdb2e21b9175df055ccfdbe1
   specs:
     shopify_api (0.0.1)
       concurrent-ruby
@@ -205,8 +205,8 @@ GEM
     rubocop-shopify (2.4.0)
       rubocop (~> 1.24)
     ruby-progressbar (1.11.0)
-    securerandom (0.1.1)
-    sorbet-runtime (0.5.9625)
+    securerandom (0.2.0)
+    sorbet-runtime (0.5.9724)
     sprockets (4.0.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -248,4 +248,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.3.5
+   2.3.8

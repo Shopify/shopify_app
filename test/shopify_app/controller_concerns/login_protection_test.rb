@@ -120,7 +120,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
 
     ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
-      .returns(ShopifyAPI::Auth::Session.new(shop: "shop", session: "123"))
+      .returns(ShopifyAPI::Auth::Session.new(shop: "shop", shopify_session_id: "123"))
 
     with_application_test_routes do
       params = { session: '456' }
