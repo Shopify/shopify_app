@@ -54,20 +54,9 @@ module ShopifyApp
     end
 
     def login_again_if_different_user_or_shop
-      if current_shopify_session&.shopify_session_id&.present? && params[:session].present? # session data was sent/stored correctly
-        clear_session = current_shopify_session.shopify_session_id != params[:session] # current session is different from stored session
-      end
-
-      if current_shopify_session &&
-        params[:shop] && params[:shop].is_a?(String) &&
-        (current_shopify_session.shop != params[:shop])
-        clear_session = true
-      end
-
-      if clear_session
-        clear_shopify_session
-        redirect_to_login
-      end
+      return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
+      clear_shopify_session
+      redirect_to_login
     end
 
     def signal_access_token_required
@@ -230,6 +219,15 @@ module ShopifyApp
     end
 
     private
+
+    def session_id_conflicts_with_params
+      shopify_session_id = current_shopify_session&.shopify_session_id
+      params[:session].present? && shopify_session_id.present? && params[:session] != shopify_session_id
+    end
+
+    def session_shop_conflicts_with_params
+      current_shopify_session && params[:shop].is_a?(String) && current_shopify_session.shop != params[:shop]
+    end
 
     def user_session_expected?
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
