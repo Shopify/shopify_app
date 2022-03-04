@@ -116,22 +116,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#login_again_if_different_user_or_shop removes current cookie if the user changes" do
+  test "#login_again_if_different_user_or_shop removes current cookie if the session changes" do
     cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
 
-    associated_user = ShopifyAPI::Auth::AssociatedUser.new(
-      id: 123,
-      first_name: "",
-      last_name: "",
-      email: "",
-      email_verified: false,
-      account_owner: false,
-      locale: "",
-      collaborator: false
-    )
-
     ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
-      .returns(ShopifyAPI::Auth::Session.new(shop: "shop", associated_user: associated_user))
+      .returns(ShopifyAPI::Auth::Session.new(shop: "shop", session: "123"))
 
     with_application_test_routes do
       params = { session: '456' }
