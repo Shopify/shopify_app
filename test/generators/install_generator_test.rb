@@ -43,6 +43,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       CONTEXT_SETUP
 
       assert_match context_setup, shopify_app
+      assert_match "ShopifyApp::WebhooksManager.add_registrations", shopify_app
     end
   end
 

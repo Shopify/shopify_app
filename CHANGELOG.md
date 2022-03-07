@@ -1,4 +1,10 @@
+UNRELEASED
+----------
+* Deprecates use of cookies in embedded apps
+  * Removes `enable_same_site_none` configuration parameter from ShopifyApp::Configuration
+
 18.1.1 (Feb 2, 2022)
+----------
 * Fix bug causing `unsafe-inline` CSP violation. [#1362](https://github.com/Shopify/shopify_app/pull/1362)
 
 18.1.0 (Jan 28, 2022)

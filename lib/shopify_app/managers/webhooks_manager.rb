@@ -1,62 +1,60 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
 
-    def self.queue(shop_domain, shop_token, webhooks)
-      ShopifyApp::WebhooksManagerJob.perform_later(
-        shop_domain: shop_domain,
-        shop_token: shop_token,
-        webhooks: webhooks
-      )
-    end
-
-    attr_reader :required_webhooks
-
-    def initialize(webhooks)
-      @required_webhooks = webhooks
-    end
-
-    def recreate_webhooks!
-      destroy_webhooks
-      create_webhooks
-    end
-
-    def create_webhooks
-      return unless required_webhooks.present?
-
-      required_webhooks.each do |webhook|
-        create_webhook(webhook) unless webhook_exists?(webhook[:topic])
-      end
-    end
-
-    def destroy_webhooks
-      ShopifyAPI::Webhook.all.to_a.each do |webhook|
-        ShopifyAPI::Webhook.delete(webhook.id) if required_webhook?(webhook)
+    class << self
+      def queue(shop_domain, shop_token)
+        ShopifyApp::WebhooksManagerJob.perform_later(
+          shop_domain: shop_domain,
+          shop_token: shop_token
+        )
       end
 
-      @current_webhooks = nil
-    end
+      def create_webhooks
+        return unless ShopifyApp.configuration.has_webhooks?
+        ShopifyAPI::Webhooks::Registry.register_all
+      end
 
-    private
+      def recreate_webhooks!
+        destroy_webhooks
+        return unless ShopifyApp.configuration.has_webhooks?
+        add_registrations
+        ShopifyAPI::Webhooks::Registry.register_all
+      end
 
-    def required_webhook?(webhook)
-      required_webhooks.map { |w| w[:address] }.include?(webhook.address)
-    end
+      def destroy_webhooks
+        return unless ShopifyApp.configuration.has_webhooks?
 
-    def create_webhook(attributes)
-      attributes.reverse_merge!(format: 'json')
-      webhook = ShopifyAPI::Webhook.create(attributes)
-      raise CreationFailed, webhook.errors.full_messages.to_sentence unless webhook.persisted?
-      webhook
-    end
+        ShopifyApp.configuration.webhooks.each do |attributes|
+          ShopifyAPI::Webhooks::Registry.unregister(topic: attributes[:topic])
+        end
+      end
 
-    def webhook_exists?(topic)
-      current_webhooks[topic]
-    end
+      def add_registrations
+        return unless ShopifyApp.configuration.has_webhooks?
 
-    def current_webhooks
-      @current_webhooks ||= ShopifyAPI::Webhook.all.to_a.index_by(&:topic)
+        ShopifyApp.configuration.webhooks.each do |attributes|
+          ShopifyAPI::Webhooks::Registry.add_registration(
+            topic: attributes[:topic],
+            delivery_method: attributes[:delivery_method] || :http,
+            path: attributes[:address],
+            handler: webhook_job_klass(attributes[:topic]),
+            fields: attributes[:fields]
+          )
+        end
+      end
+
+      private
+
+      def webhook_job_klass(topic)
+        webhook_job_klass_name(topic).safe_constantize || raise(ShopifyApp::MissingWebhookJobError)
+      end
+
+      def webhook_job_klass_name(topic)
+        [ShopifyApp.configuration.webhook_jobs_namespace, "#{topic.gsub("/", "_")}_job"].compact.join("/").classify
+      end
     end
   end
 end

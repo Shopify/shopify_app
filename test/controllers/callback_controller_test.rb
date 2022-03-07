@@ -8,6 +8,18 @@ module Shopify
   end
 end
 
+class CartsUpdateJob < ActiveJob::Base
+  extend ShopifyAPI::Webhooks::Handler
+
+  class << self
+    def handle(topic:, shop:, body:)
+      perform_later(topic: topic, shop_domain: shop, webhook: body)
+    end
+  end
+
+  def perform; end
+end
+
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     setup do
@@ -54,6 +66,7 @@ module ShopifyApp
       ShopifyApp.configure do |config|
         config.webhooks = []
       end
+      ShopifyApp::WebhooksManager.add_registrations
 
       ShopifyApp::WebhooksManager.expects(:queue).never
 

@@ -44,7 +44,7 @@ module ShopifyApp
     def destroy_scripttags
       scripttags = expanded_scripttags
       ShopifyAPI::ScriptTag.all.each do |tag|
-        ShopifyAPI::ScriptTag.delete(tag.id) if required_scripttag?(scripttags, tag)
+        tag.delete if required_scripttag?(scripttags, tag)
       end
 
       @current_scripttags = nil
@@ -61,9 +61,15 @@ module ShopifyApp
     end
 
     def create_scripttag(attributes)
-      attributes.reverse_merge!(format: 'json')
-      scripttag = ShopifyAPI::ScriptTag.create(attributes)
-      raise CreationFailed, scripttag.errors.full_messages.to_sentence unless scripttag.persisted?
+      scripttag = ShopifyAPI::ScriptTag.new
+      attributes.each { |key, value| scripttag.public_send("#{key.to_s}=", value) }
+
+      begin
+        scripttag.save!
+      rescue ShopifyAPI::Errors::HttpResponseError => e
+        raise CreationFailed, e.message
+      end
+
       scripttag
     end
 
