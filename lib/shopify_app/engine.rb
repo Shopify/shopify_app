@@ -26,9 +26,7 @@ module ShopifyApp
     end
 
     initializer "shopify_app.middleware" do |app|
-      if ShopifyApp.configuration.allow_jwt_authentication
-        app.config.middleware.insert_after(::Rack::Runtime, ShopifyApp::JWTMiddleware)
-      end
+      app.config.middleware.insert_after(::Rack::Runtime, ShopifyApp::JWTMiddleware)
     end
 
     initializer "shopify_app.redact_job_params" do

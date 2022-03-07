@@ -8,27 +8,19 @@ require "dummy/app/controllers/application_controller"
 
 class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   test "generates authenticated HomeController class if not embedded" do
-    assert_home_controller_is_authenticated(authenticated: false, is_embedded: false)
+    assert_home_controller_is_authenticated(is_embedded: false)
   end
 
   test "generates valid embedded HomeController class" do
-    with_home_controller(authenticated: false, is_embedded: true) do
+    with_home_controller(is_embedded: true) do
       refute(defined?(AuthenticatedController))
       assert(HomeController < ApplicationController)
       assert(HomeController.include?(ShopifyApp::ShopAccessScopesVerification))
     end
   end
 
-  test "generates valid HomeController class with authentication" do
-    assert_home_controller_is_authenticated(authenticated: true, is_embedded: false)
-  end
-
-  test "generates valid embedded HomeController class with authentication" do
-    assert_home_controller_is_authenticated(authenticated: true, is_embedded: true)
-  end
-
   test "generates HomeController which fetches products and webhooks" do
-    with_home_controller(authenticated: true, is_embedded: false) do
+    with_home_controller(is_embedded: false) do
       controller = HomeController.new
 
       stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
@@ -43,20 +35,19 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
 
   private
 
-  def assert_home_controller_is_authenticated(authenticated:, is_embedded:)
-    with_home_controller(authenticated: authenticated, is_embedded: is_embedded) do
+  def assert_home_controller_is_authenticated(is_embedded:)
+    with_home_controller(is_embedded: is_embedded) do
       assert(HomeController < AuthenticatedController)
       assert(HomeController.include?(ShopifyApp::ShopAccessScopesVerification))
     end
   end
 
-  def with_home_controller(authenticated:, is_embedded:, &block)
+  def with_home_controller(is_embedded:, &block)
     Utils::RailsGeneratorRuntime.with_session(self, is_embedded: is_embedded) do |runtime|
       home_controller_generator_options = []
-      home_controller_generator_options << "--with_cookie_authentication" if authenticated
       home_controller_generator_options += ["--embedded", "false"] unless is_embedded
 
-      generates_authenticated_controller = authenticated || !is_embedded
+      generates_authenticated_controller = !is_embedded
 
       refute(defined?(HomeController))
 
