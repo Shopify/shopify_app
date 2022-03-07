@@ -6,7 +6,6 @@ module ShopifyApp
     class HomeControllerGenerator < Rails::Generators::Base
       source_root File.expand_path('../templates', __FILE__)
 
-      class_option :with_cookie_authentication, type: :boolean, default: false
       class_option :embedded, type: :string, default: 'true'
 
       def create_home_controller
@@ -14,7 +13,7 @@ module ShopifyApp
       end
 
       def create_products_controller
-        generate("shopify_app:products_controller") unless with_cookie_authentication?
+        generate("shopify_app:products_controller") if embedded? || embedded_app?
       end
 
       def create_home_index_view
@@ -35,10 +34,6 @@ module ShopifyApp
         ShopifyApp.configuration.embedded_app?
       end
 
-      def with_cookie_authentication?
-        options['with_cookie_authentication']
-      end
-
       def home_controller_template
         return 'unauthenticated_home_controller.rb' unless authenticated_home_controller_required?
 
@@ -46,7 +41,7 @@ module ShopifyApp
       end
 
       def authenticated_home_controller_required?
-        with_cookie_authentication? || !embedded? || !embedded_app?
+        !embedded? || !embedded_app?
       end
     end
   end

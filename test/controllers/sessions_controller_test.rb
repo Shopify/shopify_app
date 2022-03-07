@@ -187,7 +187,6 @@ module ShopifyApp
     end
 
     test '#create should return an error for a non-myshopify URL when using JWT authentication' do
-      ShopifyApp.configuration.allow_jwt_authentication = true
       post :create, params: { shop: 'invalid domain' }
       assert_response :redirect
       assert_redirected_to '/'
