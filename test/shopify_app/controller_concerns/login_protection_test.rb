@@ -206,7 +206,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  # TODO: What is the purpose of this? Should we still be supporting this?
   test "#login_again_if_different_user_or_shop ignores non-String shop params so that Rails params for Shop model can be accepted" do
     with_application_test_routes do
       cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
