@@ -3,8 +3,6 @@ require 'shopify_app/version'
 
 # deps
 require 'shopify_api'
-require 'omniauth/rails_csrf_protection'
-require 'omniauth-shopify-oauth2'
 require 'redirect_safely'
 
 module ShopifyApp
@@ -73,7 +71,4 @@ module ShopifyApp
   require 'shopify_app/access_scopes/shop_strategy'
   require 'shopify_app/access_scopes/user_strategy'
   require 'shopify_app/access_scopes/noop_strategy'
-
-  # omniauth_configuration
-  require 'shopify_app/omniauth/omniauth_configuration'
 end

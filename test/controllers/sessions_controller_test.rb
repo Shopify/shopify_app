@@ -12,26 +12,12 @@ module ShopifyApp
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.user_storage = nil
 
       I18n.locale = :en
 
-      session['shopify.granted_storage_access'] = true
-
       request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML,
                  like Gecko) Chrome/69.0.3497.100 Safari/537.36'
-    end
-
-    test '#new redirects to the enable_cookies page if we can\'t set cookies and the user agent supports cookie partitioning' do
-      shopify_domain = 'my-shop.myshopify.com'
-      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-      get :new, params: { shop: 'my-shop' }
-      assert_redirected_to_top_level(shopify_domain, '/enable_cookies?shop=my-shop.myshopify.com')
-    end
-
-    test '#new renders the request_storage_access layout if we do not have storage access' do
-      session.delete('shopify.granted_storage_access')
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'sessions/request_storage_access'
     end
 
     test '#new renders the redirect layout if user agent is not set' do
@@ -99,38 +85,53 @@ module ShopifyApp
       assert_equal '/page', session[:return_to]
     end
 
-    test '#new sets the top_level_oauth cookie if a valid shop param exists and user agent supports cookie partitioning' do
-      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-      get :new, params: { shop: 'my-shop' }
-      assert_equal true, session['shopify.top_level_oauth']
+    test '#new redirects to the auth page if top_level param' do
+      ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
+        cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
+        auth_route: '/auth-route'
+      })
+
+      get :new, params: { shop: 'my-shop', top_level: true }
+      
+      assert_redirected_to '/auth-route'
+    end
+    
+    test '#new starts OAuth requesting online token if user session is expected' do
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+
+      ShopifyAPI::Auth::Oauth.expects(:begin_auth)
+        .with(shop: "my-shop.myshopify.com", redirect_path: "/auth/shopify/callback", is_online: true)
+        .returns({
+          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
+          auth_route: '/auth-route'
+        })
+
+      get :new, params: { shop: 'my-shop', top_level: true }
     end
 
-    test '#new redirects to the auth page if top_level param' do
+    test '#new starts OAuth requesting online token if user session is unexpected' do
+      ShopifyAPI::Auth::Oauth.expects(:begin_auth)
+        .with(shop: "my-shop.myshopify.com", redirect_path: "/auth/shopify/callback", is_online: false)
+        .returns({
+          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
+          auth_route: '/auth-route'
+        })
+
       get :new, params: { shop: 'my-shop', top_level: true }
-      assert_template 'shared/post_redirect_to_auth_shopify'
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/post_redirect_to_auth_shopify'
-      assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
-    end
-
-    test '#new authenticates the shop if we\'ve just returned from top-level login flow' do
-      session['shopify.top_level_oauth'] = true
-      get :new, params: { shop: 'my-shop', top_level: true }
-      assert_template 'shared/post_redirect_to_auth_shopify'
-      assert_equal session['shopify.omniauth_params'][:shop], 'my-shop.myshopify.com'
-    end
-
-    test '#new removes the top_level_oauth cookie if the user agent supports partitioning and we\'ve just returned from top-level login flow where the cookies_persist cookie was set' do
-      session.delete('shopify.granted_storage_access')
-      session['shopify.top_level_oauth'] = true
-      session['shopify.cookies_persist'] = true
-      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-      get :new, params: { shop: 'my-shop' }
-      assert_nil session['shopify.top_level_oauth']
+      ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
+        auth_route: '/auth-route',
+        cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "nonce", expires: Time.now),
+      })
+      freeze_time do 
+        get :new, params: { shop: 'my-shop' }
+        
+        assert_redirected_to '/auth-route'
+        assert_equal "nonce", cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      end
     end
 
     test "#new should render a full-page if the shop param doesn't exist" do
@@ -144,24 +145,6 @@ module ShopifyApp
       get :new, params: { shop: non_shop_address }
       assert_response :ok
       assert_match(/Shopify App — Installation/, response.body)
-    end
-
-    test "#new sets session[:user_tokens] to true if online tokens are expected" do
-      session[:shop_id] = 1
-      shop_session = ShopifyAPI::Auth::Session.new(
-        shop: 'my-shop',
-        access_token: '1234',
-      )
-      ShopifyApp::SessionRepository.user_storage.stubs(:present?).returns(true)
-      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with(session[:shop_id]).returns(shop_session)
-
-      client = ShopifyAPI::Clients::Rest::Admin.new(session: shop_session)
-      ShopifyAPI::Clients::Rest::Admin.stubs(:new).returns(client)
-      client.expects(:get).with(path: "metafields/boguscheck.json").raises(ShopifyAPI::Errors::HttpResponseError.new(code: 404))
-
-      get :new, params: { shop: 'my-shop' }
-
-      assert session[:user_tokens]
     end
 
     test "#new sets session[:user_tokens] to false if there is no existing offline token" do
@@ -204,7 +187,6 @@ module ShopifyApp
     end
 
     test '#create should return an error for a non-myshopify URL when using JWT authentication' do
-      ShopifyApp.configuration.allow_jwt_authentication = true
       post :create, params: { shop: 'invalid domain' }
       assert_response :redirect
       assert_redirected_to '/'
@@ -214,46 +196,6 @@ module ShopifyApp
     test "#create should render the login page if the shop param doesn't exist" do
       post :create
       assert_redirected_to '/'
-    end
-
-    test '#enable_cookies renders the correct template' do
-      get :enable_cookies, params: { shop: 'shop' }
-      assert_template 'sessions/enable_cookies'
-    end
-
-    test '#enable_cookies displays an error if no shop is provided' do
-      get :enable_cookies
-      assert_redirected_to ShopifyApp.configuration.root_url
-      assert_equal I18n.t('invalid_shop_url'), flash[:error]
-    end
-
-    test '#top_level_interaction renders the ccorrect template' do
-      get :top_level_interaction, params: { shop: 'shop' }
-      assert_template 'sessions/top_level_interaction'
-    end
-
-    test '#top_level_interaction displays an error if no shop is provided' do
-      get :top_level_interaction
-      assert_redirected_to ShopifyApp.configuration.root_url
-      assert_equal I18n.t('invalid_shop_url'), flash[:error]
-    end
-
-    test '#granted_storage_access displays an error if no shop is provided' do
-      get :granted_storage_access
-      assert_redirected_to ShopifyApp.configuration.root_url
-      assert_equal I18n.t('invalid_shop_url'), flash[:error]
-    end
-
-    test '#granted_storage_access sets shopify.granted_storage_access' do
-      get :granted_storage_access, params: { shop: 'shop' }
-
-      assert_equal true, session['shopify.granted_storage_access']
-    end
-
-    test '#granted_storage_access redirects to app root url with shop param' do
-      get :granted_storage_access, params: { shop: 'shop.myshopify.com' }
-
-      assert_redirected_to "#{ShopifyApp.configuration.root_url}?shop=shop.myshopify.com"
     end
 
     test "#destroy should reset rails session and redirect to login with notice" do

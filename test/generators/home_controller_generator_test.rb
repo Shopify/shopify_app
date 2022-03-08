@@ -29,17 +29,6 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/home/index.html.erb"
   end
 
-  test "creates authenticated home controller with home index view given --with_cookie_authentication option" do
-    run_generator %w(--with_cookie_authentication)
-
-    assert_file "app/controllers/home_controller.rb" do |file|
-      assert_match "HomeController < AuthenticatedController", file
-      assert_match "include ShopifyApp::ShopAccessScopesVerification", file
-    end
-    assert_file "app/views/home/index.html.erb"
-    assert_no_file "app/controllers/products_controller.rb"
-  end
-
   test "creates authenticated home controller with home index view given --embedded false option" do
     ShopifyApp.configuration.embedded_app = nil
     run_generator %w(--embedded false)
