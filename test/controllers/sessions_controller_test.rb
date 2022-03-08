@@ -130,7 +130,7 @@ module ShopifyApp
         get :new, params: { shop: 'my-shop' }
         
         assert_redirected_to '/auth-route'
-        assert_equal "nonce", cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+        assert_equal "nonce", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
       end
     end
 
