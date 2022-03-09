@@ -11,7 +11,7 @@ module ShopifyApp
 
         auth_result = ShopifyAPI::Auth::Oauth.validate_auth_callback(
           cookies: { 
-            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.signed[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
           },
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params)
         )
@@ -19,7 +19,7 @@ module ShopifyApp
         return respond_with_error
       end
 
-      cookies.signed[auth_result[:cookie].name] = {
+      cookies.encrypted[auth_result[:cookie].name] = {
         expires: auth_result[:cookie].expires,
         secure: true,
         http_only: true,

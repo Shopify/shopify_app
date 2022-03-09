@@ -59,7 +59,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session loads online session if user session expected" do
-    cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
     request.headers['HTTP_AUTHORIZATION'] = 'Bearer token'
 
     ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
@@ -78,7 +78,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test "#current_shopify_session loads offline session if user session unexpected" do
     ShopifyApp::SessionRepository.user_storage = nil
 
-    cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
     request.headers['HTTP_AUTHORIZATION'] = 'Bearer token'
 
     ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
@@ -95,7 +95,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session is nil if token is invalid" do
-    cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
     request.headers['HTTP_AUTHORIZATION'] = 'Bearer invalid'
 
     with_application_test_routes do
@@ -117,7 +117,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#login_again_if_different_user_or_shop removes current cookie if the session changes" do
-    cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
 
     ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
       .returns(ShopifyAPI::Auth::Session.new(shop: "shop", shopify_session_id: "123"))
@@ -125,13 +125,13 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       params = { session: '456' }
       get :second_login, params: params
-      assert_nil cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#login_again_if_different_user_or_shop retains current session if params not present" do
     with_application_test_routes do
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
 
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
         ShopifyAPI::Auth::Session.new(shop: "some-shop")
@@ -139,13 +139,13 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
       get :second_login
 
-      assert_equal 'old-cookie', cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      assert_equal 'old-cookie', cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
     end
   end
 
   test "#login_again_if_different_user_or_shop removes current session and redirects to login url" do
     with_application_test_routes do
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
 
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
         ShopifyAPI::Auth::Session.new(shop: "some-shop")
@@ -155,14 +155,14 @@ class LoginProtectionControllerTest < ActionController::TestCase
       assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com'\
                            '&shop=other-shop.myshopify.com'
 
-      assert_nil cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#current_shopify_session redirects to login if the loaded session doesn't have enough scope" do
     ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1", "scope2"]) )
 
-    cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
     request.headers['HTTP_AUTHORIZATION'] = 'Bearer token'
 
     ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
@@ -179,14 +179,14 @@ class LoginProtectionControllerTest < ActionController::TestCase
       get :index
 
       assert_redirected_to '/login'
-      assert_nil cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#current_shopify_session does not redirect when sufficient scope" do
     ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1"]) )
 
-    cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
     request.headers['HTTP_AUTHORIZATION'] = 'Bearer token'
 
     ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
@@ -202,13 +202,13 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       get :index
       assert_response :ok
-      assert_equal "cookie", cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+      assert_equal "cookie", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#login_again_if_different_user_or_shop ignores non-String shop params so that Rails params for Shop model can be accepted" do
     with_application_test_routes do
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'old-cookie'
 
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
         ShopifyAPI::Auth::Session.new(shop: "some-shop")
@@ -314,23 +314,23 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test '#activate_shopify_session when rescuing from unauthorized access, closes session' do
     with_application_test_routes do
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
 
       get :raise_unauthorized, params: { shop: 'foobar' }
       assert_redirected_to '/login?shop=foobar.myshopify.com'
-      assert_nil cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
     end
   end
 
   test '#activate_shopify_session when rescuing from non 401 errors, does not close session' do
     with_application_test_routes do
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'cookie'
 
       assert_raises(ShopifyAPI::Errors::HttpResponseError) do
         get :raise_not_found, params: { shop: 'foobar' }
       end
 
-      assert_equal "cookie", cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      assert_equal "cookie", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
     end
   end
 

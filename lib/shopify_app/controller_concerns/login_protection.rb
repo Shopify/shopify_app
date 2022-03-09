@@ -41,9 +41,10 @@ module ShopifyApp
 
     def current_shopify_session
       @current_shopify_session ||= begin
+        cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
         ShopifyAPI::Utils::SessionUtils.load_current_session(
           auth_header: request.headers['HTTP_AUTHORIZATION'],
-          cookies: cookies.to_h,
+          cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: user_session_expected?
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError => e
@@ -116,7 +117,7 @@ module ShopifyApp
     end
 
     def clear_shopify_session
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = nil
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = nil
     end
 
     def login_url_with_optional_shop(top_level: false)
