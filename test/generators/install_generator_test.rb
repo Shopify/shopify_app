@@ -31,7 +31,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
             api_key: ShopifyApp.configuration.api_key,
             api_secret_key: ShopifyApp.configuration.secret,
             api_version: ShopifyApp.configuration.api_version,
-            host_name: ENV.fetch('SHOPIFY_APP_HOST_NAME', ''),
+            host_name: ENV.fetch('HOST', ''),
             scope: ShopifyApp.configuration.scope,
             is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
             is_embedded: ShopifyApp.configuration.embedded_app,

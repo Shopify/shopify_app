@@ -10,8 +10,8 @@ module ShopifyApp
         filtered_params = request.parameters.symbolize_keys.slice(:code, :shop, :timestamp, :state, :host, :hmac)
 
         auth_result = ShopifyAPI::Auth::Oauth.validate_auth_callback(
-          cookies: { 
-            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+          cookies: {
+            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
           },
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params)
         )
@@ -27,7 +27,7 @@ module ShopifyApp
       }
 
       perform_post_authenticate_jobs(auth_result[:session])
-      
+
       respond_successfully
     end
 
@@ -51,11 +51,7 @@ module ShopifyApp
     def install_webhooks(session)
       return unless ShopifyApp.configuration.has_webhooks?
 
-      WebhooksManager.queue(
-        session.shop,
-        session.access_token,
-        ShopifyApp.configuration.webhooks
-      )
+      WebhooksManager.queue(session.shop, session.access_token)
     end
 
     def install_scripttags(session)

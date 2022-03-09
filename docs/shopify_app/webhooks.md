@@ -66,7 +66,7 @@ The WebhooksManager uses ActiveJob. If ActiveJob is not configured then by defau
 ShopifyApp can create webhooks for you using the `add_webhook` generator. This will add the new webhook to your config and create the required job class for you.
 
 ```
-rails g shopify_app:add_webhook -t carts/update -a https://example.com/webhooks/carts_update
+rails g shopify_app:add_webhook -t carts/update -a /webhooks/carts_update
 ```
 
 Where `-t` is the topic and `-a` is the address the webhook should be sent to.
