@@ -26,7 +26,7 @@ module ShopifyApp
       @routes = ShopifyApp::Engine.routes
       ShopifyApp.configuration = nil
       ShopifyApp.configuration.embedded_app = true
-      
+
       I18n.locale = :en
 
       request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'\
@@ -47,7 +47,7 @@ module ShopifyApp
 
     test '#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback' do
       mock_oauth
-      
+
       get :callback, params: @callback_params
     end
 
@@ -56,7 +56,7 @@ module ShopifyApp
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token", ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token")
 
       mock_oauth
       get :callback, params: @callback_params
@@ -156,7 +156,7 @@ module ShopifyApp
         config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token", ShopifyApp.configuration.webhooks)
+      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token")
 
       get :callback, params: @callback_params
       assert_response 302
@@ -200,7 +200,7 @@ module ShopifyApp
 
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = 'nonce'
 
-      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(cookies: 
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(cookies:
         {
           ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
         }, auth_query: @auth_query)
