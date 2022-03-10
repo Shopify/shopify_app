@@ -19,7 +19,7 @@ module ShopifyApp
         inject_into_file(
           'config/initializers/shopify_app.rb',
           "  config.webhooks = [\n  ]\n",
-          before: 'end'
+          after: /ShopifyApp\.configure.*\n/
         )
       end
 
@@ -54,7 +54,7 @@ module ShopifyApp
       end
 
       def webhook_config
-        "\n    {topic: '#{topic}', address: '#{address}', format: 'json'},"
+        "\n    { topic: '#{topic}', address: '#{address}' },"
       end
 
       def topic

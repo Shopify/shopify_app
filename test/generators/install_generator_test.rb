@@ -28,18 +28,18 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
       context_setup = <<~CONTEXT_SETUP
         ShopifyAPI::Context.setup(
-            api_key: ShopifyApp.configuration.api_key,
-            api_secret_key: ShopifyApp.configuration.secret,
-            api_version: ShopifyApp.configuration.api_version,
-            host_name: ENV.fetch('SHOPIFY_APP_HOST_NAME', ''),
-            scope: ShopifyApp.configuration.scope,
-            is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
-            is_embedded: ShopifyApp.configuration.embedded_app,
-            session_storage: ShopifyApp::SessionRepository,
-            logger: Rails.logger,
-            private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
-            user_agent_prefix: "ShopifyApp/\#{ShopifyApp::VERSION}"
-          )
+              api_key: ShopifyApp.configuration.api_key,
+              api_secret_key: ShopifyApp.configuration.secret,
+              api_version: ShopifyApp.configuration.api_version,
+              host_name: URI(ENV.fetch('HOST', '')).host || '',
+              scope: ShopifyApp.configuration.scope,
+              is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
+              is_embedded: ShopifyApp.configuration.embedded_app,
+              session_storage: ShopifyApp::SessionRepository,
+              logger: Rails.logger,
+              private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
+              user_agent_prefix: "ShopifyApp/\#{ShopifyApp::VERSION}"
+            )
       CONTEXT_SETUP
 
       assert_match context_setup, shopify_app

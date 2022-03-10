@@ -7,7 +7,7 @@ module ShopifyApp
 
     def perform(shop_domain:, shop_token:)
       ShopifyAPI::Auth::Session.temp(shop: shop_domain, access_token: shop_token) do |session|
-        WebhooksManager.create_webhooks
+        WebhooksManager.create_webhooks(session: session)
       end
     end
   end
