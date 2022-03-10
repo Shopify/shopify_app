@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `19.0.0`](#upgrading-to-v1900)
+
 [Upgrading to `v17.2.0`](#upgrading-to-v1720)
 
 [Upgrading to `v13.0.0`](#upgrading-to-v1300)
@@ -11,6 +13,20 @@ This file documents important changes needed to upgrade your app's Shopify App v
 [Upgrading to `v11.7.0`](#upgrading-to-v1170)
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
+
+## Upgrading to `v19.0.0`
+
+This update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify_api)
+gem.
+
+* Delete `config/initializers/omniauth.rb` as apps no longer need to initialize `OmniAuth` directly.
+* Delete `config/initializers/user_agent.rb` as `shopify_app` will set the right `User-Agent` header for interacting
+  with the Shopify API.
+* Remove `allow_jwt_authentication=` and `allow_cookie_authentication=` invocations from
+  `config/initializers/shopify_app.rb` as the decision logic for which authentication method to use is now handled
+  internally by the `shopify_api` gem.
+* `v19.0.0` updates the `shopify_api` dependency to `10.0.0`. This version of `shopify_api` has breaking changes. See
+  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify_api/blob/add_breaking_change_log_v10/README.md#breaking-change-notice-for-version-1000).
 
 ## Upgrading to `v17.2.0`
 
