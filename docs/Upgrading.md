@@ -56,14 +56,17 @@ class MyWebhookJob < ActiveJob::Base
 
 #### Temporary sessions
 
-The new `shopify_api` gem offers a utility to temporarily create sessions for interacting with the API within a block. This is useful for interacting with the Shopify API outside of the context of
-a subclass of `AuthenticatedController`.
+The new `shopify_api` gem offers a utility to temporarily create sessions for interacting with the API within a block.
+This is useful for interacting with the Shopify API outside of the context of a subclass of `AuthenticatedController`.
 
 ```ruby
 ShopifyAPI::Auth::Session.temp(shop: shop_domain, access_token: shop_token) do |session|
   # make invocations to the API
 end
 ```
+
+Within a subclass of `AuthenticatedController`, the `current_shopify_session` function will return the current active
+Shopify API session, or `nil` if no such session is available.
 
 #### Setting up `ShopifyAPI::Context`
 
