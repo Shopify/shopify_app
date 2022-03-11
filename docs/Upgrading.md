@@ -19,6 +19,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 This update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify_api)
 gem.
 
+### High-level process
+
 * Delete `config/initializers/omniauth.rb` as apps no longer need to initialize `OmniAuth` directly.
 * Delete `config/initializers/user_agent.rb` as `shopify_app` will set the right `User-Agent` header for interacting
   with the Shopify API.
@@ -27,6 +29,68 @@ gem.
   internally by the `shopify_api` gem.
 * `v19.0.0` updates the `shopify_api` dependency to `10.0.0`. This version of `shopify_api` has breaking changes. See
   the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify_api/blob/add_breaking_change_log_v10/README.md#breaking-change-notice-for-version-1000).
+
+### Specific cases
+
+#### Webhook Jobs
+
+Add a new `handle` method to existing webhook jobs to go through the updated `shopify_api` gem.
+
+```ruby
+class MyWebhookJob < ActiveJob::Base
+  extend ShopifyAPI::Webhooks::Handler
+
+  class << self
+    # new handle function
+    def handle(topic:, shop:, body:)
+      # delegate to pre-existing perform_later function
+      perform_later(topic: topic, shop_domain: shop, webhook: body)
+    end
+  end
+
+  # original perform function
+  def perform(topic:, shop_domain:, webhook:)
+    # ...
+```
+
+#### Temporary sessions
+
+The new `shopify_api` gem offers a utility to temporarily create sessions for interacting with the API within a block. This is useful for interacting with the Shopify API outside of the context of
+a subclass of `AuthenticatedController`.
+
+```ruby
+ShopifyAPI::Auth::Session.temp(shop: shop_domain, access_token: shop_token) do |session|
+  # make invocations to the API
+end
+```
+
+#### Setting up `ShopifyAPI::Context`
+
+The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will
+generate a block in the `shopify_app` initializer. To do so manually, ensure the following is
+part of the `after_initialize` block in `shopify_app.rb`.
+
+```ruby
+Rails.application.config.after_initialize do
+  if ShopifyApp.configuration.api_key.present? && ShopifyApp.configuration.secret.present?
+    ShopifyAPI::Context.setup(
+      api_key: ShopifyApp.configuration.api_key,
+      api_secret_key: ShopifyApp.configuration.secret,
+      api_version: ShopifyApp.configuration.api_version,
+      host_name: URI(ENV.fetch('HOST', '')).host || '',
+      scope: ShopifyApp.configuration.scope,
+      is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
+      is_embedded: ShopifyApp.configuration.embedded_app,
+      session_storage: ShopifyApp::SessionRepository,
+      logger: Rails.logger,
+      private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
+      user_agent_prefix: "ShopifyApp/#{ShopifyApp::VERSION}"
+    )
+
+    ShopifyApp::WebhooksManager.add_registrations
+  end
+end
+```
 
 ## Upgrading to `v17.2.0`
 
