@@ -23,7 +23,8 @@ gem.
 
 * Delete `config/initializers/omniauth.rb` as apps no longer need to initialize `OmniAuth` directly.
 * Delete `config/initializers/user_agent.rb` as `shopify_app` will set the right `User-Agent` header for interacting
-  with the Shopify API.
+  with the Shopify API. If the app requires further information in the `User-Agent` header beyond what Shopify API
+  requires, specify this in the `ShopifyAPI::Context.user_agent_prefix` setting.
 * Remove `allow_jwt_authentication=` and `allow_cookie_authentication=` invocations from
   `config/initializers/shopify_app.rb` as the decision logic for which authentication method to use is now handled
   internally by the `shopify_api` gem.
