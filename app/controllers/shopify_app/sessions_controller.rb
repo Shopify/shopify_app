@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
@@ -6,7 +7,7 @@ module ShopifyApp
     layout false, only: :new
 
     after_action only: [:new, :create] do |controller|
-      controller.response.headers.except!('X-Frame-Options')
+      controller.response.headers.except!("X-Frame-Options")
     end
 
     def new
@@ -24,7 +25,7 @@ module ShopifyApp
 
     def destroy
       reset_session
-      flash[:notice] = I18n.t('.logged_out')
+      flash[:notice] = I18n.t(".logged_out")
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -52,7 +53,7 @@ module ShopifyApp
         expires: auth_attributes[:cookie].expires,
         secure: true,
         http_only: true,
-        value: auth_attributes[:cookie].value
+        value: auth_attributes[:cookie].value,
       }
 
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
@@ -69,11 +70,11 @@ module ShopifyApp
     end
 
     def copy_return_to_param_to_session
-      session[:return_to] = RedirectSafely.make_safe(params[:return_to], '/') if params[:return_to]
+      session[:return_to] = RedirectSafely.make_safe(params[:return_to], "/") if params[:return_to]
     end
 
     def render_invalid_shop_error
-      flash[:error] = I18n.t('invalid_shop_url')
+      flash[:error] = I18n.t("invalid_shop_url")
       redirect_to(return_address)
     end
 

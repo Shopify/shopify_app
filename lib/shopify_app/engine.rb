@@ -1,28 +1,24 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   module RedactJobParams
     private
 
     def args_info(job)
-      log_disabled_classes = %w(ShopifyApp::ScripttagsManagerJob ShopifyApp::WebhooksManagerJob)
+      log_disabled_classes = ["ShopifyApp::ScripttagsManagerJob", "ShopifyApp::WebhooksManagerJob"]
       return "" if log_disabled_classes.include?(job.class.name)
       super
     end
   end
 
   class Engine < Rails::Engine
-    engine_name 'shopify_app'
+    engine_name "shopify_app"
     isolate_namespace ShopifyApp
 
     initializer "shopify_app.assets.precompile" do |app|
-      app.config.assets.precompile += %w[
-        shopify_app/redirect.js
-        shopify_app/post_redirect.js
-        shopify_app/top_level.js
-        shopify_app/enable_cookies.js
-        shopify_app/request_storage_access.js
-        storage_access.svg
-      ]
+      app.config.assets.precompile += ["shopify_app/redirect.js", "shopify_app/post_redirect.js",
+                                       "shopify_app/top_level.js", "shopify_app/enable_cookies.js",
+                                       "shopify_app/request_storage_access.js", "storage_access.svg",]
     end
 
     initializer "shopify_app.middleware" do |app|

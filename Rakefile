@@ -1,13 +1,14 @@
 # frozen_string_literal: true
-require 'bundler/gem_tasks'
-require 'rake/testtask'
 
-require File.expand_path('../test/dummy/config/application', __FILE__)
+require "bundler/gem_tasks"
+require "rake/testtask"
+
+require File.expand_path("../test/dummy/config/application", __FILE__)
 
 # TODO: Remove this special test and replace with `Rails.application.load_tasks`
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
+  t.libs << "lib"
+  t.libs << "test"
   t.verbose = false
   t.warning = false
 

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 class OrdersUpdatedJob < ActiveJob::Base
   extend ShopifyAPI::Webhooks::Handler
@@ -14,7 +15,6 @@ class OrdersUpdatedJob < ActiveJob::Base
 end
 
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
-
   test "#add_registrations makes calls to library's add_registration" do
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).once
     ShopifyApp.configure do |config|
@@ -53,8 +53,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).never
 
     ShopifyApp.configure do |config|
-      config.webhooks = [
-      ]
+      config.webhooks = []
     end
     ShopifyApp::WebhooksManager.add_registrations
     ShopifyApp::WebhooksManager.recreate_webhooks!

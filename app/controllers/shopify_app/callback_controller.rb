@@ -11,11 +11,12 @@ module ShopifyApp
 
         auth_result = ShopifyAPI::Auth::Oauth.validate_auth_callback(
           cookies: {
-            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
+              cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
           },
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params)
         )
-      rescue => e
+      rescue
         return respond_with_error
       end
 
@@ -23,7 +24,7 @@ module ShopifyApp
         expires: auth_result[:cookie].expires,
         secure: true,
         http_only: true,
-        value: auth_result[:cookie].value
+        value: auth_result[:cookie].value,
       }
 
       perform_post_authenticate_jobs(auth_result[:session])
@@ -38,7 +39,7 @@ module ShopifyApp
     end
 
     def respond_with_error
-      flash[:error] = I18n.t('could_not_log_in')
+      flash[:error] = I18n.t("could_not_log_in")
       redirect_to(login_url_with_optional_shop)
     end
 

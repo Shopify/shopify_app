@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'browser_sniffer'
+require "browser_sniffer"
 
 module ShopifyApp
   module LoginProtection
@@ -16,7 +16,7 @@ module ShopifyApp
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
-    ACCESS_TOKEN_REQUIRED_HEADER = 'X-Shopify-API-Request-Failure-Unauthorized'
+    ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
 
     def activate_shopify_session
       if current_shopify_session.blank?
@@ -25,7 +25,7 @@ module ShopifyApp
       end
 
       unless current_shopify_session.scope.to_a.empty? ||
-        current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
+          current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
 
         clear_shopify_session
         return redirect_to_login
@@ -43,13 +43,13 @@ module ShopifyApp
       @current_shopify_session ||= begin
         cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
         ShopifyAPI::Utils::SessionUtils.load_current_session(
-          auth_header: request.headers['HTTP_AUTHORIZATION'],
+          auth_header: request.headers["HTTP_AUTHORIZATION"],
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: user_session_expected?
         )
-      rescue ShopifyAPI::Errors::CookieNotFoundError => e
+      rescue ShopifyAPI::Errors::CookieNotFoundError
         nil
-      rescue ShopifyAPI::Errors::InvalidJwtTokenError => e
+      rescue ShopifyAPI::Errors::InvalidJwtTokenError
         nil
       end
     end
@@ -65,7 +65,7 @@ module ShopifyApp
     end
 
     def jwt_expire_at
-      expire_at = request.env['jwt.expire_at']
+      expire_at = request.env["jwt.expire_at"]
       return unless expire_at
       expire_at - 5.seconds # 5s gap to start fetching new token in advance
     end
@@ -73,11 +73,11 @@ module ShopifyApp
     protected
 
     def jwt_shopify_domain
-      request.env['jwt.shopify_domain']
+      request.env["jwt.shopify_domain"]
     end
 
     def jwt_shopify_user_id
-      request.env['jwt.shopify_user_id']
+      request.env["jwt.shopify_user_id"]
     end
 
     def host
@@ -150,14 +150,14 @@ module ShopifyApp
     end
 
     def return_to_param_required?
-      native_params = %i[shop hmac timestamp locale protocol return_to]
-      request.path != '/' || sanitized_params.except(*native_params).any?
+      native_params = [:shop, :hmac, :timestamp, :locale, :protocol, :return_to]
+      request.path != "/" || sanitized_params.except(*native_params).any?
     end
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render('shopify_app/shared/redirect', layout: false,
-               locals: { url: url, current_shopify_domain: current_shopify_domain })
+        render("shopify_app/shared/redirect", layout: false,
+          locals: { url: url, current_shopify_domain: current_shopify_domain })
       else
         redirect_to(url)
       end

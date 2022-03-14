@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class Configuration
     # Shopify App settings. These values should match the configuration
@@ -38,15 +39,15 @@ module ShopifyApp
     attr_accessor :webhook_jobs_namespace
 
     def initialize
-      @root_url = '/'
-      @myshopify_domain = 'myshopify.com'
+      @root_url = "/"
+      @myshopify_domain = "myshopify.com"
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
-      @disable_webpacker = ENV['SHOPIFY_APP_DISABLE_WEBPACKER'].present?
+      @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
     end
 
     def login_url
-      @login_url || File.join(@root_url, 'login')
+      @login_url || File.join(@root_url, "login")
     end
 
     def user_session_repository=(klass)

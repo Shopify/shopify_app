@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   module SessionStorage
     extend ActiveSupport::Concern
