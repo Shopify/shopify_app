@@ -25,6 +25,10 @@ module ShopifyApp
         copy_file('session_store.rb', 'config/initializers/session_store.rb')
       end
 
+      def create_csp_initializer
+        copy_file('content_security_policy.rb', 'config/initializers/content_security_policy.rb')
+      end
+
       def create_and_inject_into_omniauth_initializer
         unless File.exist?("config/initializers/omniauth.rb")
           copy_file('omniauth.rb', 'config/initializers/omniauth.rb')
