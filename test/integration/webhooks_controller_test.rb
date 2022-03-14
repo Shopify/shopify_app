@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 class OrderUpdateJob < ActiveJob::Base
   extend ShopifyAPI::Webhooks::Handler
@@ -22,25 +23,23 @@ module ShopifyApp
     end
 
     test "receives webhook and calls process" do
-
       ShopifyAPI::Webhooks::Registry.stubs(:process).returns(nil)
       ShopifyAPI::Webhooks::Registry.expects(:process).once
-      send_webhook 'order_update', { foo: :bar }
+      send_webhook "order_update", { foo: :bar }
       assert_response :ok
     end
 
     test "returns error for webhook with no job class" do
       assert_raises ShopifyApp::MissingWebhookJobError do
-        ShopifyApp::WebhooksManager.send(:webhook_job_klass, 'test')
+        ShopifyApp::WebhooksManager.send(:webhook_job_klass, "test")
       end
     end
 
     private
 
     def send_webhook(name, data)
-
       post(shopify_app.webhooks_path(name), params: data,
-           headers: headers(name))
+        headers: headers(name))
     end
 
     def headers(name)

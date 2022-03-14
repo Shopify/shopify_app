@@ -1,8 +1,9 @@
 # frozen_string_literal: true
-source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2.3'
-gem 'sqlite3'
-gem 'puma', '~> 3.11'
+source "https://rubygems.org"
 
-gem 'shopify_app'
+gem "rails", "~> 5.2.3"
+gem "sqlite3"
+gem "puma", "~> 3.11"
+
+gem "shopify_app"

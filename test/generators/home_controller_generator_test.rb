@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/home_controller/home_controller_generator'
+
+require "test_helper"
+require "generators/shopify_app/home_controller/home_controller_generator"
 
 class HomeControllerGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::HomeControllerGenerator
@@ -31,7 +32,7 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
 
   test "creates authenticated home controller with home index view given --embedded false option" do
     ShopifyApp.configuration.embedded_app = nil
-    run_generator %w(--embedded false)
+    run_generator ["--embedded", "false"]
 
     assert_file "app/controllers/home_controller.rb" do |file|
       assert_match "HomeController < AuthenticatedController", file
@@ -55,7 +56,7 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
   test "creates the home index view with embedded false" do
     ShopifyApp.configuration.embedded_app = false
     run_generator
-    refute File.exist?('app/javascript/shopify_app/shopify_app.js')
+    refute File.exist?("app/javascript/shopify_app/shopify_app.js")
   end
 
   test "adds home route to routes" do

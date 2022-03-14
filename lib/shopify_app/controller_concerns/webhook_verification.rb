@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   module WebhookVerification
     extend ActiveSupport::Concern
@@ -17,7 +18,7 @@ module ShopifyApp
     end
 
     def shop_domain
-      request.headers['HTTP_X_SHOPIFY_SHOP_DOMAIN']
+      request.headers["HTTP_X_SHOPIFY_SHOP_DOMAIN"]
     end
   end
 end

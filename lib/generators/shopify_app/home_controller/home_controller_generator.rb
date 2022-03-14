@@ -1,15 +1,16 @@
 # frozen_string_literal: true
-require 'rails/generators/base'
+
+require "rails/generators/base"
 
 module ShopifyApp
   module Generators
     class HomeControllerGenerator < Rails::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path("../templates", __FILE__)
 
-      class_option :embedded, type: :string, default: 'true'
+      class_option :embedded, type: :string, default: "true"
 
       def create_home_controller
-        template(home_controller_template, 'app/controllers/home_controller.rb')
+        template(home_controller_template, "app/controllers/home_controller.rb")
       end
 
       def create_products_controller
@@ -17,7 +18,7 @@ module ShopifyApp
       end
 
       def create_home_index_view
-        template('index.html.erb', 'app/views/home/index.html.erb')
+        template("index.html.erb", "app/views/home/index.html.erb")
       end
 
       def add_home_index_route
@@ -27,7 +28,7 @@ module ShopifyApp
       private
 
       def embedded?
-        options['embedded'] == 'true'
+        options["embedded"] == "true"
       end
 
       def embedded_app?
@@ -35,9 +36,9 @@ module ShopifyApp
       end
 
       def home_controller_template
-        return 'unauthenticated_home_controller.rb' unless authenticated_home_controller_required?
+        return "unauthenticated_home_controller.rb" unless authenticated_home_controller_required?
 
-        'home_controller.rb'
+        "home_controller.rb"
       end
 
       def authenticated_home_controller_required?

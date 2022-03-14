@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class ScripttagsManager
     class CreationFailed < StandardError; end
@@ -62,7 +63,7 @@ module ShopifyApp
 
     def create_scripttag(attributes)
       scripttag = ShopifyAPI::ScriptTag.new
-      attributes.each { |key, value| scripttag.public_send("#{key.to_s}=", value) }
+      attributes.each { |key, value| scripttag.public_send("#{key}=", value) }
 
       begin
         scripttag.save!

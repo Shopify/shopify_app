@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class SessionRepository
     extend ShopifyAPI::Auth::SessionStorage
@@ -42,7 +43,6 @@ module ShopifyApp
         load_user_storage
       end
 
-      
       # ShopifyAPI::Auth::SessionStorage override
       def store_session(session)
         if session.online?
@@ -54,22 +54,22 @@ module ShopifyApp
 
       # ShopifyAPI::Auth::SessionStorage override
       def load_session(id)
-        match = id.match(/^offline_(.*)/) 
+        match = id.match(/^offline_(.*)/)
         if match
           retrieve_shop_session_by_shopify_domain(match[1])
         else
-          retrieve_user_session_by_shopify_user_id(id.split('_').last)
+          retrieve_user_session_by_shopify_user_id(id.split("_").last)
         end
       end
 
       # ShopifyAPI::Auth::SessionStorage override
       def delete_session(id)
-        match = id.match(/^offline_(.*)/) 
+        match = id.match(/^offline_(.*)/)
 
         record = if match
           Shop.find_by(shopify_domain: match[1])
         else
-          User.find_by(shopify_user_id: id.split('_').last)
+          User.find_by(shopify_user_id: id.split("_").last)
         end
 
         record.destroy

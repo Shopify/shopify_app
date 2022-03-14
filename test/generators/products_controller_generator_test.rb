@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'generators/shopify_app/products_controller/products_controller_generator'
+require "test_helper"
+require "generators/shopify_app/products_controller/products_controller_generator"
 
 class ProductsControllerGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::ProductsControllerGenerator

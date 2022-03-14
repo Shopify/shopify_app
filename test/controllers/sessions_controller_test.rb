@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
@@ -16,121 +17,121 @@ module ShopifyApp
 
       I18n.locale = :en
 
-      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML,
+      request.env["HTTP_USER_AGENT"] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML,
                  like Gecko) Chrome/69.0.3497.100 Safari/537.36'
     end
 
-    test '#new renders the redirect layout if user agent is not set' do
-      request.env['HTTP_USER_AGENT'] = nil
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/redirect'
+    test "#new renders the redirect layout if user agent is not set" do
+      request.env["HTTP_USER_AGENT"] = nil
+      get :new, params: { shop: "my-shop" }
+      assert_template "shared/redirect"
     end
 
-    test '#new renders the redirect layout if user agent is Shopify Mobile (Android)' do
-      request.env['HTTP_USER_AGENT'] = 'Shopify Mobile/Android/8.12.0 (Build 12005 with API 28 on Google
+    test "#new renders the redirect layout if user agent is Shopify Mobile (Android)" do
+      request.env["HTTP_USER_AGENT"] = 'Shopify Mobile/Android/8.12.0 (Build 12005 with API 28 on Google
                                         Android SDK built for x86) MobileMiddlewareSupported Mozilla/5.0
                                         (Linux; Android 9; Android SDK built for x86 Build/PSR1.180720.075; wv)
                                         AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/69.0.3497.100
                                         Mobile Safari/537.36'
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/redirect'
+      get :new, params: { shop: "my-shop" }
+      assert_template "shared/redirect"
     end
 
-    test '#new renders the redirect layout if user agent is Shopify Mobile (iOS)' do
-      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X)
+    test "#new renders the redirect layout if user agent is Shopify Mobile (iOS)" do
+      request.env["HTTP_USER_AGENT"] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X)
                                         AppleWebKit/ 604.1.21 (KHTML, like Gecko) Version/ 12.0 Mobile/17A6278a
                                         Safari/602.1.26 MobileMiddlewareSupported
                                         Shopify Mobile/iOS/8.12.0 (iPad4,7/com.shopify.ShopifyInternal/12.0.0)'
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/redirect'
+      get :new, params: { shop: "my-shop" }
+      assert_template "shared/redirect"
     end
 
-    test '#new renders the redirect layout if user agent is Shopify POS (Android)' do
-      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS Dalvik/2.1.0
+    test "#new renders the redirect layout if user agent is Shopify POS (Android)" do
+      request.env["HTTP_USER_AGENT"] = 'com.jadedpixel.pos Shopify POS Dalvik/2.1.0
                   (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
                   POS - Debug 2.4.8 (f1d442c789)/3405 Mozilla/5.0
                   (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv)
                   AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 Chrome/64.0.3282.137 Safari/537.36'
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/redirect'
+      get :new, params: { shop: "my-shop" }
+      assert_template "shared/redirect"
     end
 
-    test '#new renders the redirect layout if user agent is Shopify POS (Android React Native)' do
-      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS/4.24.0-mal+30112/Android/9/google/Android SDK ' \
-                   'built for x86/development MobileMiddlewareSupported'
+    test "#new renders the redirect layout if user agent is Shopify POS (Android React Native)" do
+      request.env["HTTP_USER_AGENT"] = "com.jadedpixel.pos Shopify POS/4.24.0-mal+30112/Android/9/google/Android SDK " \
+        "built for x86/development MobileMiddlewareSupported"
 
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/redirect'
+      get :new, params: { shop: "my-shop" }
+      assert_template "shared/redirect"
     end
 
-    test '#new renders the redirect layout if user agent is Shopify POS (iOS)' do
-      request.env['HTTP_USER_AGENT'] = 'com.jadedpixel.pos Shopify POS/4.7 (iPad; iOS 11.0.1; Scale/2.00)'
-      get :new, params: { shop: 'my-shop' }
-      assert_template 'shared/redirect'
+    test "#new renders the redirect layout if user agent is Shopify POS (iOS)" do
+      request.env["HTTP_USER_AGENT"] = "com.jadedpixel.pos Shopify POS/4.7 (iPad; iOS 11.0.1; Scale/2.00)"
+      get :new, params: { shop: "my-shop" }
+      assert_template "shared/redirect"
     end
 
-    test '#new redirects to the top-level login if a valid shop param exists' do
-      shopify_domain = 'my-shop.myshopify.com'
-      get :new, params: { shop: 'my-shop' }
+    test "#new redirects to the top-level login if a valid shop param exists" do
+      shopify_domain = "my-shop.myshopify.com"
+      get :new, params: { shop: "my-shop" }
       assert_redirected_to_top_level(shopify_domain)
     end
 
-    test '#new stores root path when return_to url is absolute' do
-      get :new, params: { shop: 'my-shop', return_to: '//example.com' }
-      assert_equal '/', session[:return_to]
+    test "#new stores root path when return_to url is absolute" do
+      get :new, params: { shop: "my-shop", return_to: "//example.com" }
+      assert_equal "/", session[:return_to]
     end
 
-    test '#new stores only relative path for return_to in the session' do
-      get :new, params: { shop: 'my-shop', return_to: '/page' }
-      assert_equal '/page', session[:return_to]
+    test "#new stores only relative path for return_to in the session" do
+      get :new, params: { shop: "my-shop", return_to: "/page" }
+      assert_equal "/page", session[:return_to]
     end
 
-    test '#new redirects to the auth page if top_level param' do
+    test "#new redirects to the auth page if top_level param" do
       ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
         cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-        auth_route: '/auth-route'
+        auth_route: "/auth-route",
       })
 
-      get :new, params: { shop: 'my-shop', top_level: true }
-      
-      assert_redirected_to '/auth-route'
+      get :new, params: { shop: "my-shop", top_level: true }
+
+      assert_redirected_to "/auth-route"
     end
-    
-    test '#new starts OAuth requesting online token if user session is expected' do
+
+    test "#new starts OAuth requesting online token if user session is expected" do
       ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
       ShopifyAPI::Auth::Oauth.expects(:begin_auth)
         .with(shop: "my-shop.myshopify.com", redirect_path: "/auth/shopify/callback", is_online: true)
         .returns({
           cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-          auth_route: '/auth-route'
+          auth_route: "/auth-route",
         })
 
-      get :new, params: { shop: 'my-shop', top_level: true }
+      get :new, params: { shop: "my-shop", top_level: true }
     end
 
-    test '#new starts OAuth requesting online token if user session is unexpected' do
+    test "#new starts OAuth requesting online token if user session is unexpected" do
       ShopifyAPI::Auth::Oauth.expects(:begin_auth)
         .with(shop: "my-shop.myshopify.com", redirect_path: "/auth/shopify/callback", is_online: false)
         .returns({
           cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-          auth_route: '/auth-route'
+          auth_route: "/auth-route",
         })
 
-      get :new, params: { shop: 'my-shop', top_level: true }
+      get :new, params: { shop: "my-shop", top_level: true }
     end
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
       ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-        auth_route: '/auth-route',
+        auth_route: "/auth-route",
         cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "nonce", expires: Time.now),
       })
-      freeze_time do 
-        get :new, params: { shop: 'my-shop' }
-        
-        assert_redirected_to '/auth-route'
-        assert_equal "nonce", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] 
+      freeze_time do
+        get :new, params: { shop: "my-shop" }
+
+        assert_redirected_to "/auth-route"
+        assert_equal "nonce", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
       end
     end
 
@@ -152,58 +153,58 @@ module ShopifyApp
       ShopifyApp::SessionRepository.user_storage.stubs(:present?).returns(true)
       ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with(session[:shop_id]).returns(nil)
 
-      get :new, params: { shop: 'my-shop' }
+      get :new, params: { shop: "my-shop" }
 
       refute session[:user_tokens]
     end
 
-    ['my-shop', 'my-shop.myshopify.com', 'https://my-shop.myshopify.com',
-     'http://my-shop.myshopify.com'].each do |good_url|
+    ["my-shop", "my-shop.myshopify.com", "https://my-shop.myshopify.com",
+     "http://my-shop.myshopify.com",].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url})" do
-        shopify_domain = 'my-shop.myshopify.com'
+        shopify_domain = "my-shop.myshopify.com"
         post :create, params: { shop: good_url }
         assert_redirected_to_top_level(shopify_domain)
       end
     end
 
-    ['my-shop', 'my-shop.myshopify.io', 'https://my-shop.myshopify.io',
-     'http://my-shop.myshopify.io'].each do |good_url|
+    ["my-shop", "my-shop.myshopify.io", "https://my-shop.myshopify.io",
+     "http://my-shop.myshopify.io",].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain" do
-        ShopifyApp.configuration.myshopify_domain = 'myshopify.io'
-        shopify_domain = 'my-shop.myshopify.io'
+        ShopifyApp.configuration.myshopify_domain = "myshopify.io"
+        shopify_domain = "my-shop.myshopify.io"
         post :create, params: { shop: good_url }
         assert_redirected_to_top_level(shopify_domain)
       end
     end
 
-    ['myshop.com', 'myshopify.com', 'shopify.com', 'two words',
-     'store.myshopify.com.evil.com', '/foo/bar'].each do |bad_url|
+    ["myshop.com", "myshopify.com", "shopify.com", "two words",
+     "store.myshopify.com.evil.com", "/foo/bar",].each do |bad_url|
       test "#create should return an error for a non-myshopify URL (#{bad_url})" do
         post :create, params: { shop: bad_url }
         assert_response :redirect
-        assert_redirected_to '/'
-        assert_equal I18n.t('invalid_shop_url'), flash[:error]
+        assert_redirected_to "/"
+        assert_equal I18n.t("invalid_shop_url"), flash[:error]
       end
     end
 
-    test '#create should return an error for a non-myshopify URL when using JWT authentication' do
-      post :create, params: { shop: 'invalid domain' }
+    test "#create should return an error for a non-myshopify URL when using JWT authentication" do
+      post :create, params: { shop: "invalid domain" }
       assert_response :redirect
-      assert_redirected_to '/'
-      assert_equal I18n.t('invalid_shop_url'), flash[:error]
+      assert_redirected_to "/"
+      assert_equal I18n.t("invalid_shop_url"), flash[:error]
     end
 
     test "#create should render the login page if the shop param doesn't exist" do
       post :create
-      assert_redirected_to '/'
+      assert_redirected_to "/"
     end
 
     test "#destroy should reset rails session and redirect to login with notice" do
       shop_id = 1
       session[:shopify] = shop_id
-      session[:shopify_domain] = 'shop1.myshopify.com'
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      session[:foo] = 'bar'
+      session[:shopify_domain] = "shop1.myshopify.com"
+      session[:shopify_user] = { "id" => 1, "email" => "foo@example.com" }
+      session[:foo] = "bar"
 
       get :destroy
 
@@ -212,15 +213,15 @@ module ShopifyApp
       assert_nil session[:shopify_user]
       assert_nil session[:foo]
       assert_redirected_to login_path
-      assert_equal 'Successfully logged out', flash[:notice]
+      assert_equal "Successfully logged out", flash[:notice]
     end
 
-    test '#destroy should redirect with notice in spanish' do
+    test "#destroy should redirect with notice in spanish" do
       I18n.locale = :es
 
       get :destroy
 
-      assert_equal 'Cerrar sesión', flash[:notice]
+      assert_equal "Cerrar sesión", flash[:notice]
     end
 
     private
@@ -228,10 +229,10 @@ module ShopifyApp
     def assert_redirected_to_top_level(shop_domain, expected_url = nil)
       expected_url ||= "/login?shop=#{shop_domain}\\u0026top_level=true"
 
-      assert_template('shared/redirect')
-      assert_select '[id=redirection-target]', 1 do |elements|
+      assert_template("shared/redirect")
+      assert_select "[id=redirection-target]", 1 do |elements|
         assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{expected_url}\"}",
-          elements.first['data-target']
+          elements.first["data-target"]
       end
     end
   end

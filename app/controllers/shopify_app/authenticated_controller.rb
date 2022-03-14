@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class AuthenticatedController < ActionController::Base
     include ShopifyApp::Authenticated

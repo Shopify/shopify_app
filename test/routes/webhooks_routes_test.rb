@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 class WebhooksRoutingTest < ActionController::TestCase
   setup do
@@ -8,8 +9,8 @@ class WebhooksRoutingTest < ActionController::TestCase
 
   test "webhooks routing" do
     assert_routing(
-      { method: 'post', path: 'webhooks/test' },
-      { controller: 'shopify_app/webhooks', action: 'receive', type: 'test' }
+      { method: "post", path: "webhooks/test" },
+      { controller: "shopify_app/webhooks", action: "receive", type: "test" }
     )
   end
 end
