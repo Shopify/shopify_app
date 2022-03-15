@@ -1,4 +1,4 @@
-//= require ./app_bridge_1.30.0.js
+//= require ./app_bridge_2.0.12.js
 
 (function(window) {
   function appBridgeRedirect(url) {
@@ -9,8 +9,7 @@
 
     var app = createApp({
       apiKey: shopifyData.apiKey,
-      shopOrigin: shopifyData.shopOrigin,
-      forceRedirect: false,
+      host: shopifyData.host,
     });
 
     var normalizedLink = document.createElement('a');
