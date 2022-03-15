@@ -81,7 +81,7 @@ module Utils
         ShopifyAPI::Context.setup(
           api_key: "API_KEY",
           api_secret_key: "API_SECRET_KEY",
-          api_version: "unstable",
+          api_version: "2022-01",
           host_name: "app-address.com",
           scope: ["scope1", "scope2"],
           is_private: is_private,

@@ -21,7 +21,7 @@ class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
         raise "Invalid JSON provided: #{json}" unless json == { products: [] }
       end
 
-      stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
+      stub_request(:get, "https://my-shop/admin/api/2022-01/products.json?limit=10")
         .to_return(status: 200, body: "{\"products\":[]}", headers: {})
 
       controller.index
