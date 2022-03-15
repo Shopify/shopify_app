@@ -23,10 +23,10 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
     with_home_controller(is_embedded: false) do
       controller = HomeController.new
 
-      stub_request(:get, "https://my-shop/admin/api/unstable/products.json?limit=10")
+      stub_request(:get, "https://my-shop/admin/api/2022-01/products.json?limit=10")
         .to_return(status: 200, body: "{\"products\":[]}", headers: {})
 
-      stub_request(:get, "https://my-shop/admin/api/unstable/webhooks.json")
+      stub_request(:get, "https://my-shop/admin/api/2022-01/webhooks.json")
         .to_return(status: 200, body: "{}", headers: {})
 
       controller.index

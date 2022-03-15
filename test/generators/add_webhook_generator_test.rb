@@ -49,10 +49,10 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
   private
 
   def exisiting_webhook
-    "{ topic: 'carts/update', address: 'https://example.com/webhooks/carts_update' },"
+    "{ topic: \"carts/update\", address: \"https://example.com/webhooks/carts_update\" },"
   end
 
   def new_webhook
-    "{ topic: 'products/update', address: 'https://example.com/webhooks/product_update' }"
+    "{ topic: \"products/update\", address: \"https://example.com/webhooks/product_update\" }"
   end
 end

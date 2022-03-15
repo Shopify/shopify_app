@@ -55,7 +55,7 @@ module ShopifyApp
       end
 
       def webhook_config
-        "\n    { topic: '#{topic}', address: '#{address}' },"
+        "\n    { topic: \"#{topic}\", address: \"#{address}\" },"
       end
 
       def topic
