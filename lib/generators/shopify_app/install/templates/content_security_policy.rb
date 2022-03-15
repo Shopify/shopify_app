@@ -14,6 +14,8 @@
 #     policy.script_src  :self, :https
 #     policy.style_src   :self, :https
 #     # Specify frame ancestors for embedded apps
+#     # For more information, see the following documentation
+#     # https://shopify.dev/apps/store/security/iframe-protection
 #     policy.frame_ancestors :https, -> { "https://#{current_shopify_domain} https://admin.shopify.com;" }
 #     # Specify URI for violation reports
 #     # policy.report_uri "/csp-violation-report-endpoint"
