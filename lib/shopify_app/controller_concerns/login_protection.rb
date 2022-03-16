@@ -81,9 +81,7 @@ module ShopifyApp
     end
 
     def host
-      return params[:host] if params[:host].present?
-
-      raise ShopifyHostNotFound
+      params[:host]
     end
 
     def redirect_to_login
@@ -143,6 +141,10 @@ module ShopifyApp
 
       if has_referer_shop_name
         query_params[:shop] ||= referer_sanitized_shop_name
+      end
+
+      if params[:host].present?
+        query_params[:host] ||= host
       end
 
       query_params[:top_level] = true if top_level
