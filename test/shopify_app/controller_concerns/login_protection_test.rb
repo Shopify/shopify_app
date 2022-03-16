@@ -1,8 +1,9 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'action_controller'
-require 'action_controller/base'
-require 'action_view/testing/resolvers'
+
+require "test_helper"
+require "action_controller"
+require "action_controller/base"
+require "action_view/testing/resolvers"
 
 class LoginProtectionController < ActionController::Base
   include ShopifyApp::EmbeddedApp
@@ -17,7 +18,7 @@ class LoginProtectionController < ActionController::Base
   end
 
   def index_with_headers
-    response.set_header('Mock-Header', 'Mock-Value')
+    response.set_header("Mock-Header", "Mock-Value")
     signal_access_token_required
     render(plain: "OK")
   end
@@ -31,7 +32,11 @@ class LoginProtectionController < ActionController::Base
   end
 
   def raise_unauthorized
-    raise ActiveResource::UnauthorizedAccess, 'unauthorized'
+    raise ShopifyAPI::Errors::HttpResponseError.new(code: 401), "unauthorized"
+  end
+
+  def raise_not_found
+    raise ShopifyAPI::Errors::HttpResponseError.new(code: 404), "not found"
   end
 end
 
@@ -42,238 +47,191 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
-    ShopifyApp.configuration.api_key = 'api_key'
-
-    request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) '\
-                                     'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
-  end
-
-  test '#index sets test cookie if embedded app and user agent can partition cookies' do
-    with_application_test_routes do
-      request.env['HTTP_USER_AGENT'] = 'Version/12.0 Safari'
-      get :index
-      assert_equal true, session['shopify.cookies_persist']
-    end
-  end
-
-  test '#index doesn\'t set test cookie if non embedded app' do
-    with_application_test_routes do
-      ShopifyApp.configuration.embedded_app = false
-
-      get :index
-      assert_nil session['shopify.cookies_persist']
-    end
+    request.env["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) "\
+      "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
   end
 
   test "#current_shopify_session returns nil when session is nil" do
     with_application_test_routes do
-      session[:shop_id] = nil
+      session[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = nil
       get :index
       assert_nil @controller.current_shopify_session
     end
   end
 
-  test "#current_shopify_session retrieves user session using jwt" do
-    ShopifyApp.configuration.allow_jwt_authentication = true
-    domain = 'https://test.myshopify.io'
-    token = 'admin_api_token'
-    dest = 'shopify_domain'
-    sub = 'shopify_user'
+  test "#current_shopify_session loads online session if user session expected" do
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
 
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: token,
-      api_version: '2020-01',
-    )
-
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id)
-      .at_most(2).with(sub).returns(expected_session)
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
+    ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
+      .with(
+        auth_header: "Bearer token",
+        cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => "cookie" },
+        is_online: true
+      )
+      .returns(nil)
 
     with_application_test_routes do
-      request.env['jwt.shopify_domain'] = dest
-      request.env['jwt.shopify_user_id'] = sub
       get :index
-
-      assert_equal expected_session, @controller.current_shopify_session
     end
   end
 
-  test "#current_shopify_session retrieves shop session using jwt" do
-    ShopifyApp.configuration.allow_jwt_authentication = true
-    domain = 'https://test.myshopify.io'
-    token = 'admin_api_token'
-    dest = 'test.shopify.com'
+  test "#current_shopify_session loads offline session if user session unexpected" do
+    ShopifyApp::SessionRepository.user_storage = nil
 
-    expected_session = ShopifyAPI::Session.new(
-      domain: domain,
-      token: token,
-      api_version: '2020-01',
-    )
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
 
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).never
-    ShopifyApp::SessionRepository.expects(:retrieve_user_session).never
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain)
-      .with(dest).returns(expected_session)
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session).never
+    ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
+      .with(
+        auth_header: "Bearer token",
+        cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => "cookie" },
+        is_online: false
+      )
+      .returns(nil)
 
     with_application_test_routes do
-      request.env['jwt.shopify_domain'] = dest
       get :index
-
-      assert_equal expected_session, @controller.current_shopify_session
     end
   end
 
-  test "#current_shopify_session retrieves using session user_id when allow_cookie_authentication is enabled" do
-    ShopifyApp.configuration.allow_cookie_authentication = true
-    with_application_test_routes do
-      session[:user_id] = '145'
-      get :index
-      ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(session).once
-      assert @controller.current_shopify_session
-    end
-  end
+  test "#current_shopify_session is nil if token is invalid" do
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer invalid"
 
-  test "#current_shopify_session retrieves using session[:shop_id] when shopify_user not present and allow_cookie_authentication" do
-    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
-      session[:shop_id] = "shopify_id"
       get :index
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).with(session[:shop_id]).returns(session).once
-      assert @controller.current_shopify_session
-    end
-  end
-
-  test "#current_shopify_session is nil when neither jwt nor cookie based auth are allowed" do
-    ShopifyApp.configuration.allow_cookie_authentication = false
-    with_application_test_routes do
-      session[:shop_id] = "shopify_id"
-      session[:user_id] = '145'
-      get :index
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).with(session[:shop_id]).returns(session).never
-      ShopifyApp::SessionRepository.expects(:retrieve_user_session).with(session[:user_id]).returns(session).never
       assert_nil @controller.current_shopify_session
     end
   end
 
   test "#current_shopify_session is memoized and does not retrieve session twice" do
-    shop_session_record = ShopifyAPI::Session.new(
-      domain: 'my-shop',
-      token: '1234',
-      api_version: nil,
+    shop_session_record = ShopifyAPI::Auth::Session.new(
+      shop: "my-shop",
+      access_token: "1234",
     )
     with_application_test_routes do
-      request.env['jwt.shopify_domain'] = 'foobar'
       get :index
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(shop_session_record).once
+      ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(shop_session_record).once
       assert @controller.current_shopify_session
     end
   end
 
-  test "#login_again_if_different_user_or_shop removes current session if the user changes when in per-user-token mode" do
-    with_application_test_routes do
-      session[:shop_id] = "1"
-      session[:shopify_domain] = "foobar"
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      session[:user_session] = 'old-user-session'
-      params = { shop: 'foobar', session: 'new-user-session' }
-      get :second_login, params: params
-      assert_nil session[:shop_id]
-      assert_nil session[:shopify_domain]
-      assert_nil session[:shopify_user]
-      assert_nil session[:user_session]
-    end
-  end
+  test "#login_again_if_different_user_or_shop removes current cookie if the session changes" do
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
 
-  test "#login_again_if_different_user_or_shop retains current session if the users session doesn't change" do
+    ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
+      .returns(ShopifyAPI::Auth::Session.new(shop: "shop", shopify_session_id: "123"))
+
     with_application_test_routes do
-      session[:shop_id] = "1"
-      session[:shopify_domain] = "foobar"
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      session[:user_session] = 'old-user-session'
-      params = { shop: 'foobar', session: 'old-user-session' }
+      params = { session: "456" }
       get :second_login, params: params
-      assert session[:shop_id], "1"
-      assert session[:shopify_domain], "foobar"
-      assert session[:shopify_user], { 'id' => 1, 'email' => 'foo@example.com' }
-      assert session[:user_session], 'old-user-session'
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#login_again_if_different_user_or_shop retains current session if params not present" do
     with_application_test_routes do
-      session[:shop_id] = "1"
-      session[:shopify_domain] = "foobar"
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      session[:user_session] = 'old-user-session'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "old-cookie"
+
+      ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
+        ShopifyAPI::Auth::Session.new(shop: "some-shop")
+      ).once
+
       get :second_login
-      assert session[:shop_id], "1"
-      assert session[:shopify_domain], "foobar"
-      assert session[:shopify_user], { 'id' => 1, 'email' => 'foo@example.com' }
-      assert session[:user_session], 'old-user-session'
+
+      assert_equal "old-cookie", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#login_again_if_different_user_or_shop removes current session and redirects to login url" do
-    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
-      session[:shop_id] = "foobar"
-      session[:user_id] = 123
-      session[:shopify_domain] = "foobar"
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-      sess = stub(domain: 'https://foobar.myshopify.com')
-      ShopifyApp::SessionRepository.expects(:retrieve_user_session).returns(sess).once
-      get :second_login, params: { shop: 'other-shop' }
-      assert_redirected_to '/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com'\
-                           '&shop=other-shop.myshopify.com'
-      assert_nil session[:shop_id]
-      assert_nil session[:shopify_domain]
-      assert_nil session[:shopify_user]
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "old-cookie"
+
+      ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
+        ShopifyAPI::Auth::Session.new(shop: "some-shop")
+      ).once
+
+      get :second_login, params: { shop: "other-shop" }
+      assert_redirected_to "/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com"\
+        "&shop=other-shop.myshopify.com"
+
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+    end
+  end
+
+  test "#current_shopify_session redirects to login if the loaded session doesn't have enough scope" do
+    ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1", "scope2"]))
+
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
+
+    ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
+      .with(
+        auth_header: "Bearer token",
+        cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => "cookie" },
+        is_online: true
+      )
+      .returns(
+        ShopifyAPI::Auth::Session.new(shop: "some-shop", scope: ["scope1"])
+      )
+
+    with_application_test_routes do
+      get :index
+
+      assert_redirected_to "/login"
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+    end
+  end
+
+  test "#current_shopify_session does not redirect when sufficient scope" do
+    ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1"]))
+
+    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
+
+    ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session)
+      .with(
+        auth_header: "Bearer token",
+        cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => "cookie" },
+        is_online: true
+      )
+      .returns(
+        ShopifyAPI::Auth::Session.new(shop: "some-shop", scope: ["scope1", "scope2"])
+      )
+
+    with_application_test_routes do
+      get :index
+      assert_response :ok
+      assert_equal "cookie", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#login_again_if_different_user_or_shop ignores non-String shop params so that Rails params for Shop model can be accepted" do
-    ShopifyApp.configuration.allow_cookie_authentication = true
     with_application_test_routes do
-      session[:shop_id] = "foobar"
-      session[:shopify_domain] = "foobar"
-      sess = stub(domain: 'https://foobar.myshopify.com')
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(sess).once
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "old-cookie"
+
+      ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
+        ShopifyAPI::Auth::Session.new(shop: "some-shop")
+      ).once
 
       get :second_login, params: { shop: { id: 123, disabled: true } }
       assert_response :ok
     end
   end
 
-  test '#activate_shopify_session with only shop_session, clears top-level auth cookie' do
+  test "#activate_shopify_session with no Shopify session, redirects to the login url" do
     with_application_test_routes do
-      ShopifyApp::SessionRepository.user_storage = nil
-
-      session['shopify.top_level_oauth'] = true
-      sess = stub(domain: 'https://foobar.myshopify.com')
-      @controller.expects(:current_shopify_session).returns(sess).at_least_once
-      ShopifyAPI::Base.expects(:activate_session).with(sess)
-
-      get :index, params: { shop: 'foobar' }
-      assert_nil session['shopify.top_level_oauth']
+      get :index, params: { shop: "foobar" }
+      assert_redirected_to "/login?shop=foobar.myshopify.com"
     end
   end
 
-  test '#activate_shopify_session with no Shopify session, redirects to the login url' do
-    with_application_test_routes do
-      get :index, params: { shop: 'foobar' }
-      assert_redirected_to '/login?shop=foobar.myshopify.com'
-    end
-  end
-
-  test '#activate_shopify_session with no Shopify session, redirects to a custom config login url' do
-    with_custom_login_url 'https://domain.com/custom/route/login' do
+  test "#activate_shopify_session with no Shopify session, redirects to a custom config login url" do
+    with_custom_login_url "https://domain.com/custom/route/login" do
       with_application_test_routes do
-        get :index, params: { shop: 'foobar' }
-        assert_redirected_to 'https://domain.com/custom/route/login?shop=foobar.myshopify.com'
+        get :index, params: { shop: "foobar" }
+        assert_redirected_to "https://domain.com/custom/route/login?shop=foobar.myshopify.com"
       end
     end
   end
@@ -283,23 +241,23 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       ShopifyApp.configuration.user_session_repository = nil
       @controller.expects(:current_shopify_session).returns(nil)
-      request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
+      request.headers["Referer"] = "https://example.com/?shop=my-shop.myshopify.com"
 
       get :index
-      assert_redirected_to '/login?shop=my-shop.myshopify.com'
+      assert_redirected_to "/login?shop=my-shop.myshopify.com"
     end
   end
 
   test "#activate_shopify_session with no Shopify session, redirects to a custom config login url with \
         shop param of referer" do
-    with_custom_login_url 'https://domain.com/custom/route/login' do
+    with_custom_login_url "https://domain.com/custom/route/login" do
       with_application_test_routes do
         ShopifyApp.configuration.user_session_repository = nil
         @controller.expects(:current_shopify_session).returns(nil)
-        request.headers['Referer'] = 'https://example.com/?shop=my-shop.myshopify.com'
+        request.headers["Referer"] = "https://example.com/?shop=my-shop.myshopify.com"
 
         get :index
-        assert_redirected_to 'https://domain.com/custom/route/login?shop=my-shop.myshopify.com'
+        assert_redirected_to "https://domain.com/custom/route/login?shop=my-shop.myshopify.com"
       end
     end
   end
@@ -315,7 +273,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test '#activate_shopify_session with no Shopify session, redirects to a custom config login url \
         with non-String shop param' do
-    with_custom_login_url 'https://domain.com/custom/route/login' do
+    with_custom_login_url "https://domain.com/custom/route/login" do
       with_application_test_routes do
         params = { shop: { id: 123 } }
         get :index, params: params
@@ -324,10 +282,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test '#activate_shopify_session with no Shopify session, sets session[:return_to]' do
+  test "#activate_shopify_session with no Shopify session, sets session[:return_to]" do
     with_application_test_routes do
-      get :index, params: { shop: 'foobar' }
-      assert_equal '/?shop=foobar.myshopify.com', session[:return_to]
+      get :index, params: { shop: "foobar" }
+      assert_equal "/?shop=foobar.myshopify.com", session[:return_to]
     end
   end
 
@@ -340,144 +298,108 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test '#activate_shopify_session with no Shopify session, when the request is a POST, sets session[:return_to]' do
+  test "#activate_shopify_session with no Shopify session, when the request is a POST, sets session[:return_to]" do
     with_application_test_routes do
-      request.headers['Referer'] = 'https://example.com/?id=123'
-      post :index, params: { id: '123', shop: 'foobar' }
-      assert_equal '/?id=123&shop=foobar.myshopify.com', session[:return_to]
+      request.headers["Referer"] = "https://example.com/?id=123"
+      post :index, params: { id: "123", shop: "foobar" }
+      assert_equal "/?id=123&shop=foobar.myshopify.com", session[:return_to]
     end
   end
 
-  test '#activate_shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401' do
+  test "#activate_shopify_session with no Shopify session, when the request is an XHR, returns an HTTP 401" do
     with_application_test_routes do
-      get :index, params: { shop: 'foobar' }, xhr: true
+      get :index, params: { shop: "foobar" }, xhr: true
       assert_equal 401, response.status
     end
   end
 
-  test '#activate_shopify_session with shop_session and no user_session when \
-        user_session expected returns an HTTP 401 when the request is an XHR' do
-    ShopifyApp.configuration.allow_cookie_authentication = true
-    # Set up a shop_session
+  test "#activate_shopify_session when rescuing from unauthorized access, closes session" do
     with_application_test_routes do
-      session[:shop_id] = 'foobar'
-      get :index, params: { shop: 'foobar' }, xhr: true
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
-      assert @controller.current_shopify_session
-      assert_equal 401, response.status
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+
+      get :raise_unauthorized, params: { shop: "foobar" }
+      assert_redirected_to "/login?shop=foobar.myshopify.com"
+      assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
-  test '#activate_shopify_session with shop_session and no user_session when \
-        user_session expected redirect to login when the request is not an XHR' do
-    ShopifyApp.configuration.allow_cookie_authentication = true
-    # Set up a shop_session
+  test "#activate_shopify_session when rescuing from non 401 errors, does not close session" do
     with_application_test_routes do
-      session[:shop_id] = 'foobar'
-      get :index, params: { shop: 'foobar' }
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session).returns(session).once
-      assert @controller.current_shopify_session
-      assert_equal 302, response.status
-      assert_redirected_to '/login?shop=foobar.myshopify.com'
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
+
+      assert_raises(ShopifyAPI::Errors::HttpResponseError) do
+        get :raise_not_found, params: { shop: "foobar" }
+      end
+
+      assert_equal "cookie", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
-  test '#activate_shopify_session when rescuing from unauthorized access, redirects to the login url' do
+  test "#fullpage_redirect_to sends a post message to that shop in the shop param" do
     with_application_test_routes do
-      get :raise_unauthorized, params: { shop: 'foobar' }
-      assert_redirected_to '/login?shop=foobar.myshopify.com'
-    end
-  end
-
-  test '#activate_shopify_session when rescuing from unauthorized access, clears shop session' do
-    with_application_test_routes do
-      session[:shop_id] = 'foobar'
-      session[:shopify_domain] = 'foobar'
-      session[:shopify_user] = { 'id' => 1, 'email' => 'foo@example.com' }
-
-      get :raise_unauthorized, params: { shop: 'foobar' }
-
-      assert_nil session[:shop_id]
-      assert_nil session[:shopify_domain]
-      assert_nil session[:shopify_user]
-    end
-  end
-
-  test '#fullpage_redirect_to sends a post message to that shop in the shop param' do
-    with_application_test_routes do
-      example_shop = 'shop.myshopify.com'
+      example_shop = "shop.myshopify.com"
       get :redirect, params: { shop: example_shop }
       assert_fullpage_redirected(example_shop, response)
     end
   end
 
-  test '#fullpage_redirect_to, when the shop params is missing, sends a post message to the shop in the jwt' do
-    ShopifyApp.configuration.allow_jwt_authentication = true
-    domain = 'shop.myshopify.com'
-
+  test "#fullpage_redirect_to, when the shop params is missing, sends a post message to the shop in the session" do
     with_application_test_routes do
-      request.env['jwt.shopify_domain'] = domain
-      get :redirect
-      assert_fullpage_redirected(domain, response)
-    end
-  end
-
-  test '#fullpage_redirect_to, when the shop params is missing, sends a post message to the shop in the session' do
-    with_application_test_routes do
-      example_shop = 'shop.myshopify.com'
-      session[:shopify_domain] = example_shop
+      example_shop = "shop.myshopify.com"
+      ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
+        .returns(ShopifyAPI::Auth::Session.new(shop: example_shop))
       get :redirect
       assert_fullpage_redirected(example_shop, response)
     end
   end
 
-  test '#fullpage_redirect_to raises an exception when no Shopify domains are available' do
+  test "#fullpage_redirect_to raises an exception when no Shopify domains are available" do
     with_application_test_routes do
-      session[:shopify_domain] = nil
+      ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
+        .returns(nil)
       assert_raise ShopifyApp::LoginProtection::ShopifyDomainNotFound do
         get :redirect
       end
     end
   end
 
-  test '#fullpage_redirect_to skips rendering layout' do
+  test "#fullpage_redirect_to skips rendering layout" do
     with_application_test_routes do
-      example_shop = 'shop.myshopify.com'
+      example_shop = "shop.myshopify.com"
       get :redirect, params: { shop: example_shop }
       rendered_templates = @_templates.keys
-      assert_equal(['shopify_app/shared/redirect'], rendered_templates)
+      assert_equal(["shopify_app/shared/redirect"], rendered_templates)
     end
   end
 
-  test '#fullpage_redirect_to, when not an embedded app, does a regular redirect' do
+  test "#fullpage_redirect_to, when not an embedded app, does a regular redirect" do
     ShopifyApp.configuration.embedded_app = false
 
     with_application_test_routes do
       get :redirect
-      assert_redirected_to 'https://example.com'
+      assert_redirected_to "https://example.com"
     end
   end
 
-  test 'signal_access_token_required sets X-Shopify-API-Request-Unauthorized header' do
+  test "signal_access_token_required sets X-Shopify-API-Request-Unauthorized header" do
     with_application_test_routes do
       get :index_with_headers
-      assert_equal 'true', response.get_header('X-Shopify-API-Request-Failure-Unauthorized')
+      assert_equal "true", response.get_header("X-Shopify-API-Request-Failure-Unauthorized")
     end
   end
 
-  test 'signal_access_token_required does not overwrite previously set headers' do
+  test "signal_access_token_required does not overwrite previously set headers" do
     with_application_test_routes do
       get :index_with_headers
-      assert_equal 'Mock-Value', response.get_header('Mock-Header')
+      assert_equal "Mock-Value", response.get_header("Mock-Header")
     end
   end
 
   test "#jwt_expire_at returns jwt expire at with 5s gap" do
-    ShopifyApp.configuration.allow_jwt_authentication = true
     expire_at = 2.hours.from_now.to_i
 
     with_application_test_routes do
-      request.env['jwt.expire_at'] = expire_at
+      request.env["jwt.expire_at"] = expire_at
       get :index
 
       assert_equal expire_at - 5.seconds, @controller.jwt_expire_at
@@ -489,21 +411,22 @@ class LoginProtectionControllerTest < ActionController::TestCase
   def assert_fullpage_redirected(shop_domain, _response)
     example_url = "https://example.com"
 
-    assert_template('shared/redirect')
-    assert_select '[id=redirection-target]', 1 do |elements|
+    assert_template("shared/redirect")
+    assert_select "[id=redirection-target]", 1 do |elements|
       assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
-        elements.first['data-target']
+        elements.first["data-target"]
     end
   end
 
   def with_application_test_routes
     with_routing do |set|
       set.draw do
-        get '/' => 'login_protection#index'
-        get '/second_login' => 'login_protection#second_login'
-        get '/redirect' => 'login_protection#redirect'
-        get '/raise_unauthorized' => 'login_protection#raise_unauthorized'
-        get '/index_with_headers' => 'login_protection#index_with_headers'
+        get "/" => "login_protection#index"
+        get "/second_login" => "login_protection#second_login"
+        get "/redirect" => "login_protection#redirect"
+        get "/raise_unauthorized" => "login_protection#raise_unauthorized"
+        get "/raise_not_found" => "login_protection#raise_not_found"
+        get "/index_with_headers" => "login_protection#index_with_headers"
       end
       yield
     end

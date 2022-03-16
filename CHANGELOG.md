@@ -1,3 +1,8 @@
+UNRELEASED
+----------
+* Deprecates use of cookies in embedded apps
+  * Removes `enable_same_site_none` configuration parameter from ShopifyApp::Configuration
+
 18.1.2 (Mar 3, 2022)
 ----------
 * Use the App Bridge 2.0 redirect when attempting to break out of an iframe. This happens when an app is installed, requires new access scopes, or re-authentication because the login session is expired. [#1376](https://github.com/Shopify/shopify_app/pull/1376)

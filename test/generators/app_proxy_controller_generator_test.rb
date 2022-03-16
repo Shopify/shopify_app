@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/app_proxy_controller/app_proxy_controller_generator'
+
+require "test_helper"
+require "generators/shopify_app/app_proxy_controller/app_proxy_controller_generator"
 
 class AppProxyControllerGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AppProxyControllerGenerator
@@ -24,7 +25,7 @@ class AppProxyControllerGeneratorTest < Rails::Generators::TestCase
   test "adds app_proxy route to routes" do
     run_generator
     assert_file "config/routes.rb" do |routes|
-      assert_match "mount ShopifyApp::Engine, at: '/'\n", routes
+      assert_match "mount ShopifyApp::Engine, at: \"/\"\n", routes
       assert "namespace :app_proxy do\n", routes
     end
   end

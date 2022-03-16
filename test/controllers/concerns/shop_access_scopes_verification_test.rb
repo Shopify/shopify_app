@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 class ScopesVerificationController < ActionController::Base
   include ShopifyApp::ShopAccessScopesVerification
@@ -14,15 +15,15 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
 
   setup do
     ShopifyApp.configuration.reauth_on_access_scope_changes = true
-    @shopify_domain = 'test-shop.myshopify.com'
-    @host = 'https://mock-host/admin'
+    @shopify_domain = "test-shop.myshopify.com"
+    @host = "https://mock-host/admin"
 
     Rails.application.routes.draw do
-      get '/', to: 'scopes_verification#index'
+      get "/", to: "scopes_verification#index"
     end
   end
 
-  test '#login_on_scope_changes does nothing if shop scopes match' do
+  test "#login_on_scope_changes does nothing if shop scopes match" do
     mock_shop_scopes_match_strategy
 
     get :index, params: { shop: @shopify_domain, host: @host }
@@ -30,7 +31,7 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
     assert_response :ok
   end
 
-  test '#login_on_scope_changes redirects to login when scopes do not match' do
+  test "#login_on_scope_changes redirects to login when scopes do not match" do
     mock_shop_scopes_mismatch_strategy
 
     get :index, params: { shop: @shopify_domain, host: @host }
