@@ -44,7 +44,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       ]
     end
     ShopifyApp::WebhooksManager.add_registrations
-    ShopifyApp::WebhooksManager.recreate_webhooks!
+    ShopifyApp::WebhooksManager.recreate_webhooks!(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
   end
 
   test "#recreate_webhooks! does not call unregister if there is no webhook" do
@@ -56,6 +56,6 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       config.webhooks = []
     end
     ShopifyApp::WebhooksManager.add_registrations
-    ShopifyApp::WebhooksManager.recreate_webhooks!
+    ShopifyApp::WebhooksManager.recreate_webhooks!(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
   end
 end
