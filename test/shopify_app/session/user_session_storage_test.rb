@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 class UserMockSessionStore < ActiveRecord::Base
   include ShopifyApp::UserSessionStorage
@@ -20,8 +21,8 @@ module ShopifyApp
 
       session = UserMockSessionStore.retrieve(shopify_user_id: TEST_SHOPIFY_USER_ID)
 
-      assert_equal TEST_SHOPIFY_DOMAIN, session.domain
-      assert_equal TEST_SHOPIFY_USER_TOKEN, session.token
+      assert_equal TEST_SHOPIFY_DOMAIN, session.shop
+      assert_equal TEST_SHOPIFY_USER_TOKEN, session.access_token
     end
 
     test ".retrieve_by_shopify_user_id returns user session by shopify_user_id" do
@@ -29,21 +30,19 @@ module ShopifyApp
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
-        api_version: '2020-01',
+        api_version: "2020-01",
       )
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
-      expected_session = ShopifyAPI::Session.new(
-        domain: instance.shopify_domain,
-        token: instance.shopify_token,
-        api_version: instance.api_version,
+      expected_session = ShopifyAPI::Auth::Session.new(
+        shop: instance.shopify_domain,
+        access_token: instance.shopify_token,
       )
 
       user_id = TEST_SHOPIFY_USER_ID
       session = UserMockSessionStore.retrieve_by_shopify_user_id(user_id)
-      assert_equal expected_session.domain, session.domain
-      assert_equal expected_session.token, session.token
-      assert_equal expected_session.api_version, session.api_version
+      assert_equal expected_session.shop, session.shop
+      assert_equal expected_session.access_token, session.access_token
     end
 
     test ".store can store user session record" do
@@ -53,8 +52,8 @@ module ShopifyApp
       UserMockSessionStore.stubs(:find_or_initialize_by).returns(mock_user_instance)
 
       mock_auth_hash = mock
-      mock_auth_hash.stubs(:domain).returns(mock_user_instance.shopify_domain)
-      mock_auth_hash.stubs(:token).returns("a-new-user_token!")
+      mock_auth_hash.stubs(:shop).returns(mock_user_instance.shopify_domain)
+      mock_auth_hash.stubs(:access_token).returns("a-new-user_token!")
 
       associated_user = {
         id: 100,
@@ -66,15 +65,15 @@ module ShopifyApp
       assert_equal mock_user_instance.id, saved_id
     end
 
-    test '.retrieve returns nil for non-existent user' do
-      user_id = 'non-existent-user'
+    test ".retrieve returns nil for non-existent user" do
+      user_id = "non-existent-user"
       UserMockSessionStore.stubs(:find_by).with(id: user_id).returns(nil)
 
       refute UserMockSessionStore.retrieve(user_id)
     end
 
-    test '.retrieve_by_user_id returns nil for non-existent user' do
-      user_id = 'non-existent-user'
+    test ".retrieve_by_user_id returns nil for non-existent user" do
+      user_id = "non-existent-user"
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: user_id).returns(nil)
 
       refute UserMockSessionStore.retrieve_by_shopify_user_id(user_id)

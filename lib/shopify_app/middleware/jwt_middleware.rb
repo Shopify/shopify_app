@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class JWTMiddleware
     TOKEN_REGEX = /^Bearer\s+(.*?)$/
@@ -24,7 +25,7 @@ module ShopifyApp
     end
 
     def authorization_header(env)
-      env['HTTP_AUTHORIZATION']
+      env["HTTP_AUTHORIZATION"]
     end
 
     def extract_token(env)
@@ -35,9 +36,9 @@ module ShopifyApp
     def set_env_variables(token, env)
       jwt = ShopifyApp::JWT.new(token)
 
-      env['jwt.shopify_domain'] = jwt.shopify_domain
-      env['jwt.shopify_user_id'] = jwt.shopify_user_id
-      env['jwt.expire_at'] = jwt.expire_at
+      env["jwt.shopify_domain"] = jwt.shopify_domain
+      env["jwt.shopify_user_id"] = jwt.shopify_user_id
+      env["jwt.expire_at"] = jwt.expire_at
     end
   end
 end

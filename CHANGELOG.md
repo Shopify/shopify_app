@@ -1,3 +1,7 @@
+UNRELEASED
+----------
+* Use v10 of the Shopify API (https://github.com/Shopify/shopify_api). This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for details.
+
 18.1.2 (Mar 3, 2022)
 ----------
 * Use the App Bridge 2.0 redirect when attempting to break out of an iframe. This happens when an app is installed, requires new access scopes, or re-authentication because the login session is expired. [#1376](https://github.com/Shopify/shopify_app/pull/1376)

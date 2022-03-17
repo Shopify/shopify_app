@@ -1,7 +1,9 @@
 # frozen_string_literal: true
-require File.expand_path('../boot', __FILE__)
 
-require 'rails/all'
+require File.expand_path("../boot", __FILE__)
+
+require "rails/all"
+require "sprockets/railtie"
 
 Bundler.require(*Rails.groups)
 require "shopify_app"
