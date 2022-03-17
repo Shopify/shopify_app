@@ -1,7 +1,6 @@
 UNRELEASED
 ----------
-* Deprecates use of cookies in embedded apps
-  * Removes `enable_same_site_none` configuration parameter from ShopifyApp::Configuration
+* Use v10 of the Shopify API (https://github.com/Shopify/shopify_api). This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for details.
 
 18.1.2 (Mar 3, 2022)
 ----------
