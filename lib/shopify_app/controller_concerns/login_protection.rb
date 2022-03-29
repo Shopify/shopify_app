@@ -10,7 +10,7 @@ module ShopifyApp
     class ShopifyDomainNotFound < StandardError; end
 
     class ShopifyHostNotFound < StandardError; end
-    
+
     attr_reader :host
 
     included do
