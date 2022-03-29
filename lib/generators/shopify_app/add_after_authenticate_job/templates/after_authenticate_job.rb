@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
     def perform(shop_domain:)

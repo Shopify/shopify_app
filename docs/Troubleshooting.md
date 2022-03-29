@@ -87,9 +87,6 @@ Edit `config/initializer/shopify_app.rb` and ensure the following configurations
 ```diff
 + config.embedded_app = true
 
-+ config.allow_jwt_authentication = true
-+ config.allow_cookie_authentication = false
-
 # This line should already exist if you're using shopify_app gem 13.x.x+
 + config.shop_session_repository = 'Shop'
 ```

@@ -28,7 +28,7 @@ module ShopifyApp
       redirect_to(splash_page)
     rescue ShopifyApp::LoginProtection::ShopifyDomainNotFound => error
       Rails.logger.warn("[ShopifyApp::EnsureAuthenticatedLinks] Redirecting to login: [#{error.class}] "\
-                         "Could not determine current shop domain")
+        "Could not determine current shop domain")
       redirect_to(ShopifyApp.configuration.login_url)
     end
 

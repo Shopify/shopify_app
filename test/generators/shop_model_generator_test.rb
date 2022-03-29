@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/shop_model/shop_model_generator'
+
+require "test_helper"
+require "generators/shopify_app/shop_model/shop_model_generator"
 
 class ShopModelGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::ShopModelGenerator
@@ -35,10 +36,10 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
   end
 
   test "create shop with access_scopes migration with --new-shopify-cli-app flag provided" do
-    Rails.env = 'mock_environment'
+    Rails.env = "mock_environment"
 
-    run_generator %w(--new-shopify-cli-app)
-    Rails.env = 'test' # Change this back for subsequent tests
+    run_generator ["--new-shopify-cli-app"]
+    Rails.env = "test" # Change this back for subsequent tests
 
     assert_migration "db/migrate/add_shop_access_scopes_column.rb" do |migration|
       assert_match "add_column :shops, :access_scopes, :string", migration
@@ -48,7 +49,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
   test "updates the shopify_app initializer" do
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |file|
-      assert_match "config.shop_session_repository = 'Shop'", file
+      assert_match "config.shop_session_repository = \"Shop\"", file
     end
   end
 
