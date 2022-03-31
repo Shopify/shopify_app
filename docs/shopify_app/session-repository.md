@@ -35,7 +35,7 @@ This will generate a shop model and user model, which will be the storage for th
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 
-Read more about Online vs. Offline access [here](https://help.shopify.com/api/getting-started/authentication/oauth).
+Read more about Online vs. Offline access [here](https://shopify.dev/apps/auth/oauth/access-modes).
 
 ## Access scopes
 
