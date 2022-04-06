@@ -1,4 +1,14 @@
+19.0.0 (April 6, 2022)
+----------
+* Updating shopify_api gem to [v10](https://github.com/Shopify/shopify_api#v10) 
+  BREAKING, please see [migration notes](docs/Upgrading.md#upgrading-to-v1900).
+
+18.1.2 (Mar 3, 2022)
+----------
+* Use the App Bridge 2.0 redirect when attempting to break out of an iframe. This happens when an app is installed, requires new access scopes, or re-authentication because the login session is expired. [#1376](https://github.com/Shopify/shopify_app/pull/1376)
+
 18.1.1 (Feb 2, 2022)
+----------
 * Fix bug causing `unsafe-inline` CSP violation. [#1362](https://github.com/Shopify/shopify_app/pull/1362)
 
 18.1.0 (Jan 28, 2022)
