@@ -122,3 +122,48 @@ end
 ```
 
 See [Authenticate server-side rendered embedded apps using Rails and Turbolinks](https://shopify.dev/tutorials/authenticate-server-side-rendered-embedded-apps-using-rails-and-turbolinks) for more information.
+
+### `ShopifyApp::SetShopHost`
+
+The [`ShopifyApp::SetShopHost`](/app/controllers/concerns/shopify_app/set_shop_host.rb) concern handles fetching `host` from `param[:host]` or the HTTP header `shopify-app-bridge-host` for App Bridge 2.0 apps.
+
+Include this concern in yours app's `SplashPageController` and `AuthenticatedController` or `ApplicationController` if your app uses App Bridge 2.0. It adds `before_action` that sets `@host` variable from params or the HTTP header `shopify-app-bridge-host` then update `params[:host]` and set on `@host`. This will help to fix most session token integration issue.
+
+Another thing you need to care about is setting the HTTP header `shopify-app-bridge-host` for each request you send from browser to server.
+
+*Example:*
+
+```diff
+# app/controllers/authenticated_controller
+class ApplicationController < ActionController::Base
++  include ShopifyApp::SetShopHost
+end
+```
+
+```diff
+# app/javascript/shopify_app/shopify_app.js
+document.addEventListener("turbolinks:request-start", function (event) {
+  var xhr = event.data.xhr;
+  xhr.setRequestHeader("Authorization", "Bearer " + window.sessionToken);
++  xhr.setRequestHeader("shopify-app-bridge-host", window.ShopifyAppBridgeHost);
+});
+
+document.addEventListener("turbolinks:render", function () {
+  $("form, a[data-method=delete]").on("ajax:beforeSend", function (event) {
+    const xhr = event.detail[0];
+    xhr.setRequestHeader("Authorization", "Bearer " + window.sessionToken);
++    xhr.setRequestHeader("shopify-app-bridge-host", window.ShopifyAppBridgeHost);
+  });
+});
+```
+
+```diff
+# app/views/layouts/embedded_app.html.erb
+<%= content_tag(:div, nil, id: 'shopify-app-init', data: {
+  api_key: ShopifyApp.configuration.api_key,
+  shop_origin: @shop_origin || (@current_shopify_session.domain if @current_shopify_session),
++  host: @host,
+  load_path: params[:return_to] || home_path,
+  debug: Rails.env.development?
+} ) %>
+```

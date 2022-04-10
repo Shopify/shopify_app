@@ -1,3 +1,7 @@
+19.1.0:
+----------
+* Add `SetShopHost` concern for fetch and keeping host [#1403](https://github.com/Shopify/shopify_app/pull/1403)
+
 19.0.0 (April 6, 2022)
 ----------
 * Use v10 of the Shopify API (https://github.com/Shopify/shopify_api). This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for details.
