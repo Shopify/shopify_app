@@ -194,7 +194,7 @@ GEM
       rubocop (~> 1.24)
     ruby-progressbar (1.11.0)
     securerandom (0.2.0)
-    shopify_api (10.0.1)
+    shopify_api (10.0.2)
       concurrent-ruby
       hash_diff
       httparty
