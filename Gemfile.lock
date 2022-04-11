@@ -194,7 +194,7 @@ GEM
       rubocop (~> 1.24)
     ruby-progressbar (1.11.0)
     securerandom (0.2.0)
-    shopify_api (10.0.0)
+    shopify_api (10.0.1)
       concurrent-ruby
       hash_diff
       httparty
@@ -204,7 +204,7 @@ GEM
       securerandom
       sorbet-runtime
       zeitwerk (~> 2.5)
-    sorbet-runtime (0.5.9854)
+    sorbet-runtime (0.5.9874)
     sprockets (4.0.3)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
