@@ -1,6 +1,6 @@
 19.0.1 (April 11, 2022)
 ----------
-* Bump Shopify API (https://github.com/Shopify/shopify_api) to version 10.0.2. This update includes patch fixes since its initial v10 release.
+* Bump Shopify API (https://github.com/Shopify/shopify_api) to version 10.0.2. This update includes patch fixes since the initial v10 release.
 
 19.0.0 (April 6, 2022)
 ----------
