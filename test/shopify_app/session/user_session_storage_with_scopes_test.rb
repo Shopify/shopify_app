@@ -57,16 +57,12 @@ module ShopifyApp
 
       UserMockSessionStoreWithScopes.stubs(:find_or_initialize_by).returns(mock_user_instance)
 
-      mock_auth_hash = mock
-      mock_auth_hash.stubs(:shop).returns(mock_user_instance.shopify_domain)
-      mock_auth_hash.stubs(:access_token).returns("a-new-user_token!")
-      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES))
+      mock_session = mock
+      mock_session.stubs(:shop).returns(mock_user_instance.shopify_domain)
+      mock_session.stubs(:access_token).returns("a-new-user_token!")
+      mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES))
 
-      associated_user = {
-        id: 100,
-      }
-
-      saved_id = UserMockSessionStoreWithScopes.store(mock_auth_hash, user: associated_user)
+      saved_id = UserMockSessionStoreWithScopes.store(mock_session, mock_associated_user)
 
       assert_equal "a-new-user_token!", mock_user_instance.shopify_token
       assert_equal mock_user_instance.id, saved_id
@@ -98,6 +94,21 @@ module ShopifyApp
       assert_raises NotImplementedError do
         UserMockSessionStoreWithScopes.retrieve(1)
       end
+    end
+
+    private
+
+    def mock_associated_user
+      ShopifyAPI::Auth::AssociatedUser.new(
+        id: 100,
+        first_name: "John",
+        last_name: "Doe",
+        email: "johndoe@email.com",
+        email_verified: true,
+        account_owner: false,
+        locale: "en",
+        collaborator: true
+      )
     end
   end
 end

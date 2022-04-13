@@ -54,6 +54,7 @@ module ShopifyApp
       mock_auth_hash = mock
       mock_auth_hash.stubs(:shop).returns(mock_user_instance.shopify_domain)
       mock_auth_hash.stubs(:access_token).returns("a-new-user_token!")
+      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
 
       associated_user = {
         id: 100,

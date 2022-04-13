@@ -60,6 +60,11 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session loads online session if user session expected" do
+    shop = "my-shop.myshopify.com"
+    ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
+      .with(shop)
+      .returns(mock_session(shop))
+
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
     request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
 
@@ -72,7 +77,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .returns(nil)
 
     with_application_test_routes do
-      get :index
+      get :index, params: { shop: shop }
     end
   end
 
@@ -161,6 +166,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session redirects to login if the loaded session doesn't have enough scope" do
+    shop = "my-shop.myshopify.com"
+    ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
+      .with(shop)
+      .returns(mock_session(shop))
     ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1", "scope2"]))
 
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
@@ -173,18 +182,22 @@ class LoginProtectionControllerTest < ActionController::TestCase
         is_online: true
       )
       .returns(
-        ShopifyAPI::Auth::Session.new(shop: "some-shop", scope: ["scope1"])
+        ShopifyAPI::Auth::Session.new(shop: shop, scope: ["scope1"])
       )
 
     with_application_test_routes do
-      get :index
+      get :index, params: { shop: shop }
 
-      assert_redirected_to "/login"
+      assert_redirected_to "/login?shop=my-shop.myshopify.com"
       assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
 
   test "#current_shopify_session does not redirect when sufficient scope" do
+    shop = "my-shop.myshopify.com"
+    ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
+      .with(shop)
+      .returns(mock_session(shop))
     ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1"]))
 
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
@@ -201,7 +214,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       )
 
     with_application_test_routes do
-      get :index
+      get :index, params: { shop: shop }
       assert_response :ok
       assert_equal "cookie", cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
@@ -439,5 +452,27 @@ class LoginProtectionControllerTest < ActionController::TestCase
     yield
   ensure
     ShopifyApp.configure { |config| config.login_url = original_url }
+  end
+
+  def mock_session(shop = "my-shop.myshopify.com")
+    mock_session = mock
+    mock_session.stubs(:shop).returns(shop)
+    mock_session.stubs(:access_token).returns("a-new-user_token!")
+    mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
+
+    mock_session
+  end
+
+  def mock_associated_user
+    ShopifyAPI::Auth::AssociatedUser.new(
+      id: 100,
+      first_name: "John",
+      last_name: "Doe",
+      email: "johndoe@email.com",
+      email_verified: true,
+      account_owner: false,
+      locale: "en",
+      collaborator: true
+    )
   end
 end

@@ -97,17 +97,41 @@ module ShopifyApp
       assert_redirected_to "/auth-route"
     end
 
-    test "#new starts OAuth requesting online token if user session is expected" do
+    test "#new starts OAuth requesting offline token if user session is expected but there is no shop session" do
       ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
       ShopifyAPI::Auth::Oauth.expects(:begin_auth)
-        .with(shop: "my-shop.myshopify.com", redirect_path: "/auth/shopify/callback", is_online: true)
+        .with(shop: "my-shop.myshopify.com", redirect_path: "/auth/shopify/callback", is_online: false)
         .returns({
           cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
           auth_route: "/auth-route",
         })
 
       get :new, params: { shop: "my-shop", top_level: true }
+    end
+
+    test "#new starts OAuth requesting online token if user session is expected and there is a shop session" do
+      shop = "my-shop.myshopify.com"
+
+      mock_session = mock
+      mock_session.stubs(:shop).returns(shop)
+      mock_session.stubs(:access_token).returns("a-new-user_token!")
+      mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
+
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
+        .with(shop)
+        .returns(mock_session)
+
+      ShopifyAPI::Auth::Oauth.expects(:begin_auth)
+        .with(shop: shop, redirect_path: "/auth/shopify/callback", is_online: true)
+        .returns({
+          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
+          auth_route: "/auth-route",
+        })
+
+      get :new, params: { shop: shop, top_level: true }
     end
 
     test "#new starts OAuth requesting online token if user session is unexpected" do

@@ -27,6 +27,12 @@ module ShopifyApp
         value: auth_result[:cookie].value,
       }
 
+      session[:shopify_user_id] = auth_result[:session].associated_user.id if auth_result[:session].online?
+
+      if start_user_token_flow?(auth_result[:session])
+        return respond_with_user_token_flow
+      end
+
       perform_post_authenticate_jobs(auth_result[:session])
 
       respond_successfully
@@ -41,6 +47,25 @@ module ShopifyApp
     def respond_with_error
       flash[:error] = I18n.t("could_not_log_in")
       redirect_to(login_url_with_optional_shop)
+    end
+
+    def respond_with_user_token_flow
+      redirect_to(login_url_with_optional_shop)
+    end
+
+    def start_user_token_flow?(shopify_session)
+      return false unless ShopifyApp::SessionRepository.user_storage.present?
+      return false if shopify_session.online?
+      update_user_access_scopes?(shopify_session)
+    end
+
+    def update_user_access_scopes?(shopify_session)
+      return true if session[:shopify_user_id].nil?
+      user_access_scopes_strategy.update_access_scopes?(shopify_user_id: session[:shopify_user_id])
+    end
+
+    def user_access_scopes_strategy
+      ShopifyApp.configuration.user_access_scopes_strategy
     end
 
     def perform_post_authenticate_jobs(session)

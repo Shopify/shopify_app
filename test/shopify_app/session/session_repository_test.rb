@@ -106,7 +106,7 @@ module ShopifyApp
       user = mock_associated_user
       session.stubs(:associated_user).returns(user)
 
-      InMemoryUserSessionStore.expects(:store).with(session, user.id.to_s)
+      InMemoryUserSessionStore.expects(:store).with(session, user)
 
       SessionRepository.store_session(session)
     end
