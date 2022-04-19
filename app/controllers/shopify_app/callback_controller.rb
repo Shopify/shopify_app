@@ -56,10 +56,10 @@ module ShopifyApp
     def start_user_token_flow?(shopify_session)
       return false unless ShopifyApp::SessionRepository.user_storage.present?
       return false if shopify_session.online?
-      update_user_access_scopes?(shopify_session)
+      update_user_access_scopes?
     end
 
-    def update_user_access_scopes?(shopify_session)
+    def update_user_access_scopes?
       return true if session[:shopify_user_id].nil?
       user_access_scopes_strategy.update_access_scopes?(shopify_user_id: session[:shopify_user_id])
     end
