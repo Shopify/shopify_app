@@ -31,7 +31,7 @@ gem.
   `config/initializers/shopify_app.rb` as the decision logic for which authentication method to use is now handled
   internally by the `shopify_api` gem, using the `ShopifyAPI::Context.embedded_app` setting.
 * `v19.0.0` updates the `shopify_api` dependency to `10.0.0`. This version of `shopify_api` has breaking changes. See
-  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify_api/blob/add_breaking_change_log_v10/README.md#breaking-change-notice-for-version-1000).
+  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify_api#breaking-change-notice-for-version-1000).
 
 ### Specific cases
 
