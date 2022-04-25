@@ -63,7 +63,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     shop = "my-shop.myshopify.com"
     ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
       .with(shop)
-      .returns(mock_session(shop))
+      .returns(mock_session(shop: shop))
 
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
     request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
@@ -169,7 +169,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     shop = "my-shop.myshopify.com"
     ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
       .with(shop)
-      .returns(mock_session(shop))
+      .returns(mock_session(shop: shop))
     ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1", "scope2"]))
 
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
@@ -197,7 +197,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     shop = "my-shop.myshopify.com"
     ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
       .with(shop)
-      .returns(mock_session(shop))
+      .returns(mock_session(shop: shop))
     ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1"]))
 
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
@@ -452,15 +452,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
     yield
   ensure
     ShopifyApp.configure { |config| config.login_url = original_url }
-  end
-
-  def mock_session(shop = "my-shop.myshopify.com")
-    mock_session = mock
-    mock_session.stubs(:shop).returns(shop)
-    mock_session.stubs(:access_token).returns("a-new-user_token!")
-    mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
-
-    mock_session
   end
 
   def mock_associated_user

@@ -44,7 +44,17 @@ class ActiveSupport::TestCase
     super
     WebMock.disable_net_connect!
     WebMock.stub_request(:get, "https://app.shopify.com/services/apis.json").to_return(body: API_META_TEST_RESPONSE)
+    ShopifyApp::InMemorySessionStore.clear
     ShopifyAppConfigurer.call
     Rails.application.reload_routes!
+  end
+
+  def mock_session(shop: "my-shop.myshopify.com", scope: ShopifyApp.configuration.scope)
+    mock_session = mock
+    mock_session.stubs(:shop).returns(shop)
+    mock_session.stubs(:access_token).returns("a-new-user_token!")
+    mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(scope))
+
+    mock_session
   end
 end

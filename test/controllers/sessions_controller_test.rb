@@ -113,16 +113,11 @@ module ShopifyApp
     test "#new starts OAuth requesting online token if user session is expected and there is a shop session" do
       shop = "my-shop.myshopify.com"
 
-      mock_session = mock
-      mock_session.stubs(:shop).returns(shop)
-      mock_session.stubs(:access_token).returns("a-new-user_token!")
-      mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
-
       ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
         .with(shop)
-        .returns(mock_session)
+        .returns(mock_session(shop: shop))
 
       ShopifyAPI::Auth::Oauth.expects(:begin_auth)
         .with(shop: shop, redirect_path: "/auth/shopify/callback", is_online: true)

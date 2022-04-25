@@ -57,12 +57,13 @@ module ShopifyApp
 
       UserMockSessionStoreWithScopes.stubs(:find_or_initialize_by).returns(mock_user_instance)
 
-      mock_session = mock
-      mock_session.stubs(:shop).returns(mock_user_instance.shopify_domain)
-      mock_session.stubs(:access_token).returns("a-new-user_token!")
-      mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES))
-
-      saved_id = UserMockSessionStoreWithScopes.store(mock_session, mock_associated_user)
+      saved_id = UserMockSessionStoreWithScopes.store(
+        mock_session(
+          shop: mock_user_instance.shopify_domain,
+          scope: TEST_MERCHANT_SCOPES
+        ),
+        mock_associated_user
+      )
 
       assert_equal "a-new-user_token!", mock_user_instance.shopify_token
       assert_equal mock_user_instance.id, saved_id
