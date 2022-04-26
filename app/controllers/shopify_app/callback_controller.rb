@@ -55,7 +55,7 @@ module ShopifyApp
 
     def start_user_token_flow?(shopify_session)
       return false unless ShopifyApp::SessionRepository.user_storage.present?
-      return false if shopify_session.is_online?
+      return false if shopify_session.online?
       update_user_access_scopes?
     end
 
