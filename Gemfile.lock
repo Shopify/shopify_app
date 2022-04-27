@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (19.0.1)
+    shopify_app (19.0.2)
       activeresource
       browser_sniffer (~> 1.4.0)
       jwt (>= 2.2.3)
