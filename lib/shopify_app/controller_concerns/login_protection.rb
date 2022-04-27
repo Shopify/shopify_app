@@ -232,7 +232,13 @@ module ShopifyApp
       current_shopify_session && params[:shop].is_a?(String) && current_shopify_session.shop != params[:shop]
     end
 
+    def shop_session
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(sanitize_shop_param(params))
+    end
+
     def user_session_expected?
+      return false if shop_session.nil?
+      return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
   end

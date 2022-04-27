@@ -11,7 +11,7 @@ module ShopifyApp
 
     class_methods do
       def store(auth_session, user)
-        user = find_or_initialize_by(shopify_user_id: user[:id])
+        user = find_or_initialize_by(shopify_user_id: user.id)
         user.shopify_token = auth_session.access_token
         user.shopify_domain = auth_session.shop
         user.access_scopes = auth_session.scope.to_s
