@@ -1,6 +1,11 @@
 Unreleased
 ----------
+
+19.0.2 (April 27, 2022)
+----------
+
 * Fix regression in apps using online tokens. [#1413](https://github.com/Shopify/shopify_app/pull/1413)
+* Bump [Shopify API](https://github.com/Shopify/shopify_api) to version 10.0.3. It includes [these fixes](https://github.com/Shopify/shopify_api/blob/main/CHANGELOG.md#version-1003).
 
 19.0.1 (April 11, 2022)
 ----------
