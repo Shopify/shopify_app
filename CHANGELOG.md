@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Fix "allowed hosts" configuration for ngrok URLs including a region such as `eu`.
+
 19.0.2 (April 27, 2022)
 ----------
 
