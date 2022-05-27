@@ -33,6 +33,35 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     ShopifyApp::WebhooksManager.add_registrations
   end
 
+  test "#create_webhooks uses api context active session by default" do
+    active_session = ShopifyAPI::Auth::Session.new(shop: "testshop.myshopify.com")
+    ShopifyAPI::Context.activate_session(active_session)
+    ShopifyAPI::Webhooks::Registry.expects(:register_all).with(session: active_session)
+
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", address: "/webhooks" },
+      ]
+    end
+    ShopifyApp::WebhooksManager.add_registrations
+    ShopifyApp::WebhooksManager.create_webhooks
+  end
+
+  test "#recreate_webhooks! uses api context active session by default" do
+    active_session = ShopifyAPI::Auth::Session.new(shop: "testshop.myshopify.com")
+    ShopifyAPI::Context.activate_session(active_session)
+    ShopifyAPI::Webhooks::Registry.expects(:register_all).with(session: active_session)
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated")
+
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", address: "/webhooks" },
+      ]
+    end
+    ShopifyApp::WebhooksManager.add_registrations
+    ShopifyApp::WebhooksManager.recreate_webhooks!
+  end
+
   test "#recreate_webhooks! destroys all webhooks and recreates" do
     ShopifyAPI::Webhooks::Registry.expects(:register_all)
     ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated")
