@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.metadata['allowed_push_host'] = 'https://rubygems.org'
 
-  s.add_runtime_dependency('browser_sniffer', '~> 1.4.0')
+  s.add_runtime_dependency('browser_sniffer', '~> 2.0')
   s.add_runtime_dependency('omniauth-rails_csrf_protection')
   s.add_runtime_dependency('rails', '> 5.2.1')
   s.add_runtime_dependency('shopify_api', '~> 9.4')
