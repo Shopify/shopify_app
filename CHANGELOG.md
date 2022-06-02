@@ -1,3 +1,7 @@
+18.1.3 (Jun 2, 2022)
+----------
+* Update browser_sniffer to 2.0.0
+
 18.1.2 (Mar 3, 2022)
 ----------
 * Use the App Bridge 2.0 redirect when attempting to break out of an iframe. This happens when an app is installed, requires new access scopes, or re-authentication because the login session is expired. [#1376](https://github.com/Shopify/shopify_app/pull/1376)
