@@ -8,6 +8,8 @@ module ShopifyApp
 
     class InvalidAudienceError < StandardError; end
 
+    NBF_TOLERANCE = 5.seconds
+
     WARN_EXCEPTIONS = [
       ::JWT::DecodeError,
       ::JWT::ExpiredSignature,
@@ -46,7 +48,7 @@ module ShopifyApp
     end
 
     def parse_token_data(secret, old_secret)
-      ::JWT.decode(@token, secret, true, { algorithm: "HS256" })
+      ::JWT.decode(@token, secret, true, { nbf_leeway: NBF_TOLERANCE, algorithm: "HS256" })
     rescue ::JWT::VerificationError
       raise unless old_secret
 

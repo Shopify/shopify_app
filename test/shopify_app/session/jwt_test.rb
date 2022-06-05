@@ -25,6 +25,15 @@ module ShopifyApp
       assert_equal TEST_JWT_EXPIRE_AT.to_i, jwt.expire_at
     end
 
+    test "#shopify_domain, #shopify_user_id and #expire_at are returned with NBF tolerances" do
+      p = payload(nbf: (JWT::NBF_TOLERANCE - 1.second).from_now)
+      jwt = JWT.new(token(p))
+
+      assert_equal TEST_SANITIZED_SHOPIFY_DOMAIN, jwt.shopify_domain
+      assert_equal TEST_USER_ID.to_i, jwt.shopify_user_id
+      assert_equal TEST_JWT_EXPIRE_AT.to_i, jwt.expire_at
+    end
+
     test "#shopify_domain and #shopify_user_id are returned using the old secret" do
       p = payload
       t = ::JWT.encode(p, ShopifyApp.configuration.old_secret, "HS256")
@@ -97,7 +106,7 @@ module ShopifyApp
     test "#shopify_domain and #shopify_user_id are nil if 'nbf' claim is in the future" do
       expect_jwt_error(::JWT::ImmatureSignature, "Signature nbf has not been reached")
 
-      p = payload(nbf: 1.day.from_now)
+      p = payload(nbf: (JWT::NBF_TOLERANCE + 3.second).from_now)
       jwt = JWT.new(token(p))
 
       assert_nil jwt.shopify_domain
