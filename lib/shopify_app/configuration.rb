@@ -24,6 +24,7 @@ module ShopifyApp
     # customise urls
     attr_accessor :root_url
     attr_writer :login_url
+    attr_writer :login_callback_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -48,6 +49,10 @@ module ShopifyApp
 
     def login_url
       @login_url || File.join(@root_url, "login")
+    end
+
+    def login_callback_url
+      @login_callback_url || File.join(@root_url, "auth/shopify/callback")
     end
 
     def user_session_repository=(klass)
