@@ -44,9 +44,11 @@ module ShopifyApp
     end
 
     def start_oauth
+      callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
+
       auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
         shop: sanitized_shop_name,
-        redirect_path: ShopifyApp.configuration.login_callback_url,
+        redirect_path: "/#{callback_url}",
         is_online: user_session_expected?
       )
       cookies.encrypted[auth_attributes[:cookie].name] = {

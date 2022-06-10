@@ -52,7 +52,8 @@ module ShopifyApp
     end
 
     def login_callback_url
-      @login_callback_url || File.join(@root_url, "auth/shopify/callback")
+      # Not including @root_url to keep historic behaviour
+      @login_callback_url || File.join("auth/shopify/callback")
     end
 
     def user_session_repository=(klass)

@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Add the `login_callback_url` config to allow overwriting that route as well, and mount the engine routes based on the configurations. [#1445](https://github.com/Shopify/shopify_app/pull/1445)
+
 19.0.2 (April 27, 2022)
 ----------
 
@@ -27,7 +29,7 @@ BREAKING, please see migration notes.
 18.1.0 (Jan 28, 2022)
 ----------
 * Support Rails 7 [#1354](https://github.com/Shopify/shopify_app/pull/1354)
-* Fix webhooks handling in Ruby 3 [#1342](https://github.com/Shopify/shopify_app/pull/1342) 
+* Fix webhooks handling in Ruby 3 [#1342](https://github.com/Shopify/shopify_app/pull/1342)
 * Update to Ruby 3 and drop support to Ruby 2.5 [#1359](https://github.com/Shopify/shopify_app/pull/1359)
 
 18.0.4 (Jan 27, 2022)
@@ -51,7 +53,7 @@ BREAKING, please see migration notes.
 
 18.0.0 (May 3, 2021)
 ----------
-* Support OmniAuth 2.x 
+* Support OmniAuth 2.x
   * If your app has custom OmniAuth configuration, please refer to the [OmniAuth 2.0 upgrade guide](https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0).
 * Support App Bridge version 2.x in the Embedded App layout. [#1241](https://github.com/Shopify/shopify_app/pull/1241)
 
@@ -81,7 +83,7 @@ BREAKING, please see migration notes.
 
 17.0.4 (January 25, 2021)
 ----------
-* Redirect user to login page if shopify domain is not found in the `EnsureAuthenticatedLinks` concern [#1158](https://github.com/Shopify/shopify_app/pull/1158) 
+* Redirect user to login page if shopify domain is not found in the `EnsureAuthenticatedLinks` concern [#1158](https://github.com/Shopify/shopify_app/pull/1158)
 
 17.0.3 (January 22, 2021)
 ----------
