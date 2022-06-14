@@ -7,8 +7,7 @@ module ShopifyApp
     class << self
       def queue(shop_domain, shop_token)
         ShopifyApp::WebhooksManagerJob.perform_later(
-          shop_domain: shop_domain,
-          shop_token: shop_token
+          shop_domain: shop_domain
         )
       end
 
