@@ -2,6 +2,7 @@ Unreleased
 ----------
 
 * Add the `login_callback_url` config to allow overwriting that route as well, and mount the engine routes based on the configurations. [#1445](https://github.com/Shopify/shopify_app/pull/1445)
+* Add special headers when returning 401s from LoginProtection. [#1450](https://github.com/Shopify/shopify_app/pull/1450)
 
 19.0.2 (April 27, 2022)
 ----------

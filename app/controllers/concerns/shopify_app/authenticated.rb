@@ -11,6 +11,7 @@ module ShopifyApp
       include ShopifyApp::EmbeddedApp
       before_action :login_again_if_different_user_or_shop
       around_action :activate_shopify_session
+      after_action :add_top_level_redirection_headers
     end
   end
 end

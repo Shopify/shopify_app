@@ -323,6 +323,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       get :index, params: { shop: "foobar" }, xhr: true
       assert_equal 401, response.status
+      assert_match "1", response.headers["X-Shopify-API-Request-Failure-Reauthorize"]
+      assert_match "/login?shop=foobar", response.headers["X-Shopify-API-Request-Failure-Reauthorize-Url"]
     end
   end
 
