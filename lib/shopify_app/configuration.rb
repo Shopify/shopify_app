@@ -39,6 +39,9 @@ module ShopifyApp
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
+    # takes a ShopifyApp::BillingConfiguration object
+    attr_accessor :billing
+
     def initialize
       @root_url = "/"
       @myshopify_domain = "myshopify.com"
@@ -90,12 +93,34 @@ module ShopifyApp
       scripttags.present?
     end
 
+    def requires_billing?
+      billing.present?
+    end
+
     def shop_access_scopes
       @shop_access_scopes || scope
     end
 
     def user_access_scopes
       @user_access_scopes || scope
+    end
+  end
+
+  class BillingConfiguration
+    INTERVAL_ONE_TIME = "ONE_TIME"
+    INTERVAL_EVERY_30_DAYS = "EVERY_30_DAYS"
+    INTERVAL_ANNUAL = "ANNUAL"
+
+    attr_reader :charge_name
+    attr_reader :amount
+    attr_reader :currency_code
+    attr_reader :interval
+
+    def initialize(charge_name:, amount:, interval:, currency_code: "USD")
+      @charge_name = charge_name
+      @amount = amount
+      @currency_code = currency_code
+      @interval = interval
     end
   end
 

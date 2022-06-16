@@ -4,6 +4,7 @@ module ShopifyApp
   # Performs login after OAuth completes
   class CallbackController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::EnsureBilling
 
     def callback
       begin
@@ -34,8 +35,9 @@ module ShopifyApp
       end
 
       perform_post_authenticate_jobs(auth_result[:session])
+      has_payment = check_billing(auth_result[:session])
 
-      respond_successfully
+      respond_successfully if has_payment
     end
 
     private

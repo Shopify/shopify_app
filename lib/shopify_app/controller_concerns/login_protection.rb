@@ -70,7 +70,7 @@ module ShopifyApp
       expire_at - 5.seconds # 5s gap to start fetching new token in advance
     end
 
-    def add_top_level_redirection_headers(ignore_response_code: false)
+    def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
@@ -82,8 +82,10 @@ module ShopifyApp
           end
         end
 
+        url ||= login_url_with_optional_shop
+
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
-        response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", login_url_with_optional_shop)
+        response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
       end
     end
 

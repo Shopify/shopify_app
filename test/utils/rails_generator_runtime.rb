@@ -75,7 +75,6 @@ module Utils
       @initialized = false
 
       def with_session(test_class, is_embedded: false, is_private: false, &block)
-        WebMock.enable!
         original_embedded_app = ShopifyApp.configuration.embedded_app
         ShopifyApp.configuration.embedded_app = false unless is_embedded
         ShopifyAPI::Context.setup(
@@ -94,8 +93,6 @@ module Utils
         runtime = Utils::RailsGeneratorRuntime.new(test_class)
         block.call(runtime)
       ensure
-        WebMock.reset!
-        WebMock.disable!
         ShopifyApp.configuration.embedded_app = original_embedded_app
         ShopifyAPI::Context.deactivate_session
         runtime&.clear
