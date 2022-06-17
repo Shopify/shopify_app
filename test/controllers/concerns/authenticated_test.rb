@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "test_helper"
+
 class AuthenticatedTest < ActionController::TestCase
   class AuthenticatedTestController < ActionController::Base
     include ShopifyApp::Authenticated
@@ -15,5 +17,6 @@ class AuthenticatedTest < ActionController::TestCase
     AuthenticatedTestController.include?(ShopifyApp::LoginProtection)
     AuthenticatedTestController.include?(ShopifyApp::CsrfProtection)
     AuthenticatedTestController.include?(ShopifyApp::EmbeddedApp)
+    AuthenticatedTestController.include?(ShopifyApp::EnsureBilling)
   end
 end

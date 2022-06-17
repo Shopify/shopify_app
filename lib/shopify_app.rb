@@ -39,6 +39,7 @@ module ShopifyApp
   require "shopify_app/controller_concerns/localization"
   require "shopify_app/controller_concerns/itp"
   require "shopify_app/controller_concerns/login_protection"
+  require "shopify_app/controller_concerns/ensure_billing"
   require "shopify_app/controller_concerns/embedded_app"
   require "shopify_app/controller_concerns/payload_verification"
   require "shopify_app/controller_concerns/app_proxy_verification"
