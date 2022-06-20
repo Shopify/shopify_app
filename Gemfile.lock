@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (19.0.2)
+    shopify_app (19.1.0)
       activeresource
       browser_sniffer (~> 2.0)
       jwt (>= 2.2.3)
@@ -104,7 +104,7 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
-    jwt (2.3.0)
+    jwt (2.4.1)
     loofah (2.15.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -124,7 +124,7 @@ GEM
     nokogiri (1.13.4)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    oj (3.13.11)
+    oj (3.13.14)
     openssl (3.0.0)
     parallel (1.21.0)
     parser (3.1.0.0)
@@ -194,7 +194,7 @@ GEM
       rubocop (~> 1.24)
     ruby-progressbar (1.11.0)
     securerandom (0.2.0)
-    shopify_api (10.0.3)
+    shopify_api (10.1.0)
       concurrent-ruby
       hash_diff
       httparty
@@ -204,7 +204,7 @@ GEM
       securerandom
       sorbet-runtime
       zeitwerk (~> 2.5)
-    sorbet-runtime (0.5.9944)
+    sorbet-runtime (0.5.10101)
     sprockets (4.0.3)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
