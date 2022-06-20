@@ -63,7 +63,7 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if the signature is bad" do
-      expect_jwt_error(::JWT::VerificationError, "Signature verification raised")
+      expect_jwt_error(::JWT::VerificationError, "Signature verification failed")
 
       t = ::JWT.encode(payload, "bad", "HS256")
       jwt = JWT.new(t)
