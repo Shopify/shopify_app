@@ -1,4 +1,5 @@
 //= require ./app_bridge_redirect.js
+//= require ./app_bridge_utils_3.1.1.js
 
 (function () {
   function redirect() {
@@ -10,15 +11,12 @@
 
     var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
 
-    if (window.top == window.self) {
-      // If the current window is the 'parent', change the URL by setting location.href
-      window.top.location.href = targetInfo.url;
-    } else {
-      // If the current window is the 'child' or embedded, change the parent's URL with
-      // App Bridge redirect. This case can happen when an app updates its access scopes,
-      // or the unlikely scenario where the shop thinks the app is installed, but the
-      // app does not have an record for the shop.
+    var appBridgeUtils = window['app-bridge-utils'];
+
+    if (appBridgeUtils.isShopifyEmbedded()) {
       window.appBridgeRedirect(targetInfo.url);
+    } else {
+      window.top.location.href = targetInfo.url;
     }
   }
 
