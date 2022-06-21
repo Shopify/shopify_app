@@ -13,6 +13,11 @@
 
     var appBridgeUtils = window['app-bridge-utils'];
 
+    console.log('***** DEBUG *****: app-bridge v3', {
+      'targetInfo.url': targetInfo.url,
+      'appBridgeUtils.isShopifyEmbedded()': appBridgeUtils.isShopifyEmbedded(),
+    });
+
     if (appBridgeUtils.isShopifyEmbedded()) {
       window.appBridgeRedirect(targetInfo.url);
     } else {
