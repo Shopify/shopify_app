@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Internal update, adding App Bridge 3 for redirect (only). [#1458](https://github.com/Shopify/shopify_app/pull/1458)
+
 19.1.0 (June 20, 2022)
 ----------
 
