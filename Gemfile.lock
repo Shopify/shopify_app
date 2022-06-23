@@ -1,3 +1,19 @@
+GIT
+  remote: git@github.com:Shopify/shopify_api.git
+  revision: 6b29be3c09e9668f7746d8535cc3fc05d3236b3c
+  branch: add-old-api-secret-key-to-context
+  specs:
+    shopify_api (10.1.0)
+      concurrent-ruby
+      hash_diff
+      httparty
+      jwt
+      oj
+      openssl
+      securerandom
+      sorbet-runtime
+      zeitwerk (~> 2.5)
+
 PATH
   remote: .
   specs:
@@ -194,16 +210,6 @@ GEM
       rubocop (~> 1.24)
     ruby-progressbar (1.11.0)
     securerandom (0.2.0)
-    shopify_api (10.1.0)
-      concurrent-ruby
-      hash_diff
-      httparty
-      jwt
-      oj
-      openssl
-      securerandom
-      sorbet-runtime
-      zeitwerk (~> 2.5)
     sorbet-runtime (0.5.10101)
     sprockets (4.0.3)
       concurrent-ruby (~> 1.0)
@@ -240,6 +246,7 @@ DEPENDENCIES
   rake
   rb-readline
   rubocop-shopify
+  shopify_api!
   shopify_app!
   sqlite3 (~> 1.4)
   webmock
