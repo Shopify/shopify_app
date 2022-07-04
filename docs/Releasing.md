@@ -12,7 +12,7 @@
 1. Checkout and pull from master so you have the latest version of the shopify_app
 1. Tag the HEAD with the version
     ```bash
-    $ git tag -f vX.Y.Z && git push --tags --force
+    $ git tag -f vX.Y.Z && git push origin vX.Y.Z
     ```
 1. Check that Create Release workflow successfully runs
 1. Use Shipit to build and push the gem
