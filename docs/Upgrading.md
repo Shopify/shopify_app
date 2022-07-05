@@ -87,6 +87,7 @@ Rails.application.config.after_initialize do
     ShopifyAPI::Context.setup(
       api_key: ShopifyApp.configuration.api_key,
       api_secret_key: ShopifyApp.configuration.secret,
+      old_api_secret_key: ShopifyApp.configuration.old_secret,
       api_version: ShopifyApp.configuration.api_version,
       host_name: URI(ENV.fetch('HOST', '')).host || '',
       scope: ShopifyApp.configuration.scope,

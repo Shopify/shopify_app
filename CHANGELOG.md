@@ -1,6 +1,11 @@
 Unreleased
 ----------
 
+20.0.2 (July 7, 2022)
+----------
+
+* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.1. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1101). Fix an issue where HMAC signature verification would fail in OAuth flows during API key rotation.
+
 20.0.1 (July 6, 2022)
 ----------
 
@@ -9,7 +14,7 @@ Unreleased
 20.0.0 (July 4, 2022)
 ----------
 
-* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.0. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1100).  The breaking change relates to the removal of API version `2021-07` support.
+* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.0. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1100). The breaking change relates to the removal of API version `2021-07` support.
 * Internal update, adding App Bridge 3 for redirect (only). [#1458](https://github.com/Shopify/shopify_app/pull/1458)
 
 19.1.0 (June 20, 2022)
