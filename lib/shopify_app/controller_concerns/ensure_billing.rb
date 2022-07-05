@@ -7,7 +7,7 @@ module ShopifyApp
       attr_accessor :errors
 
       def initialize(message, errors)
-        super
+        super(message)
         @message = message
         @errors = errors
       end
@@ -119,7 +119,7 @@ module ShopifyApp
         data = data["data"]["appPurchaseOneTimeCreate"]
       end
 
-      raise BillingError.new("Error while billing the store", data["userErrros"]) unless data["userErrors"].empty?
+      raise BillingError.new("Error while billing the store", data["userErrors"]) unless data["userErrors"].empty?
 
       data["confirmationUrl"]
     end
