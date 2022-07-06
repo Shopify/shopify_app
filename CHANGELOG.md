@@ -1,6 +1,11 @@
 Unreleased
 ----------
 
+19.1.1 (July 6, 2022)
+----------
+
+* Accept extra keyword arguments to WebhooksManagerJob to ease upgrade path from v18 or older (https://github.com/Shopify/shopify_app/pull/1466)
+
 19.1.0 (June 20, 2022)
 ----------
 
