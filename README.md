@@ -128,4 +128,4 @@ To learn more about how this gem authenticates with Shopify, see [*Authenticatio
 
 [Shopify's API is versioned](https://shopify.dev/concepts/about-apis/versioning). With Shopify App `v1.11.0`, the included Shopify API gem allows developers to specify and update the Shopify API version they want their app or service to use. The Shopify API gem also surfaces warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).
 
-See the [Shopify API gem README](https://github.com/Shopify/shopify_api/) for more information.
+See the [Shopify API gem README](https://github.com/Shopify/shopify-api-ruby/) for more information.
