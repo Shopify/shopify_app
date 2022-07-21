@@ -36,11 +36,11 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if top_level?
-        start_oauth
-      else
-        redirect_auth_to_top_level
-      end
+      # if top_level?
+      start_oauth
+      # else
+      #   redirect_auth_to_top_level
+      # end
     end
 
     def start_oauth
