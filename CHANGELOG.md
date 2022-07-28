@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Set the appropriate CSP `frame-ancestor` directive in controllers using the `EmbeddedApp` concern. [#1474](https://github.com/Shopify/shopify_app/pull/1474)
+
 20.0.2 (July 7, 2022)
 ----------
 

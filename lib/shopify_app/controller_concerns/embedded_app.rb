@@ -4,6 +4,8 @@ module ShopifyApp
   module EmbeddedApp
     extend ActiveSupport::Concern
 
+    include ShopifyApp::FrameAncestors
+
     included do
       if ShopifyApp.configuration.embedded_app?
         after_action(:set_esdk_headers)
