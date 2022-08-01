@@ -18,7 +18,7 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 ## Upgrading to `v19.0.0`
 
-This update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify_api)
+This update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby)
 gem.
 
 ### High-level process
@@ -31,7 +31,7 @@ gem.
   `config/initializers/shopify_app.rb` as the decision logic for which authentication method to use is now handled
   internally by the `shopify_api` gem, using the `ShopifyAPI::Context.embedded_app` setting.
 - `v19.0.0` updates the `shopify_api` dependency to `10.0.0`. This version of `shopify_api` has breaking changes. See
-  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify_api#breaking-change-notice-for-version-1000).
+  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify-api-ruby#breaking-change-notice-for-version-1000).
 
 ### Specific cases
 
@@ -87,6 +87,7 @@ Rails.application.config.after_initialize do
     ShopifyAPI::Context.setup(
       api_key: ShopifyApp.configuration.api_key,
       api_secret_key: ShopifyApp.configuration.secret,
+      old_api_secret_key: ShopifyApp.configuration.old_secret,
       api_version: ShopifyApp.configuration.api_version,
       host_name: URI(ENV.fetch('HOST', '')).host || '',
       scope: ShopifyApp.configuration.scope,
@@ -222,7 +223,7 @@ is changed to
 
 ### ShopifyAPI changes
 
-You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify_api/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with API versioning.
+You will need to also follow the ShopifyAPI [upgrade guide](https://github.com/Shopify/shopify-api-ruby/blob/master/README.md#-breaking-change-notice-for-version-700-) to ensure your app is ready to work with API versioning.
 
 [dashboard]: https://partners.shopify.com
 [app-bridge]: https://shopify.dev/apps/tools/app-bridge

@@ -1,7 +1,5 @@
 # Shopify App
 
-**Shopify is doubling our engineering staff in 2021! [Join our team and work on libraries like this one.](https://smrtr.io/5GGrK)**
-
 [![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI) ![Supported Rails version][supported_rails_version]
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
@@ -128,4 +126,4 @@ To learn more about how this gem authenticates with Shopify, see [*Authenticatio
 
 [Shopify's API is versioned](https://shopify.dev/concepts/about-apis/versioning). With Shopify App `v1.11.0`, the included Shopify API gem allows developers to specify and update the Shopify API version they want their app or service to use. The Shopify API gem also surfaces warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).
 
-See the [Shopify API gem README](https://github.com/Shopify/shopify_api/) for more information.
+See the [Shopify API gem README](https://github.com/Shopify/shopify-api-ruby/) for more information.

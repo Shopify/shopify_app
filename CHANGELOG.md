@@ -1,10 +1,22 @@
 Unreleased
 ----------
 
+* Set the appropriate CSP `frame-ancestor` directive in controllers using the `EmbeddedApp` concern. [#1474](https://github.com/Shopify/shopify_app/pull/1474)
+
+20.0.2 (July 7, 2022)
+----------
+
+* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.1. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1101). Fix an issue where HMAC signature verification would fail in OAuth flows during API key rotation.
+
+20.0.1 (July 6, 2022)
+----------
+
+* Accept extra keyword arguments to WebhooksManagerJob to ease upgrade path from v18 or older (https://github.com/Shopify/shopify_app/pull/1466)
+
 20.0.0 (July 4, 2022)
 ----------
 
-* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.0. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1100).  The breaking change relates to the removal of API version `2021-07` support.
+* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.0. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1100). The breaking change relates to the removal of API version `2021-07` support.
 * Internal update, adding App Bridge 3 for redirect (only). [#1458](https://github.com/Shopify/shopify_app/pull/1458)
 
 19.1.0 (June 20, 2022)
@@ -18,15 +30,15 @@ Unreleased
 ----------
 
 * Fix regression in apps using online tokens. [#1413](https://github.com/Shopify/shopify_app/pull/1413)
-* Bump [Shopify API](https://github.com/Shopify/shopify_api) to version 10.0.3. It includes [these fixes](https://github.com/Shopify/shopify_api/blob/main/CHANGELOG.md#version-1003).
+* Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 10.0.3. It includes [these fixes](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1003).
 
 19.0.1 (April 11, 2022)
 ----------
-* Bump Shopify API (https://github.com/Shopify/shopify_api) to version 10.0.2. This update includes patch fixes since the initial v10 release.
+* Bump Shopify API (https://github.com/Shopify/shopify-api-ruby) to version 10.0.2. This update includes patch fixes since the initial v10 release.
 
 19.0.0 (April 6, 2022)
 ----------
-* Use v10 of the Shopify API (https://github.com/Shopify/shopify_api). This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for details.
+* Use v10 of the Shopify API (https://github.com/Shopify/shopify-api-ruby). This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for details.
 BREAKING, please see migration notes.
 
 18.1.2 (Mar 3, 2022)
