@@ -147,6 +147,18 @@ module ShopifyApp
       url
     end
 
+    def login_url_with_fqdn_and_optional_shop
+      url = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
+
+      query_params = {}
+      query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
+
+      query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
+
+      url = "#{url}?#{query_params.to_query}" if query_params.present?
+      url
+    end
+
     def login_url_params(top_level:)
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
@@ -219,6 +231,13 @@ module ShopifyApp
           query_params[:shop] = sanitize_shop_param(params)
         end
       end
+    end
+
+    # TODO: remove this once https://github.com/Shopify/shopify-api-ruby/pull/1001
+    # is merged and released
+    def embedded_app_url
+      decoded_host = Base64.decode64(host)
+      "https://#{decoded_host}/apps/#{ShopifyAPI::Context.api_key}"
     end
 
     def return_address

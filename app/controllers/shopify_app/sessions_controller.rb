@@ -36,7 +36,9 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if top_level?
+      if params[:embedded].present?
+        fullpage_redirect_to(login_url_with_fqdn_and_optional_shop)
+      elsif top_level?
         start_oauth
       else
         redirect_auth_to_top_level
