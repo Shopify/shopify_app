@@ -238,7 +238,7 @@ module ShopifyApp
     # TODO: remove this once https://github.com/Shopify/shopify-api-ruby/pull/1001
     # is merged and released
     def embedded_app_url
-      decoded_host = Base64.strict_decode64(host)
+      decoded_host = Base64.decode64(host)
       "https://#{decoded_host}/apps/#{ShopifyAPI::Context.api_key}"
     end
 
