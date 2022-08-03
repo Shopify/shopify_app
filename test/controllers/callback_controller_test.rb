@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "test_helpers/fake_session_storage"
 
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
@@ -25,6 +26,10 @@ module ShopifyApp
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp.configuration = nil
+      ShopifyApp.configuration.api_key = "api_key"
+      ShopifyApp.configuration.secret = "secret"
+      ShopifyApp.configuration.api_version = "2022-07"
+      ShopifyApp.configuration.scope = "read_orders, write_orders"
       ShopifyApp.configuration.embedded_app = true
 
       I18n.locale = :en
@@ -141,12 +146,23 @@ module ShopifyApp
       end
     end
 
-    test "#callback redirects to the root_url with shop and host parameter" do
+    test "#callback redirects to the root_url with shop and host parameter for non-embedded" do
+      ShopifyApp.configuration.embedded_app = false
+      setup_context
       mock_oauth
 
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
       assert_redirected_to "/?host=#{@callback_params[:host]}&shop=#{@callback_params[:shop]}.myshopify.com"
+    end
+
+    test "#callback redirects to the embedded app url for embedded" do
+      setup_context
+      mock_oauth
+
+      get :callback, params: @callback_params # host is required for App Bridge 2.0
+
+      assert_redirected_to "https://test.host/admin/apps/api_key"
     end
 
     test "#callback performs install_webhook job after authentication" do
@@ -194,7 +210,8 @@ module ShopifyApp
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
 
-      @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host",
+      host = Base64.strict_encode64("test.host/admin")
+      @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
                            hmac: "hmac", }
       @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
       ShopifyAPI::Auth::Oauth::AuthQuery.stubs(:new).with(**@callback_params).returns(@auth_query)
@@ -210,6 +227,19 @@ module ShopifyApp
           cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
           session: ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token"),
         })
+    end
+
+    def setup_context
+      ShopifyAPI::Context.setup(
+        api_key: ShopifyApp.configuration.api_key,
+        api_secret_key: ShopifyApp.configuration.secret,
+        api_version: ShopifyApp.configuration.api_version,
+        host_name: "test.host",
+        scope: ShopifyApp.configuration.scope,
+        is_private: false,
+        is_embedded: ShopifyApp.configuration.embedded_app,
+        session_storage: ::TestHelpers::FakeSessionStorage.new,
+      )
     end
   end
 end

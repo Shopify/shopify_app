@@ -36,8 +36,8 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if params[:embedded].present?
-        fullpage_redirect_to(login_url_with_fqdn_and_optional_shop)
+      if params[:embedded].present? && ShopifyApp.configuration.embedded_redirect_url.present?
+        redirect_for_embedded
       elsif top_level?
         start_oauth
       else
@@ -90,6 +90,10 @@ module ShopifyApp
 
     def redirect_auth_to_top_level
       fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
+    end
+
+    def redirect_for_embedded
+      redirect_to(redirect_uri_for_embedded)
     end
   end
 end
