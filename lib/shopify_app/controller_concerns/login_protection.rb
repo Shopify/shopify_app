@@ -147,16 +147,18 @@ module ShopifyApp
       url
     end
 
-    def login_url_with_fqdn_and_optional_shop
-      url = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
+    def redirect_uri_for_embedded
+      redirect_query_params = {}
+      redirect_uri = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
+      redirect_query_params[:shop] = sanitized_shop_name
+      redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
+      redirect_query_params[:host] ||= host if params[:host].present?
+      redirect_uri = "#{redirect_uri}?#{redirect_query_params.to_query}" if redirect_query_params.present?
 
-      query_params = {}
-      query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
+      query_params = sanitized_params.except(:redirect_uri, :embedded)
+      query_params[:redirect_uri] = redirect_uri
 
-      query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
-
-      url = "#{url}?#{query_params.to_query}" if query_params.present?
-      url
+      "#{ShopifyApp.configuration.embedded_redirect_url}?#{query_params.to_query}"
     end
 
     def login_url_params(top_level:)
@@ -236,7 +238,7 @@ module ShopifyApp
     # TODO: remove this once https://github.com/Shopify/shopify-api-ruby/pull/1001
     # is merged and released
     def embedded_app_url
-      decoded_host = Base64.decode64(host)
+      decoded_host = Base64.strict_decode64(host)
       "https://#{decoded_host}/apps/#{ShopifyAPI::Context.api_key}"
     end
 
