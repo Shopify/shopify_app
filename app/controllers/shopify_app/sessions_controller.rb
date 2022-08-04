@@ -36,8 +36,12 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if params[:embedded].present? && ShopifyApp.configuration.embedded_redirect_url.present?
-        redirect_for_embedded
+      if ShopifyApp.configuration.embedded_redirect_url.present?
+        if params[:embedded].present? && params[:embedded] == "1"
+          redirect_for_embedded
+        else
+          start_oauth
+        end
       elsif top_level?
         start_oauth
       else
