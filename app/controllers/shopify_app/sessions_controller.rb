@@ -3,6 +3,7 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::RedirectForEmbedded
 
     layout false, only: :new
 
@@ -93,10 +94,6 @@ module ShopifyApp
 
     def redirect_auth_to_top_level
       fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
-    end
-
-    def redirect_for_embedded
-      redirect_to(redirect_uri_for_embedded)
     end
   end
 end

@@ -6,6 +6,7 @@ module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
     include ShopifyApp::Itp
+    include ShopifyApp::SanitizedParams
 
     class ShopifyDomainNotFound < StandardError; end
 
@@ -147,20 +148,6 @@ module ShopifyApp
       url
     end
 
-    def redirect_uri_for_embedded
-      redirect_query_params = {}
-      redirect_uri = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
-      redirect_query_params[:shop] = sanitized_shop_name
-      redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
-      redirect_query_params[:host] ||= host if params[:host].present?
-      redirect_uri = "#{redirect_uri}?#{redirect_query_params.to_query}" if redirect_query_params.present?
-
-      query_params = sanitized_params.except(:redirect_uri, :embedded)
-      query_params[:redirect_uri] = redirect_uri
-
-      "#{ShopifyApp.configuration.embedded_redirect_url}?#{query_params.to_query}"
-    end
-
     def login_url_params(top_level:)
       query_params = {}
       query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
@@ -233,13 +220,6 @@ module ShopifyApp
           query_params[:shop] = sanitize_shop_param(params)
         end
       end
-    end
-
-    # TODO: remove this once https://github.com/Shopify/shopify-api-ruby/pull/1001
-    # is merged and released
-    def embedded_app_url
-      decoded_host = Base64.decode64(host)
-      "https://#{decoded_host}/apps/#{ShopifyAPI::Context.api_key}"
     end
 
     def return_address
