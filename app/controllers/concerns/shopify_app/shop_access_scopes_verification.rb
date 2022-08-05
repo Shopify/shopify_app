@@ -3,6 +3,7 @@
 module ShopifyApp
   module ShopAccessScopesVerification
     extend ActiveSupport::Concern
+    include ShopifyApp::RedirectForEmbedded
 
     included do
       before_action :login_on_scope_changes
@@ -11,7 +12,13 @@ module ShopifyApp
     protected
 
     def login_on_scope_changes
-      redirect_to(shop_login) if scopes_mismatch?
+      if scopes_mismatch?
+        if params[:embedded].present? && params[:embedded] == "1"
+          redirect_for_embedded
+        else
+          redirect_to(shop_login)
+        end
+      end
     end
 
     private
