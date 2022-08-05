@@ -3,7 +3,6 @@
 module ShopifyApp
   module RequireKnownShop
     extend ActiveSupport::Concern
-    include ShopifyApp::SanitizedParams
     include ShopifyApp::RedirectForEmbedded
 
     included do
