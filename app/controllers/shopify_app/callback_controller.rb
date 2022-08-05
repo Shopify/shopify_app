@@ -44,9 +44,9 @@ module ShopifyApp
 
     def respond_successfully
       if ShopifyAPI::Context.embedded?
-        # TODO: replace this param with ShopifyAPI::Utils::AppUrl.get_embedded or whatever the new
+        # TODO: replace this param with ShopifyAPI::Auth.embedded_app_url or whatever the new
         # method name will be, once https://github.com/Shopify/shopify-api-ruby/pull/1002 is merged
-        redirect_to(embedded_app_url, allow_other_host: true)
+        redirect_to(embedded_app_url(params[:host]), allow_other_host: true)
       else
         redirect_to(return_address)
       end
@@ -54,7 +54,7 @@ module ShopifyApp
 
     # TODO: remove this once https://github.com/Shopify/shopify-api-ruby/pull/1002
     # is merged and released
-    def embedded_app_url
+    def embedded_app_url(host)
       decoded_host = Base64.decode64(host)
       "https://#{decoded_host}/apps/#{ShopifyAPI::Context.api_key}"
     end
