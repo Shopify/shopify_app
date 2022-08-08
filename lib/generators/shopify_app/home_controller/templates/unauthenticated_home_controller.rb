@@ -9,7 +9,7 @@ class HomeController < ApplicationController
     if ShopifyAPI::Context.embedded? && !params[:embedded].present? || params[:embedded] != "1"
       # TODO: replace this param with ShopifyAPI::Auth.embedded_app_url or whatever the new
       # method name will be, once https://github.com/Shopify/shopify-api-ruby/pull/1002 is merged
-      redirect_to(embedded_app_url(params[:host]), allow_other_host: true)
+      redirect_to(embedded_app_url(params[:host]) + request.path, allow_other_host: true)
     else
       @shop_origin = current_shopify_domain
       @host = params[:host]

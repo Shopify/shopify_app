@@ -46,7 +46,8 @@ module ShopifyApp
       if ShopifyAPI::Context.embedded?
         # TODO: replace this param with ShopifyAPI::Auth.embedded_app_url or whatever the new
         # method name will be, once https://github.com/Shopify/shopify-api-ruby/pull/1002 is merged
-        redirect_to(embedded_app_url(params[:host]), allow_other_host: true)
+        return_to = session.delete(:return_to) || ""
+        redirect_to(embedded_app_url(params[:host]) + return_to, allow_other_host: true)
       else
         redirect_to(return_address)
       end
