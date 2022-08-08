@@ -11,7 +11,7 @@ class ShopifyAppConfigurer
       config.user_access_scopes = nil
       config.embedded_app = true
       config.myshopify_domain = "myshopify.com"
-      config.api_version = :unstable
+      config.api_version = "unstable"
       config.billing = nil
 
       config.shop_session_repository = ShopifyApp::InMemorySessionStore

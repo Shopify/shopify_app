@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "test_helpers/fake_session_storage"
 
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
@@ -25,13 +24,8 @@ module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp.configuration = nil
-      ShopifyApp.configuration.api_key = "api_key"
-      ShopifyApp.configuration.secret = "secret"
-      ShopifyApp.configuration.api_version = "2022-07"
-      ShopifyApp.configuration.scope = "read_orders, write_orders"
-      ShopifyApp.configuration.embedded_app = true
-
+      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      setup_context
       I18n.locale = :en
 
       request.env["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)"\
@@ -148,7 +142,7 @@ module ShopifyApp
 
     test "#callback redirects to the root_url with shop and host parameter for non-embedded" do
       ShopifyApp.configuration.embedded_app = false
-      setup_context
+      setup_context # to reset the context, as there's no attr_writer for embedded
       mock_oauth
 
       get :callback, params: @callback_params # host is required for App Bridge 2.0
@@ -157,12 +151,11 @@ module ShopifyApp
     end
 
     test "#callback redirects to the embedded app url for embedded" do
-      setup_context
       mock_oauth
 
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      assert_redirected_to "https://test.host/admin/apps/api_key"
+      assert_redirected_to "https://test.host/admin/apps/key"
     end
 
     test "#callback performs install_webhook job after authentication" do
@@ -238,7 +231,7 @@ module ShopifyApp
         scope: ShopifyApp.configuration.scope,
         is_private: false,
         is_embedded: ShopifyApp.configuration.embedded_app,
-        session_storage: ::TestHelpers::FakeSessionStorage.new,
+        session_storage: ShopifyApp::SessionRepository,
       )
     end
   end
