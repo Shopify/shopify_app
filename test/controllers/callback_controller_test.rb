@@ -183,10 +183,6 @@ module ShopifyApp
 
       get :callback, params: @callback_params
       assert_response 302
-
-      ShopifyApp.configure do |config|
-        config.scripttags = nil
-      end
     end
 
     test "#callback performs after_authenticate job after authentication" do
