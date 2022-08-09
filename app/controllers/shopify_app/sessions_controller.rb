@@ -38,7 +38,7 @@ module ShopifyApp
       copy_return_to_param_to_session
 
       if ShopifyApp.configuration.embedded_redirect_url.present?
-        if params[:embedded].present? && params[:embedded] == "1"
+        if embedded_param?
           redirect_for_embedded
         else
           start_oauth

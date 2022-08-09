@@ -24,7 +24,7 @@ module ShopifyApp
     def check_shop_known
       @shop = SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
       unless @shop
-        if params[:embedded].present? && params[:embedded] == "1"
+        if embedded_param?
           redirect_for_embedded
         else
           redirect_to(shop_login)

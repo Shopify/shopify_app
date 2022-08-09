@@ -13,7 +13,7 @@ module ShopifyApp
 
     def login_on_scope_changes
       if scopes_mismatch?
-        if params[:embedded].present? && params[:embedded] == "1"
+        if embedded_param?
           redirect_for_embedded
         else
           redirect_to(shop_login)
