@@ -25,6 +25,7 @@ module ShopifyApp
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.user_storage = nil
       ShopifyAppConfigurer.setup_context
       I18n.locale = :en
 
@@ -175,13 +176,17 @@ module ShopifyApp
       mock_oauth
 
       ShopifyApp.configure do |config|
-        config.scripttags = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
+        config.scripttags = [{ event: "onload", src: "https://example.com/fancy.js" }]
       end
 
       ShopifyApp::ScripttagsManager.expects(:queue).with("shop", "token", ShopifyApp.configuration.scripttags)
 
       get :callback, params: @callback_params
       assert_response 302
+
+      ShopifyApp.configure do |config|
+        config.scripttags = nil
+      end
     end
 
     test "#callback performs after_authenticate job after authentication" do
@@ -200,10 +205,7 @@ module ShopifyApp
     private
 
     def mock_oauth
-      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      ShopifyApp::SessionRepository.user_storage = nil
-
-      host = Base64.strict_encode64("test.host/admin")
+      host = Base64.strict_encode64("#{ShopifyAPI::Context.host_name}/admin")
       @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
                            hmac: "hmac", }
       @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
