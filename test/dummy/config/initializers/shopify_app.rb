@@ -18,7 +18,20 @@ class ShopifyAppConfigurer
       config.after_authenticate_job = false
       config.reauth_on_access_scope_changes = true
     end
+
+    setup_context
+  end
+
+  def self.setup_context
+    ShopifyAPI::Context.setup(
+      api_key: ShopifyApp.configuration.api_key,
+      api_secret_key: ShopifyApp.configuration.secret,
+      api_version: ShopifyApp.configuration.api_version,
+      host_name: "test.host",
+      scope: ShopifyApp.configuration.scope,
+      is_private: false,
+      is_embedded: ShopifyApp.configuration.embedded_app,
+      session_storage: ShopifyApp::SessionRepository,
+    )
   end
 end
-
-ShopifyAppConfigurer.call
