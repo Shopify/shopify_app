@@ -37,7 +37,7 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if ShopifyApp.configuration.embedded_redirect_url.present?
+      if embedded_redirect_url?
         if embedded_param?
           redirect_for_embedded
         else

@@ -6,8 +6,12 @@ module ShopifyApp
 
     private
 
+    def embedded_redirect_url?
+      ShopifyApp.configuration.embedded_redirect_url.present?
+    end
+
     def embedded_param?
-      params[:embedded].present? && params[:embedded] == "1"
+      embedded_redirect_url? && params[:embedded].present? && params[:embedded] == "1"
     end
 
     def redirect_for_embedded
