@@ -13,6 +13,7 @@ class ShopifyAppConfigurer
       config.myshopify_domain = "myshopify.com"
       config.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
       config.billing = nil
+      config.scripttags = nil
 
       config.shop_session_repository = ShopifyApp::InMemorySessionStore
       config.after_authenticate_job = false
