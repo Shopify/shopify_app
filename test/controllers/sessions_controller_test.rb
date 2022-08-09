@@ -12,11 +12,10 @@ module ShopifyApp
   class SessionsControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyAppConfigurer.call
       ShopifyApp.configuration.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
-      setup_context
+      ShopifyAppConfigurer.setup_context  # need to reset context after config changes
 
       I18n.locale = :en
 
@@ -393,19 +392,6 @@ module ShopifyApp
       expected_url = base_embedded_url + "?redirectUri=#{CGI.escape(redirect_uri)}" + "&shop=#{shop_domain}"
 
       assert_redirected_to(expected_url)
-    end
-
-    def setup_context
-      ShopifyAPI::Context.setup(
-        api_key: ShopifyApp.configuration.api_key,
-        api_secret_key: ShopifyApp.configuration.secret,
-        api_version: ShopifyApp.configuration.api_version,
-        host_name: "test.host",
-        scope: ShopifyApp.configuration.scope,
-        is_private: false,
-        is_embedded: ShopifyApp.configuration.embedded_app,
-        session_storage: ShopifyApp::SessionRepository,
-      )
     end
 
     def with_embedded_redirect_url
