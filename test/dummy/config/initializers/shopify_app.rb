@@ -14,6 +14,7 @@ class ShopifyAppConfigurer
       config.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
       config.billing = nil
       config.scripttags = nil
+      config.embedded_redirect_url = nil
 
       config.shop_session_repository = ShopifyApp::InMemorySessionStore
       config.after_authenticate_job = false
