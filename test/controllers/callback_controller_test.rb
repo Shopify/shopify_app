@@ -25,7 +25,8 @@ module ShopifyApp
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      setup_context
+      ShopifyApp::SessionRepository.user_storage = nil
+      ShopifyAppConfigurer.setup_context
       I18n.locale = :en
 
       request.env["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)"\
@@ -142,7 +143,7 @@ module ShopifyApp
 
     test "#callback redirects to the root_url with shop and host parameter for non-embedded" do
       ShopifyApp.configuration.embedded_app = false
-      setup_context # to reset the context, as there's no attr_writer for embedded
+      ShopifyAppConfigurer.setup_context # to reset the context, as there's no attr_writer for embedded
       mock_oauth
 
       get :callback, params: @callback_params # host is required for App Bridge 2.0
@@ -175,7 +176,7 @@ module ShopifyApp
       mock_oauth
 
       ShopifyApp.configure do |config|
-        config.scripttags = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
+        config.scripttags = [{ event: "onload", src: "https://example.com/fancy.js" }]
       end
 
       ShopifyApp::ScripttagsManager.expects(:queue).with("shop", "token", ShopifyApp.configuration.scripttags)
@@ -200,10 +201,7 @@ module ShopifyApp
     private
 
     def mock_oauth
-      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      ShopifyApp::SessionRepository.user_storage = nil
-
-      host = Base64.strict_encode64("test.host/admin")
+      host = Base64.strict_encode64("#{ShopifyAPI::Context.host_name}/admin")
       @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
                            hmac: "hmac", }
       @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
@@ -220,19 +218,6 @@ module ShopifyApp
           cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
           session: ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token"),
         })
-    end
-
-    def setup_context
-      ShopifyAPI::Context.setup(
-        api_key: ShopifyApp.configuration.api_key,
-        api_secret_key: ShopifyApp.configuration.secret,
-        api_version: ShopifyApp.configuration.api_version,
-        host_name: "test.host",
-        scope: ShopifyApp.configuration.scope,
-        is_private: false,
-        is_embedded: ShopifyApp.configuration.embedded_app,
-        session_storage: ShopifyApp::SessionRepository,
-      )
     end
   end
 end

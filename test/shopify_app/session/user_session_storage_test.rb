@@ -30,7 +30,7 @@ module ShopifyApp
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
-        api_version: "2020-01",
+        api_version: ShopifyApp.configuration.api_version,
       )
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
