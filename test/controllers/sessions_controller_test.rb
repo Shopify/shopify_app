@@ -79,11 +79,10 @@ module ShopifyApp
     end
 
     test "#new redirects to the embedded url if a valid shop param exists and embedded param exists" do
-      with_embedded_redirect_url do
-        shopify_domain = "my-shop.myshopify.com"
-        get :new, params: { shop: "my-shop", embedded: 1 }
-        assert_redirected_to_embedded(shopify_domain, ShopifyApp.configuration.embedded_redirect_url)
-      end
+      ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+      shopify_domain = "my-shop.myshopify.com"
+      get :new, params: { shop: "my-shop", embedded: 1 }
+      assert_redirected_to_embedded(shopify_domain, ShopifyApp.configuration.embedded_redirect_url)
     end
 
     test "#new stores root path when return_to url is absolute" do
@@ -221,11 +220,10 @@ module ShopifyApp
       "http://my-shop.myshopify.com",
     ].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url}) with embedded param" do
-        with_embedded_redirect_url do
-          shopify_domain = "my-shop.myshopify.com"
-          post :create, params: { shop: good_url, embedded: 1 }
-          assert_redirected_to_embedded(shopify_domain, ShopifyApp.configuration.embedded_redirect_url)
-        end
+        ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+        shopify_domain = "my-shop.myshopify.com"
+        post :create, params: { shop: good_url, embedded: 1 }
+        assert_redirected_to_embedded(shopify_domain, ShopifyApp.configuration.embedded_redirect_url)
       end
     end
 
@@ -236,12 +234,11 @@ module ShopifyApp
       "http://my-shop.myshopify.io",
     ].each do |good_url|
       test "#create should authenticate the shop for the URL (#{good_url}) with custom myshopify_domain with embedded param" do
-        with_embedded_redirect_url do
-          ShopifyApp.configuration.myshopify_domain = "myshopify.io"
-          shopify_domain = "my-shop.myshopify.io"
-          post :create, params: { shop: good_url, embedded: 1 }
-          assert_redirected_to_embedded(shopify_domain, ShopifyApp.configuration.embedded_redirect_url)
-        end
+        ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+        ShopifyApp.configuration.myshopify_domain = "myshopify.io"
+        shopify_domain = "my-shop.myshopify.io"
+        post :create, params: { shop: good_url, embedded: 1 }
+        assert_redirected_to_embedded(shopify_domain, ShopifyApp.configuration.embedded_redirect_url)
       end
     end
 
@@ -252,14 +249,13 @@ module ShopifyApp
       "http://my-shop.myshopify.com",
     ].each do |good_url|
       test "#create should redirect to auth route when embedded_redirect_url configured but no embedded param for the URL (#{good_url})" do
-        with_embedded_redirect_url do
-          ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-            cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-            auth_route: "/auth-route",
-          })
-          post :create, params: { shop: good_url }
-          assert_redirected_to "/auth-route"
-        end
+        ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+        ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
+          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
+          auth_route: "/auth-route",
+        })
+        post :create, params: { shop: good_url }
+        assert_redirected_to "/auth-route"
       end
     end
 
@@ -270,15 +266,14 @@ module ShopifyApp
       "http://my-shop.myshopify.io",
     ].each do |good_url|
       test "#create should redirect to toplevel when embedded_redirect_url configured but no embedded param for the URL (#{good_url}) with custom myshopify_domain" do
-        with_embedded_redirect_url do
-          ShopifyApp.configuration.myshopify_domain = "myshopify.io"
-          ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-            cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-            auth_route: "/auth-route",
-          })
-          post :create, params: { shop: good_url }
-          assert_redirected_to "/auth-route"
-        end
+        ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+        ShopifyApp.configuration.myshopify_domain = "myshopify.io"
+        ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
+          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
+          auth_route: "/auth-route",
+        })
+        post :create, params: { shop: good_url }
+        assert_redirected_to "/auth-route"
       end
     end
 
@@ -328,12 +323,11 @@ module ShopifyApp
       "/foo/bar",
     ].each do |bad_url|
       test "#create should return an error for a non-myshopify URL (#{bad_url}) with embedded param" do
-        with_embedded_redirect_url do
-          post :create, params: { shop: bad_url, embedded: 1 }
-          assert_response :redirect
-          assert_redirected_to "/"
-          assert_equal I18n.t("invalid_shop_url"), flash[:error]
-        end
+        ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+        post :create, params: { shop: bad_url, embedded: 1 }
+        assert_response :redirect
+        assert_redirected_to "/"
+        assert_equal I18n.t("invalid_shop_url"), flash[:error]
       end
     end
 
@@ -392,12 +386,6 @@ module ShopifyApp
       expected_url = base_embedded_url + "?redirectUri=#{CGI.escape(redirect_uri)}" + "&shop=#{shop_domain}"
 
       assert_redirected_to(expected_url)
-    end
-
-    def with_embedded_redirect_url
-      ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
-      yield
-      ShopifyApp.configuration.embedded_redirect_url = nil
     end
   end
 end
