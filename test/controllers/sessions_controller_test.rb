@@ -12,7 +12,6 @@ module ShopifyApp
   class SessionsControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp.configuration.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
       ShopifyAppConfigurer.setup_context  # need to reset context after config changes
@@ -96,10 +95,7 @@ module ShopifyApp
     end
 
     test "#new redirects to the auth page if top_level param" do
-      ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-        cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-        auth_route: "/auth-route",
-      })
+      stub_begin_auth(value: "", auth_route: "/auth-route")
 
       get :new, params: { shop: "my-shop", top_level: true }
 
@@ -151,10 +147,7 @@ module ShopifyApp
 
     test "#new should authenticate the shop if a valid shop param exists non embedded" do
       ShopifyApp.configuration.embedded_app = false
-      ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-        auth_route: "/auth-route",
-        cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "nonce", expires: Time.now),
-      })
+      stub_begin_auth(value: "nonce", auth_route: "/auth-route")
       freeze_time do
         get :new, params: { shop: "my-shop" }
 
@@ -250,10 +243,7 @@ module ShopifyApp
     ].each do |good_url|
       test "#create should redirect to auth route when embedded_redirect_url configured but no embedded param for the URL (#{good_url})" do
         ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
-        ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-          auth_route: "/auth-route",
-        })
+        stub_begin_auth(value: "", auth_route: "/auth-route")
         post :create, params: { shop: good_url }
         assert_redirected_to "/auth-route"
       end
@@ -268,10 +258,7 @@ module ShopifyApp
       test "#create should redirect to toplevel when embedded_redirect_url configured but no embedded param for the URL (#{good_url}) with custom myshopify_domain" do
         ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
         ShopifyApp.configuration.myshopify_domain = "myshopify.io"
-        ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
-          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-          auth_route: "/auth-route",
-        })
+        stub_begin_auth(value: "", auth_route: "/auth-route")
         post :create, params: { shop: good_url }
         assert_redirected_to "/auth-route"
       end
@@ -284,6 +271,7 @@ module ShopifyApp
       "http://my-shop.myshopify.com",
     ].each do |good_url|
       test "#create should redirect to toplevel when embedded_redirect_url is not configured but embedded param sent for the URL (#{good_url})" do
+        ShopifyApp.configuration.embedded_redirect_url = nil
         shopify_domain = "my-shop.myshopify.com"
         post :create, params: { shop: good_url, embedded: 1 }
         assert_redirected_to_top_level(shopify_domain)
@@ -297,6 +285,7 @@ module ShopifyApp
       "http://my-shop.myshopify.io",
     ].each do |good_url|
       test "#create should redirect to toplevel when embedded_redirect_url is not configured but embedded param sent for the URL (#{good_url}) with custom myshopify_domain" do
+        ShopifyApp.configuration.embedded_redirect_url = nil
         ShopifyApp.configuration.myshopify_domain = "myshopify.io"
         shopify_domain = "my-shop.myshopify.io"
         post :create, params: { shop: good_url, embedded: 1 }
@@ -386,6 +375,13 @@ module ShopifyApp
       expected_url = base_embedded_url + "?redirectUri=#{CGI.escape(redirect_uri)}" + "&shop=#{shop_domain}"
 
       assert_redirected_to(expected_url)
+    end
+
+    def stub_begin_auth(value:, auth_route:)
+      ShopifyAPI::Auth::Oauth.stubs(:begin_auth).returns({
+        cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: value, expires: Time.now),
+        auth_route: auth_route,
+      })
     end
   end
 end

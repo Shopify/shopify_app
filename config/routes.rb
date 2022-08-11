@@ -9,6 +9,11 @@ ShopifyApp::Engine.routes.draw do
     post login_url => :create, :as => :authenticate
     get "logout" => :destroy, :as => :logout
 
+    if ShopifyApp.configuration.embedded_redirect_url.present?
+      embedded_redirect_url = ShopifyApp.configuration.embedded_redirect_url.gsub(/^#{ShopifyApp.configuration.root_url}/, "")
+      get embedded_redirect_url => :exitiframe, :as => :exitiframe
+    end
+
     # Kept to prevent apps relying on these routes from breaking
     if login_url.gsub(%r{^/}, "") != "login"
       get "login" => :new, :as => :default_login

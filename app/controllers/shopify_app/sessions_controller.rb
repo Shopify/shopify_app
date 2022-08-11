@@ -24,6 +24,10 @@ module ShopifyApp
       validate_shop_presence
     end
 
+    def exitiframe
+      fullpage_redirect_to(login_url_with_optional_shop)
+    end
+
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
