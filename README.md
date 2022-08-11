@@ -1,6 +1,6 @@
 # Shopify App
 
-[![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI) ![Supported Rails version][supported_rails_version]
+[![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI)
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
 [gem_url]: https://rubygems.org/gems/shopify_app
