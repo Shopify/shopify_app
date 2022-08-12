@@ -41,7 +41,7 @@ module ShopifyApp
         start_oauth
       else
         redirect_for_embedded
-      else
+      end
     end
 
     def start_oauth
