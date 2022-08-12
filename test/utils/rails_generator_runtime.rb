@@ -9,6 +9,7 @@ module Utils
 
     def initialize(test_class)
       raise "Caller must provide an instance of a test to Utils::RailsGeneratorRuntime.new" if test_class.nil?
+
       Utils::RailsGeneratorRuntime.clear_generated_source_folder_on_first_instance
       @classes = []
       @destination = File.join(ROOT, "#{test_class.class_name}/#{test_class.method_name}")
@@ -100,6 +101,7 @@ module Utils
 
       def clear_generated_source_folder_on_first_instance
         return if @initialized
+
         @initialized = true
         FileUtils.rm_rf(ROOT)
         FileUtils.mkdir_p(ROOT)

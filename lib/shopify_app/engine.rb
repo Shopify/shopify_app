@@ -7,6 +7,7 @@ module ShopifyApp
     def args_info(job)
       log_disabled_classes = ["ShopifyApp::ScripttagsManagerJob", "ShopifyApp::WebhooksManagerJob"]
       return "" if log_disabled_classes.include?(job.class.name)
+
       super
     end
   end

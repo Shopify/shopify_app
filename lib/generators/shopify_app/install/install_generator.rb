@@ -13,8 +13,8 @@ module ShopifyApp
       class_option :embedded, type: :string, default: "true"
       class_option :api_version, type: :string, default: nil
 
-      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/\n".freeze
-      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/\n".freeze
+      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/\n"
+      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/\n"
 
       def create_shopify_app_initializer
         @application_name = format_array_argument(options["application_name"])
