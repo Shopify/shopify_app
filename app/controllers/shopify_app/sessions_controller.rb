@@ -24,10 +24,6 @@ module ShopifyApp
       validate_shop_presence
     end
 
-    def exitiframe
-      fullpage_redirect_to(login_url_with_optional_shop)
-    end
-
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
@@ -41,17 +37,11 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if embedded_redirect_url?
-        if embedded_param?
-          redirect_for_embedded
-        else
-          start_oauth
-        end
-      elsif top_level?
+      if !ShopifyApp.configuration.embedded_app? || (ShopifyApp.configuration.embedded_app? && !embedded_param?)
         start_oauth
       else
-        redirect_auth_to_top_level
-      end
+        redirect_for_embedded
+      else
     end
 
     def start_oauth
@@ -89,15 +79,6 @@ module ShopifyApp
     def render_invalid_shop_error
       flash[:error] = I18n.t("invalid_shop_url")
       redirect_to(return_address)
-    end
-
-    def top_level?
-      return true unless ShopifyApp.configuration.embedded_app?
-      !params[:top_level].nil?
-    end
-
-    def redirect_auth_to_top_level
-      fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
     end
   end
 end

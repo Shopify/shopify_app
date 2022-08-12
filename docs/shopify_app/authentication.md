@@ -1,10 +1,10 @@
 # Authentication
 
-The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) to get [access tokens](https://shopify.dev/concepts/about-apis/authentication#api-access-modes). These are used to authenticate requests made by the app to the Shopify API. 
+The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) to get [access tokens](https://shopify.dev/concepts/about-apis/authentication#api-access-modes). These are used to authenticate requests made by the app to the Shopify API.
 
-By default, the gem generates an embedded app frontend that uses [Shopify App Bridge](https://shopify.dev/tools/app-bridge) to fetch [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens). Session tokens are used by the embedded app to make authenticated requests to the app backend. 
+By default, the gem generates an embedded app frontend that uses [Shopify App Bridge](https://shopify.dev/tools/app-bridge) to fetch [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens). Session tokens are used by the embedded app to make authenticated requests to the app backend.
 
-See [*Authenticate an embedded app using session tokens*](https://shopify.dev/tutorials/authenticate-your-app-using-session-tokens) to learn more. 
+See [*Authenticate an embedded app using session tokens*](https://shopify.dev/tutorials/authenticate-your-app-using-session-tokens) to learn more.
 
 > ⚠️ Be sure you understand the differences between the types of authentication schemes before reading this guide.
 
@@ -17,14 +17,16 @@ See [*Authenticate an embedded app using session tokens*](https://shopify.dev/tu
 [Rotate API credentials](#rotate-api-credentials)
 
 [Available authentication mixins](#available-authentication-mixins)
-  * [`ShopifyApp::Authenticated`](#shopifyappauthenticated)
-  * [`ShopifyApp::EnsureAuthenticatedLinks`](#shopifyappensureauthenticatedlinks)
+
+* [`ShopifyApp::Authenticated`](#shopifyappauthenticated)
+* [`ShopifyApp::EnsureAuthenticatedLinks`](#shopifyappensureauthenticatedlinks)
 
 ## OAuth callback
 
 >️ **Note:** In Shopify App version 8.4.0, we have extracted the callback logic in its own controller. If you are upgrading from a version older than 8.4.0 the callback action and related helper methods were defined in `ShopifyApp::SessionsController` ==> you will have to extend `ShopifyApp::CallbackController` instead and port your logic to the new controller.
 
 Upon completing the OAuth flow, Shopify calls the app at the `callback_path`. If the app needs to do some extra work, it can define and configure the route to a custom callback controller, inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods. The default callback controller already provides the following behaviour:
+
 * Logging into the shop and resetting the session
 * [Installing Webhooks](/docs/shopify_app/webhooks.md)
 * [Setting Scripttags](/docs/shopify_app/script-tags.md)
@@ -55,7 +57,7 @@ end
 
 We've also provided a generator which creates a skeleton job and updates the initializer for you:
 
-```
+```shell
 bin/rails g shopify_app:add_after_authenticate_job
 ```
 

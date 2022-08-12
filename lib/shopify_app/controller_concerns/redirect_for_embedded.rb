@@ -3,38 +3,30 @@
 module ShopifyApp
   module RedirectForEmbedded
     include ShopifyApp::SanitizedParams
+    include ShopifyApp::LoginUrls
 
     private
+
+    def redirect_for_embedded
+      if embedded_redirect_url?
+        url = ShopifyApp.configuration.embedded_redirect_url
+
+        query_params = sanitized_params.except(:redirect_uri, :embedded)
+        query_params[:redirectUri] = login_url_with_optional_shop
+
+        url = "#{url}?#{query_params.to_query}"
+        redirect_to(url)
+      else
+        fullpage_redirect_to(login_url_with_optional_shop)
+      end
+    end
 
     def embedded_redirect_url?
       ShopifyApp.configuration.embedded_redirect_url.present?
     end
 
     def embedded_param?
-      embedded_redirect_url? && params[:embedded].present? && params[:embedded] == "1"
-    end
-
-    def redirect_for_embedded
-      url = ShopifyApp.configuration.embedded_redirect_url
-
-      query_params = sanitized_params.except(:redirect_uri, :embedded)
-      query_params[:redirectUri] = redirect_uri_for_embedded
-
-      url = "#{url}?#{query_params.to_query}"
-
-      redirect_to(url)
-    end
-
-    def redirect_uri_for_embedded
-      redirect_uri = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
-
-      redirect_query_params = {}
-      redirect_query_params[:shop] = sanitized_shop_name
-      redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
-      redirect_query_params[:host] ||= params[:host] if params[:host].present?
-
-      redirect_uri = "#{redirect_uri}?#{redirect_query_params.to_query}" if redirect_query_params.present?
-      redirect_uri
+      params[:embedded].present? && params[:embedded] == "1"
     end
   end
 end

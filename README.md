@@ -7,13 +7,12 @@
 
 This gem builds Rails applications that can be embedded in the Shopify Admin.
 
-[Introduction](#introduction) | 
-[Requirements](#requirements) | 
-[Usage](#usage) | 
-[Documentation](#documentation) | 
+[Introduction](#introduction) |
+[Requirements](#requirements) |
+[Usage](#usage) |
+[Documentation](#documentation) |
 [Contributing](/CONTRIBUTING.md) |
 [License](/LICENSE)
-
 
 ## Introduction
 
@@ -22,21 +21,21 @@ This gem includes a Rails engine, generators, modules, and mixins that help crea
 <!-- This section is linked to in `templates/shopify_app.rb.tt`. Be careful renaming this heading. -->
 ## Requirements
 
-> **Rails compatibility** 
+> **Rails compatibility**
 > * Use Shopify App `<= v7.2.8` if you need to work with Rails 4.
 
 To become a Shopify app developer, you will need a [Shopify Partners](https://www.shopify.com/partners) account. Explore the [Shopify dev docs](https://shopify.dev/concepts/shopify-introduction) to learn more about [building Shopify apps](https://shopify.dev/concepts/apps).
 
 This gem requires that you have the following credentials:
 
-- **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
-- **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
+- **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations).
+- **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations).
 
 ## Usage
 
 1. To get started, create a new Rails app:
 
-``` sh
+```sh
 $ rails new my_shopify_app
 ```
 

@@ -4,6 +4,7 @@ module ShopifyApp
   module ShopAccessScopesVerification
     extend ActiveSupport::Concern
     include ShopifyApp::RedirectForEmbedded
+    include ShopifyApp::LoginUrls
 
     included do
       before_action :login_on_scope_changes
@@ -30,10 +31,6 @@ module ShopifyApp
     def current_shopify_domain
       return if params[:shop].blank?
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
-    end
-
-    def shop_login
-      ShopifyApp::Utils.shop_login_url(shop: params[:shop], host: params[:host], return_to: request.fullpath)
     end
   end
 end

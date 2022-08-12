@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    shopify_app (20.0.2)
+    shopify_app (20.0.3.pre)
       activeresource
       browser_sniffer (~> 2.0)
       jwt (>= 2.2.3)
       rails (> 5.2.1)
       redirect_safely (~> 1.0)
-      shopify_api (~> 11.1.0)
+      shopify_api (~> 11.1)
       sprockets-rails (>= 2.0.0)
 
 GEM
