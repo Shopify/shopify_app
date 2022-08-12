@@ -13,6 +13,9 @@ module ShopifyApp
       class_option :embedded, type: :string, default: "true"
       class_option :api_version, type: :string, default: nil
 
+      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/\n".freeze
+      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/\n".freeze
+
       def create_shopify_app_initializer
         @application_name = format_array_argument(options["application_name"])
         @scope = format_array_argument(options["scope"])
@@ -51,36 +54,33 @@ module ShopifyApp
       end
 
       def insert_hosts_into_development_config
-        allow_ngrok_tunnels
-        allow_cloudflare_tunnels
+        "Rails.application.configure do\n"
+          .then { insert_tunnel_host_rules("ngrok", _1, NGROK_HOST) }
+          .then { insert_tunnel_host_rules("Cloudflare", _1, CLOUDFLARE_HOST) }
       end
 
       private
 
-      def add_comment_explaining_tunnel_host(host_name)
+      def add_comment_explaining_tunnel_host(provider_name, insert_after_line)
+        comment = "  # Allow #{provider_name} tunnels for secure Shopify OAuth redirects\n"
         inject_into_file(
           "config/environments/development.rb",
-          "  # allow #{host_name} tunnels for secure OAuth redirects",
-          after: "Rails.application.configure do\n"
+          comment,
+          after: insert_after_line
         )
+        comment
       end
 
-      def allow_ngrok_tunnels
-        add_comment_explaining_tunnel_host("ngrok")
-        inject_into_file(
-          "config/environments/development.rb",
-          "  config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.ngrok\\.io/\n",
-          after: "Rails.application.configure do\n"
-        )
-      end
+      def insert_tunnel_host_rules(provider_name, insert_after_line, provider_host_domain)
+        explaination_comment = add_comment_explaining_tunnel_host(provider_name, insert_after_line)
+        host_line = "  config.hosts = (config.hosts rescue []) << #{provider_host_domain}"
 
-      def allow_cloudflare_tunnels
-        add_comment_explaining_tunnel_host("Cloudflare")
         inject_into_file(
           "config/environments/development.rb",
-          "  config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.trycloudflare\\.com/\n",
-          after: "Rails.application.configure do\n"
+          host_line,
+          after: explaination_comment
         )
+        host_line
       end
 
       def embedded_app?

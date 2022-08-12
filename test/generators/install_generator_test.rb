@@ -97,10 +97,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "adds host config to development.rb" do
     run_generator
     assert_file "config/environments/development.rb" do |config|
-      assert_match "allow ngrok tunnels for secure OAuth redirects", config
-      assert_match "config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.ngrok\\.io/", config
-      assert_match "allow Cloudflare tunnels for secure OAuth redirects", config
-      assert_match "config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.trycloudflare\\.com/", config
+      assert_match "Allow ngrok tunnels for secure Shopify OAuth redirects\n", config
+      assert_match "config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.ngrok\\.io/\n", config
+      assert_match "Allow Cloudflare tunnels for secure Shopify OAuth redirects\n", config
+      assert_match "config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.trycloudflare\\.com/\n", config
     end
   end
 end
