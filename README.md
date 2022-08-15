@@ -34,7 +34,7 @@ This gem requires that you have the following credentials:
 
 ### OAuth Tunnel in Development
 
-In order to redirect OAuth requests securely to localhost, we recommend establishing a tunnel.
+In order to redirect OAuth requests securely to localhost, you'll need to setup a tunnel to redirect from the internet to localhost.
 
 We've validated that [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) works with this template.
 
@@ -66,7 +66,7 @@ $ bundle add shopify_app
 ```
 SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
-HOST=<your ssh tunnel host>
+HOST=<Your SSH tunnel host>
 ```
 
 > In a development environment, you can use a gem like `dotenv-rails` to manage environment variables. 

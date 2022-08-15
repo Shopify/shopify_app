@@ -13,8 +13,8 @@ module ShopifyApp
       class_option :embedded, type: :string, default: "true"
       class_option :api_version, type: :string, default: nil
 
-      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/\n"
-      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/\n"
+      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/"
+      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/"
 
       def create_shopify_app_initializer
         @application_name = format_array_argument(options["application_name"])
@@ -55,8 +55,8 @@ module ShopifyApp
 
       def insert_hosts_into_development_config
         "Rails.application.configure do\n"
-          .then { insert_tunnel_host_rules("ngrok", _1, NGROK_HOST) }
-          .then { insert_tunnel_host_rules("Cloudflare", _1, CLOUDFLARE_HOST) }
+          .then { insert_tunnel_host_rules("ngrok", _1, NGROK_HOST + "\n") }
+          .then { insert_tunnel_host_rules("Cloudflare", _1, CLOUDFLARE_HOST + "\n") }
       end
 
       private

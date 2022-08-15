@@ -12,7 +12,7 @@ This guide assumes you have completed the steps to create a new Rails app using 
 
 Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
 
-Use a tunneling service like [Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/), [ngrok](https://ngrok.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+Use a tunneling service like [Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) to make your development environment accessible to the internet.
 
 To use Cloudflare, [install the `cloudflared` CLI tool](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/), and run:
 
