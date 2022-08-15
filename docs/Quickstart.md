@@ -12,12 +12,13 @@ This guide assumes you have completed the steps to create a new Rails app using 
 
 Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
 
-Use a tunneling service like [ngrok](https://ngrok.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+Use a tunneling service like [Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) to make your development environment accessible to the internet.
 
-For example with [ngrok](https://ngrok.com/), run this command to set up a tunnel proxy to Rails' default port:
+To use Cloudflare, [install the `cloudflared` CLI tool](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/), and run:
 
-```sh
-ngrok http 3000
+```shell
+# Note that you can also use a different port
+cloudflared tunnel --url http://localhost:3000
 ```
 
 See the [*Embed the app in Shopify*](https://shopify.dev/tutorials/build-rails-react-app-that-uses-app-bridge-authentication#embed-the-app-in-shopify) section of [*Build a Shopify app with Rails, React, and App Bridge*](https://shopify.dev/tutorials/build-rails-react-app-that-uses-app-bridge-authentication) to learn more.

@@ -81,11 +81,13 @@ module ShopifyApp
 
       def load_shop_storage
         return unless @shop_storage
+
         @shop_storage.respond_to?(:safe_constantize) ? @shop_storage.safe_constantize : @shop_storage
       end
 
       def load_user_storage
         return NullUserSessionStore unless @user_storage
+
         @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
       end
     end

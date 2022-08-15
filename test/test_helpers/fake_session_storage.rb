@@ -28,6 +28,7 @@ module TestHelpers
     end
     def store_session(session)
       return false if error_on_save
+
       sessions[session.id] = session
       true
     end
@@ -46,6 +47,7 @@ module TestHelpers
     end
     def delete_session(id)
       return false if error_on_delete
+
       sessions.delete(id)
       true
     end

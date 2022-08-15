@@ -11,6 +11,7 @@ module ShopifyApp
 
     def current_shopify_domain
       return if params[:shop].blank?
+
       @shopify_domain ||= ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 

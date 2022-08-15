@@ -77,11 +77,13 @@ module ShopifyApp
 
     def shop_access_scopes_strategy
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+
       ShopifyApp::AccessScopes::ShopStrategy
     end
 
     def user_access_scopes_strategy
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+
       ShopifyApp::AccessScopes::UserStrategy
     end
 

@@ -56,6 +56,7 @@ module ShopifyApp
 
     def login_again_if_different_user_or_shop
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
+
       clear_shopify_session
       redirect_to_login
     end
@@ -67,6 +68,7 @@ module ShopifyApp
     def jwt_expire_at
       expire_at = request.env["jwt.expire_at"]
       return unless expire_at
+
       expire_at - 5.seconds # 5s gap to start fetching new token in advance
     end
 
@@ -210,6 +212,7 @@ module ShopifyApp
 
     def sanitize_shop_param(params)
       return unless params[:shop].present?
+
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 
@@ -259,6 +262,7 @@ module ShopifyApp
     def user_session_expected?
       return false if shop_session.nil?
       return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
+
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
   end

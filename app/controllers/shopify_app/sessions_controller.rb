@@ -82,6 +82,7 @@ module ShopifyApp
 
     def top_level?
       return true unless ShopifyApp.configuration.embedded_app?
+
       !params[:top_level].nil?
     end
 
