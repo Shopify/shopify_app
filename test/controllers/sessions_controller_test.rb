@@ -74,7 +74,7 @@ module ShopifyApp
     test "#new redirects to the top-level login if a valid shop param exists" do
       shopify_domain = "my-shop.myshopify.com"
       get :new, params: { shop: "my-shop" }
-      assert_redirected_to_top_level(shopify_domain)
+      assert_redirected_to_app_bridge_redirect_page(shopify_domain)
     end
 
     test "#new redirects to the embedded url if a valid shop param exists and embedded param exists" do
@@ -188,7 +188,7 @@ module ShopifyApp
       test "#create should authenticate the shop for the URL (#{good_url})" do
         shopify_domain = "my-shop.myshopify.com"
         post :create, params: { shop: good_url }
-        assert_redirected_to_top_level(shopify_domain)
+        assert_redirected_to_app_bridge_redirect_page(shopify_domain)
       end
     end
 
@@ -202,7 +202,7 @@ module ShopifyApp
         ShopifyApp.configuration.myshopify_domain = "myshopify.io"
         shopify_domain = "my-shop.myshopify.io"
         post :create, params: { shop: good_url }
-        assert_redirected_to_top_level(shopify_domain)
+        assert_redirected_to_app_bridge_redirect_page(shopify_domain)
       end
     end
 
@@ -274,7 +274,7 @@ module ShopifyApp
         ShopifyApp.configuration.embedded_redirect_url = nil
         shopify_domain = "my-shop.myshopify.com"
         post :create, params: { shop: good_url, embedded: 1 }
-        assert_redirected_to_top_level(shopify_domain)
+        assert_redirected_to_app_bridge_redirect_page(shopify_domain)
       end
     end
 
@@ -289,7 +289,7 @@ module ShopifyApp
         ShopifyApp.configuration.myshopify_domain = "myshopify.io"
         shopify_domain = "my-shop.myshopify.io"
         post :create, params: { shop: good_url, embedded: 1 }
-        assert_redirected_to_top_level(shopify_domain)
+        assert_redirected_to_app_bridge_redirect_page(shopify_domain)
       end
     end
 
@@ -359,8 +359,8 @@ module ShopifyApp
 
     private
 
-    def assert_redirected_to_top_level(shop_domain, expected_url = nil)
-      expected_url ||= "/login?shop=#{shop_domain}\\u0026top_level=true"
+    def assert_redirected_to_app_bridge_redirect_page(shop_domain, expected_url = nil)
+      expected_url ||= "https://test.host/login?shop=#{shop_domain}"
 
       assert_template("shared/redirect")
       assert_select "[id=redirection-target]", 1 do |elements|

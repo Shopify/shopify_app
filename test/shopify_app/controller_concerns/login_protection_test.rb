@@ -158,7 +158,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       ).once
 
       get :second_login, params: { shop: "other-shop" }
-      assert_redirected_to "/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com"\
+      assert_redirected_to "https://test.host/login?return_to=%2Fsecond_login%3Fshop%3Dother-shop.myshopify.com"\
         "&shop=other-shop.myshopify.com"
 
       assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
@@ -188,7 +188,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       get :index, params: { shop: shop }
 
-      assert_redirected_to "/login?shop=my-shop.myshopify.com"
+      assert_redirected_to "https://test.host/login?shop=my-shop.myshopify.com"
       assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end
@@ -236,7 +236,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test "#activate_shopify_session with no Shopify session, redirects to the login url" do
     with_application_test_routes do
       get :index, params: { shop: "foobar" }
-      assert_redirected_to "/login?shop=foobar.myshopify.com"
+      assert_redirected_to "https://test.host/login?shop=foobar.myshopify.com"
     end
   end
 
@@ -257,7 +257,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       request.headers["Referer"] = "https://example.com/?shop=my-shop.myshopify.com"
 
       get :index
-      assert_redirected_to "/login?shop=my-shop.myshopify.com"
+      assert_redirected_to "https://test.host/login?shop=my-shop.myshopify.com"
     end
   end
 
@@ -280,7 +280,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       params = { shop: { id: 123 } }
       get :index, params: params
-      assert_redirected_to "/login?#{params.to_query}"
+      assert_redirected_to "https://test.host/login?#{params.to_query}"
     end
   end
 
@@ -333,7 +333,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
 
       get :raise_unauthorized, params: { shop: "foobar" }
-      assert_redirected_to "/login?shop=foobar.myshopify.com"
+      assert_redirected_to "https://test.host/login?shop=foobar.myshopify.com"
       assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
     end
   end

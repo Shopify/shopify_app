@@ -28,5 +28,14 @@ module ShopifyApp
     def embedded_param?
       params[:embedded].present? && params[:embedded] == "1"
     end
+
+    def fullpage_redirect_to(url)
+      if ShopifyApp.configuration.embedded_app?
+        render("shopify_app/shared/redirect", layout: false,
+          locals: { url: url, current_shopify_domain: sanitized_shop_name })
+      else
+        redirect_to(url)
+      end
+    end
   end
 end

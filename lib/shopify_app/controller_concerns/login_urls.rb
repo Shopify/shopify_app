@@ -7,7 +7,11 @@ module ShopifyApp
     protected
 
     def login_url_with_optional_shop(top_level: false)
-      url = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
+      if ShopifyApp.configuration.login_url =~ %r|\Ahttps?://|
+        url = ShopifyApp.configuration.login_url
+      else
+        url = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
+      end
 
       query_params = login_url_params(top_level: top_level)
 
@@ -32,7 +36,7 @@ module ShopifyApp
       end
 
       if params[:host].present?
-        query_params[:host] ||= host
+        query_params[:host] ||= params[:host]
       end
 
       query_params[:top_level] = true if top_level
