@@ -45,9 +45,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   setup do
     @shop = "my-shop.myshopify.com"
-    @api_key = "api_key"
-    @secret = "secret"
-    @old_secret = "old_secret"
 
     ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
@@ -55,10 +52,12 @@ class LoginProtectionControllerTest < ActionController::TestCase
     @session = ShopifyAPI::Auth::Session.new(shop: @shop)
     ShopifyApp::SessionRepository.store_shop_session(@session)
 
+    ShopifyApp.configuration.old_secret = "old_secret"
+
     ShopifyAPI::Context.setup(
-      api_key: @api_key,
-      api_secret_key: @secret,
-      old_api_secret_key: @old_secret,
+      api_key: ShopifyApp.configuration.api_key,
+      api_secret_key: ShopifyApp.configuration.secret,
+      old_api_secret_key: ShopifyApp.configuration.old_secret,
       api_version: ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION,
       host_name: "host.example.io",
       scope: ShopifyApp.configuration.scope,
@@ -121,7 +120,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test "#current_shopify_session loads offline session if token is signed with new secret" do
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
-    token = mock_jwt_token(@secret)
+    token = mock_jwt_token(ShopifyApp.configuration.secret)
     request.headers["HTTP_AUTHORIZATION"] = "Bearer #{token}"
 
     ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
@@ -140,7 +139,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test "#current_shopify_session loads offline session if token is signed with old secret" do
     cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
-    token = mock_jwt_token(@old_secret)
+    token = mock_jwt_token(ShopifyApp.configuration.old_secret)
     request.headers["HTTP_AUTHORIZATION"] = "Bearer #{token}"
 
     ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
@@ -515,7 +514,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     {
       "iss" => "https://#{@shop}/admin",
       "dest" => "https://#{@shop}",
-      "aud" => @api_key,
+      "aud" => ShopifyApp.configuration.api_key,
       "sub" => "123",
       "exp" => 1.day.from_now.to_i,
       "nbf" => 1.day.ago.to_i,
