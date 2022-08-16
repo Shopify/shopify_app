@@ -7,7 +7,7 @@ module Shopify
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_TOKEN = "1234567890abcdef"
 
-    test 'proc params of #with_shopify_session should be ShopifyAPI::Auth::Session' do
+    test '#with_shopify_session should be supplied ShopifyAPI::Auth::Session in block argument' do
       shop_mock = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_TOKEN,
