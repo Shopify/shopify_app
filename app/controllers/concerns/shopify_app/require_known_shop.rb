@@ -3,6 +3,7 @@
 module ShopifyApp
   module RequireKnownShop
     extend ActiveSupport::Concern
+    include ShopifyApp::RedirectForEmbedded
 
     included do
       before_action :check_shop_domain
@@ -23,7 +24,13 @@ module ShopifyApp
 
     def check_shop_known
       @shop = SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
-      redirect_to(shop_login) unless @shop
+      unless @shop
+        if embedded_param?
+          redirect_for_embedded
+        else
+          redirect_to(shop_login)
+        end
+      end
     end
 
     def shop_login

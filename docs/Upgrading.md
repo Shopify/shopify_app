@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `v20.1.0`](#upgrading-to-v2010)
+
 [Upgrading to `v19.0.0`](#upgrading-to-v1900)
 
 [Upgrading to `v18.1.2`](#upgrading-to-v1812)
@@ -15,6 +17,15 @@ This file documents important changes needed to upgrade your app's Shopify App v
 [Upgrading to `v11.7.0`](#upgrading-to-v1170)
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
+
+## Upgrading to `v20.1.0`
+
+Note that the following steps are *optional* and only apply to **embedded** applications. However, they can improve the loading time of your embedded app at installation and re-auth.
+
+- For embedded applications, update any controller that renders a full page reload (e.g: your home controller) to redirect using `Shopify::Auth.embedded_app_url`, if the `embedded` query argument is not present or does not equal `1`. Example [here](https://github.com/Shopify/shopify-app-template-ruby/pull/35/files#)
+- If your app already has a frontend that uses App Bridge, this gem now supports using that to redirect out of the iframe before OAuth.  Example [here](https://github.com/Shopify/shopify-frontend-template-react/blob/main/pages/ExitIframe.jsx)
+  - In your `shopify_app.rb` initializer, configure `.embedded_redirect_url` to the path of the route you added above.
+  - If you don't set this route, then the `shopify_app` gem will automatically load its own copy of App Bridge and perform this redirection without any additional configuration.
 
 ## Upgrading to `v19.0.0`
 

@@ -25,6 +25,7 @@ module ShopifyApp
     attr_accessor :root_url
     attr_writer :login_url
     attr_writer :login_callback_url
+    attr_accessor :embedded_redirect_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name

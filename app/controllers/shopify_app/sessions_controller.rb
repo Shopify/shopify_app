@@ -3,6 +3,7 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::RedirectForEmbedded
 
     layout false, only: :new
 
@@ -36,7 +37,13 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if top_level?
+      if embedded_redirect_url?
+        if embedded_param?
+          redirect_for_embedded
+        else
+          start_oauth
+        end
+      elsif top_level?
         start_oauth
       else
         redirect_auth_to_top_level

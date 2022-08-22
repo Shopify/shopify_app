@@ -43,7 +43,12 @@ module ShopifyApp
     private
 
     def respond_successfully
-      redirect_to(return_address)
+      if ShopifyAPI::Context.embedded?
+        return_to = session.delete(:return_to) || ""
+        redirect_to(ShopifyAPI::Auth.embedded_app_url(params[:host]) + return_to, allow_other_host: true)
+      else
+        redirect_to(return_address)
+      end
     end
 
     def respond_with_error

@@ -36,17 +36,8 @@ class EnsureBillingTest < ActionController::TestCase
     ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session).returns(@session)
 
     @api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
-
-    ShopifyAPI::Context.setup(
-      api_key: "api_key",
-      api_secret_key: "api_secret_key",
-      api_version: @api_version,
-      host_name: "host.example.io",
-      scope: "read_products",
-      session_storage: ShopifyApp::SessionRepository,
-      is_private: false,
-      is_embedded: true,
-    )
+    ShopifyApp.configuration.api_version = @api_version
+    ShopifyAppConfigurer.setup_context
   end
 
   test "requires single payment if none exists and non recurring" do
