@@ -21,7 +21,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       delivery_method: :http,
       path: "webhooks/orders_updated",
       handler: OrdersUpdatedJob,
-      fields: nil
+      fields: nil,
     }
 
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once

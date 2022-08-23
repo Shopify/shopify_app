@@ -41,7 +41,7 @@ module ShopifyApp
           ShopifyAPI::Webhooks::Registry.add_registration(
             topic: attributes[:topic],
             delivery_method: attributes[:delivery_method] || :http,
-            path: attributes[:path],
+            path: attributes[:path] || attributes[:address],
             handler: webhook_job_klass(attributes[:path]),
             fields: attributes[:fields]
           )
@@ -56,7 +56,8 @@ module ShopifyApp
 
       def webhook_job_klass_name(path)
         job_file_name = path.split("/").last
-        [ShopifyApp.configuration.webhook_jobs_namespace, "#{job_file_name.gsub("/", "_")}_job"].compact.join("/").classify
+        [ShopifyApp.configuration.webhook_jobs_namespace,
+         "#{job_file_name.gsub("/", "_")}_job",].compact.join("/").classify
       end
     end
   end
