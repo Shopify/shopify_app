@@ -6,7 +6,7 @@ require "generators/shopify_app/add_webhook/add_webhook_generator"
 class AddWebhookGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AddWebhookGenerator
   destination File.expand_path("../tmp", File.dirname(__FILE__))
-  arguments ["-t", "products/update", "-a", "https://example.com/webhooks/product_update"]
+  arguments ["--topic", "products/update", "--path", "webhooks/product_update"]
 
   setup do
     prepare_destination
@@ -49,10 +49,10 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
   private
 
   def exisiting_webhook
-    "{ topic: \"carts/update\", address: \"https://example.com/webhooks/carts_update\" },"
+    "{ topic: \"carts/update\", path: \"webhooks/carts_update\" },"
   end
 
   def new_webhook
-    "{ topic: \"products/update\", address: \"https://example.com/webhooks/product_update\" }"
+    "{ topic: \"products/update\", path: \"webhooks/product_update\" }"
   end
 end
