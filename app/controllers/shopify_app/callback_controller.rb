@@ -43,7 +43,12 @@ module ShopifyApp
     private
 
     def respond_successfully
-      redirect_to(return_address)
+      if ShopifyAPI::Context.embedded?
+        return_to = session.delete(:return_to) || ""
+        redirect_to(ShopifyAPI::Auth.embedded_app_url(params[:host]) + return_to, allow_other_host: true)
+      else
+        redirect_to(return_address)
+      end
     end
 
     def respond_with_error
@@ -58,11 +63,13 @@ module ShopifyApp
     def start_user_token_flow?(shopify_session)
       return false unless ShopifyApp::SessionRepository.user_storage.present?
       return false if shopify_session.online?
+
       update_user_access_scopes?
     end
 
     def update_user_access_scopes?
       return true if session[:shopify_user_id].nil?
+
       user_access_scopes_strategy.update_access_scopes?(shopify_user_id: session[:shopify_user_id])
     end
 

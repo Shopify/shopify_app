@@ -6,6 +6,7 @@ module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
     include ShopifyApp::Itp
+    include ShopifyApp::SanitizedParams
 
     class ShopifyDomainNotFound < StandardError; end
 
@@ -56,6 +57,7 @@ module ShopifyApp
 
     def login_again_if_different_user_or_shop
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
+
       clear_shopify_session
       redirect_to_login
     end
@@ -67,6 +69,7 @@ module ShopifyApp
     def jwt_expire_at
       expire_at = request.env["jwt.expire_at"]
       return unless expire_at
+
       expire_at - 5.seconds # 5s gap to start fetching new token in advance
     end
 
@@ -193,34 +196,6 @@ module ShopifyApp
       raise ShopifyDomainNotFound
     end
 
-    def sanitized_shop_name
-      @sanitized_shop_name ||= sanitize_shop_param(params)
-    end
-
-    def referer_sanitized_shop_name
-      return unless request.referer.present?
-
-      @referer_sanitized_shop_name ||= begin
-        referer_uri = URI(request.referer)
-        query_params = Rack::Utils.parse_query(referer_uri.query)
-
-        sanitize_shop_param(query_params.with_indifferent_access)
-      end
-    end
-
-    def sanitize_shop_param(params)
-      return unless params[:shop].present?
-      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
-    end
-
-    def sanitized_params
-      request.query_parameters.clone.tap do |query_params|
-        if params[:shop].is_a?(String)
-          query_params[:shop] = sanitize_shop_param(params)
-        end
-      end
-    end
-
     def return_address
       return_address_with_params(shop: current_shopify_domain, host: host)
     rescue ShopifyDomainNotFound, ShopifyHostNotFound
@@ -259,6 +234,7 @@ module ShopifyApp
     def user_session_expected?
       return false if shop_session.nil?
       return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
+
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
   end

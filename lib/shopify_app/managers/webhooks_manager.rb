@@ -14,12 +14,14 @@ module ShopifyApp
 
       def create_webhooks(session:)
         return unless ShopifyApp.configuration.has_webhooks?
+
         ShopifyAPI::Webhooks::Registry.register_all(session: session)
       end
 
       def recreate_webhooks!(session:)
         destroy_webhooks
         return unless ShopifyApp.configuration.has_webhooks?
+
         add_registrations
         ShopifyAPI::Webhooks::Registry.register_all(session: session)
       end

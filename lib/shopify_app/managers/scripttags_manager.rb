@@ -16,6 +16,7 @@ module ShopifyApp
     def self.build_src(scripttags, domain)
       scripttags.map do |tag|
         next tag unless tag[:src].respond_to?(:call)
+
         tag = tag.dup
         tag[:src] = tag[:src].call(domain)
         tag
