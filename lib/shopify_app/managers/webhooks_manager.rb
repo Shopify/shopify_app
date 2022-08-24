@@ -55,9 +55,10 @@ module ShopifyApp
       end
 
       def webhook_job_klass_name(path)
-        job_file_name = path.split("/").last
+        job_file_name = Pathname(path.to_s).basename
+
         [ShopifyApp.configuration.webhook_jobs_namespace,
-         "#{job_file_name.gsub("/", "_")}_job",].compact.join("/").classify
+         "#{job_file_name}_job",].compact.join("/").classify
       end
     end
   end
