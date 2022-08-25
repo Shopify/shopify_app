@@ -16,16 +16,24 @@ end
 
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   test "#add_registrations makes calls to library's add_registration" do
-    ShopifyAPI::Webhooks::Registry.expects(:add_registration).once
+    expected_hash = {
+      topic: "orders/updated",
+      delivery_method: :http,
+      path: "webhooks/orders_updated",
+      handler: OrdersUpdatedJob,
+      fields: nil,
+    }
+
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
     ShopifyApp.configure do |config|
       config.webhooks = [
-        { topic: "orders/updated", address: "/webhooks" },
+        { topic: "orders/updated", path: "webhooks/orders_updated" },
       ]
     end
     ShopifyApp::WebhooksManager.add_registrations
   end
 
-  test "#add_registrations does not makes calls to library's add_registration when there is no webhooks" do
+  test "#add_registrations does not makes calls to library's add_registration when there are no webhooks" do
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).never
     ShopifyApp.configure do |config|
       config.webhooks = []
@@ -40,7 +48,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
 
     ShopifyApp.configure do |config|
       config.webhooks = [
-        { topic: "orders/updated", address: "/webhooks" },
+        { topic: "orders/updated", path: "webhooks" },
       ]
     end
     ShopifyApp::WebhooksManager.add_registrations
