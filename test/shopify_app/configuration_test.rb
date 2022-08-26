@@ -25,6 +25,10 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "/login", ShopifyApp.configuration.login_url
   end
 
+  test "defaults login_callback_url" do
+    assert_equal "auth/shopify/callback", ShopifyApp.configuration.login_callback_url
+  end
+
   test "can set root_url which affects login_url" do
     original_root = ShopifyApp.configuration.root_url
 

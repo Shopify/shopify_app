@@ -25,6 +25,7 @@ module ShopifyApp
     attr_accessor :root_url
     attr_writer :login_url
     attr_writer :login_callback_url
+    attr_accessor :embedded_redirect_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -77,11 +78,13 @@ module ShopifyApp
 
     def shop_access_scopes_strategy
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+
       ShopifyApp::AccessScopes::ShopStrategy
     end
 
     def user_access_scopes_strategy
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+
       ShopifyApp::AccessScopes::UserStrategy
     end
 

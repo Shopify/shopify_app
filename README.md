@@ -1,6 +1,6 @@
 # Shopify App
 
-[![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI) ![Supported Rails version][supported_rails_version]
+[![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI)
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
 [gem_url]: https://rubygems.org/gems/shopify_app
@@ -32,6 +32,21 @@ This gem requires that you have the following credentials:
 - **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
 - **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
 
+### OAuth Tunnel in Development
+
+In order to redirect OAuth requests securely to localhost, you'll need to setup a tunnel to redirect from the internet to localhost.
+
+We've validated that [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) works with this template.
+
+To do that, you can [install the `cloudflared` CLI tool](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/), and run:
+
+```shell
+# Note that you can also use a different port
+cloudflared tunnel --url http://localhost:3000
+```
+
+You will need to keep this window running to maintain the tunnel during development.
+
 ## Usage
 
 1. To get started, create a new Rails app:
@@ -51,6 +66,7 @@ $ bundle add shopify_app
 ```
 SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
+HOST=<Your SSH tunnel host>
 ```
 
 > In a development environment, you can use a gem like `dotenv-rails` to manage environment variables. 

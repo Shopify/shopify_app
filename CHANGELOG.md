@@ -1,7 +1,14 @@
 Unreleased
 ----------
+* Fixes bug where webhooks were generated with addresses instead of the [path the Ruby API](https://github.com/Shopify/shopify-api-ruby/blob/7a08ae9d96a7a85abd0113dae4eb76398cba8c64/lib/shopify_api/webhooks/registrations/http.rb#L12) is expecting [#1474](https://github.com/Shopify/shopify_app/pull/1474). The breaking change that was accidentially already shipped was that `address` attribute for webhooks should be paths not addresses with `https://` and the host name. While the `address` attribute name will still work assuming the value is a path, this name is deprecated. Please configure webhooks with the `path` attribute name instead.
+
+20.1.0 (August 22, 2022)
+----------
 
 * Set the appropriate CSP `frame-ancestor` directive in controllers using the `EmbeddedApp` concern. [#1474](https://github.com/Shopify/shopify_app/pull/1474)
+* Allow [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) hosts in `config/environments/development.rb`.
+* Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) as example tunnel in readme/docs.
+* Change to optimize OAuth redirects to happen on the server side when possible.  Also, add an optional `.embedded_redirect_url` configuration parameter to enable customized App Bridge-supported redirect. [1483](https://github.com/Shopify/shopify_app/pull/1483)
 
 20.0.2 (July 7, 2022)
 ----------
