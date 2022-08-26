@@ -51,6 +51,23 @@ class RequireKnownShopTest < ActionController::TestCase
     assert_redirected_to redirect_url.to_s
   end
 
+  test "redirects to the right embedded URL if the shop is not known and embedded mode is enabled" do
+    ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+
+    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(false)
+
+    shopify_domain = "shop1.myshopify.com"
+    host = "mock-host"
+
+    get :index, params: { shop: shopify_domain, host: host, embedded: "1" }
+
+    redirect_uri = "https://test.host/login?host=#{host}&return_to=#{CGI.escape(request.fullpath)}&shop=#{shopify_domain}"
+    embedded_url_params = { redirectUri: redirect_uri, shop: shopify_domain, host: host }
+    embedded_url = "#{ShopifyApp.configuration.embedded_redirect_url}?#{embedded_url_params.to_query}"
+
+    assert_redirected_to embedded_url
+  end
+
   test "returns :ok if the shop is installed" do
     ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(true)
 

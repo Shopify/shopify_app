@@ -14,12 +14,11 @@ module ShopifyApp
       embedded_redirect_url? && params[:embedded].present? && params[:embedded] == "1"
     end
 
-    def redirect_for_embedded
-      redirect_to(redirect_uri_for_embedded)
+    def redirect_for_embedded(**redirect_query_params)
+      redirect_to(redirect_uri_for_embedded(**redirect_query_params))
     end
 
-    def redirect_uri_for_embedded
-      redirect_query_params = {}
+    def redirect_uri_for_embedded(**redirect_query_params)
       redirect_uri = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
       redirect_query_params[:shop] = sanitized_shop_name
       redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?

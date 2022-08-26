@@ -26,7 +26,7 @@ module ShopifyApp
       @shop = SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
       unless @shop
         if embedded_param?
-          redirect_for_embedded
+          redirect_for_embedded(return_to: request.fullpath)
         else
           redirect_to(shop_login)
         end

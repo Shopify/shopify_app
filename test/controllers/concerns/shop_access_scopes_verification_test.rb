@@ -39,6 +39,20 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
     assert_redirected_to expected_redirect_url
   end
 
+  test "#login_on_scope_changes redirects to the right embedded URL when scopes do not match and embedded mode is enabled" do
+    ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+
+    mock_shop_scopes_mismatch_strategy
+
+    get :index, params: { shop: @shopify_domain, host: @host, embedded: "1" }
+
+    redirect_uri = "https://test.host/login?host=#{CGI.escape(@host)}&return_to=#{CGI.escape(request.fullpath)}&shop=#{@shopify_domain}"
+    embedded_url_params = { redirectUri: redirect_uri, shop: @shopify_domain, host: @host }
+    embedded_url = "#{ShopifyApp.configuration.embedded_redirect_url}?#{embedded_url_params.to_query}"
+
+    assert_redirected_to embedded_url
+  end
+
   private
 
   def expected_redirect_url

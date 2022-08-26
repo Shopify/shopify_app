@@ -14,7 +14,7 @@ module ShopifyApp
     def login_on_scope_changes
       if scopes_mismatch?
         if embedded_param?
-          redirect_for_embedded
+          redirect_for_embedded(return_to: request.fullpath)
         else
           redirect_to(shop_login)
         end
