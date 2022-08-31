@@ -118,12 +118,14 @@ module ShopifyApp
     attr_reader :amount
     attr_reader :currency_code
     attr_reader :interval
+    attr_reader :test
 
-    def initialize(charge_name:, amount:, interval:, currency_code: "USD")
+    def initialize(charge_name:, amount:, interval:, currency_code: "USD", test: false)
       @charge_name = charge_name
       @amount = amount
       @currency_code = currency_code
       @interval = interval
+      @test = test
     end
   end
 

@@ -142,7 +142,7 @@ module ShopifyApp
             },
           },
           returnUrl: return_url,
-          test: !Rails.env.production?,
+          test: ShopifyApp.configuration.billing.test,
         }
       )
 
@@ -160,7 +160,7 @@ module ShopifyApp
             currencyCode: ShopifyApp.configuration.billing.currency_code,
           },
           returnUrl: return_url,
-          test: !Rails.env.production?,
+          test: ShopifyApp.configuration.billing.test,
         }
       )
 
