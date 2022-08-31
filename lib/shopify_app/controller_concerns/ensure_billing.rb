@@ -153,7 +153,7 @@ module ShopifyApp
           },
           returnUrl: return_url,
           test: !Rails.env.production?,
-        }
+        },
       )
 
       response.body
