@@ -55,14 +55,11 @@ module ShopifyApp
       private
 
       def path(webhook_attributes)
-        path = webhook_attributes.dig(:path)
-        address = webhook_attributes.dig(:address)
+        path = webhook_attributes[:path]
+        address = webhook_attributes[:address]
         uri = URI(address) if address
 
-        # Fail unless path or address are present
-        if path.nil? && address.nil?
-          raise ShopifyApp::MissingWebhookJobError("The :path attribute is required for webhook registration.")
-        elsif path.present?
+        if path.present?
           path
         elsif uri&.path&.present?
           uri.path
