@@ -60,7 +60,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       config.webhooks = [
         {
           topic: "orders/updated",
-        }
+        },
       ]
     end
 
