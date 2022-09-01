@@ -76,7 +76,4 @@ module ShopifyApp
   require "shopify_app/access_scopes/shop_strategy"
   require "shopify_app/access_scopes/user_strategy"
   require "shopify_app/access_scopes/noop_strategy"
-
-  # errors
-  require "shopify_app/errors/missing_webhook_job_error"
 end
