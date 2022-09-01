@@ -64,7 +64,7 @@ module ShopifyApp
         elsif uri&.path&.present?
           uri.path
         else
-          raise ShopifyApp::MissingWebhookJobError("The :path attribute is required for webhook registration.")
+          raise ShopifyApp::MissingWebhookJobError, "The :path attribute is required for webhook registration."
         end
       end
 

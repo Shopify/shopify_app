@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  class MissingWebhookJobError < StandardError; end
-
   class WebhooksController < ActionController::Base
     include ShopifyApp::WebhookVerification
 
