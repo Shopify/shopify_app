@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "uri"
+
 module ShopifyApp
   class WebhooksManager
     class CreationFailed < StandardError; end
@@ -38,17 +40,33 @@ module ShopifyApp
         return unless ShopifyApp.configuration.has_webhooks?
 
         ShopifyApp.configuration.webhooks.each do |attributes|
+          webhook_path = path(attributes)
+
           ShopifyAPI::Webhooks::Registry.add_registration(
             topic: attributes[:topic],
             delivery_method: attributes[:delivery_method] || :http,
-            path: attributes[:path] || attributes[:address],
-            handler: webhook_job_klass(attributes[:path]),
+            path: webhook_path,
+            handler: webhook_job_klass(webhook_path),
             fields: attributes[:fields]
           )
         end
       end
 
       private
+
+      def path(webhook_attributes)
+        path = webhook_attributes[:path]
+        address = webhook_attributes[:address]
+        uri = URI(address) if address
+
+        if path.present?
+          path
+        elsif uri&.path&.present?
+          uri.path
+        else
+          raise ShopifyApp::MissingWebhookJobError("The :path attribute is required for webhook registration.")
+        end
+      end
 
       def webhook_job_klass(path)
         webhook_job_klass_name(path).safe_constantize || raise(ShopifyApp::MissingWebhookJobError)
