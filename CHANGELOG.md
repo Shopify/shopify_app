@@ -1,6 +1,7 @@
 Unreleased
 ----------
 * Fixes bug where webhooks were generated with addresses instead of the [path the Ruby API](https://github.com/Shopify/shopify-api-ruby/blob/7a08ae9d96a7a85abd0113dae4eb76398cba8c64/lib/shopify_api/webhooks/registrations/http.rb#L12) is expecting [#1474](https://github.com/Shopify/shopify_app/pull/1474). The breaking change that was accidentially already shipped was that `address` attribute for webhooks should be paths not addresses with `https://` and the host name. While the `address` attribute name will still work assuming the value is a path, this name is deprecated. Please configure webhooks with the `path` attribute name instead.
+* Deduce webhook path from deprecated webhook address if initializer uses address attribute. This makes this attribute change a non-breaking change for those upgrading.
 
 20.1.0 (August 22, 2022)
 ----------
