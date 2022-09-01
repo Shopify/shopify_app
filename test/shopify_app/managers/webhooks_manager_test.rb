@@ -55,6 +55,20 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     ShopifyApp::WebhooksManager.add_registrations
   end
 
+  test "#add_registrations raises an error when missing path and address" do
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        {
+          topic: "orders/updated",
+        },
+      ]
+    end
+
+    assert_raises ShopifyApp::MissingWebhookJobError do
+      ShopifyApp::WebhooksManager.add_registrations
+    end
+  end
+
   test "#add_registrations does not makes calls to library's add_registration when there are no webhooks" do
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).never
     ShopifyApp.configure do |config|
