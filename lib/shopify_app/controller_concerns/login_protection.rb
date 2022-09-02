@@ -8,10 +8,6 @@ module ShopifyApp
     include ShopifyApp::Itp
     include ShopifyApp::SanitizedParams
 
-    class ShopifyDomainNotFound < StandardError; end
-
-    class ShopifyHostNotFound < StandardError; end
-
     included do
       after_action :set_test_cookie
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error

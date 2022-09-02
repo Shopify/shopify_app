@@ -4,8 +4,6 @@ module ShopifyApp
   class SessionRepository
     extend ShopifyAPI::Auth::SessionStorage
 
-    class ConfigurationError < StandardError; end
-
     class << self
       attr_writer :shop_storage
 

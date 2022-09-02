@@ -4,8 +4,6 @@ require "uri"
 
 module ShopifyApp
   class WebhooksManager
-    class CreationFailed < StandardError; end
-
     class << self
       def queue(shop_domain, shop_token)
         ShopifyApp::WebhooksManagerJob.perform_later(

@@ -3,8 +3,6 @@
 module ShopifyApp
   module AccessScopes
     class UserStrategy
-      class InvalidInput < StandardError; end
-
       class << self
         def update_access_scopes?(user_id: nil, shopify_user_id: nil)
           return update_access_scopes_for_user_id?(user_id) if user_id

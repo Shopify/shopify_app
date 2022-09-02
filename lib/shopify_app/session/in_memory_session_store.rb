@@ -4,8 +4,6 @@ module ShopifyApp
   # rubocop:disable Style/ClassVars
   # Class var repo is needed here in order to share data between the 2 child classes.
   class InMemorySessionStore
-    class EnvironmentError < StandardError; end
-
     def self.retrieve(id)
       repo[id]
     end
