@@ -1,6 +1,9 @@
 Unreleased
 ----------
 
+20.1.1 (September 2, 2022)
+----------
+
 * Fixed an issue where the `embedded_redirect_url` could lead to a redirect loop in server-side rendered (or production) apps. [#1497](https://github.com/Shopify/shopify_app/pull/1497)
 * Fixes bug where webhooks were generated with addresses instead of the [path the Ruby API](https://github.com/Shopify/shopify-api-ruby/blob/7a08ae9d96a7a85abd0113dae4eb76398cba8c64/lib/shopify_api/webhooks/registrations/http.rb#L12) is expecting [#1474](https://github.com/Shopify/shopify_app/pull/1474). The breaking change that was accidentially already shipped was that `address` attribute for webhooks should be paths not addresses with `https://` and the host name. While the `address` attribute name will still work assuming the value is a path, this name is deprecated. Please configure webhooks with the `path` attribute name instead.
 * Deduce webhook path from deprecated webhook address if initializer uses address attribute. This makes this attribute change a non-breaking change for those upgrading.
