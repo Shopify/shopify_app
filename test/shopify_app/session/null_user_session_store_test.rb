@@ -9,7 +9,7 @@ module ShopifyApp
     end
 
     test ".store raises ConfigurationError" do
-      assert_raises(SessionRepository::ConfigurationError) do
+      assert_raises(::ShopifyApp::Errors::ConfigurationError) do
         NullUserSessionStore.store("session", "user")
       end
     end

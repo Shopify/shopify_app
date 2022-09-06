@@ -2,6 +2,6 @@
 
 module ShopifyApp
   module Errors
-    class MissingWebhookJobError < StandardError; end
+    class InvalidInput < StandardError; end
   end
 end

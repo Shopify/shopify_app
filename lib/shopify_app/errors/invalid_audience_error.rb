@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  class JWT
+  module Errors
     class InvalidAudienceError < StandardError; end
   end
 end

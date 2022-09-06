@@ -20,7 +20,7 @@ module ShopifyApp
 
     def self.repo
       if Rails.env.production?
-        raise EnvironmentError, "Cannot use InMemorySessionStore in a Production environment. \
+        raise ::ShopifyApp::Errors::EnvironmentError, "Cannot use InMemorySessionStore in a Production environment. \
           Please initialize ShopifyApp with a model that can store and retrieve sessions"
       end
       @@repo ||= {}

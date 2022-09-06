@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  module EnsureBilling
+  module Errors
     class BillingError < StandardError
       attr_accessor :message
       attr_accessor :errors

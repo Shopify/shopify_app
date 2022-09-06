@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  class SessionRepository
+  module Errors
     class ConfigurationError < StandardError; end
   end
 end

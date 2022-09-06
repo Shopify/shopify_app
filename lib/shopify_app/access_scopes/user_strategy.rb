@@ -8,7 +8,8 @@ module ShopifyApp
           return update_access_scopes_for_user_id?(user_id) if user_id
           return update_access_scopes_for_shopify_user_id?(shopify_user_id) if shopify_user_id
 
-          raise(InvalidInput, "#update_access_scopes? requires user_id or shopify_user_id parameter inputs")
+          raise(::ShopifyApp::Errors::InvalidInput,
+            "#update_access_scopes? requires user_id or shopify_user_id parameter inputs")
         end
 
         private

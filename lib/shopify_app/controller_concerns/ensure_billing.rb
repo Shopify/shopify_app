@@ -8,7 +8,7 @@ module ShopifyApp
 
     included do
       before_action :check_billing, if: :billing_required?
-      rescue_from BillingError, with: :handle_billing_error
+      rescue_from ::ShopifyApp::Errors::BillingError, with: :handle_billing_error
     end
 
     private

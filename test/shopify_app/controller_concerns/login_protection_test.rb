@@ -421,7 +421,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
         .returns(nil)
-      assert_raise ShopifyApp::LoginProtection::ShopifyDomainNotFound do
+      assert_raise ::ShopifyApp::Errors::ShopifyDomainNotFound do
         get :redirect
       end
     end

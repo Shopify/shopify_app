@@ -8,7 +8,7 @@ module ShopifyApp
       end
 
       def store(_, _)
-        raise SessionRepository::ConfigurationError, "user_storage is not configured"
+        raise ::ShopifyApp::Errors::ConfigurationError, "user_storage is not configured"
       end
 
       def retrieve_by_shopify_user_id(_)
