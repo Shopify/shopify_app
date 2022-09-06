@@ -146,6 +146,6 @@ Then, use the [Shopify App Bridge Redirect](https://shopify.dev/tools/app-bridge
 
 ### I'm stuck in a redirect loop after OAuth
 
-In previous versions of `ShopifyApp::Authenticated` controller concern and App Bridge embededd apps were able to include the `Authenticated` controller concern in the `HomeController` and other embeded controllers. This is no longer supported due to security concerns with third party cookies. App Bridge 3 is needed to handle all embeded sessions.
+In previous versions of `ShopifyApp::Authenticated` controller concern, App Bridge embedded apps were able to include the `Authenticated` controller concern in the `HomeController` and other embedded controllers. This is no longer supported due to browsers blocking 3rd party cookies to increase privacy. App Bridge 3 is needed to handle all embedded sessions.
 
 For more details on how to handle embeded sessions, refer to [the session token documentation](https://shopify.dev/apps/auth/oauth/session-tokens).
