@@ -4,7 +4,7 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
-[Upgrading to `v20.2.0`](#upgrading-to-v2100)
+[Upgrading to `v20.2.0`](#upgrading-to-v2020)
 
 [Upgrading to `v20.1.0`](#upgrading-to-v2010)
 
