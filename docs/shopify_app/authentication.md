@@ -106,9 +106,9 @@ end
 
 For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
 
-#### Embededd apps and `ShopifyApp::Authenticated`
+#### Embedded apps and `ShopifyApp::Authenticated`
 
-Embedded Shopify Admin apps are unable to use the `ShopifyApp::Authenticated` controller concern. Those who inclue this concern in the `HomeController` or some other embdeded controller will see what looks like an OAuth redirect loop as the `ShopifyApp::Authenticated` concern will be fighting with the App Bridge. For more details on how to handle embeded sessions, refer to [the session token documentation](https://shopify.dev/apps/auth/oauth/session-tokens).
+Embedded Shopify Admin apps can only use the `ShopifyApp::Authenticated` controller concern *if* the requests originate from App Bridge's `authenticatedFetch` method. Those who include this concern in the `HomeController` or some other embedded controller will see what looks like an OAuth redirect loop as the `ShopifyApp::Authenticated` concern will be fighting with the App Bridge. For more details on how to handle embedded sessions, refer to [the session token documentation](https://shopify.dev/apps/auth/oauth/session-tokens).
 
 ### `ShopifyApp::EnsureAuthenticatedLinks`
 
