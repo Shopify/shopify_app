@@ -35,17 +35,7 @@ module ShopifyApp
   require "shopify_app/utils"
 
   # errors
-  require "shopify_app/errors/missing_webhook_job_error"
-  require "shopify_app/errors/invalid_input"
-  require "shopify_app/errors/billing_error"
-  require "shopify_app/errors/environment_error"
-  require "shopify_app/errors/shopify_domain_not_found"
-  require "shopify_app/errors/shopify_host_not_found"
-  require "shopify_app/errors/creation_failed"
-  require "shopify_app/errors/configuration_error"
-  require "shopify_app/errors/mismatched_hosts_error"
-  require "shopify_app/errors/invalid_audience_error"
-  require "shopify_app/errors/invalid_destination_error"
+  require "shopify_app/errors"
 
   # controller concerns
   require "shopify_app/controller_concerns/csrf_protection"

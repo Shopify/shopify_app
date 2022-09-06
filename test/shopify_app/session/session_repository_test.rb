@@ -37,7 +37,7 @@ module ShopifyApp
       assert_kind_of InMemoryShopSessionStore.class, SessionRepository.user_storage
 
       SessionRepository.shop_storage = nil
-      assert_raises(::ShopifyApp::Errors::ConfigurationError) { SessionRepository.shop_storage }
+      assert_raises(::ShopifyApp::ConfigurationError) { SessionRepository.shop_storage }
     end
 
     test ".shop_storage accepts a String as argument" do

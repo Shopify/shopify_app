@@ -7,9 +7,9 @@ module ShopifyApp
       ::JWT::ExpiredSignature,
       ::JWT::ImmatureSignature,
       ::JWT::VerificationError,
-      ::ShopifyApp::Errors::InvalidAudienceError,
-      ::ShopifyApp::Errors::InvalidDestinationError,
-      ::ShopifyApp::Errors::MismatchedHostsError,
+      ::ShopifyApp::InvalidAudienceError,
+      ::ShopifyApp::InvalidDestinationError,
+      ::ShopifyApp::MismatchedHostsError,
     ]
 
     def initialize(token)
@@ -52,10 +52,10 @@ module ShopifyApp
       iss_host = ShopifyApp::Utils.sanitize_shop_domain(payload["iss"])
       api_key = ShopifyApp.configuration.api_key
 
-      raise ::ShopifyApp::Errors::InvalidAudienceError,
+      raise ::ShopifyApp::InvalidAudienceError,
         "'aud' claim does not match api_key" unless payload["aud"] == api_key
-      raise ::ShopifyApp::Errors::InvalidDestinationError, "'dest' claim host not a valid shopify host" unless dest_host
-      raise ::ShopifyApp::Errors::MismatchedHostsError,
+      raise ::ShopifyApp::InvalidDestinationError, "'dest' claim host not a valid shopify host" unless dest_host
+      raise ::ShopifyApp::MismatchedHostsError,
         "'dest' claim host does not match 'iss' claim host" unless dest_host == iss_host
 
       payload

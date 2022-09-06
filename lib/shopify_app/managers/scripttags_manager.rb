@@ -67,7 +67,7 @@ module ShopifyApp
       begin
         scripttag.save!
       rescue ShopifyAPI::Errors::HttpResponseError => e
-        raise ::ShopifyApp::Errors::CreationFailed, e.message
+        raise ::ShopifyApp::CreationFailed, e.message
       end
 
       scripttag

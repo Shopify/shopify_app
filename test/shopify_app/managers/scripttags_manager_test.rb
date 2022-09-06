@@ -44,7 +44,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     ShopifyAPI::ScriptTag.stubs(:new).returns(scripttag)
     scripttag.stubs(:save!).raises(ShopifyAPI::Errors::HttpResponseError.new(code: 401), "Error message")
 
-    e = assert_raise ::ShopifyApp::Errors::CreationFailed do
+    e = assert_raise ::ShopifyApp::CreationFailed do
       @manager.create_scripttags
     end
 

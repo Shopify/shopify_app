@@ -61,8 +61,8 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
   end
 
   test "redirects to login page if current shopify domain is not found" do
-    @controller.expects(:current_shopify_domain).raises(::ShopifyApp::Errors::ShopifyDomainNotFound)
-    expect_redirect_error(ShopifyApp::Errors::ShopifyDomainNotFound, "Could not determine current shop domain")
+    @controller.expects(:current_shopify_domain).raises(::ShopifyApp::ShopifyDomainNotFound)
+    expect_redirect_error(ShopifyApp::ShopifyDomainNotFound, "Could not determine current shop domain")
 
     get :some_link
 

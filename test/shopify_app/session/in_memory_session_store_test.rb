@@ -27,11 +27,11 @@ module ShopifyApp
 
     test "it should raise when the environment is not valid" do
       Rails.env.stubs(:production?).returns(true)
-      assert_raises ::ShopifyApp::Errors::EnvironmentError do
+      assert_raises ::ShopifyApp::EnvironmentError do
         InMemorySessionStore.store("data")
       end
 
-      assert_raises ::ShopifyApp::Errors::EnvironmentError do
+      assert_raises ::ShopifyApp::EnvironmentError do
         InMemorySessionStore.retrieve("abracadabra")
       end
     end
