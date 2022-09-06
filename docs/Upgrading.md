@@ -21,9 +21,9 @@ This file documents important changes needed to upgrade your app's Shopify App v
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
 
 ## Upgrading to `v20.2.0`
-All custom errors defined in `ShopifyApp` gem have been moved to `lib/shopify_app/errors`.
+All custom errors defined inline within the `ShopifyApp` gem have been moved to `lib/shopify_app/errors.rb`.
 
-- Rename any error constants to match their new path/namespace in custom error handling
+- If you rescue any errors defined in this gem, you will need to rename them to match their new namespacing.
 
 ## Upgrading to `v20.1.0`
 
