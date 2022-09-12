@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Add `ENV["HOST"]` to CSP `frame-ancestor` hosts if present.
 
 20.1.1 (September 2, 2022)
 ----------

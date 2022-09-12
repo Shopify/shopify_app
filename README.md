@@ -121,6 +121,7 @@ You can find documentation on gem usage, concepts, mixins, installation, and mor
   * [Handling changes in access scopes](/docs/shopify_app/handling-access-scopes-changes.md)
   * [Testing](/docs/shopify_app/testing.md)
   * [Webhooks](/docs/shopify_app/webhooks.md)
+  * [Content Security Policy](/docs/shopify_app/content-security-policy.md)
 
 ### Engine
 
