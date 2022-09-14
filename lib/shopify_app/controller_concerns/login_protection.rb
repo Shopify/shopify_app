@@ -117,7 +117,8 @@ module ShopifyApp
         else
           referer = URI(request.referer || "/")
           path = referer.path
-          query = "#{referer.query}&#{sanitized_params.to_query}"
+          query = Rack::Utils.parse_nested_query(referer.query)
+          query = query.merge(sanitized_params).to_query
         end
         session[:return_to] = query.blank? ? path.to_s : "#{path}?#{query}"
         redirect_to(login_url_with_optional_shop)

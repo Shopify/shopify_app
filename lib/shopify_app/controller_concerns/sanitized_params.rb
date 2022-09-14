@@ -25,9 +25,10 @@ module ShopifyApp
     end
 
     def sanitized_params
-      request.query_parameters.clone.tap do |query_params|
+      parameters = request.post? ? request.request_parameters : request.query_parameters
+      parameters.clone.tap do |params_copy|
         if params[:shop].is_a?(String)
-          query_params[:shop] = sanitize_shop_param(params)
+          params_copy[:shop] = sanitize_shop_param(params)
         end
       end
     end
