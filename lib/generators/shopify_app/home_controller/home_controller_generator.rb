@@ -18,11 +18,7 @@ module ShopifyApp
       end
 
       def create_home_index_view
-        if Rails.version.split(".").first.to_i >= 7
-          template("importmap_index.html.erb", "app/views/home/index.html.erb")
-        else
-          template("index.html.erb", "app/views/home/index.html.erb")
-        end
+        template("index.html.erb", "app/views/home/index.html.erb")
       end
 
       def add_home_index_route
