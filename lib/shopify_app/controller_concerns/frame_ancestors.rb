@@ -7,8 +7,11 @@ module ShopifyApp
     included do
       content_security_policy do |policy|
         policy.frame_ancestors(-> do
-          domain_host = "*.#{::ShopifyApp::Configuration.myshopify_domain}"
-          "https://#{domain_host} https://admin.shopify.com"
+          hosts = []
+          hosts << "https://admin.shopify.com"
+          hosts << "https://#{current_shopify_domain}"
+          hosts << "https://*.#{::ShopifyApp.configuration.myshopify_domain}"
+          hosts.join(" ")
         end)
       end
     end
