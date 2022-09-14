@@ -383,7 +383,7 @@ module ShopifyApp
     def assert_redirected_to_embedded(shop_domain, base_embedded_url = nil)
       assert_not_nil base_embedded_url
       redirect_uri = "https://test.host/login?shop=#{shop_domain}"
-      expected_url = base_embedded_url + "?redirectUri=#{CGI.escape(redirect_uri)}" + "&shop=#{shop_domain}"
+      expected_url = base_embedded_url + "?embedded=1&redirectUri=#{CGI.escape(redirect_uri)}" + "&shop=#{shop_domain}"
 
       assert_redirected_to(expected_url)
     end
