@@ -26,7 +26,7 @@
 Rails uses spring by default to speed up development. To run the generator, spring has to be stopped:
 
 ```sh
-$ bundle exec spring stop
+bundle exec spring stop
 ```
 
 Run shopify_app generator again.
