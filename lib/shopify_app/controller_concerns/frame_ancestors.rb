@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+#
 module ShopifyApp
   module FrameAncestors
     extend ActiveSupport::Concern
@@ -7,11 +7,8 @@ module ShopifyApp
     included do
       content_security_policy do |policy|
         policy.frame_ancestors(-> do
-          hosts = []
-          hosts << "https://admin.shopify.com"
-          hosts << "https://#{current_shopify_domain}"
-          hosts << "https://*.#{::ShopifyApp.configuration.myshopify_domain}"
-          hosts.join(" ")
+          domain_host = current_shopify_domain || "*.#{::ShopifyApp.configuration.myshopify_domain}"
+          "https://#{domain_host} https://admin.shopify.com"
         end)
       end
     end
