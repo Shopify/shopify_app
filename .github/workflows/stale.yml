@@ -14,11 +14,17 @@ jobs:
         with:
           days-before-issue-stale: 730
           days-before-issue-close: 14
-          stale-issue-label: "stale"
+          stale-issue-label: "Stale"
           stale-issue-message: >
             This issue is stale because it has been open for 2 years. It will be closed if no further action occurs in 14 days. 
           close-issue-message: >
-            This issue was closed because it has been inactive for 14 days since being marked as stale.
+            We are closing this issue because it has been inactive for a few months. 
+            This probably means that it is not reproducible or it has been fixed in a newer version. 
+            If it’s an enhancement and hasn’t been taken on since it was submitted, then it seems other issues have taken priority.
+
+            If you still encounter this issue with the latest stable version, please reopen using the issue template. You can also contribute directly by submitting a pull request– see the CONTRIBUTING.md(.github/CONTRIBUTING.md) file for guidelines
+
+            Thank you!
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
