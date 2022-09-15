@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-#
+
 module ShopifyApp
   module FrameAncestors
     extend ActiveSupport::Concern
