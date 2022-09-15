@@ -4,7 +4,7 @@ Shopify App [handles Rails' configuration](https://edgeguides.rubyonrails.org/se
 
 ## Included Domains
 
-For actions that include the `ShopifyApp::FrameAncestors` controller concern, the following hosts are added to the Content-Security-Policy header:
+For actions that include the `ShopifyApp::FrameAncestors` controller concern, the following hosts are added to the Content-Security-Policy header as [per the store requirements](https://shopify.dev/apps/store/security/iframe-protection#embedded-apps):
 
-1.  `https://*.myshopify.com`
+1. [`current_shopify_domain`](https://github.com/Shopify/shopify_app/blob/ed41165ca9598d2c9d514487365192f22b5eb096/app/controllers/concerns/shopify_app/require_known_shop.rb#L13) || `"*.myshopify.com"` if current shopify domain isn't present
 2. "https://admin.shopify.com"
