@@ -2,13 +2,24 @@
 
 module ShopifyApp
   module EnsureBilling
+    class BillingError < StandardError
+      attr_accessor :message
+      attr_accessor :errors
+
+      def initialize(message, errors)
+        super
+        @message = message
+        @errors = errors
+      end
+    end
+
     extend ActiveSupport::Concern
 
     RECURRING_INTERVALS = [BillingConfiguration::INTERVAL_EVERY_30_DAYS, BillingConfiguration::INTERVAL_ANNUAL]
 
     included do
       before_action :check_billing, if: :billing_required?
-      rescue_from ::ShopifyApp::BillingError, with: :handle_billing_error
+      rescue_from BillingError, with: :handle_billing_error
     end
 
     private
