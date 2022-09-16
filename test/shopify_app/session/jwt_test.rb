@@ -73,7 +73,7 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if 'aud' claim doesn't match api_key" do
-      expect_jwt_error(JWT::InvalidAudienceError, "'aud' claim does not match api_key")
+      expect_jwt_error(::ShopifyApp::InvalidAudienceError, "'aud' claim does not match api_key")
 
       ShopifyApp.configuration.api_key = "other_key"
 
@@ -105,7 +105,7 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if `dest` is not a valid shopify domain" do
-      expect_jwt_error(JWT::InvalidDestinationError, "'dest' claim host not a valid shopify host")
+      expect_jwt_error(::ShopifyApp::InvalidDestinationError, "'dest' claim host not a valid shopify host")
 
       p = payload(dest: "https://example.com")
       jwt = JWT.new(token(p))
@@ -115,7 +115,7 @@ module ShopifyApp
     end
 
     test "#shopify_domain and #shopify_user_id are nil if `iss` host doesn't match `dest` host" do
-      expect_jwt_error(JWT::MismatchedHostsError, "'dest' claim host does not match 'iss' claim host")
+      expect_jwt_error(::ShopifyApp::MismatchedHostsError, "'dest' claim host does not match 'iss' claim host")
 
       p = payload(dest: "https://other.myshopify.io")
       jwt = JWT.new(token(p))

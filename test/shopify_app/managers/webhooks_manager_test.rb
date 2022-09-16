@@ -64,7 +64,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       ]
     end
 
-    assert_raises ShopifyApp::MissingWebhookJobError do
+    assert_raises ::ShopifyApp::MissingWebhookJobError do
       ShopifyApp::WebhooksManager.add_registrations
     end
   end
