@@ -32,21 +32,6 @@ This gem requires that you have the following credentials:
 - **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
 - **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
 
-### OAuth Tunnel in Development
-
-In order to redirect OAuth requests securely to localhost, you'll need to setup a tunnel to redirect from the internet to localhost.
-
-We've validated that [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) works with this template.
-
-To do that, you can [install the `cloudflared` CLI tool](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/), and run:
-
-```shell
-# Note that you can also use a different port
-cloudflared tunnel --url http://localhost:3000
-```
-
-You will need to keep this window running to maintain the tunnel during development.
-
 ## Usage
 
 1. To get started, create a new Rails app:
@@ -63,10 +48,9 @@ $ bundle add shopify_app
 
 3. Create a `.env` file in the root of `my_shopify_app` to specify your Shopify API credentials:
 
-```
+```sh
 SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
-HOST=<Your SSH tunnel host>
 ```
 
 > In a development environment, you can use a gem like `dotenv-rails` to manage environment variables. 
@@ -83,13 +67,17 @@ $ rails generate shopify_app
 $ rails db:migrate
 ```
 
-6. Run the app:
+6. Setup a SSH tunnel to allow the OAuth redirect to work. See how in the [Setup SSH tunnel for development](/docs/Quickstart.md#setup-ssh-tunnel-for-development) section in [Quickstart](/docs/Quickstart.md)
+
+7. Run the app:
 
 ```sh
 $ rails server
 ```
 
-See [*Quickstart*](/docs/Quickstart.md) to learn how to install your app on a shop.
+8. Install the app by visiting the server's URL (e.g. http://127.0.0.1:3000) and specifying the subdomain of the shop where you want it to be installed to.
+
+9. After the app is installed, you're redirected to the embedded app.
 
 This app implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
 
@@ -121,6 +109,7 @@ You can find documentation on gem usage, concepts, mixins, installation, and mor
   * [Handling changes in access scopes](/docs/shopify_app/handling-access-scopes-changes.md)
   * [Testing](/docs/shopify_app/testing.md)
   * [Webhooks](/docs/shopify_app/webhooks.md)
+  * [Content Security Policy](/docs/shopify_app/content-security-policy.md)
 
 ### Engine
 
