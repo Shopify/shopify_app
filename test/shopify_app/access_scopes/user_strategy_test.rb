@@ -54,7 +54,7 @@ module ShopifyApp
       end
 
       def test_assert_invalid_input_error_when_no_parameters_passed_in
-        assert_raises ::ShopifyApp::InvalidInput do
+        assert_raises ShopifyApp::AccessScopes::UserStrategy::InvalidInput do
           assert ShopifyApp::AccessScopes::UserStrategy.update_access_scopes?
         end
       end
