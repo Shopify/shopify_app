@@ -1,6 +1,7 @@
-Unreleased
+20.2.0 (September 16, 2022)
 ----------
 * Move all error classes created for this gem into `lib/shopify_app/errors.rb`. Constant names of errors nested by modules and classes have been removed to give a shorter namespace.
+* Refactor `::ShopifyApp::FrameAncestors` to get domain host from config instead of hard coded.
 
 20.1.1 (September 2, 2022)
 ----------
