@@ -4,8 +4,6 @@ module ShopifyApp
   class SessionRepository
     extend ShopifyAPI::Auth::SessionStorage
 
-    class ConfigurationError < StandardError; end
-
     class << self
       attr_writer :shop_storage
 
@@ -36,7 +34,8 @@ module ShopifyApp
       end
 
       def shop_storage
-        load_shop_storage || raise(ConfigurationError, "ShopifySessionRepository.shop_storage is not configured!")
+        load_shop_storage || raise(::ShopifyApp::ConfigurationError,
+          "ShopifySessionRepository.shop_storage is not configured!")
       end
 
       def user_storage

@@ -2,8 +2,6 @@
 
 module ShopifyApp
   class ScripttagsManager
-    class CreationFailed < StandardError; end
-
     def self.queue(shop_domain, shop_token, scripttags)
       ShopifyApp::ScripttagsManagerJob.perform_later(
         shop_domain: shop_domain,
@@ -69,7 +67,7 @@ module ShopifyApp
       begin
         scripttag.save!
       rescue ShopifyAPI::Errors::HttpResponseError => e
-        raise CreationFailed, e.message
+        raise ::ShopifyApp::CreationFailed, e.message
       end
 
       scripttag

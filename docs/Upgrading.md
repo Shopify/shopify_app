@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[Upgrading to `v20.2.0`](#upgrading-to-v2020)
+
 [Upgrading to `v20.1.0`](#upgrading-to-v2010)
 
 [Upgrading to `v19.0.0`](#upgrading-to-v1900)
@@ -17,6 +19,11 @@ This file documents important changes needed to upgrade your app's Shopify App v
 [Upgrading to `v11.7.0`](#upgrading-to-v1170)
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
+
+## Upgrading to `v20.2.0`
+All custom errors defined inline within the `ShopifyApp` gem have been moved to `lib/shopify_app/errors.rb`.
+
+- If you rescue any errors defined in this gem, you will need to rename them to match their new namespacing.
 
 ## Upgrading to `v20.1.0`
 
