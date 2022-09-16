@@ -4,8 +4,6 @@ require "uri"
 
 module ShopifyApp
   class WebhooksManager
-    class CreationFailed < StandardError; end
-
     class << self
       def queue(shop_domain, shop_token)
         ShopifyApp::WebhooksManagerJob.perform_later(
@@ -64,12 +62,13 @@ module ShopifyApp
         elsif uri&.path&.present?
           uri.path
         else
-          raise ShopifyApp::MissingWebhookJobError, "The :path attribute is required for webhook registration."
+          raise ::ShopifyApp::MissingWebhookJobError,
+            "The :path attribute is required for webhook registration."
         end
       end
 
       def webhook_job_klass(path)
-        webhook_job_klass_name(path).safe_constantize || raise(ShopifyApp::MissingWebhookJobError)
+        webhook_job_klass_name(path).safe_constantize || raise(::ShopifyApp::MissingWebhookJobError)
       end
 
       def webhook_job_klass_name(path)
