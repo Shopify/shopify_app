@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Move all error classes created for this gem into `lib/shopify_app/errors.rb`. Constant names of errors nested by modules and classes have been removed to give a shorter namespace.
 
 20.1.1 (September 2, 2022)
 ----------
