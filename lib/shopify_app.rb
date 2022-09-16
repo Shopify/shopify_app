@@ -34,6 +34,9 @@ module ShopifyApp
   # utils
   require "shopify_app/utils"
 
+  # errors
+  require "shopify_app/errors"
+
   # controller concerns
   require "shopify_app/controller_concerns/csrf_protection"
   require "shopify_app/controller_concerns/localization"

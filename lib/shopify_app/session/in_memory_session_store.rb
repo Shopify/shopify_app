@@ -4,8 +4,6 @@ module ShopifyApp
   # rubocop:disable Style/ClassVars
   # Class var repo is needed here in order to share data between the 2 child classes.
   class InMemorySessionStore
-    class EnvironmentError < StandardError; end
-
     def self.retrieve(id)
       repo[id]
     end
@@ -22,7 +20,7 @@ module ShopifyApp
 
     def self.repo
       if Rails.env.production?
-        raise EnvironmentError, "Cannot use InMemorySessionStore in a Production environment. \
+        raise ::ShopifyApp::EnvironmentError, "Cannot use InMemorySessionStore in a Production environment. \
           Please initialize ShopifyApp with a model that can store and retrieve sessions"
       end
       @@repo ||= {}
