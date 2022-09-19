@@ -9,7 +9,7 @@
       />
     <% if embedded_app? %>
       <script type="module">
-        async function bridge() {
+        async function displayProducts() {
           var SessionToken = window["app-bridge"].actions.SessionToken
           var app = window.app;
 
@@ -46,10 +46,10 @@
 
         <% if ShopifyApp.use_importmap? %>
           import "lib/shopify_app"
-          bridge();
+          displayProducts();
         <% else %>
           document.addEventListener("DOMContentLoaded", async function() {
-            bridge();
+            displayProducts();
           });
         <% end %>
       </script>
