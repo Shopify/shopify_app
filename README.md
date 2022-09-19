@@ -37,13 +37,13 @@ This gem requires that you have the following credentials:
 1. To get started, create a new Rails app:
 
 ``` sh
-$ rails new my_shopify_app
+rails new my_shopify_app
 ```
 
 2. Add the Shopify App gem to `my_shopify_app`'s Gemfile.
 
 ```sh
-$ bundle add shopify_app
+bundle add shopify_app
 ```
 
 3. Create a `.env` file in the root of `my_shopify_app` to specify your Shopify API credentials:
@@ -58,13 +58,13 @@ SHOPIFY_API_SECRET=<Your Shopify API secret>
 4. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
 
 ```sh
-$ rails generate shopify_app
+rails generate shopify_app
 ```
 
 5. Run a migration to create the necessary tables in your database:
 
 ```sh
-$ rails db:migrate
+rails db:migrate
 ```
 
 6. Setup a SSH tunnel to allow the OAuth redirect to work. See how in the [Setup SSH tunnel for development](/docs/Quickstart.md#setup-ssh-tunnel-for-development) section in [Quickstart](/docs/Quickstart.md)
@@ -72,7 +72,7 @@ $ rails db:migrate
 7. Run the app:
 
 ```sh
-$ rails server
+rails server
 ```
 
 8. Install the app by visiting the server's URL (e.g. http://127.0.0.1:3000) and specifying the subdomain of the shop where you want it to be installed to.
@@ -109,6 +109,7 @@ You can find documentation on gem usage, concepts, mixins, installation, and mor
   * [Handling changes in access scopes](/docs/shopify_app/handling-access-scopes-changes.md)
   * [Testing](/docs/shopify_app/testing.md)
   * [Webhooks](/docs/shopify_app/webhooks.md)
+  * [Content Security Policy](/docs/shopify_app/content-security-policy.md)
 
 ### Engine
 

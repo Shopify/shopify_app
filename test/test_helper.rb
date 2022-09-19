@@ -8,7 +8,7 @@ require "rails/test_help"
 require "mocha/minitest"
 require "webmock/minitest"
 require "byebug"
-require "pry"
+require "pry-nav"
 
 # Filter out Minitest backtrace while allowing backtrace from other libraries
 # to be shown.
