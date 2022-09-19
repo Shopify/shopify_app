@@ -17,7 +17,7 @@ jobs:
           stale-issue-label: "Stale"
           stale-issue-message: >
             This issue is stale because it has been open for 2 years. It will be closed if no further action occurs in 14 days. 
-          close-issue-message: >
+          close-issue-message: |
             We are closing this issue because it has been inactive for a few months. 
             This probably means that it is not reproducible or it has been fixed in a newer version. 
             If it’s an enhancement and hasn’t been taken on since it was submitted, then it seems other issues have taken priority.
