@@ -9,8 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions-ecosystem/action-remove-labels@v1
-        if: contains(github.event.issue.labels.*.name, 'Waiting for Response') || contains(github.event.issue.labels.*.name, 'Stale')
+        if: contains(github.event.issue.labels.*.name, 'Waiting for Response')
         with:
           labels: |
             Waiting for Response
-            Stale
+
