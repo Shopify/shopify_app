@@ -48,9 +48,7 @@
           import "lib/shopify_app"
           displayProducts();
         <% else %>
-          document.addEventListener("DOMContentLoaded", async function() {
-            displayProducts();
-          });
+          document.addEventListener("DOMContentLoaded", displayProducts);
         <% end %>
       </script>
     <% end %>
