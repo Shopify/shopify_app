@@ -119,7 +119,7 @@ module ShopifyApp
         data = data["data"]["appPurchaseOneTimeCreate"]
       end
 
-      raise BillingError.new("Error while billing the store", data["userErrros"]) unless data["userErrors"].empty?
+      raise BillingError.new("Error while billing the store", data["userErrors"]) unless data["userErrors"].empty?
 
       data["confirmationUrl"]
     end
