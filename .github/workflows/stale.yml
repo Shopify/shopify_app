@@ -22,7 +22,7 @@ jobs:
             This probably means that it is not reproducible or it has been fixed in a newer version. 
             If it’s an enhancement and hasn’t been taken on since it was submitted, then it seems other issues have taken priority.
 
-            If you still encounter this issue with the latest stable version, please reopen using the issue template. You can also contribute directly by submitting a pull request– see the CONTRIBUTING.md(.github/CONTRIBUTING.md) file for guidelines
+            If you still encounter this issue with the latest stable version, please reopen using the issue template. You can also contribute directly by submitting a pull request– see the [CONTRIBUTING.md](https://github.com/Shopify/shopify_app/blob/main/CONTRIBUTING.md) file for guidelines
 
             Thank you!
           days-before-pr-stale: -1
