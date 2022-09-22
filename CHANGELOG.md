@@ -6,6 +6,8 @@ Unreleased
 * Removes duplicate `;` added in CSP header. [#1500](https://github.com/Shopify/shopify_app/pull/1500)
 * Move all error classes created for this gem into `lib/shopify_app/errors.rb`. Constant names of errors nested by modules and classes have been removed to give a shorter namespace.
 
+* Fixed an issue where `ShopifyApp::UserSessionStorage` was causing an infinite OAuth loop when not checking scopes. [#1516](https://github.com/Shopify/shopify_app/pull/1516)
+
 20.1.1 (September 2, 2022)
 ----------
 

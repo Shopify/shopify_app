@@ -11,6 +11,7 @@ module ShopifyApp
     TEST_SHOPIFY_USER_ID = 42
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
+    TEST_MERCHANT_SCOPES = "read_orders, write_products"
 
     test ".retrieve returns user session by id" do
       UserMockSessionStore.stubs(:find_by).returns(MockUserInstance.new(
@@ -51,16 +52,13 @@ module ShopifyApp
 
       UserMockSessionStore.stubs(:find_or_initialize_by).returns(mock_user_instance)
 
-      mock_auth_hash = mock
-      mock_auth_hash.stubs(:shop).returns(mock_user_instance.shopify_domain)
-      mock_auth_hash.stubs(:access_token).returns("a-new-user_token!")
-      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
-
-      associated_user = {
-        id: 100,
-      }
-
-      saved_id = UserMockSessionStore.store(mock_auth_hash, user: associated_user)
+      saved_id = UserMockSessionStore.store(
+        mock_session(
+          shop: mock_user_instance.shopify_domain,
+          scope: TEST_MERCHANT_SCOPES
+        ),
+        mock_associated_user
+      )
 
       assert_equal "a-new-user_token!", mock_user_instance.shopify_token
       assert_equal mock_user_instance.id, saved_id
@@ -78,6 +76,21 @@ module ShopifyApp
       UserMockSessionStore.stubs(:find_by).with(shopify_user_id: user_id).returns(nil)
 
       refute UserMockSessionStore.retrieve_by_shopify_user_id(user_id)
+    end
+
+    private
+
+    def mock_associated_user
+      ShopifyAPI::Auth::AssociatedUser.new(
+        id: 100,
+        first_name: "John",
+        last_name: "Doe",
+        email: "johndoe@email.com",
+        email_verified: true,
+        account_owner: false,
+        locale: "en",
+        collaborator: true
+      )
     end
   end
 end
