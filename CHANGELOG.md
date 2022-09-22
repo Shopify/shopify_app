@@ -5,6 +5,8 @@ Unreleased
 * Refactors how default `domain_host` is populated in the CSP header added to responses in the `FrameAncestors` controller concern. [#1504](https://github.com/Shopify/shopify_app/pull/1504)
 * Removes duplicate `;` added in CSP header. [#1500](https://github.com/Shopify/shopify_app/pull/1500)
 
+* Fixed an issue where `ShopifyApp::UserSessionStorage` was causing an infinite OAuth loop when not checking scopes. [#1516](https://github.com/Shopify/shopify_app/pull/1516)
+
 20.1.1 (September 2, 2022)
 ----------
 
