@@ -21,7 +21,7 @@ module ShopifyApp
 
     def redirect_uri_for_embedded
       redirect_query_params = {}
-      redirect_uri = "https://#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
+      redirect_uri = "#{ShopifyAPI::Context.host_scheme}#{ShopifyAPI::Context.host_name}#{ShopifyApp.configuration.login_url}"
       redirect_query_params[:shop] = sanitized_shop_name
       redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
       redirect_query_params[:host] ||= params[:host] if params[:host].present?
