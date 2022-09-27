@@ -6,7 +6,7 @@ module ShopifyApp
     attr_accessor :errors
 
     def initialize(message, errors)
-      super
+      super(message)
       @message = message
       @errors = errors
     end
