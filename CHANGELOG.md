@@ -1,5 +1,11 @@
 Unreleased
 ----------
+* Fixes a method signature error bug when raising `BillingError`.  [#1513](https://github.com/Shopify/shopify_app/pull/1513)
+* Fixes bug with Rails 7 and import maps with Safari/Firefox on the HomeController#index view.  [#1506](https://github.com/Shopify/shopify_app/pull/1506)
+* Refactors how default `domain_host` is populated in the CSP header added to responses in the `FrameAncestors` controller concern. [#1504](https://github.com/Shopify/shopify_app/pull/1504)
+* Removes duplicate `;` added in CSP header. [#1500](https://github.com/Shopify/shopify_app/pull/1500)
+
+* Fixed an issue where `ShopifyApp::UserSessionStorage` was causing an infinite OAuth loop when not checking scopes. [#1516](https://github.com/Shopify/shopify_app/pull/1516)
 * Move all error classes created for this gem into `lib/shopify_app/errors.rb`. Constant names of errors nested by modules and classes have been removed to give a shorter namespace.
 
 20.1.1 (September 2, 2022)
