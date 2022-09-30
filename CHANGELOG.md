@@ -1,5 +1,9 @@
 Unreleased
 ----------
+
+20.2.0 (September 30, 2021)
+----------
+
 * Fixes a method signature error bug when raising `BillingError`.  [#1513](https://github.com/Shopify/shopify_app/pull/1513)
 * Fixes bug with Rails 7 and import maps with Safari/Firefox on the HomeController#index view.  [#1506](https://github.com/Shopify/shopify_app/pull/1506)
 * Refactors how default `domain_host` is populated in the CSP header added to responses in the `FrameAncestors` controller concern. [#1504](https://github.com/Shopify/shopify_app/pull/1504)
