@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (20.2.0)
+    shopify_app (21.0.0)
       activeresource
       browser_sniffer (~> 2.0)
       jwt (>= 2.2.3)
@@ -204,7 +204,7 @@ GEM
       securerandom
       sorbet-runtime
       zeitwerk (~> 2.5)
-    sorbet-runtime (0.5.10470)
+    sorbet-runtime (0.5.10474)
     sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)

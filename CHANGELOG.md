@@ -1,6 +1,9 @@
 Unreleased
 ----------
 
+21.2.0 (Oct 3, 2022)
+----------
+
 20.2.0 (September 30, 2022)
 ----------
 * Fixes a method signature error bug when raising `BillingError`.  [#1513](https://github.com/Shopify/shopify_app/pull/1513)
