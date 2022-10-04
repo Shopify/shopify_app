@@ -3,6 +3,7 @@ Unreleased
 
 21.0.0 (Oct 3, 2022)
 ----------
+* Updating shopify_api gem to 12.0.0
 
 20.2.0 (September 30, 2022)
 ----------
