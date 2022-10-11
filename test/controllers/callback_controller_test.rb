@@ -35,13 +35,15 @@ module ShopifyApp
     end
 
     test "#callback flashes error when omniauth is not present" do
-      get :callback, params: { shop: "shop" }
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
       assert_equal flash[:error], "Could not log in to Shopify store"
     end
 
     test "#callback flashes error in Spanish" do
       I18n.locale = :es
-      get :callback, params: { shop: "shop" }
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
       assert_match "sesión", flash[:error]
     end
 

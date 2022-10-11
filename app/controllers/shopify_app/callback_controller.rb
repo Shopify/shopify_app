@@ -17,8 +17,12 @@ module ShopifyApp
           },
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
         )
-      rescue
-        return respond_with_error
+      rescue => e
+        if e.class.module_parent == ShopifyAPI::Errors
+          return respond_with_error
+        else
+          raise
+        end
       end
 
       cookies.encrypted[auth_result[:cookie].name] = {
