@@ -24,7 +24,7 @@
       id: 'redirection-target',
       data: {
         target: {
-          myshopifyUrl: current_shopify_domain,
+          myshopifyUrl: "#{ShopifyAPI::Context.host_scheme}://#{current_shopify_domain},
           hasStorageAccessUrl: "#{has_storage_access_url}",
           doesNotHaveStorageAccessUrl: "#{does_not_have_storage_access_url}",
           appTargetUrl: "#{app_target_url}"
