@@ -18,7 +18,7 @@
 
   <%= javascript_include_tag('shopify_app/top_level', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= ShopifyAPI::Context.host_scheme + @shop %>" data-host="<%= @host %>" data-redirect-url="<%= @url %>">
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= ShopifyAPI::Context.host_scheme + "://" + @shop %>" data-host="<%= @host %>" data-redirect-url="<%= @url %>">
   <main id="TopLevelInteractionContent">
     <div class="Polaris-Page">
       <div class="Polaris-Page__Content">
