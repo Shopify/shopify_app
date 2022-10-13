@@ -8,10 +8,6 @@ module ShopifyApp
     include ShopifyApp::Itp
     include ShopifyApp::SanitizedParams
 
-    class ShopifyDomainNotFound < StandardError; end
-
-    class ShopifyHostNotFound < StandardError; end
-
     included do
       after_action :set_test_cookie
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
@@ -194,12 +190,12 @@ module ShopifyApp
 
       return shopify_domain if shopify_domain.present?
 
-      raise ShopifyDomainNotFound
+      raise ::ShopifyApp::ShopifyDomainNotFound
     end
 
     def return_address
       return_address_with_params(shop: current_shopify_domain, host: host)
-    rescue ShopifyDomainNotFound, ShopifyHostNotFound
+    rescue ::ShopifyApp::ShopifyDomainNotFound, ::ShopifyApp::ShopifyHostNotFound
       base_return_address
     end
 
