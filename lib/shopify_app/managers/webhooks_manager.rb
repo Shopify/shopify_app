@@ -8,7 +8,7 @@ module ShopifyApp
       def queue(shop_domain, shop_token)
         ShopifyApp::WebhooksManagerJob.perform_later(
           shop_domain: shop_domain,
-          shop_token: shop_token
+          shop_token: shop_token,
         )
       end
 
@@ -45,7 +45,7 @@ module ShopifyApp
             delivery_method: attributes[:delivery_method] || :http,
             path: webhook_path,
             handler: webhook_job_klass(webhook_path),
-            fields: attributes[:fields]
+            fields: attributes[:fields],
           )
         end
       end

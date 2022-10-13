@@ -37,7 +37,7 @@ module ShopifyApp
         ShopifyAPI::Auth::Session.new(
           shop: shopify_domain,
           access_token: "access_token",
-          scope: scopes
+          scope: scopes,
         )
       end
     end

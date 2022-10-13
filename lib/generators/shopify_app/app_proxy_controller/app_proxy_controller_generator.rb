@@ -19,7 +19,7 @@ module ShopifyApp
         inject_into_file(
           "config/routes.rb",
           File.read(File.expand_path(find_in_source_paths("app_proxy_route.rb"))),
-          after: "mount ShopifyApp::Engine, at: '/'\n"
+          after: "mount ShopifyApp::Engine, at: '/'\n",
         )
       end
     end

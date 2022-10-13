@@ -34,6 +34,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("webmock")
 
   s.files         = %x(git ls-files).split("\n").reject { |f| f.match(%r{^(test|example)/}) }
-  s.test_files    = %x(git ls-files -- {test}/*).split("\n")
   s.require_paths = ["lib"]
 end

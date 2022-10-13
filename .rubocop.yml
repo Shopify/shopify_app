@@ -16,3 +16,5 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'test/**/*'
 
+Style/ClassMethodsDefinitions:
+  Enabled: false

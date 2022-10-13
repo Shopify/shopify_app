@@ -7,7 +7,7 @@ module ShopifyApp
         shop_domain: shop_domain,
         shop_token: shop_token,
         # Procs cannot be serialized so we interpolate now, if necessary
-        scripttags: build_src(scripttags, shop_domain)
+        scripttags: build_src(scripttags, shop_domain),
       )
     end
 
