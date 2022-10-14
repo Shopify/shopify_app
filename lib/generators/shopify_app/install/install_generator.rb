@@ -66,7 +66,7 @@ module ShopifyApp
         inject_into_file(
           "config/environments/development.rb",
           comment,
-          after: insert_after_line
+          after: insert_after_line,
         )
         comment
       end
@@ -78,7 +78,7 @@ module ShopifyApp
         inject_into_file(
           "config/environments/development.rb",
           host_line,
-          after: explaination_comment
+          after: explaination_comment,
         )
         host_line
       end

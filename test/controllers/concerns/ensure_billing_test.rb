@@ -212,7 +212,7 @@ class EnsureBillingTest < ActionController::TestCase
       stub_request(:post, "https://my-shop.myshopify.com/admin/api/#{@api_version}/graphql.json")
         .with(
           body: request[:request_body],
-          headers: { "X-Shopify-Access-Token": "access-token" }
+          headers: { "X-Shopify-Access-Token": "access-token" },
         )
         .to_return(
           status: 200,

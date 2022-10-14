@@ -21,7 +21,7 @@ module ShopifyApp
         inject_into_file(
           "config/initializers/shopify_app.rb",
           after_authenticate_job_config,
-          before: "end"
+          before: "end",
         )
 
         unless initializer.include?(after_authenticate_job_config)

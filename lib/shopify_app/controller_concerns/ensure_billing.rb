@@ -98,7 +98,7 @@ module ShopifyApp
     def request_payment(session)
       shop = session.shop
       host = Base64.encode64("#{shop}/admin")
-      return_url = "https://#{ShopifyAPI::Context.host_name}?shop=#{shop}&host=#{host}"
+      return_url = "#{ShopifyAPI::Context.host}?shop=#{shop}&host=#{host}"
 
       if recurring?
         data = request_recurring_payment(session: session, return_url: return_url)
@@ -149,7 +149,7 @@ module ShopifyApp
             currencyCode: ShopifyApp.configuration.billing.currency_code,
           },
           returnUrl: return_url,
-          test: ShopifyApp.configuration.billing.test,
+          test: !Rails.env.production?,
         }
       )
 

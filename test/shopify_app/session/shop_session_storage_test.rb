@@ -14,7 +14,7 @@ module ShopifyApp
     test ".retrieve can retrieve shop session records by ID" do
       ShopMockSessionStore.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_TOKEN
+        shopify_token: TEST_SHOPIFY_TOKEN,
       ))
 
       session = ShopMockSessionStore.retrieve(1)

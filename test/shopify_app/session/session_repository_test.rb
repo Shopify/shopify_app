@@ -171,7 +171,7 @@ module ShopifyApp
       ShopifyAPI::Auth::Session.new(
         shop: mock_shopify_domain,
         access_token: "abracadabra",
-        scope: "read_products"
+        scope: "read_products",
       )
     end
 
@@ -184,7 +184,7 @@ module ShopifyApp
         email_verified: true,
         account_owner: false,
         locale: "en",
-        collaborator: true
+        collaborator: true,
       )
     end
   end

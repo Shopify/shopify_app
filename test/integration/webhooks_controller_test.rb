@@ -46,7 +46,7 @@ module ShopifyApp
       hmac = OpenSSL::HMAC.digest(
         OpenSSL::Digest.new("sha256"),
         "API_SECRET_KEY",
-        "{}"
+        "{}",
       )
       headers = {
         "x-shopify-topic" => name,

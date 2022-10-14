@@ -4,13 +4,15 @@ This guide assumes you have completed the steps to create a new Rails app using 
 
 #### Table of contents
 
-[Setup SSH tunnel for development](#setup-ssh-tunnel-for-development)
+[Optionally Setup SSH tunnel for development](#setup-ssh-tunnel-for-development)
 
 [Use Shopify App Bridge to embed your app in the Shopify Admin](#use-shopify-app-bridge-to-embed-your-app-in-the-shopify-admin)
 
-## Setup SSH tunnel for development
+## Optionally Setup SSH tunnel for development
 
-Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
+Local development supports both `http` and `https` schemes. By default `http` and localhost are used.
+
+To use `https`, your local app needs to be accessible from the public Internet in order to install it on a Shopify store to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
 
 In order to receive requests securely, you'll need to setup a tunnel from the internet to localhost. You can use [Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) for this.
 

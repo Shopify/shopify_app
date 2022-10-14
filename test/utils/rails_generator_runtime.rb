@@ -20,7 +20,7 @@ module Utils
         suppress_output do
           generator_class.start(
             additional_args + ["--skip-bundle", "--skip-bootsnap"],
-            { destination_root: destination }
+            { destination_root: destination },
           )
         end
       end
@@ -87,7 +87,7 @@ module Utils
           is_private: is_private,
           is_embedded: is_embedded,
           session_storage: TestHelpers::FakeSessionStorage.new,
-          user_agent_prefix: nil
+          user_agent_prefix: nil,
         )
         ShopifyAPI::Context.activate_session(ShopifyAPI::Auth::Session.new(shop: "my-shop"))
 
