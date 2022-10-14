@@ -14,7 +14,7 @@ module ShopifyApp
       splash_page_with_params(
         return_to: request.fullpath,
         shop: current_shopify_domain,
-        host: params[:host]
+        host: params[:host],
       )
     end
 

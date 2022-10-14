@@ -55,6 +55,7 @@ module ShopifyApp
       raise ::ShopifyApp::InvalidAudienceError,
         "'aud' claim does not match api_key" unless payload["aud"] == api_key
       raise ::ShopifyApp::InvalidDestinationError, "'dest' claim host not a valid shopify host" unless dest_host
+
       raise ::ShopifyApp::MismatchedHostsError,
         "'dest' claim host does not match 'iss' claim host" unless dest_host == iss_host
 

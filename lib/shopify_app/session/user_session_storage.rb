@@ -41,13 +41,13 @@ module ShopifyApp
           email_verified: false,
           account_owner: false,
           locale: "",
-          collaborator: false
+          collaborator: false,
         )
 
         ShopifyAPI::Auth::Session.new(
           shop: user.shopify_domain,
           access_token: user.shopify_token,
-          associated_user: associated_user
+          associated_user: associated_user,
         )
       end
     end

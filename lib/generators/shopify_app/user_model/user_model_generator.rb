@@ -35,7 +35,7 @@ module ShopifyApp
         if new_shopify_cli_app? || Rails.env.test? || yes?(scopes_column_prompt)
           migration_template(
             "db/migrate/add_user_access_scopes_column.erb",
-            "db/migrate/add_user_access_scopes_column.rb"
+            "db/migrate/add_user_access_scopes_column.rb",
           )
         end
       end

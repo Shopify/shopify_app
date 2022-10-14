@@ -42,7 +42,7 @@ module ShopifyApp
         ShopifyAPI::Utils::SessionUtils.load_current_session(
           auth_header: request.headers["HTTP_AUTHORIZATION"],
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
-          is_online: user_session_expected?
+          is_online: user_session_expected?,
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError
         nil

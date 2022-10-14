@@ -15,7 +15,7 @@ module ShopifyApp
         gsub_file(
           "config/routes.rb",
           "mount ShopifyApp::Engine, at: '/'",
-          ""
+          "",
         )
       end
 

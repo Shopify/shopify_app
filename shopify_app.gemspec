@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("jwt", ">= 2.2.3")
   s.add_runtime_dependency("rails", "> 5.2.1")
   s.add_runtime_dependency("redirect_safely", "~> 1.0")
-  s.add_runtime_dependency("shopify_api", "~> 12.0.0")
+  s.add_runtime_dependency("shopify_api", "~> 12.1")
   s.add_runtime_dependency("sprockets-rails", ">= 2.0.0")
 
   s.add_development_dependency("byebug")
@@ -34,6 +34,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("webmock")
 
   s.files         = %x(git ls-files).split("\n").reject { |f| f.match(%r{^(test|example)/}) }
-  s.test_files    = %x(git ls-files -- {test}/*).split("\n")
   s.require_paths = ["lib"]
 end

@@ -21,6 +21,7 @@ module ShopifyApp
 
     def sanitize_shop_param(params)
       return unless params[:shop].present?
+
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 

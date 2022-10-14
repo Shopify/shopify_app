@@ -15,7 +15,7 @@ module ShopifyApp
             ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
               cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
           },
-          auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params)
+          auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
         )
       rescue
         return respond_with_error
@@ -95,7 +95,7 @@ module ShopifyApp
       ScripttagsManager.queue(
         session.shop,
         session.access_token,
-        ShopifyApp.configuration.scripttags
+        ShopifyApp.configuration.scripttags,
       )
     end
 
