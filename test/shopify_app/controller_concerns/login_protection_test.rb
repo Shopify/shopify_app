@@ -89,7 +89,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer token",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: true
+        is_online: true,
       )
       .returns(nil)
 
@@ -107,7 +107,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer token",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: false
+        is_online: false,
       )
       .returns(nil)
 
@@ -124,7 +124,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer #{token}",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: false
+        is_online: false,
       )
       .returns(@session)
 
@@ -142,7 +142,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer #{token}",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: false
+        is_online: false,
       )
       .returns(@session)
 
@@ -191,7 +191,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "old-cookie"
 
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
-        ShopifyAPI::Auth::Session.new(shop: "some-shop")
+        ShopifyAPI::Auth::Session.new(shop: "some-shop"),
       ).once
 
       get :second_login
@@ -205,7 +205,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "old-cookie"
 
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
-        ShopifyAPI::Auth::Session.new(shop: "some-shop")
+        ShopifyAPI::Auth::Session.new(shop: "some-shop"),
       ).once
 
       get :second_login, params: { shop: "other-shop" }
@@ -229,10 +229,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer token",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => "cookie" },
-        is_online: true
+        is_online: true,
       )
       .returns(
-        ShopifyAPI::Auth::Session.new(shop: @shop, scope: ["scope1"])
+        ShopifyAPI::Auth::Session.new(shop: @shop, scope: ["scope1"]),
       )
 
     with_application_test_routes do
@@ -256,10 +256,10 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer token",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => "cookie" },
-        is_online: true
+        is_online: true,
       )
       .returns(
-        ShopifyAPI::Auth::Session.new(shop: "some-shop", scope: ["scope1", "scope2"])
+        ShopifyAPI::Auth::Session.new(shop: "some-shop", scope: ["scope1", "scope2"]),
       )
 
     with_application_test_routes do
@@ -274,7 +274,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "old-cookie"
 
       ShopifyAPI::Utils::SessionUtils.expects(:load_current_session).returns(
-        ShopifyAPI::Auth::Session.new(shop: "some-shop")
+        ShopifyAPI::Auth::Session.new(shop: "some-shop"),
       ).once
 
       get :second_login, params: { shop: { id: 123, disabled: true } }

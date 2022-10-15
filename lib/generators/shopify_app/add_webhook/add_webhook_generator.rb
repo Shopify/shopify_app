@@ -20,7 +20,7 @@ module ShopifyApp
         inject_into_file(
           "config/initializers/shopify_app.rb",
           "  config.webhooks = [\n  ]\n",
-          after: /ShopifyApp\.configure.*\n/
+          after: /ShopifyApp\.configure.*\n/,
         )
       end
 
@@ -28,7 +28,7 @@ module ShopifyApp
         inject_into_file(
           "config/initializers/shopify_app.rb",
           webhook_config,
-          after: "config.webhooks = ["
+          after: "config.webhooks = [",
         )
 
         initializer = load_initializer

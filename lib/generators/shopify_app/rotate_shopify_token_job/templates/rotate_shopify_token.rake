@@ -6,7 +6,7 @@ namespace :shopify do
     all_active_shops.find_each do |shop|
       Shopify::RotateShopifyTokenJob.perform_later(
         shop_domain: shop.shopify_domain,
-        refresh_token: args[:refresh_token]
+        refresh_token: args[:refresh_token],
       )
     end
   end

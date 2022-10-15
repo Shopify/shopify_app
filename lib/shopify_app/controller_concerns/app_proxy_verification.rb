@@ -22,7 +22,7 @@ module ShopifyApp
 
       ActiveSupport::SecurityUtils.secure_compare(
         calculated_signature(query_hash),
-        signature
+        signature,
       )
     end
 
@@ -32,7 +32,7 @@ module ShopifyApp
       OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest.new("sha256"),
         ShopifyApp.configuration.secret,
-        sorted_params
+        sorted_params,
       )
     end
   end

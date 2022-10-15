@@ -46,9 +46,10 @@ rails new my_shopify_app
 bundle add shopify_app
 ```
 
-3. Create a `.env` file in the root of `my_shopify_app` to specify your Shopify API credentials:
+3. Create a `.env` file in the root of `my_shopify_app` to specify your full host and Shopify API credentials:
 
 ```sh
+HOST=http://localhost:3000
 SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
 ```
@@ -67,17 +68,15 @@ rails generate shopify_app
 rails db:migrate
 ```
 
-6. Setup a SSH tunnel to allow the OAuth redirect to work. See how in the [Setup SSH tunnel for development](/docs/Quickstart.md#setup-ssh-tunnel-for-development) section in [Quickstart](/docs/Quickstart.md)
-
-7. Run the app:
+6. Run the app:
 
 ```sh
 rails server
 ```
 
-8. Install the app by visiting the server's URL (e.g. http://127.0.0.1:3000) and specifying the subdomain of the shop where you want it to be installed to.
+7. Install the app by visiting the server's URL (e.g. http://127.0.0.1:3000) and specifying the subdomain of the shop where you want it to be installed to.
 
-9. After the app is installed, you're redirected to the embedded app.
+8. After the app is installed, you're redirected to the embedded app.
 
 This app implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
 
