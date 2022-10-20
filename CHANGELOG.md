@@ -1,5 +1,13 @@
 Unreleased
 ----------
+
+21.1.1 (Oct 20, 2022)
+----------
+* Updates dependency to `shopify_api` to 12.2 to fix error with host_name argument.
+
+21.1.0 (Oct 17, 2022)
+----------
+
 * Removes assumed `https` required to run locally. Support both `http` and `https` in backward compatible way. [#1518](https://github.com/Shopify/shopify_app/pull/1518)
 
 21.0.0 (Oct 3, 2022)
