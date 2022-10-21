@@ -14,6 +14,7 @@ module ShopifyApp
 
       def create_webhooks(session:)
         return unless ShopifyApp.configuration.has_webhooks?
+        Rails.logger.debug("ShopifyApp - Creating Webhooks #{ShopifyApp.configuration.webhooks}")
 
         ShopifyAPI::Webhooks::Registry.register_all(session: session)
       end

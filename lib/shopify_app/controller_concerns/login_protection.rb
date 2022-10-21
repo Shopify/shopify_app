@@ -44,9 +44,12 @@ module ShopifyApp
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: user_session_expected?,
         )
+        Rails.logger.debug("Loaded current shopify session")
       rescue ShopifyAPI::Errors::CookieNotFoundError
+        Rails.logger.debug("CookiesNotFound for current shopify session")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
+        Rails.logger.debug("InvalidJwtTokenError current shopify session")
         nil
       end
     end
@@ -55,6 +58,7 @@ module ShopifyApp
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
       clear_shopify_session
+      Rails.logger.debug("Redirecting to login because session id conflicts with params or session shop conflicts with params")
       redirect_to_login
     end
 

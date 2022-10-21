@@ -38,20 +38,25 @@ module ShopifyApp
       copy_return_to_param_to_session
 
       if embedded_redirect_url?
+        Rails.logger.debug("Embedded URL within /authenticate")
         if embedded_param?
+          Rails.logger.debug("Embedded param. Redirecting to redirect_for_embedded")
           redirect_for_embedded
         else
           start_oauth
         end
       elsif top_level?
+        Rails.logger.debug("Top level redirect")
         start_oauth
       else
+        Rails.logger.debug("Redirecting to top level")
         redirect_auth_to_top_level
       end
     end
 
     def start_oauth
       callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
+      Rails.logger.debug("Starting OAuth with the following Callback URL: #{callback_url}")
 
       auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
         shop: sanitized_shop_name,
@@ -65,6 +70,7 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
+      Rails.logger.debug("Redirecting to #{:auth_route}")
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
     end
 
