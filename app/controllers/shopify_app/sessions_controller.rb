@@ -27,6 +27,7 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
+      Rails.logger.debug("ShopifyApp - Destroy Session and redirecting to login")
       redirect_to(login_url_with_optional_shop)
     end
 
