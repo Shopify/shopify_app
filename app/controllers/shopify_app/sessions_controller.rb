@@ -70,7 +70,7 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
-      Rails.logger.debug("ShopifyApp - Redirecting to #{:auth_route}")
+      Rails.logger.debug("ShopifyApp - Redirecting to auth_route")
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
     end
 

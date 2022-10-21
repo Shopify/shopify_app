@@ -58,7 +58,8 @@ module ShopifyApp
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
       clear_shopify_session
-      Rails.logger.debug("ShopifyApp - Redirecting to login because session id conflicts with params or session shop conflicts with params")
+      Rails.logger.debug("ShopifyApp - Redirecting to login because session id conflicts with params or
+        session shop conflicts with params")
       redirect_to_login
     end
 
