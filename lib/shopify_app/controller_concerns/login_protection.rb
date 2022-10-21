@@ -16,8 +16,10 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
 
     def activate_shopify_session
+      Rails.logger.debug("ShopifyApp - Activating Shopify Session")
       if current_shopify_session.blank?
         signal_access_token_required
+        Rails.logger.debug("ShopifyApp - Access Token is required when making session. Redirecting to Login")
         return redirect_to_login
       end
 
@@ -32,6 +34,7 @@ module ShopifyApp
         ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
       ensure
+        Rails.logger.debug("ShopifyApp - Deactivating Session")
         ShopifyAPI::Context.deactivate_session
       end
     end
@@ -75,8 +78,10 @@ module ShopifyApp
 
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
+        Rails.logger.debug("ShopifyApp - Adding top level redirection headers")
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
+          Rails.logger.debug("ShopifyApp - Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
