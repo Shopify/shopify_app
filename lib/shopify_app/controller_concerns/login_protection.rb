@@ -44,7 +44,7 @@ module ShopifyApp
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: user_session_expected?,
         )
-        Rails.logger.debug("ShopifyApp - Loaded current shopify session")
+        # Rails.logger.debug("ShopifyApp - Loaded current shopify session")
       rescue ShopifyAPI::Errors::CookieNotFoundError
         Rails.logger.debug("ShopifyApp - CookiesNotFound for current shopify session")
         nil
