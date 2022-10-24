@@ -52,7 +52,7 @@ module ShopifyApp
         Rails.logger.debug("ShopifyApp - CookiesNotFound for current shopify session")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        Rails.logger.debug("ShopifyApp - InvalidJwtTokenError current shopify session")
+        Rails.logger.debug("ShopifyApp - Invalid Jwt token for current shopify session")
         nil
       end
     end
