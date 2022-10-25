@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+21.2.0 (Oct 25, 2022)
+----------
 * Pass access scopes on query string [#1540](https://github.com/Shopify/shopify_app/pull/1540)
 
 21.1.1 (Oct 20, 2022)
