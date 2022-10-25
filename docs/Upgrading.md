@@ -30,6 +30,8 @@ We strongly recommend you avoid 'monkeypatching' any existing code from `Shopify
 
 If you need to upgrade by more than one major version (e.g. from v18 to v20), we recommend doing one at a time. Deploy each into production to help to detect problems earlier.
 
+We also recommend the use of a staging site which matches your production environment as closely as possible.
+
 If you do run into issues, there are two useful techniques to apply: Adding log statements, and using an interactive debugger, such as `pry`.
 
 You can temporarily add log statements or debugger calls to the `shopify_app` or `shopify-api-ruby` gems:
