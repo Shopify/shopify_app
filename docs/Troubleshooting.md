@@ -10,6 +10,7 @@
 
 [App installation](#app-installation)
   * [My app won't install](#my-app-wont-install)
+  * [My app keeps redirecting to login](#my-app-keeps-redirecting-to-login)
   * [My app returns 401 during oauth](#my-app-returns-401-during-oauth)
 
 [JWT session tokens](#jwt-session-tokens)
@@ -142,9 +143,18 @@ X-Shopify-API-Request-Failure-Unauthorized: true
 
 Then, use the [Shopify App Bridge Redirect](https://shopify.dev/tools/app-bridge/actions/navigation/redirect) action to redirect your app frontend to the app login URL if this header is set.
 
-
 ### I'm stuck in a redirect loop after OAuth
 
 In previous versions of `ShopifyApp::Authenticated` controller concern, App Bridge embedded apps were able to include the `Authenticated` controller concern in the `HomeController` and other embedded controllers. This is no longer supported due to browsers blocking 3rd party cookies to increase privacy. App Bridge 3 is needed to handle all embedded sessions.
 
 For more details on how to handle embeded sessions, refer to [the session token documentation](https://shopify.dev/apps/auth/oauth/session-tokens).
+
+### `redirect_uri is not whitelisted`
+
+* Ensure you have set the `HOST` environment variable to match your host's URL, e.g. `http://localhost:3000` or `https://my-host-name.trycloudflare.com`.
+* Update the app's URL and whitelisted URLs in App Setup on https://partners.shopify.com
+
+### `This app can’t load due to an issue with browser cookies`
+
+This can be caused by an infinite redirect due to a coding error
+To investigate the cause, you can add a breakpoint or logging to the `rescue` clause of `ShopifyApp::CallbackController`.

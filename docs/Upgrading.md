@@ -26,7 +26,7 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 Although we strive to make upgrades as smooth as possible, some effort may be required to stay up to date with the latest changes to `shopify_app`.
 
-We strongly recommend you avoid 'monkeypatching' any existing code from `ShopifyApp`, e.g. by inheriting from `ShopifyApp` and then overriding particular methods. This can result in difficult upgrades. If your app does so, you will need carefully check the gem's internal changes when upgrading.
+We strongly recommend you avoid 'monkeypatching' any existing code from `ShopifyApp`, e.g. by inheriting from `ShopifyApp` and then overriding particular methods. This can result in difficult upgrades. If your app does so, you will need to carefully check the gem's internal changes when upgrading.
 
 If you need to upgrade by more than one major version (e.g. from v18 to v20), we recommend doing one at a time. Deploy each into production to help to detect problems earlier.
 
@@ -39,18 +39,6 @@ You can temporarily add log statements or debugger calls to the `shopify_app` or
   * Alternatively, you can your modify your `Gemfile` to use local locally checked out gems with the the [`path` option](https://bundler.io/man/gemfile.5.html).
 
 Note that if you make changes to a gem, you will need to restart the app for the changes to be applied.
-
-## Common Errors
-
-### `redirect_uri is not whitelisted`
-
-* Ensure you have set the `HOST` environment variable to match your host's URL, e.g. `http://localhost:3000` or `https://my-host-name.trycloudflare.com`.
-* Update the app's URL and whitelisted URLs in App Setup on https://partners.shopify.com
-
-### `This app can’t load due to an issue with browser cookies`
-
-This can be caused by an infinite redirect due to a coding error.
-To investigate the cause, you can add a breakpoint or logging to the `rescue` clause of `ShopifyApp::CallbackController`.
 
 ## Upgrading to `v20.2.0`
 
