@@ -3,14 +3,13 @@
 #### Table of contents
 
 [Generators](#generators)
-  * [The `shopify_app:install` generator hangs](#the-shopifyappinstall-generator-hangs)
+  * [The `shopify_app:install` generator hangs](#the-shopify_appinstall-generator-hangs)g
 
 [Rails](#rails)
   * [Known issues with Rails `v6.1`](#known-issues-with-rails-v61)
 
 [App installation](#app-installation)
   * [My app won't install](#my-app-wont-install)
-  * [My app keeps redirecting to login](#my-app-keeps-redirecting-to-login)
   * [My app returns 401 during oauth](#my-app-returns-401-during-oauth)
 
 [JWT session tokens](#jwt-session-tokens)
