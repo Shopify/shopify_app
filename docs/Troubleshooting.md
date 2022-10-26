@@ -158,3 +158,5 @@ For more details on how to handle embeded sessions, refer to [the session token 
 
 This can be caused by an infinite redirect due to a coding error
 To investigate the cause, you can add a breakpoint or logging to the `rescue` clause of `ShopifyApp::CallbackController`.
+
+One possible cause is that XHR requests, the `Authenticated` concern should be used, rather than `RequireKnownShop`.
