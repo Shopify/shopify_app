@@ -32,13 +32,7 @@ If you need to upgrade by more than one major version (e.g. from v18 to v20), we
 
 We also recommend the use of a staging site which matches your production environment as closely as possible.
 
-If you do run into issues, there are two useful techniques to apply: Adding log statements, and using an interactive debugger, such as `pry`.
-
-You can temporarily add log statements or debugger calls to the `shopify_app` or `shopify-api-ruby` gems:
-  * You can modify a gem using [`bundle open`](https://boringrails.com/tips/bundle-open-debug-gems)
-  * Alternatively, you can your modify your `Gemfile` to use local locally checked out gems with the the [`path` option](https://bundler.io/man/gemfile.5.html).
-
-Note that if you make changes to a gem, you will need to restart the app for the changes to be applied.
+If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
 
 ## Upgrading to `v20.2.0`
 
@@ -57,8 +51,9 @@ Note that the following steps are *optional* and only apply to **embedded** appl
 
 ## Upgrading to `v19.0.0`
 
-This update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby)
-gem.
+*This change introduced a major change of strategy regarding sessions.*  Due to security changes with browsers, support for cookie based sessions was dropped. JWT is now the only supported method for managing sessions.
+
+As part of that change, this update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby) gem.
 
 ### High-level process
 

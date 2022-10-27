@@ -18,6 +18,11 @@
   * [My app can't make requests to the Shopify API](#my-app-cant-make-requests-to-the-shopify-api)
   * [I'm stuck in a redirect loop after OAuth](#im-stuck-in-a-redirect-loop-after-oauth)
 
+[Controller Concerns](#controller-concerns)
+  * [Authenticated vs Unauthenticated requests](#authenticated-vs-unauthenticated-requests)
+
+[Debugging Tips](#debugging-tips)
+
 ## Generators
 
 ### The shopify_app:install generator hangs
@@ -160,3 +165,25 @@ This can be caused by an infinite redirect due to a coding error
 To investigate the cause, you can add a breakpoint or logging to the `rescue` clause of `ShopifyApp::CallbackController`.
 
 One possible cause is that XHR requests, the `Authenticated` concern should be used, rather than `RequireKnownShop`.
+
+## Controller Concerns
+### Authenticated vs RequireKnownShop
+The gem heavily relies on the `current_shopify_domain` helper to contextualize a request to a given Shopify shop. This helper is set in different and conflicting ways if the request is authenticated or not.
+
+Because of these conflicting approaches the `Authenticated` (for use in authenticated requests) and `RequireKnownShop` (for use in unauthenticated requests) controller concerns be *never* be included within the same controller.
+
+#### Authenticated Requests
+For authenticated requests the [`Authenticated` controller concern](https://github.com/Shopify/shopify_app/blob/707e6079e5d48fa17e7f40d130d7e14871edbf9c/app/controllers/concerns/shopify_app/authenticated.rb) is recommended to be included in controller actions that are are authenticated. The `current_shopify_domain` is set from the JWT for these requests.
+
+#### Unauthenticated Requests
+For unauthenticated requests the [`RequireKnownShop` controller concern](https://github.com/Shopify/shopify_app/blob/707e6079e5d48fa17e7f40d130d7e14871edbf9c/app/controllers/concerns/shopify_app/require_known_shop.rb) is recommended to be included in controller actions that are are unauthenticated. The `current_shopify_domain` is set from the query string params that are passed during unauthenticated routes.
+
+## Debugging Tips
+
+If you do run into issues with the gem there are two useful techniques to apply: Adding log statements, and using an interactive debugger, such as `pry`.
+
+You can temporarily add log statements or debugger calls to the `shopify_app` or `shopify-api-ruby` gems:
+  * You can modify a gem using [`bundle open`](https://boringrails.com/tips/bundle-open-debug-gems)
+  * Alternatively, you can your modify your `Gemfile` to use local locally checked out gems with the the [`path` option](https://bundler.io/man/gemfile.5.html).
+
+Note that if you make changes to a gem, you will need to restart the app for the changes to be applied.
