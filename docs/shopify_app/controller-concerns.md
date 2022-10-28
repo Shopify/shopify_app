@@ -34,7 +34,7 @@ If your ShopifyApp configuration has the `embedded_app` config set to true, [P3P
 #### Billing Enforcement
 If billing is enabled for the app, the active payment for the session is queried and enforced if needed. If billing is required the user will be redirected to a page requesting payment.
 
-## EnsureAuthenicatedLinks
+## EnsureAuthenticatedLinks
 Designed to be more of a lightweight session concern specifically for XHR requests. Where `Authenticated` does far more than just session management, this concern will redirect to the splash page of the app if no active session was found.
 
 ## RequireKnownShop
