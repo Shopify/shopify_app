@@ -40,7 +40,7 @@ Designed to be more of a lightweight session concern specifically for XHR reques
 ## RequireKnownShop
 Designed to handle unauthenticated requests. Rather than using the JWT to determine the requested shop of the request, the `shop` name is expected to be passed in the query string. If `shop` wasn't included in the query string params the request will be redirected to the login_url of the app.
 
-If the shop session cannot be found for the provided `shop` in the query string, the requrest will be redirected to login or the `embedded_redirect_url`.
+If the shop session cannot be found for the provided `shop` in the query string, the request will be redirected to login or the `embedded_redirect_url`.
 
 ## ShopAccessScopesVerification
 If scopes for the session don't match configuration of scopes defined in `config/initializers/shopify_app.rb` the user will be redirected to login or the `embedded_redirect_url`
