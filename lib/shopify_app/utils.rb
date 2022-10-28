@@ -41,12 +41,5 @@ module ShopifyApp
         ShopifyAPI::Context.logger.info("[#{DateTime.current}] [ Shopify | INFO | #{current_shop} ] #{message}")
       end
     end
-
-
-    # Nelsons Example
-    # ShopifyApp::Utils.logger
-    # def self.logger(log_severity, message)
-    #   ShopifyAPI::Context.logger.log_something(timestamp, log_severity, message)
-    # end
   end
 end

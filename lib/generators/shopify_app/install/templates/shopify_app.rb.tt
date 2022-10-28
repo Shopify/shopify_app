@@ -53,5 +53,3 @@ Rails.application.config.after_initialize do
     ShopifyApp::WebhooksManager.add_registrations
   end
 end
-
-ShopifyAPI::Context.logger("some message under the rainbow")
