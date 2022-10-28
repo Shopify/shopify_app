@@ -116,7 +116,7 @@ module ShopifyApp
     def redirect_to_login
       if request.xhr?
         add_top_level_redirection_headers(ignore_response_code: true)
-        ShopifyApp::Utils.logger_info("Hitting redirect_to_login: Request is xhr")
+        Rails.logger.debug("Hitting redirect_to_login: Request is xhr")
         head(:unauthorized)
       else
         if request.get?
