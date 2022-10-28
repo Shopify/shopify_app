@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("pry-stack_explorer")
   s.add_development_dependency("rake")
   s.add_development_dependency("rb-readline")
+  s.add_development_dependency("ruby-lsp")
   s.add_development_dependency("sqlite3", "~> 1.4")
   s.add_development_dependency("webmock")
 
