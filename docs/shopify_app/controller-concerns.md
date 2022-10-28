@@ -10,6 +10,18 @@ In addition to session management, this concern will also handle localization, C
 #### Session Management
 This concern will setup and teardown the session around the action. If the session cannot be setup for the requested shop the request will be redirected to login.
 
+The concern will load sessions depending on your app's configuration:
+
+**Embedded apps**
+
+Cookies are not available for embedded apps because it loads in an iframe, so this concern will load the session from the request's `Authorization` header containing a session token, which can be set using [App Bridge](https://shopify.dev/apps/tools/app-bridge).
+
+Learn more about [using `authenticatedFetch`](https://shopify.dev/apps/auth/oauth/session-tokens/getting-started#step-2-authenticate-your-requests) to create session tokens and authenticate your requests.
+
+**Non-embedded apps**
+
+Since cookies are available, the concern will load the session directly from them, so you can make regular `fetch` requests on your front-end.
+
 #### Localization
 I18n localization is saved to the session for consistent translations for the session.
 
