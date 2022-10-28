@@ -94,6 +94,7 @@ module ShopifyApp
 
         url ||= login_url_with_optional_shop
 
+        Rails.logger.debug("ShopifyApp - Setting Reauthorize-Url to #{url}")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
       end
