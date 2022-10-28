@@ -20,7 +20,7 @@ module ShopifyApp
 
       if current_shopify_session.blank?
         signal_access_token_required
-        Rails.logger.debug("ShopifyApp - Access Token is required when making session. Redirecting to Login")
+        ShopifyApp::Utils.logger_debug("Access Token is required when making a session. Redirecting to Login")
         return redirect_to_login
       end
 
@@ -51,10 +51,10 @@ module ShopifyApp
         )
         # Rails.logger.debug("ShopifyApp - Loaded current shopify session")
       rescue ShopifyAPI::Errors::CookieNotFoundError
-        Rails.logger.debug("ShopifyApp - CookiesNotFound for current shopify session")
+        ShopifyApp::Utils.logger_debug("CookiesNotFound for current shopify session")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        Rails.logger.debug("ShopifyApp - Invalid Jwt token for current shopify session")
+        ShopifyApp::Utils.logger_debug("Invalid Jwt token for current shopify session")
         nil
       end
     end
@@ -63,7 +63,7 @@ module ShopifyApp
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
       clear_shopify_session
-      Rails.logger.debug("ShopifyApp - Redirecting to login because session id conflicts with params or session shop conflicts with params")
+      ShopifyApp::Utils.logger_debug("Redirecting to login because session id conflicts with params or session shop conflicts with params")
       redirect_to_login
     end
 
@@ -80,10 +80,10 @@ module ShopifyApp
 
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
-        Rails.logger.debug("ShopifyApp - Adding top level redirection headers")
+        ShopifyApp::Utils.logger_debug("Adding top level redirection headers")
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
-          Rails.logger.debug("ShopifyApp - Setting current shop session")
+          ShopifyApp::Utils.logger_debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
