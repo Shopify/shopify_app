@@ -7,7 +7,7 @@ Designed for controllers that are designed to handle authenticated actions by en
 
 In addition to session management, this concern will also handle localization, CSRF protection, embedded app settings, and billing enforcement.
 
-#### Session Management
+#### LoginProtection - Session Management
 This concern will setup and teardown the session around the action. If the session cannot be setup for the requested shop the request will be redirected to login.
 
 The concern will load sessions depending on your app's configuration:
@@ -25,10 +25,10 @@ Since cookies are available, the concern will load the session directly from the
 #### Localization
 I18n localization is saved to the session for consistent translations for the session.
 
-#### CSRF Protection
+#### CSRFProtection
 Implements Rails' [protect_from_forgery](https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html#method-i-protect_from_forgery) unless a valid session token is found for the request.
 
-#### Embedded App
+#### EmbeddedApp
 If your ShopifyApp configuration has the `embedded_app` config set to true, [P3P header](https://www.w3.org/P3P/) and [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) are handled for you.
 
 #### EnsureBilling
