@@ -38,7 +38,9 @@ If billing is enabled for the app, the active payment for the session is queried
 Designed to be more of a lightweight session concern specifically for XHR requests. Where `Authenticated` does far more than just session management, this concern will redirect to the splash page of the app if no active session was found.
 
 ## RequireKnownShop
-Designed to handle unauthenticated requests. Rather than using the JWT to determine the requested shop of the request, the `shop` name is expected to be passed in the query string. If `shop` wasn't included in the query string params the request will be redirected to the login_url of the app.
+Designed to handle unauthenticated requests for *embedded apps*. If you are non-embedded app, we recommend using `Authenticated` concern instead of this one.
+
+Rather than using the JWT to determine the requested shop of the request, the `shop` name param is taken from the query string that Shopify Admin provides.
 
 If the shop session cannot be found for the provided `shop` in the query string, the request will be redirected to login or the `embedded_redirect_url`.
 
