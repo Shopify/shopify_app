@@ -27,5 +27,26 @@ module ShopifyApp
 
       url.to_s
     end
+
+    def self.logger_debug(message)
+      current_shop = ShopifyAPI::Context.active_session&.shop
+      if ShopifyApp.configuration.log_level == :debug
+        ShopifyAPI::Context.logger.debug("[#{DateTime.current}] [ Shopify | DEBUG | #{current_shop} ] #{message}")
+      end
+    end
+
+    def self.logger_info(message)
+      current_shop = ShopifyAPI::Context.active_session&.shop
+      if ShopifyApp.configuration.log_level == :info
+        ShopifyAPI::Context.logger.info("[#{DateTime.current}] [ Shopify | INFO | #{current_shop} ] #{message}")
+      end
+    end
+
+
+    # Nelsons Example
+    # ShopifyApp::Utils.logger
+    # def self.logger(log_severity, message)
+    #   ShopifyAPI::Context.logger.log_something(timestamp, log_severity, message)
+    # end
   end
 end
