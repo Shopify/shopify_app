@@ -31,7 +31,7 @@ Implements Rails' [protect_from_forgery](https://api.rubyonrails.org/classes/Act
 #### Embedded App
 If your ShopifyApp configuration has the `embedded_app` config set to true, [P3P header](https://www.w3.org/P3P/) and [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) are handled for you.
 
-#### Billing Enforcement
+#### EnsureBilling
 If billing is enabled for the app, the active payment for the session is queried and enforced if needed. If billing is required the user will be redirected to a page requesting payment.
 
 ## EnsureAuthenticatedLinks
