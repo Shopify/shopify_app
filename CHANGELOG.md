@@ -1,13 +1,16 @@
 Unreleased
 ----------
 
+21.2.0 (Oct 25, 2022)
+----------
+* Pass access scopes on query string [#1540](https://github.com/Shopify/shopify_app/pull/1540)
+
 21.1.1 (Oct 20, 2022)
 ----------
 * Updates dependency to `shopify_api` to 12.2 to fix error with host_name argument.
 
 21.1.0 (Oct 17, 2022)
 ----------
-
 * Removes assumed `https` required to run locally. Support both `http` and `https` in backward compatible way. [#1518](https://github.com/Shopify/shopify_app/pull/1518)
 
 21.0.0 (Oct 3, 2022)
@@ -26,14 +29,12 @@ Unreleased
 
 20.1.1 (September 2, 2022)
 ----------
-
 * Fixed an issue where the `embedded_redirect_url` could lead to a redirect loop in server-side rendered (or production) apps. [#1497](https://github.com/Shopify/shopify_app/pull/1497)
 * Fixes bug where webhooks were generated with addresses instead of the [path the Ruby API](https://github.com/Shopify/shopify-api-ruby/blob/7a08ae9d96a7a85abd0113dae4eb76398cba8c64/lib/shopify_api/webhooks/registrations/http.rb#L12) is expecting [#1474](https://github.com/Shopify/shopify_app/pull/1474). The breaking change that was accidentially already shipped was that `address` attribute for webhooks should be paths not addresses with `https://` and the host name. While the `address` attribute name will still work assuming the value is a path, this name is deprecated. Please configure webhooks with the `path` attribute name instead.
 * Deduce webhook path from deprecated webhook address if initializer uses address attribute. This makes this attribute change a non-breaking change for those upgrading.
 
 20.1.0 (August 22, 2022)
 ----------
-
 * Set the appropriate CSP `frame-ancestor` directive in controllers using the `EmbeddedApp` concern. [#1474](https://github.com/Shopify/shopify_app/pull/1474)
 * Allow [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) hosts in `config/environments/development.rb`.
 * Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) as example tunnel in readme/docs.
@@ -41,30 +42,25 @@ Unreleased
 
 20.0.2 (July 7, 2022)
 ----------
-
 * Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.1. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1101). Fix an issue where HMAC signature verification would fail in OAuth flows during API key rotation.
 
 20.0.1 (July 6, 2022)
 ----------
-
 * Accept extra keyword arguments to WebhooksManagerJob to ease upgrade path from v18 or older (https://github.com/Shopify/shopify_app/pull/1466)
 
 20.0.0 (July 4, 2022)
 ----------
-
 * Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 11.0.0. It includes [these updates](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1100). The breaking change relates to the removal of API version `2021-07` support.
 * Internal update, adding App Bridge 3 for redirect (only). [#1458](https://github.com/Shopify/shopify_app/pull/1458)
 
 19.1.0 (June 20, 2022)
 ----------
-
 * Add the `login_callback_url` config to allow overwriting that route as well, and mount the engine routes based on the configurations. [#1445](https://github.com/Shopify/shopify_app/pull/1445)
 * Add special headers when returning 401s from LoginProtection. [#1450](https://github.com/Shopify/shopify_app/pull/1450)
 * Add a new `billing` configuration which takes in a `ShopifyApp::BillingConfiguration` object and checks for payment on controllers with `Authenticated`. [#1455](https://github.com/Shopify/shopify_app/pull/1455)
 
 19.0.2 (April 27, 2022)
 ----------
-
 * Fix regression in apps using online tokens. [#1413](https://github.com/Shopify/shopify_app/pull/1413)
 * Bump [Shopify API](https://github.com/Shopify/shopify-api-ruby) to version 10.0.3. It includes [these fixes](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#version-1003).
 

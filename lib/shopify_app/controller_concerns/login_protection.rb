@@ -178,6 +178,10 @@ module ShopifyApp
         query_params[:host] ||= host
       end
 
+      if params[:access_scopes].present?
+        query_params[:scope] = params[:access_scopes].join(",")
+      end
+
       query_params[:top_level] = true if top_level
       query_params
     end
