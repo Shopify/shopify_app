@@ -1,6 +1,6 @@
 # Controller Concerns
 
-The following are controller concerns designed to be public controller concerns that can be included in your controllers. Concerns defined in `lib/shopify_app/controller_concerns` are designed to be private concerns and are not meant to be included directly into your controllers.
+The following controller concerns are designed to be public and can be included in your controllers. Concerns defined in `lib/shopify_app/controller_concerns` are designed to be private and are not meant to be included directly into your controllers.
 
 ## Authenticated
 Designed for controllers that are designed to handle authenticated actions by ensuring there is a valid session for the request.
