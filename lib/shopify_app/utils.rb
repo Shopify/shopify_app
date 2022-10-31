@@ -28,18 +28,27 @@ module ShopifyApp
       url.to_s
     end
 
-    def self.logger_debug(message)
-      current_shop = ShopifyAPI::Context.active_session&.shop
-      if ShopifyApp.configuration.log_level == :debug
-        ShopifyAPI::Context.logger.debug("[#{DateTime.current}] [ Shopify | DEBUG | #{current_shop} ] #{message}")
-      end
-    end
+    module Logger
+      LOG_LEVELS = { :off => 0 , :info => 1, :debug => 2 }
 
-    def self.logger_info(message)
-      current_shop = ShopifyAPI::Context.active_session&.shop
-      if ShopifyApp.configuration.log_level == :info
-        ShopifyAPI::Context.logger.info("[#{DateTime.current}] [ Shopify | INFO | #{current_shop} ] #{message}")
+      def self.debug(message)
+        current_shop = ShopifyAPI::Context.active_session&.shop
+        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
+
+        if current_level >= LOG_LEVELS[:debug]
+          ShopifyAPI::Context.logger.debug("[#{DateTime.current}] [ Shopify | DEBUG | #{current_shop} ] #{message}")
+        end
       end
+  
+      def self.info(message)
+        current_shop = ShopifyAPI::Context.active_session&.shop
+        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
+
+        if current_level >= LOG_LEVELS[:info]
+          ShopifyAPI::Context.logger.info("[#{DateTime.current}] [ Shopify | INFO | #{current_shop} ] #{message}")
+        end
+      end
+
     end
   end
 end
