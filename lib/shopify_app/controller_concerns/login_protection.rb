@@ -94,6 +94,7 @@ module ShopifyApp
 
         url ||= login_url_with_optional_shop
 
+        Rails.logger.debug("ShopifyApp - Setting Reauthorize-Url to #{url}")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
       end
@@ -116,7 +117,7 @@ module ShopifyApp
     def redirect_to_login
       if request.xhr?
         add_top_level_redirection_headers(ignore_response_code: true)
-        ShopifyApp::Utils.logger_info("Hitting redirect_to_login: Request is xhr")
+        Rails.logger.debug("Hitting redirect_to_login: Request is xhr")
         head(:unauthorized)
       else
         if request.get?
