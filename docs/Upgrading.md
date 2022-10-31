@@ -4,6 +4,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 #### Table of contents
 
+[General Advice](#general-advice)
+
 [Upgrading to `v20.2.0`](#upgrading-to-v2020)
 
 [Upgrading to `v20.1.0`](#upgrading-to-v2010)
@@ -20,7 +22,20 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [Upgrading from `v8.6` to `v9.0.0`](#upgrading-from-v86-to-v900)
 
+## General Advice
+
+Although we strive to make upgrades as smooth as possible, some effort may be required to stay up to date with the latest changes to `shopify_app`.
+
+We strongly recommend you avoid 'monkeypatching' any existing code from `ShopifyApp`, e.g. by inheriting from `ShopifyApp` and then overriding particular methods. This can result in difficult upgrades. If your app does so, you will need to carefully check the gem's internal changes when upgrading.
+
+If you need to upgrade by more than one major version (e.g. from v18 to v20), we recommend doing one at a time. Deploy each into production to help to detect problems earlier.
+
+We also recommend the use of a staging site which matches your production environment as closely as possible.
+
+If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
+
 ## Upgrading to `v20.2.0`
+
 All custom errors defined inline within the `ShopifyApp` gem have been moved to `lib/shopify_app/errors.rb`.
 
 - If you rescue any errors defined in this gem, you will need to rename them to match their new namespacing.
@@ -36,8 +51,9 @@ Note that the following steps are *optional* and only apply to **embedded** appl
 
 ## Upgrading to `v19.0.0`
 
-This update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby)
-gem.
+*This change introduced a major change of strategy regarding sessions.*  Due to security changes with browsers, support for cookie based sessions was dropped. JWT is now the only supported method for managing sessions.
+
+As part of that change, this update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby) gem.
 
 ### High-level process
 
@@ -53,12 +69,15 @@ gem.
 
 ### Specific cases
 
-#### Shopify user id in session
+#### Shopify user ID in session
 
 Previously, we set the entire app user object in the `session` object.
 As of v19, since we no longer save the app user to the session (but only the shopify user id), we now store it as `session[:shopify_user_id]`. Please make sure to update any references to that object.
 
 #### Webhook Jobs
+
+It is assumed that you have an ActiveJob implementation configured for `perform_later`, e.g. Sidekiq.
+Ensure your jobs inherit from `ApplicationJob` or `ActiveJob::Base`.
 
 Add a new `handle` method to existing webhook jobs to go through the updated `shopify_api` gem.
 
@@ -95,32 +114,7 @@ Shopify API session, or `nil` if no such session is available.
 
 #### Setting up `ShopifyAPI::Context`
 
-The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will
-generate a block in the `shopify_app` initializer. To do so manually, ensure the following is
-part of the `after_initialize` block in `shopify_app.rb`.
-
-```ruby
-Rails.application.config.after_initialize do
-  if ShopifyApp.configuration.api_key.present? && ShopifyApp.configuration.secret.present?
-    ShopifyAPI::Context.setup(
-      api_key: ShopifyApp.configuration.api_key,
-      api_secret_key: ShopifyApp.configuration.secret,
-      old_api_secret_key: ShopifyApp.configuration.old_secret,
-      api_version: ShopifyApp.configuration.api_version,
-      host_name: URI(ENV.fetch('HOST', '')).host || '',
-      scope: ShopifyApp.configuration.scope,
-      is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
-      is_embedded: ShopifyApp.configuration.embedded_app,
-      session_storage: ShopifyApp::SessionRepository,
-      logger: Rails.logger,
-      private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
-      user_agent_prefix: "ShopifyApp/#{ShopifyApp::VERSION}"
-    )
-
-    ShopifyApp::WebhooksManager.add_registrations
-  end
-end
-```
+The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template]((https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
 
 ## Upgrading to `v18.1.2`
 
@@ -128,7 +122,7 @@ Version 18.1.2 replaces the deprecated EASDK redirect with an App Bridge 2 redir
 
 ## Upgrading to `v17.2.0`
 
-### Different SameSite cookie attribute behaviour
+### Different SameSite cookie attribute behavior
 
 To support Rails `v6.1`, the [`SameSiteCookieMiddleware`](/lib/shopify_app/middleware/same_site_cookie_middleware.rb) was updated to configure cookies to `SameSite=None` if the app is embedded. Before this release, cookies were configured to `SameSite=None` only if this attribute had not previously been set before.
 
