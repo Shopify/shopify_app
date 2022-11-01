@@ -29,7 +29,7 @@ module ShopifyApp
     end
 
     module Logger
-      LOG_LEVELS = { :debug => 0, :info => 1, :warn => 2, :error => 3, :off => 4 }
+      LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 4 }
       PREFIX = "ShopifyAPP"
 
       def self.debug(message)
@@ -37,7 +37,7 @@ module ShopifyApp
         current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
 
         if current_level <= LOG_LEVELS[:debug]
-          ShopifyAPI::Context.logger.debug("[#{DateTime.current}] [ #{PREFIX} | DEBUG | #{current_shop} ] #{message}")
+          ShopifyAPI::Context.logger.debug("[#{Time.current}] [ #{PREFIX} | DEBUG | #{current_shop} ] #{message}")
         end
       end
 
@@ -46,7 +46,7 @@ module ShopifyApp
         current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
 
         if current_level <= LOG_LEVELS[:info]
-          ShopifyAPI::Context.logger.info("[#{DateTime.current}] [ #{PREFIX} | INFO | #{current_shop} ] #{message}")
+          ShopifyAPI::Context.logger.info("[#{Time.current}] [ #{PREFIX} | INFO | #{current_shop} ] #{message}")
         end
       end
 
@@ -55,7 +55,7 @@ module ShopifyApp
         current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
 
         if current_level <= LOG_LEVELS[:warn]
-          ShopifyAPI::Context.logger.warn("[#{DateTime.current}] [ #{PREFIX} | WARNING | #{current_shop} ] #{message}")
+          ShopifyAPI::Context.logger.warn("[#{Time.current}] [ #{PREFIX} | WARNING | #{current_shop} ] #{message}")
         end
       end
 
@@ -64,7 +64,7 @@ module ShopifyApp
         current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
 
         if current_level <= LOG_LEVELS[:error]
-          ShopifyAPI::Context.logger.error("[#{DateTime.current}] [ #{PREFIX} | ERROR | #{current_shop} ] #{message}")
+          ShopifyAPI::Context.logger.error("[#{Time.current}] [ #{PREFIX} | ERROR | #{current_shop} ] #{message}")
         end
       end
     end

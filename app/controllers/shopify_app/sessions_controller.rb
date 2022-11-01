@@ -27,7 +27,7 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
-      ShopifyApp::Utils::Logger.debug("Session Destroyed and Redirecting to login")      
+      ShopifyApp::Utils::Logger.debug("Session Destroyed and Redirecting to login")
       redirect_to(login_url_with_optional_shop)
     end
 
