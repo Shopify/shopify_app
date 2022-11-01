@@ -126,7 +126,7 @@ GEM
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
     minitest (5.16.3)
-    mocha (1.16.0)
+    mocha (2.0.0)
     multi_xml (0.6.0)
     net-imap (0.3.1)
       net-protocol
@@ -134,7 +134,7 @@ GEM
       net-protocol
     net-protocol (0.1.3)
       timeout
-    net-smtp (0.3.2)
+    net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.8)
     nokogiri (1.13.9)
@@ -196,17 +196,17 @@ GEM
       activemodel
     regexp_parser (2.6.0)
     rexml (3.2.5)
-    rubocop (1.37.0)
+    rubocop (1.38.0)
       json (~> 2.3)
       parallel (~> 1.10)
       parser (>= 3.1.2.1)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.22.0, < 2.0)
+      rubocop-ast (>= 1.23.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.22.0)
+    rubocop-ast (1.23.0)
       parser (>= 3.1.1.0)
     rubocop-shopify (2.10.1)
       rubocop (~> 1.35)
@@ -226,7 +226,7 @@ GEM
       securerandom
       sorbet-runtime
       zeitwerk (~> 2.5)
-    sorbet-runtime (0.5.10514)
+    sorbet-runtime (0.5.10526)
     sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -250,7 +250,7 @@ GEM
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.6.1)
+    zeitwerk (2.6.3)
 
 PLATFORMS
   ruby

@@ -8,6 +8,9 @@ module Utils
   class RailsGeneratorRuntimeTest < ActiveSupport::TestCase
     test "generates and clears classes" do
       runtime = Utils::RailsGeneratorRuntime.new(self)
+      puts "!!!!!!!!!!!!!!"
+      # FIXME - HomeController is already defined with the new rails 7 configs / rake tests that I've ported.
+      #         Find way to refactor loading or test
       refute(defined?(HomeController))
       runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator)
       assert(defined?(HomeController))

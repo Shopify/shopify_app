@@ -6,6 +6,7 @@ require "test_helpers/fake_session_storage"
 module Utils
   class RailsGeneratorRuntime
     ROOT = "test/.generated"
+    APP_RAKEFILE = File.expand_path("../dummy/Rakefile", __dir__)
 
     def initialize(test_class)
       raise "Caller must provide an instance of a test to Utils::RailsGeneratorRuntime.new" if test_class.nil?
@@ -17,12 +18,13 @@ module Utils
 
     def run_generator(generator_class, additional_args = [])
       new_files = generates_files do
-        suppress_output do
+        binding.pry
+        #suppress_output do
           generator_class.start(
             additional_args + ["--skip-bundle", "--skip-bootsnap"],
             { destination_root: destination },
           )
-        end
+        #end
       end
 
       generates_classes do
