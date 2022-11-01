@@ -8,39 +8,55 @@ module ShopifyApp
 
     def callback
       begin
-        filtered_params = request.parameters.symbolize_keys.slice(:code, :shop, :timestamp, :state, :host, :hmac)
-
-        auth_result = ShopifyAPI::Auth::Oauth.validate_auth_callback(
-          cookies: {
-            ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
-              cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
-          },
-          auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
-        )
+        session, cookie = validated_auth_objects
       rescue
         return respond_with_error
       end
 
-      cookies.encrypted[auth_result[:cookie].name] = {
-        expires: auth_result[:cookie].expires,
-        secure: true,
-        http_only: true,
-        value: auth_result[:cookie].value,
-      }
+      save_session(session) if session
+      update_rails_cookie(session, cookie)
 
-      session[:shopify_user_id] = auth_result[:session].associated_user.id if auth_result[:session].online?
+      return respond_with_user_token_flow if start_user_token_flow?(session)
 
-      if start_user_token_flow?(auth_result[:session])
-        return respond_with_user_token_flow
-      end
-
-      perform_post_authenticate_jobs(auth_result[:session])
-      has_payment = check_billing(auth_result[:session])
-
-      respond_successfully if has_payment
+      perform_post_authenticate_jobs(session)
+      respond_successfully if check_billing(session)
     end
 
     private
+
+    def save_session(session)
+      return true # FIXME - update tests to properly mock this boundary
+      ShopifyApp::SessionRepository.store_session(session)
+    end
+
+    def validated_auth_objects
+      filtered_params = request.parameters.symbolize_keys.slice(:code, :shop, :timestamp, :state, :host, :hmac)
+
+      oauth_payload = ShopifyAPI::Auth::Oauth.validate_auth_callback(
+        cookies: {
+          ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
+            cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
+        },
+        auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
+      )
+      session = oauth_payload.dig(:session)
+      cookie = oauth_payload.dig(:cookie)
+
+      [session, cookie]
+    end
+
+    def update_rails_cookie(session, cookie)
+      if cookie.value.present?
+        cookies.encrypted[cookie.name] = {
+          expires: cookie.expires,
+          secure: true,
+          http_only: true,
+          value: cookies.value,
+        }
+      end
+
+      session[:shopify_user_id] = session.associated_user.associated_user.id if session.online?
+    end
 
     def respond_successfully
       if ShopifyAPI::Context.embedded?
