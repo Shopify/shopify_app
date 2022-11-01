@@ -27,7 +27,7 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
-      ShopifyApp::Utils.logger_debug("Session Destroyed and Redirecting to login")      
+      ShopifyApp::Utils::Logger.debug("Session Destroyed and Redirecting to login")      
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -39,25 +39,25 @@ module ShopifyApp
       copy_return_to_param_to_session
 
       if embedded_redirect_url?
-        ShopifyApp::Utils.logger_debug("Embedded URL within / authenticate")
+        ShopifyApp::Utils::Logger.debug("Embedded URL within / authenticate")
         if embedded_param?
-          ShopifyApp::Utils.logger_debug("Embedded param. Redirecting to redirect_for_embedded")
+          ShopifyApp::Utils::Logger.debug("Embedded param. Redirecting to redirect_for_embedded")
           redirect_for_embedded
         else
           start_oauth
         end
       elsif top_level?
-        ShopifyApp::Utils.logger_debug("Top level redirect")
+        ShopifyApp::Utils::Logger.debug("Top level redirect")
         start_oauth
       else
-        ShopifyApp::Utils.logger_debug("Redirecting to top level")
+        ShopifyApp::Utils::Logger.debug("Redirecting to top level")
         redirect_auth_to_top_level
       end
     end
 
     def start_oauth
       callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
-      ShopifyApp::Utils.logger_debug("Starting OAuth with the following Callback URL: #{callback_url}")
+      ShopifyApp::Utils::Logger.debug("Starting OAuth with the following Callback URL: #{callback_url}")
 
       auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
         shop: sanitized_shop_name,
@@ -71,7 +71,7 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
-      ShopifyApp::Utils.logger_debug("Redirecting to auth_route")
+      ShopifyApp::Utils::Logger.debug("Redirecting to auth_route")
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
     end
 

@@ -16,11 +16,11 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
 
     def activate_shopify_session
-      ShopifyApp::Utils::Logger.debug("DEBUG: Activating Shopify Session")
+      ShopifyApp::Utils::Logger.debug("Activating Shopify Session")
 
       if current_shopify_session.blank?
         signal_access_token_required
-        ShopifyApp::Utils.logger_debug("Access Token is required when making a session. Redirecting to Login")
+        ShopifyApp::Utils::Logger.debug("Access Token is required when making a session. Redirecting to Login")
         return redirect_to_login
       end
 
@@ -35,7 +35,7 @@ module ShopifyApp
         ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
       ensure
-        ShopifyApp::Utils::Logger.debug("ShopifyApp Deactivation Session")
+        ShopifyApp::Utils::Logger.debug("Deactivating Session")
         ShopifyAPI::Context.deactivate_session
       end
     end
@@ -50,10 +50,10 @@ module ShopifyApp
         )
         # Rails.logger.debug("ShopifyApp - Loaded current shopify session")
       rescue ShopifyAPI::Errors::CookieNotFoundError
-        ShopifyApp::Utils.logger_debug("CookiesNotFound for current shopify session")
+        ShopifyApp::Utils::Logger.debug("CookiesNotFound for current shopify session")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        ShopifyApp::Utils.logger_debug("Invalid Jwt token for current shopify session")
+        ShopifyApp::Utils::Logger.debug("Invalid Jwt token for current shopify session")
         nil
       end
     end
@@ -62,7 +62,7 @@ module ShopifyApp
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
       clear_shopify_session
-      ShopifyApp::Utils.logger_debug("Redirecting to login because session id conflicts with params or session shop conflicts with params")
+      ShopifyApp::Utils::Logger.debug("Redirecting to login because session id conflicts with params or session shop conflicts with params")
       redirect_to_login
     end
 
@@ -79,10 +79,10 @@ module ShopifyApp
 
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
-        ShopifyApp::Utils.logger_debug("Adding top level redirection headers")
+        ShopifyApp::Utils::Logger.debug("Adding top level redirection headers")
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
-          ShopifyApp::Utils.logger_debug("Setting current shop session")
+          ShopifyApp::Utils.Logger.debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
@@ -93,7 +93,7 @@ module ShopifyApp
 
         url ||= login_url_with_optional_shop
 
-        Rails.logger.debug("ShopifyApp - Setting Reauthorize-Url to #{url}")
+        ShopifyApp::Utils.Logger.debug("Setting Reauthorize-Url to #{url}")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
       end
@@ -116,7 +116,7 @@ module ShopifyApp
     def redirect_to_login
       if request.xhr?
         add_top_level_redirection_headers(ignore_response_code: true)
-        Rails.logger.debug("Hitting redirect_to_login: Request is xhr")
+        ShopifyApp::Utils.Logger.debug("Hitting redirect_to_login: Request is xhr")
         head(:unauthorized)
       else
         if request.get?

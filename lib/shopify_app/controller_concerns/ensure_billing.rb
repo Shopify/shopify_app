@@ -28,7 +28,7 @@ module ShopifyApp
       unless has_payment
         if request.xhr?
           add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
-          Rails.logger.debug("ShopifyApp - Setting 401 from EnsureBilling")
+          ShopifyApp::Utils::Logger.debug("Setting 401 from EnsureBilling")
           head(:unauthorized)
         else
           redirect_to(confirmation_url, allow_other_host: true)
