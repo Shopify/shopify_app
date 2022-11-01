@@ -29,19 +29,19 @@ module ShopifyApp
     end
 
     module Logger
-      LOG_LEVELS = { :off => 0 , :info => 1, :debug => 2 }
+      LOG_LEVELS = { :debug => 0, :info => 1, :warn => 2, :error => 3, :off => 4 }
 
       def self.debug(message)
-        current_shop = ShopifyAPI::Context.active_session&.shop
+        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
         current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
 
-        if current_level >= LOG_LEVELS[:debug]
+        if current_level <= LOG_LEVELS[:debug]
           ShopifyAPI::Context.logger.debug("[#{DateTime.current}] [ Shopify | DEBUG | #{current_shop} ] #{message}")
         end
       end
-  
+
       def self.info(message)
-        current_shop = ShopifyAPI::Context.active_session&.shop
+        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
         current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
 
         if current_level >= LOG_LEVELS[:info]
@@ -49,6 +49,23 @@ module ShopifyApp
         end
       end
 
+      def self.warn(message)
+        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
+        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
+
+        if current_level >= LOG_LEVELS[:warn]
+          ShopifyAPI::Context.logger.info("[#{DateTime.current}] [ Shopify | WARNING | #{current_shop} ] #{message}")
+        end
+      end
+
+      def self.error(message)
+        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
+        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
+
+        if current_level >= LOG_LEVELS[:error]
+          ShopifyAPI::Context.logger.debug("[#{DateTime.current}] [ Shopify | ERROR | #{current_shop} ] #{message}")
+        end
+      end
     end
   end
 end
