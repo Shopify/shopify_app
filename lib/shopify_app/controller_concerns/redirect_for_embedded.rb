@@ -19,8 +19,7 @@ module ShopifyApp
       unless request.path == ShopifyApp.configuration.embedded_redirect_url
         ShopifyApp::Utils::Logger.debug("Redirecting to #{redirect_uri_for_embedded}")
         redirect_to(redirect_uri_for_embedded)
-      end 
-        
+      end
     end
 
     def redirect_uri_for_embedded
