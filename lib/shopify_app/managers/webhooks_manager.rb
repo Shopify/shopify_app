@@ -42,7 +42,7 @@ module ShopifyApp
       def add_registrations
         return unless ShopifyApp.configuration.has_webhooks?
 
-        ShopifyApp::Utils::Logger.debug("Adding Registrations ot Webhooks")
+        ShopifyApp::Utils::Logger.debug("Adding Registrations to Webhooks")
         ShopifyApp.configuration.webhooks.each do |attributes|
           webhook_path = path(attributes)
 

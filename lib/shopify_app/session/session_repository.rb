@@ -45,8 +45,10 @@ module ShopifyApp
       # ShopifyAPI::Auth::SessionStorage override
       def store_session(session)
         if session.online?
+          ShopifyApp::Utils::Logger.debug("Store Online Session - Session: #{session}, User: #{session.associated_user}")
           user_storage.store(session, session.associated_user)
         else
+          ShopifyApp::Utils::Logger.debug("Store Offline Session - Session: #{session}")
           shop_storage.store(session)
         end
       end

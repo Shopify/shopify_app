@@ -164,6 +164,7 @@ module ShopifyApp
     def run_query(session:, query:, variables: nil)
       client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
 
+      ShopifyApp::Utils::Logger.debug("Client query - Query: #{query}, Variables: #{variables} ")
       response = client.query(query: query, variables: variables)
 
       raise BillingError.new("Error while billing the store", []) unless response.ok?

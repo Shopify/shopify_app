@@ -27,7 +27,8 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
-      ShopifyApp::Utils::Logger.debug("Session Destroyed and Redirecting to login")
+      ShopifyApp::Utils::Logger.debug("Session Destroyed")
+      ShopifyApp::Utils::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -41,7 +42,7 @@ module ShopifyApp
       if embedded_redirect_url?
         ShopifyApp::Utils::Logger.debug("Embedded URL within / authenticate")
         if embedded_param?
-          ShopifyApp::Utils::Logger.debug("Embedded param. Redirecting to redirect_for_embedded")
+          ShopifyApp::Utils::Logger.debug("Embedded param")
           redirect_for_embedded
         else
           start_oauth
@@ -50,7 +51,6 @@ module ShopifyApp
         ShopifyApp::Utils::Logger.debug("Top level redirect")
         start_oauth
       else
-        ShopifyApp::Utils::Logger.debug("Redirecting to top level")
         redirect_auth_to_top_level
       end
     end
@@ -101,6 +101,7 @@ module ShopifyApp
     end
 
     def redirect_auth_to_top_level
+      ShopifyApp::Utils::Logger.debug("Redirecting to top level - #{login_url_with_optional_shop(top_level: true)}")
       fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
     end
   end
