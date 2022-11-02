@@ -8,25 +8,24 @@ module ShopifyApp
 
     def callback
       begin
-        session, cookie = validated_auth_objects
+        api_session, cookie = validated_auth_objects
       rescue
         return respond_with_error
       end
 
-      save_session(session) if session
-      update_rails_cookie(session, cookie)
+      save_session(api_session) if api_session
+      update_rails_cookie(api_session, cookie)
 
-      return respond_with_user_token_flow if start_user_token_flow?(session)
+      return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
-      perform_post_authenticate_jobs(session)
-      respond_successfully if check_billing(session)
+      perform_post_authenticate_jobs(api_session)
+      respond_successfully if check_billing(api_session)
     end
 
     private
 
-    def save_session(session)
-      return true # FIXME - update tests to properly mock this boundary
-      ShopifyApp::SessionRepository.store_session(session)
+    def save_session(api_session)
+      ShopifyApp::SessionRepository.store_session(api_session)
     end
 
     def validated_auth_objects
@@ -39,23 +38,23 @@ module ShopifyApp
         },
         auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
       )
-      session = oauth_payload.dig(:session)
+      api_session = oauth_payload.dig(:session)
       cookie = oauth_payload.dig(:cookie)
 
-      [session, cookie]
+      [api_session, cookie]
     end
 
-    def update_rails_cookie(session, cookie)
+    def update_rails_cookie(api_session, cookie)
       if cookie.value.present?
         cookies.encrypted[cookie.name] = {
           expires: cookie.expires,
           secure: true,
           http_only: true,
-          value: cookies.value,
+          value: cookie.value,
         }
       end
 
-      session[:shopify_user_id] = session.associated_user.associated_user.id if session.online?
+      session[:shopify_user_id] = api_session.associated_user.id if api_session.online?
     end
 
     def respond_successfully
