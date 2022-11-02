@@ -28,6 +28,8 @@ module ShopifyApp
         value: auth_result[:cookie].value,
       }
 
+      session[:host] = filtered_params[:host]
+
       session[:shopify_user_id] = auth_result[:session].associated_user.id if auth_result[:session].online?
 
       if start_user_token_flow?(auth_result[:session])

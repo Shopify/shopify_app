@@ -183,7 +183,7 @@ module ShopifyApp
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
         render("shopify_app/shared/redirect", layout: false,
-          locals: { url: url, current_shopify_domain: current_shopify_domain })
+          locals: { url: url, current_shopify_domain: current_shopify_domain, host: session[:host] })
       else
         redirect_to(url)
       end
