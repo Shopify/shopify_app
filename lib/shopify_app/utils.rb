@@ -30,42 +30,35 @@ module ShopifyApp
 
     module Logger
       LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 4 }
-      PREFIX = "ShopifyAPP"
+      PREFIX = "ShopifyApp"
+
+      def self.send_to_logger(log_level, message)
+        return if enabled_for_log_level?(log_level)
+        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
+        message_context = "[#{Time.current}] [ #{PREFIX} | DEBUG | #{current_shop} ] #{message}"
+
+        ShopifyAPI::Context.logger.send(log_level, message_context + message)
+      end
 
       def self.debug(message)
-        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
-        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
-
-        if current_level <= LOG_LEVELS[:debug]
-          ShopifyAPI::Context.logger.debug("[#{Time.current}] [ #{PREFIX} | DEBUG | #{current_shop} ] #{message}")
-        end
+        send_to_logger(:debug, message)
       end
 
       def self.info(message)
-        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
-        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
-
-        if current_level <= LOG_LEVELS[:info]
-          ShopifyAPI::Context.logger.info("[#{Time.current}] [ #{PREFIX} | INFO | #{current_shop} ] #{message}")
-        end
+        send_to_logger(:info, message)
       end
 
       def self.warn(message)
-        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
-        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
-
-        if current_level <= LOG_LEVELS[:warn]
-          ShopifyAPI::Context.logger.warn("[#{Time.current}] [ #{PREFIX} | WARNING | #{current_shop} ] #{message}")
-        end
+        send_to_logger(:warn, message)
       end
 
       def self.error(message)
-        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
-        current_level = LOG_LEVELS[ShopifyApp.configuration.log_level]
+        send_to_logger(:error, message)
+      end
 
-        if current_level <= LOG_LEVELS[:error]
-          ShopifyAPI::Context.logger.error("[#{Time.current}] [ #{PREFIX} | ERROR | #{current_shop} ] #{message}")
-        end
+      private
+      def enabled_for_log_level?(log_level)
+        LOG_LEVELS[log_level] <= LOG_LEVELS[ShopifyApp.configuration.log_level]
       end
     end
   end

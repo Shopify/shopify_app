@@ -16,6 +16,7 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
 
     def activate_shopify_session
+      # binding.pry
       ShopifyApp::Utils::Logger.debug("Activating Shopify Session")
 
       if current_shopify_session.blank?
