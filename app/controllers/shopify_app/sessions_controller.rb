@@ -12,12 +12,10 @@ module ShopifyApp
     end
 
     def new
-      binding.pry
       authenticate if sanitized_shop_name.present?
     end
 
     def create
-      binding.pry
       authenticate
     end
 
@@ -72,7 +70,6 @@ module ShopifyApp
         http_only: true,
         value: auth_attributes[:cookie].value,
       }
-      # binding.pry
 
       ShopifyApp::Utils::Logger.debug("Redirecting to auth_route - #{auth_attributes[:auth_route]}")
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
