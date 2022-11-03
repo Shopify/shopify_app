@@ -2,18 +2,10 @@
 
 module ShopifyApp
   module Authenticated
-    extend ActiveSupport::Concern
+    include ShopifyApp::EnsureHasSession
 
     included do
-      include ShopifyApp::Localization
-      include ShopifyApp::LoginProtection
-      include ShopifyApp::CsrfProtection
-      include ShopifyApp::EmbeddedApp
-      include ShopifyApp::EnsureBilling
-
-      before_action :login_again_if_different_user_or_shop
-      around_action :activate_shopify_session
-      after_action :add_top_level_redirection_headers
+      ShopifyApp::Utils.log_deprecations("RequireKnownShop has been renamed to EnsureInstalled")
     end
   end
 end
