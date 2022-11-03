@@ -28,6 +28,7 @@ module ShopifyApp
       unless has_payment
         if request.xhr?
           add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
+          ShopifyApp::Utils::Logger.debug("Setting 401 from EnsureBilling")
           head(:unauthorized)
         else
           redirect_to(confirmation_url, allow_other_host: true)
@@ -163,6 +164,7 @@ module ShopifyApp
     def run_query(session:, query:, variables: nil)
       client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
 
+      ShopifyApp::Utils::Logger.debug("Client query - Query: #{query}, Variables: #{variables} ")
       response = client.query(query: query, variables: variables)
 
       raise BillingError.new("Error while billing the store", []) unless response.ok?

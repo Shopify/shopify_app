@@ -29,6 +29,7 @@ module ShopifyApp
       }
 
       session[:shopify_user_id] = auth_result[:session].associated_user.id if auth_result[:session].online?
+      ShopifyApp::Utils::Logger.debug("Setting :shopify_user_id to Rails cookie")
 
       if start_user_token_flow?(auth_result[:session])
         return respond_with_user_token_flow
