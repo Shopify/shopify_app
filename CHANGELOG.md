@@ -1,6 +1,7 @@
 Unreleased
 ----------
 * Fixes a bug with `EnsureAuthenticatedLinks` causing deep links to not work [#1549](https://github.com/Shopify/shopify_app/pull/1549)
+* Ensure online token is properly used when using `current_shopify_session` [#1566](https://github.com/Shopify/shopify_app/pull/1566)
 
 21.2.0 (Oct 25, 2022)
 ----------
