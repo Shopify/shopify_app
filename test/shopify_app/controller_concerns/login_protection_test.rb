@@ -112,42 +112,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session loads session if token is signed with new secret" do
-    token = mock_jwt_token(ShopifyApp.configuration.secret)
-    request.headers["HTTP_AUTHORIZATION"] = "Bearer #{token}"
-
-    ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
-      .with(
-        auth_header: "Bearer #{token}",
-        cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: true,
-      )
-      .returns(@session)
-
-    with_application_test_routes do
-      get :index
-      assert_equal @session, @controller.current_shopify_session
-    end
-  end
-
-  test "#current_shopify_session loads session if token is signed with old secret" do
-    token = mock_jwt_token(ShopifyApp.configuration.old_secret)
-    request.headers["HTTP_AUTHORIZATION"] = "Bearer #{token}"
-
-    ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
-      .with(
-        auth_header: "Bearer #{token}",
-        cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: true,
-      )
-      .returns(@session)
-
-    with_application_test_routes do
-      get :index
-      assert_equal @session, @controller.current_shopify_session
-    end
-  end
-
   test "#current_shopify_session is nil if token is invalid" do
     request.headers["HTTP_AUTHORIZATION"] = "Bearer invalid"
 
