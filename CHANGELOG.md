@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fixes a bug with `EnsureAuthenticatedLinks` causing deep links to not work [#1549](https://github.com/Shopify/shopify_app/pull/1549)
 
 21.2.0 (Oct 25, 2022)
 ----------
