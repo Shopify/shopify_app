@@ -15,6 +15,7 @@ module ShopifyApp
         return_to: request.fullpath,
         shop: current_shopify_domain,
         host: params[:host],
+        embedded: params[:embedded],
       )
     end
 
