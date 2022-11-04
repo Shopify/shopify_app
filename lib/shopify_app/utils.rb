@@ -57,6 +57,10 @@ module ShopifyApp
         send_to_logger(:error, message)
       end
 
+      def self.deprecated(message)
+        send_to_logger(:warn, "DEPRECATED - #{message}")
+      end
+
       private
 
       def enabled_for_log_level?(log_level)

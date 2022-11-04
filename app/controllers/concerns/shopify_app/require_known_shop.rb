@@ -5,6 +5,7 @@ module ShopifyApp
     include ShopifyApp::EnsureInstalled
 
     included do
-      ShopifyApp::Utils.log_deprecations("RequireKnownShop has been renamed to EnsureInstalled")
+      ShopifyApp::Utils::Logger.deprecated("RequireKnownShop has been renamed to EnsureInstalled")
     end
+  end
 end

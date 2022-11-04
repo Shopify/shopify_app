@@ -5,7 +5,7 @@ module ShopifyApp
     include ShopifyApp::EnsureHasSession
 
     included do
-      ShopifyApp::Utils.log_deprecations("RequireKnownShop has been renamed to EnsureInstalled")
+      ShopifyApp::Utils::Logger.deprecated("Authenticated has been renamed to EnsureHasSession")
     end
   end
 end
