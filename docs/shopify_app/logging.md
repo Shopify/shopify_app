@@ -1,4 +1,6 @@
-# Log Levels
+# Logging
+
+## Log Levels
 
 1. Debug
 2. Info
