@@ -79,10 +79,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "#current_shopify_session loads online session if user session expected" do
-    ShopifyApp::SessionRepository.shop_storage.stubs(:retrieve_by_shopify_domain)
-      .with(@shop)
-      .returns(mock_session(shop: @shop))
-
     request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
 
     ShopifyAPI::Utils::SessionUtils.expects(:load_current_session)
@@ -116,7 +112,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session loads offline session if token is signed with new secret" do
+  test "#current_shopify_session loads session if token is signed with new secret" do
     token = mock_jwt_token(ShopifyApp.configuration.secret)
     request.headers["HTTP_AUTHORIZATION"] = "Bearer #{token}"
 
@@ -124,7 +120,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer #{token}",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: false,
+        is_online: true,
       )
       .returns(@session)
 
@@ -134,7 +130,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
-  test "#current_shopify_session loads offline session if token is signed with old secret" do
+  test "#current_shopify_session loads session if token is signed with old secret" do
     token = mock_jwt_token(ShopifyApp.configuration.old_secret)
     request.headers["HTTP_AUTHORIZATION"] = "Bearer #{token}"
 
@@ -142,7 +138,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       .with(
         auth_header: "Bearer #{token}",
         cookies: { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
-        is_online: false,
+        is_online: true,
       )
       .returns(@session)
 

@@ -42,7 +42,7 @@ module ShopifyApp
         ShopifyAPI::Utils::SessionUtils.load_current_session(
           auth_header: request.headers["HTTP_AUTHORIZATION"],
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
-          is_online: user_session_expected?,
+          is_online: online_token_configured?,
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError
         nil
@@ -232,11 +232,15 @@ module ShopifyApp
       ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(sanitize_shop_param(params))
     end
 
+    def online_token_configured?
+      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+    end
+
     def user_session_expected?
       return false if shop_session.nil?
       return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
 
-      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+      online_token_configured?
     end
   end
 end
