@@ -41,12 +41,20 @@ module ShopifyApp
         if embedded_param?
           redirect_for_embedded
         else
-          start_oauth
+          start_oauth_or_install
         end
       elsif top_level?
-        start_oauth
+        start_oauth_or_install
       else
         redirect_auth_to_top_level
+      end
+    end
+
+    def start_oauth_or_install
+      if ShopifyApp.configuration.install_only
+        start_install
+      else
+        start_oauth
       end
     end
 
@@ -66,6 +74,20 @@ module ShopifyApp
       }
 
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
+    end
+
+    def start_install
+      shop = sanitized_shop_name
+      query = {
+        client_id: ShopifyAPI::Context.api_key,
+        scope: ShopifyAPI::Context.scope
+      }
+
+      query_string = URI.encode_www_form(query)
+
+      auth_route = "https://#{shop}/admin/oauth/authorize?#{query_string}"
+
+      redirect_to(auth_route, allow_other_host: true)
     end
 
     def validate_shop_presence

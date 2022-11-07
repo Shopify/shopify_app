@@ -10,6 +10,7 @@ module ShopifyApp
     attr_accessor :secret
     attr_accessor :old_secret
     attr_accessor :scope
+    attr_accessor :install_only
     attr_writer :shop_access_scopes
     attr_writer :user_access_scopes
     attr_accessor :embedded_app
