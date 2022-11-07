@@ -279,13 +279,13 @@ module ShopifyApp
           end
         else
           # falling back to session cookie
-          raise ShopifyAPI::Errors::CookieNotFoundError, "JWT token or Session cookie not found for app" unless
+          raise ShopifyAPI::Errors::CookieNotFoundError, "JWT token or Session cookie not found for app" unless # FIXME - should we move this error to the app g em?
           cookies && cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
 
           cookie_session_id(cookies)
         end
       else
-        raise Errors::CookieNotFoundError, "Session cookie not found for app" unless
+        raise ShopifyAPI::Errors::CookieNotFoundError, "Session cookie not found for app" unless # FIXME - should we move this error to the app g em?
         cookies && cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
 
         cookie_session_id(cookies)
