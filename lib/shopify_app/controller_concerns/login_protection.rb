@@ -239,69 +239,13 @@ module ShopifyApp
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
 
-    private
-
     def load_current_session(auth_header: nil, cookies: nil, is_online: false)
-      return load_private_session if ShopifyAPI::Context.private?
+      return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
 
-      session_id = current_session_id(auth_header, cookies, is_online)
+      session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(auth_header, cookies, is_online)
       return nil unless session_id
 
       ShopifyApp::SessionRepository.load_session(session_id)
-    end
-
-    def load_private_session
-      unless ShopifyAPI::Context.private_shop
-        raise Errors::SessionNotFoundError, "Could not load private shop, Context.private_shop is nil."
-      end
-
-      Auth::Session.new(
-        shop: ShopifyAPI::Context.private_shop,
-        access_token: ShopifyAPI::Context.api_secret_key,
-        scope: ShopifyAPI::Context.scope.to_a,
-      )
-    end
-
-    def current_session_id(auth_header, cookies, online)
-      if ShopifyApp.configuration.embedded_app?
-        if auth_header
-          matches = auth_header.match(/^Bearer (.+)$/)
-          raise Errors::MissingJwtTokenError,
-            "Missing Bearer token in authorization header" unless matches
-
-          jwt_payload = ShopifyAPI::Auth::JwtPayload.new(matches[1])
-          shop = jwt_payload.shop
-
-          if online
-            jwt_session_id(shop, jwt_payload.sub)
-          else
-            offline_session_id(shop)
-          end
-        else
-          # falling back to session cookie
-          raise ShopifyAPI::Errors::CookieNotFoundError, "JWT token or Session cookie not found for app" unless # FIXME - should we move this error to the app g em?
-          cookies && cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
-
-          cookie_session_id(cookies)
-        end
-      else
-        raise ShopifyAPI::Errors::CookieNotFoundError, "Session cookie not found for app" unless # FIXME - should we move this error to the app g em?
-        cookies && cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
-
-        cookie_session_id(cookies)
-      end
-    end
-
-    def jwt_session_id(shop, user_id)
-      "#{shop}_#{user_id}"
-    end
-
-    def offline_session_id(shop)
-      "offline_#{shop}"
-    end
-
-    def cookie_session_id(cookies)
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] # FIXME - should we move to library as well?
     end
   end
 end
