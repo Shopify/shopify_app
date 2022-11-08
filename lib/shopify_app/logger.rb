@@ -36,7 +36,7 @@ module ShopifyApp
 
     private
 
-    def enabled_for_log_level?(log_level)
+    def self.enabled_for_log_level?(log_level)
       LOG_LEVELS[log_level] <= LOG_LEVELS[ShopifyApp.configuration.log_level]
     end
   end
