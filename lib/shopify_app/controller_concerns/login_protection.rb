@@ -247,35 +247,9 @@ module ShopifyApp
       return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
 
       session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(auth_header, cookies, is_online)
-
-      return load_private_session if ShopifyAPI::Context.private?
       return nil unless session_id
 
       ShopifyApp::SessionRepository.load_session(session_id)
-    end
-
-    def load_private_session
-      unless ShopifyAPI::Context.private_shop
-        raise Errors::SessionNotFoundError, "Could not load private shop, Context.private_shop is nil."
-      end
-
-      Auth::Session.new(
-        shop: ShopifyAPI::Context.private_shop,
-        access_token: ShopifyAPI::Context.api_secret_key,
-        scope: ShopifyAPI::Context.scope.to_a,
-      )
-    end
-
-    def jwt_session_id(shop, user_id)
-      "#{shop}_#{user_id}"
-    end
-
-    def offline_session_id(shop)
-      "offline_#{shop}"
-    end
-
-    def cookie_session_id(cookies)
-      cookies[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] # FIXME - should we move to library as well?
     end
   end
 end
