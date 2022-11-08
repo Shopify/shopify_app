@@ -14,7 +14,7 @@ module ShopifyApp
 
     def verify_request
       data = request.raw_post
-      ShopifyApp::Utils::Logger.debug("Setting 401 from WebhookVerification")
+      ShopifyApp::Logger.debug("Setting 401 from WebhookVerification")
       return head(:unauthorized) unless hmac_valid?(data)
     end
 

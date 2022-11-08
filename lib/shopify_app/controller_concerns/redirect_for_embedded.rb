@@ -17,7 +17,7 @@ module ShopifyApp
     def redirect_for_embedded
       # Don't actually redirect if we're already in the redirect route - we want the request to reach the FE
       unless request.path == ShopifyApp.configuration.embedded_redirect_url
-        ShopifyApp::Utils::Logger.debug("Redirecting to #{redirect_uri_for_embedded}")
+        ShopifyApp::Logger.debug("Redirecting to #{redirect_uri_for_embedded}")
         redirect_to(redirect_uri_for_embedded)
       end
     end

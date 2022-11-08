@@ -27,7 +27,7 @@ module Shopify
     private
 
     def log_error(message)
-      ShopifyApp::Utils::Logger.error(message)
+      ShopifyApp::Logger.error(message)
     end
 
     def no_access_token_error_message

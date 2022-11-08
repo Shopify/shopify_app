@@ -27,7 +27,7 @@ module ShopifyApp
     def redirect_to_splash_page
       redirect_to(splash_page)
     rescue ::ShopifyApp::ShopifyDomainNotFound => error
-      ShopifyApp::Utils::Logger.warn("Redirecting to login: [#{error.class}] "\
+      ShopifyApp::Logger.info("Redirecting to login: [#{error.class}] "\
         "Could not determine current shop domain")
       redirect_to(ShopifyApp.configuration.login_url)
     end

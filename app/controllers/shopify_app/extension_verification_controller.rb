@@ -11,7 +11,7 @@ module ShopifyApp
     def verify_request
       unless hmac_valid?(request.body.read)
         head(:unauthorized)
-        ShopifyApp::Utils::Logger.debug("Setting 401 from ExtensionVerificationController")
+        ShopifyApp::Logger.debug("Setting 401 from ExtensionVerificationController")
       end
     end
   end

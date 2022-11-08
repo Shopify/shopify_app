@@ -45,11 +45,11 @@ module ShopifyApp
       # ShopifyAPI::Auth::SessionStorage override
       def store_session(session)
         if session.online?
-          ShopifyApp::Utils::Logger.debug("Storing Online Session - Session: #{session},"\
+          ShopifyApp::Logger.debug("Storing Online Session - Session: #{session},"\
             " User: #{session.associated_user}")
           user_storage.store(session, session.associated_user)
         else
-          ShopifyApp::Utils::Logger.debug("Storing Offline Session - Session: #{session}")
+          ShopifyApp::Logger.debug("Storing Offline Session - Session: #{session}")
           shop_storage.store(session)
         end
       end
@@ -58,10 +58,10 @@ module ShopifyApp
       def load_session(id)
         match = id.match(/^offline_(.*)/)
         if match
-          ShopifyApp::Utils::Logger.debug("Loading Session by domain - domain: #{match[1]}")
+          ShopifyApp::Logger.debug("Loading Session by domain - domain: #{match[1]}")
           retrieve_shop_session_by_shopify_domain(match[1])
         else
-          ShopifyApp::Utils::Logger.debug("Loading Session by user_id - user: #{id.split("_").last}")
+          ShopifyApp::Logger.debug("Loading Session by user_id - user: #{id.split("_").last}")
           retrieve_user_session_by_shopify_user_id(id.split("_").last)
         end
       end
@@ -71,10 +71,10 @@ module ShopifyApp
         match = id.match(/^offline_(.*)/)
 
         record = if match
-          ShopifyApp::Utils::Logger.debug("Destroying Session by domain - domain: #{match[1]}")
+          ShopifyApp::Logger.debug("Destroying Session by domain - domain: #{match[1]}")
           Shop.find_by(shopify_domain: match[1])
         else
-          ShopifyApp::Utils::Logger.debug("Destroying Session by user - user_id: #{id.split("_").last}")
+          ShopifyApp::Logger.debug("Destroying Session by user - user_id: #{id.split("_").last}")
           User.find_by(shopify_user_id: id.split("_").last)
         end
 
