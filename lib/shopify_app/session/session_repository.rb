@@ -74,8 +74,9 @@ module ShopifyApp
           ShopifyApp::Logger.debug("Destroying Session by domain - domain: #{match[1]}")
           Shop.find_by(shopify_domain: match[1])
         else
-          ShopifyApp::Logger.debug("Destroying Session by user - user_id: #{id.split("_").last}")
-          User.find_by(shopify_user_id: id.split("_").last)
+          shopify_user_id = id.split("_").last
+          ShopifyApp::Logger.debug("Destroying Session by user - user_id: #{shopify_user_id}")
+          User.find_by(shopify_user_id: shopify_user_id)
         end
 
         record.destroy
