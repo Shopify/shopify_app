@@ -60,4 +60,20 @@ class RequireKnownShopTest < ActionController::TestCase
 
     assert_response :ok
   end
+
+  test "detects incompatible controller concerns" do
+    assert_raises ShopifyApp::ConfigurationError do
+      Class.new(ApplicationController) do
+        include ShopifyApp::RequireKnownShop
+        include ShopifyApp::LoginProtection
+      end
+    end
+
+    assert_raises ShopifyApp::ConfigurationError do
+      Class.new(ApplicationController) do
+        include ShopifyApp::RequireKnownShop
+        include ShopifyApp::Authenticated # since this indirectly includes LoginProtection
+      end
+    end
+  end
 end

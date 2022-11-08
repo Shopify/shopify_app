@@ -466,6 +466,15 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test "detects incompatible controller concerns" do
+    assert_raises ShopifyApp::ConfigurationError do
+      Class.new(ApplicationController) do
+        include ShopifyApp::LoginProtection
+        include ShopifyApp::RequireKnownShop
+      end
+    end
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, _response)

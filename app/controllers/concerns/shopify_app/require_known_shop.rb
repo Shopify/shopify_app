@@ -6,6 +6,12 @@ module ShopifyApp
     include ShopifyApp::RedirectForEmbedded
 
     included do
+      if ancestors.include?(ShopifyApp::LoginProtection)
+        raise ConfigurationError,
+          "You are attempting to use both RequireKnownShop and LoginProtection in the same controller. "\
+            "These are not compatible."
+      end
+
       before_action :check_shop_domain
       before_action :check_shop_known
     end

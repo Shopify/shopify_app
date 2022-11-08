@@ -9,6 +9,12 @@ module ShopifyApp
     include ShopifyApp::SanitizedParams
 
     included do
+      if ancestors.include?(ShopifyApp::RequireKnownShop)
+        raise ConfigurationError,
+          "You are attempting to use both RequireKnownShop and LoginProtection in the same controller. "\
+            "These are not compatible."
+      end
+
       after_action :set_test_cookie
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
