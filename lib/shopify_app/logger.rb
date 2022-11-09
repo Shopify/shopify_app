@@ -6,7 +6,7 @@ module ShopifyApp
     PREFIX = "ShopifyApp"
 
     def self.send_to_logger(log_level, message)
-      return if enabled_for_log_level?(log_level)
+      return unless enabled_for_log_level?(log_level)
 
       current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
       message_context = "[ #{PREFIX} | #{log_level.to_s.upcase} | #{current_shop} ] #{message}"
@@ -37,7 +37,7 @@ module ShopifyApp
     private
 
     def self.enabled_for_log_level?(log_level)
-      LOG_LEVELS[log_level] <= LOG_LEVELS[ShopifyApp.configuration.log_level]
+      LOG_LEVELS[log_level] >= LOG_LEVELS[ShopifyApp.configuration.log_level]
     end
   end
 end
