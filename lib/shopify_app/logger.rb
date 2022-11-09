@@ -4,6 +4,7 @@ module ShopifyApp
   module Logger
     LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 4 }
     PREFIX = "ShopifyApp"
+    DEFAULT_LOG_LEVEL = :info
 
     def self.send_to_logger(log_level, message)
       return unless enabled_for_log_level?(log_level)
@@ -31,7 +32,7 @@ module ShopifyApp
     end
 
     def self.enabled_for_log_level?(log_level)
-      LOG_LEVELS[log_level] >= LOG_LEVELS[ShopifyApp.configuration.log_level]
+      LOG_LEVELS[log_level] >= LOG_LEVELS[ShopifyApp.configuration.log_level || DEFAULT_LOG_LEVEL]
     end
   end
 end
