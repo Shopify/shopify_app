@@ -47,6 +47,7 @@ class ActiveSupport::TestCase
     ShopifyApp::InMemorySessionStore.clear
     ShopifyAppConfigurer.call
     Rails.application.reload_routes!
+    ShopifyApp.configuration.log_level = :warn
   end
 
   def mock_session(shop: "my-shop.myshopify.com", scope: ShopifyApp.configuration.scope)

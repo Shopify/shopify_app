@@ -34,8 +34,6 @@ module ShopifyApp
       send_to_logger(:warn, "DEPRECATED - #{message}")
     end
 
-    private
-
     def self.enabled_for_log_level?(log_level)
       LOG_LEVELS[log_level] >= LOG_LEVELS[ShopifyApp.configuration.log_level]
     end
