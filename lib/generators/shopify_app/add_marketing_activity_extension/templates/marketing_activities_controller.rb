@@ -55,7 +55,7 @@ class MarketingActivitiesController < ShopifyApp::ExtensionVerificationControlle
     request_id = params[:request_id]
     message = params[:message]
 
-    ShopifyApp::Utils::Logger.info("[Marketing Activity App Error Feedback]"\
+    ShopifyApp::Logger.info("[Marketing Activity App Error Feedback]"\
       "Request id: #{request_id}, message: #{message}")
 
     render(json: {}, status: :ok)

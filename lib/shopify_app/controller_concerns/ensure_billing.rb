@@ -28,7 +28,7 @@ module ShopifyApp
       unless has_payment
         if request.xhr?
           add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
-          ShopifyApp::Utils::Logger.debug("Setting 401 from EnsureBilling")
+          ShopifyApp::Logger.debug("Setting 401 from EnsureBilling")
           head(:unauthorized)
         else
           redirect_to(confirmation_url, allow_other_host: true)
@@ -56,6 +56,7 @@ module ShopifyApp
     end
 
     def has_subscription?(session)
+      ShopifyApp::Logger.debug("Has Subscription")
       response = run_query(session: session, query: RECURRING_PURCHASES_QUERY)
       subscriptions = response.body["data"]["currentAppInstallation"]["activeSubscriptions"]
 
@@ -71,6 +72,7 @@ module ShopifyApp
     end
 
     def has_one_time_payment?(session)
+      ShopifyApp::Logger.debug("Has One Time Payment")
       purchases = nil
       end_cursor = nil
 
@@ -164,7 +166,7 @@ module ShopifyApp
     def run_query(session:, query:, variables: nil)
       client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
 
-      ShopifyApp::Utils::Logger.debug("Client query - Query: #{query}, Variables: #{variables} ")
+      ShopifyApp::Logger.debug("Client query - Query: #{query}, Variables: #{variables} ")
       response = client.query(query: query, variables: variables)
 
       raise BillingError.new("Error while billing the store", []) unless response.ok?

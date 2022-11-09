@@ -27,8 +27,8 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
-      ShopifyApp::Utils::Logger.debug("Session Destroyed")
-      ShopifyApp::Utils::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
+      ShopifyApp::Logger.debug("Session Destroyed")
+      ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -40,15 +40,15 @@ module ShopifyApp
       copy_return_to_param_to_session
 
       if embedded_redirect_url?
-        ShopifyApp::Utils::Logger.debug("Embedded URL within / authenticate")
+        ShopifyApp::Logger.debug("Embedded URL within / authenticate")
         if embedded_param?
-          ShopifyApp::Utils::Logger.debug("Embedded param")
+          ShopifyApp::Logger.debug("Embedded param")
           redirect_for_embedded
         else
           start_oauth
         end
       elsif top_level?
-        ShopifyApp::Utils::Logger.debug("Top level redirect")
+        ShopifyApp::Logger.debug("Top level redirect")
         start_oauth
       else
         redirect_auth_to_top_level
@@ -57,7 +57,7 @@ module ShopifyApp
 
     def start_oauth
       callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
-      ShopifyApp::Utils::Logger.debug("Starting OAuth with the following Callback URL: #{callback_url}")
+      ShopifyApp::Logger.debug("Starting OAuth with the following Callback URL: #{callback_url}")
 
       auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
         shop: sanitized_shop_name,
@@ -71,7 +71,7 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
-      ShopifyApp::Utils::Logger.debug("Redirecting to auth_route - #{auth_attributes[:auth_route]}")
+      ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_attributes[:auth_route]}")
       redirect_to(auth_attributes[:auth_route], allow_other_host: true)
     end
 
@@ -101,7 +101,7 @@ module ShopifyApp
     end
 
     def redirect_auth_to_top_level
-      ShopifyApp::Utils::Logger.debug("Redirecting to top level - #{login_url_with_optional_shop(top_level: true)}")
+      ShopifyApp::Logger.debug("Redirecting to top level - #{login_url_with_optional_shop(top_level: true)}")
       fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
     end
   end
