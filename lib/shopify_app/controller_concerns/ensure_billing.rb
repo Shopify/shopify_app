@@ -56,6 +56,7 @@ module ShopifyApp
     end
 
     def has_subscription?(session)
+      ShopifyApp::Logger.debug("Has Subscription")
       response = run_query(session: session, query: RECURRING_PURCHASES_QUERY)
       subscriptions = response.body["data"]["currentAppInstallation"]["activeSubscriptions"]
 
@@ -71,6 +72,7 @@ module ShopifyApp
     end
 
     def has_one_time_payment?(session)
+      ShopifyApp::Logger.debug("Has One Time Payment")
       purchases = nil
       end_cursor = nil
 
