@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  module Logger
+  class Logger
     LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 4 }
     PREFIX = "ShopifyApp"
 
     def self.send_to_logger(log_level, message)
       return unless enabled_for_log_level?(log_level)
 
-      current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
-      message_context = "[ #{PREFIX} | #{log_level.to_s.upcase} | #{current_shop} ] #{message}"
+      full_message = "#{context(log_level)} #{message}"
 
-      ShopifyAPI::Context.logger.send(log_level, message_context)
+      ShopifyAPI::Context.logger.send(log_level, full_message)
     end
 
     def self.debug(message)
@@ -31,7 +30,16 @@ module ShopifyApp
     end
 
     def self.deprecated(message)
-      send_to_logger(:warn, "DEPRECATED - #{message}")
+      return unless enabled_for_log_level?(:warn)
+
+      ActiveSupport::Deprecation.warn("#{context(:warn)} #{message}")
+    end
+
+    private
+
+    def self.context(log_level)
+      current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
+      "[ #{PREFIX} | #{log_level.to_s.upcase} | #{current_shop} ]"
     end
 
     def self.enabled_for_log_level?(log_level)
