@@ -2,10 +2,11 @@
 
 module ShopifyApp
   module Authenticated
-    include ShopifyApp::EnsureHasSession
+    extend ShopifyApp::EnsureHasSession
+    extend ActiveSupport::Concern
 
     included do
-      ShopifyApp::Utils::Logger.deprecated("Authenticated has been renamed to EnsureHasSession")
+      ShopifyApp::Logger.deprecated("Authenticated has been renamed to EnsureHasSession")
     end
   end
 end

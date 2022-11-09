@@ -43,7 +43,7 @@ module ShopifyApp
     end
 
     def self.enabled_for_log_level?(log_level)
-      LOG_LEVELS[log_level] >= LOG_LEVELS[ShopifyApp.configuration.log_level]
+      LOG_LEVELS[log_level] >= LOG_LEVELS[ShopifyApp.configuration.log_level || :off]
     end
   end
 end
