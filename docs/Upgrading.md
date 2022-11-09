@@ -114,7 +114,7 @@ Shopify API session, or `nil` if no such session is available.
 
 #### Setting up `ShopifyAPI::Context`
 
-The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template]((https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
+The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template](https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
 
 ## Upgrading to `v18.1.2`
 
