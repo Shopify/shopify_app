@@ -20,7 +20,7 @@ module ShopifyApp
 
       if current_shopify_session.blank?
         signal_access_token_required
-        ShopifyApp::Logger.debug("Access Token is required when making a session.")
+        ShopifyApp::Logger.debug("No session found for request in JWT or cookie.")
         return redirect_to_login
       end
 
