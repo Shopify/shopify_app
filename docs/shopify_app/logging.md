@@ -11,4 +11,4 @@ We have four log levels with `error` being the most severe.
 
 ## Configuration
 
-You can configure your log level by changing your `SHOPIFY_LOG_LEVEL` environment variable. If `SHOPIFY_LOG_LEVEL` is not set the configuration file with default to `info`. To turn off all shopify_app logs you can change this environment variable to `off`.
+Your log level is set to `:info` by default. You can change this by going into your configuration file and changing the `log_level` setting. You can remove all logs by setting this to `:off`.
