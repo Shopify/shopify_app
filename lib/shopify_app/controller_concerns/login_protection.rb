@@ -16,8 +16,11 @@ module ShopifyApp
     ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
 
     def activate_shopify_session
+      ShopifyApp::Logger.debug("Activating Shopify Session")
+
       if current_shopify_session.blank?
         signal_access_token_required
+        ShopifyApp::Logger.debug("No session found")
         return redirect_to_login
       end
 
@@ -32,6 +35,7 @@ module ShopifyApp
         ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
       ensure
+        ShopifyApp::Logger.info("Deactivating Session")
         ShopifyAPI::Context.deactivate_session
       end
     end
@@ -45,8 +49,10 @@ module ShopifyApp
           is_online: online_token_configured?,
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError
+        ShopifyApp::Logger.info("CookiesNotFound for current shopify session")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
+        ShopifyApp::Logger.info("Invalid Jwt token for current shopify session")
         nil
       end
     end
@@ -54,6 +60,7 @@ module ShopifyApp
     def login_again_if_different_user_or_shop
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
+      ShopifyApp::Logger.debug("Clearing session and redirecting to login")
       clear_shopify_session
       redirect_to_login
     end
@@ -71,8 +78,10 @@ module ShopifyApp
 
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
+        ShopifyApp::Logger.debug("Adding top level redirection headers")
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
+          ShopifyApp::Logger.debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
@@ -83,6 +92,7 @@ module ShopifyApp
 
         url ||= login_url_with_optional_shop
 
+        ShopifyApp::Logger.debug("Setting Reauthorize-Url to #{url}")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
       end
@@ -105,6 +115,7 @@ module ShopifyApp
     def redirect_to_login
       if request.xhr?
         add_top_level_redirection_headers(ignore_response_code: true)
+        ShopifyApp::Logger.debug("Login Redirect request is a xhr")
         head(:unauthorized)
       else
         if request.get?
@@ -117,12 +128,15 @@ module ShopifyApp
           query = query.merge(sanitized_params).to_query
         end
         session[:return_to] = query.blank? ? path.to_s : "#{path}?#{query}"
+        ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
         redirect_to(login_url_with_optional_shop)
       end
     end
 
     def close_session
       clear_shopify_session
+      ShopifyApp::Logger.debug("Closing Session")
+      ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
       redirect_to(login_url_with_optional_shop)
     end
 

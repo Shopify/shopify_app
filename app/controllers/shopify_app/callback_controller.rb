@@ -30,7 +30,10 @@ module ShopifyApp
 
       session[:host] = filtered_params[:host]
 
-      session[:shopify_user_id] = auth_result[:session].associated_user.id if auth_result[:session].online?
+      if auth_result[:session].online?
+        ShopifyApp::Logger.debug("Setting Shopify user ID to Rails cookie")
+        session[:shopify_user_id] = auth_result[:session].associated_user.id
+      end
 
       if start_user_token_flow?(auth_result[:session])
         return respond_with_user_token_flow

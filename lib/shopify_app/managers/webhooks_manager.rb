@@ -15,6 +15,8 @@ module ShopifyApp
       def create_webhooks(session:)
         return unless ShopifyApp.configuration.has_webhooks?
 
+        ShopifyApp::Logger.debug("Creating Webhooks #{ShopifyApp.configuration.webhooks}")
+
         ShopifyAPI::Webhooks::Registry.register_all(session: session)
       end
 
@@ -23,12 +25,15 @@ module ShopifyApp
         return unless ShopifyApp.configuration.has_webhooks?
 
         add_registrations
+
+        ShopifyApp::Logger.debug("Recreating Webhooks")
         ShopifyAPI::Webhooks::Registry.register_all(session: session)
       end
 
       def destroy_webhooks
         return unless ShopifyApp.configuration.has_webhooks?
 
+        ShopifyApp::Logger.debug("Destroying Webhooks")
         ShopifyApp.configuration.webhooks.each do |attributes|
           ShopifyAPI::Webhooks::Registry.unregister(topic: attributes[:topic])
         end
@@ -37,6 +42,7 @@ module ShopifyApp
       def add_registrations
         return unless ShopifyApp.configuration.has_webhooks?
 
+        ShopifyApp::Logger.debug("Adding Registrations to Webhooks")
         ShopifyApp.configuration.webhooks.each do |attributes|
           webhook_path = path(attributes)
 
