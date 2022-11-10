@@ -71,8 +71,10 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
-      ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_attributes[:auth_route]}")
-      redirect_to(auth_attributes[:auth_route], allow_other_host: true)
+      auth_route = auth_attributes[:auth_route]
+
+      ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_route}")
+      redirect_to(auth_route, allow_other_host: true)
     end
 
     def validate_shop_presence
@@ -101,8 +103,9 @@ module ShopifyApp
     end
 
     def redirect_auth_to_top_level
-      ShopifyApp::Logger.debug("Redirecting to top level - #{login_url_with_optional_shop(top_level: true)}")
-      fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
+      url = login_url_with_optional_shop(top_level: true)
+      ShopifyApp::Logger.debug("Redirecting to top level - #{url}")
+      fullpage_redirect_to(url)
     end
   end
 end

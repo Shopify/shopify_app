@@ -37,7 +37,6 @@ module ShopifyApp
   # errors
   require "shopify_app/errors"
 
-  # logger
   require "shopify_app/logger"
 
   # controller concerns

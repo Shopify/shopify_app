@@ -2,17 +2,20 @@
 
 ## Log Levels
 
+There are four log levels with `error` being the most severe.
+
 1. Debug
 2. Info
 3. Warn
 4. Error
 
-We have four log levels with `error` being the most severe.
-
 ## Configuration
 
-Your log level is set to `:info` by default. You can change this by going into your configuration file and changing the `log_level` setting. You can remove all logs by setting this to `:off`.
+The logging is controlled by the `log_level` configuration setting.
+The default log level is `:info`.
+You can disable all logs by setting this to `:off`.
 
 ## Upgrading
 
-Make sure to add the `config.log_level` setting to your configuration file so you can start changing the log level to your preference. If `log_level` isn't found if your configuration settings then it will default to the `:info` level.
+For a newly-generated app, the `shopify_app` initializer will contain the `log_level` setting.
+If you are upgrading from a previous version of the `shopify_app` gem then you will need to add this manually, otherwise it will default to `:info`.

@@ -20,7 +20,7 @@ module ShopifyApp
 
       if current_shopify_session.blank?
         signal_access_token_required
-        ShopifyApp::Logger.debug("No session found for request in JWT or cookie.")
+        ShopifyApp::Logger.debug("No session found")
         return redirect_to_login
       end
 
@@ -60,8 +60,8 @@ module ShopifyApp
     def login_again_if_different_user_or_shop
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
+      ShopifyApp::Logger.debug("Clearing session and redirecting to login")
       clear_shopify_session
-      ShopifyApp::Logger.debug("session id or session shop conflicts with params")
       redirect_to_login
     end
 

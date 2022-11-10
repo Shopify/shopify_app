@@ -7,13 +7,11 @@ ShopifyApp.configure do |config|
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'Shop'
-
+  config.log_level = :info
   config.reauth_on_access_scope_changes = true
 
   config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence
   config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence
-
-  config.log_level = :info
 
   # You may want to charge merchants for using your app. Setting the billing configuration will cause the Authenticated
   # controller concern to check that the session is for a merchant that has an active one-time payment or subscription.
