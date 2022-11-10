@@ -2,7 +2,7 @@
 
 module ShopifyApp
   module Logger
-    LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 4 }
+    LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 6 }
     PREFIX = "ShopifyApp"
     DEFAULT_LOG_LEVEL = :info
 
