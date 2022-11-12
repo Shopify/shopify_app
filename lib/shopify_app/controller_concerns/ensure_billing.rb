@@ -30,6 +30,8 @@ module ShopifyApp
           add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
           ShopifyApp::Logger.debug("Responding with 401 unauthorized")
           head(:unauthorized)
+        elsif ShopifyApp.configuration.embedded_app?
+          fullpage_redirect_to(confirmation_url)
         else
           redirect_to(confirmation_url, allow_other_host: true)
         end
