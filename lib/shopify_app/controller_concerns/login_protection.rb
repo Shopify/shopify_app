@@ -29,7 +29,8 @@ module ShopifyApp
       end
 
       begin
-        ShopifyAPI::Context.activate_session(current_shopify_session) # FIXME - should we still have an idea of current session?
+        # FIXME: - should we still have an idea of current session?
+        ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
       ensure
         ShopifyAPI::Context.deactivate_session

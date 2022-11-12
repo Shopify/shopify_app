@@ -75,7 +75,8 @@ module ShopifyApp
         collaborator: true,
         account_owner: true,
       )
-      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: true, associated_user: associated_user)
+      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: true,
+        associated_user: associated_user)
       mock_oauth(session: mock_session)
       get :callback, params: @callback_params
       assert_equal session[:shopify_user_id], associated_user.id

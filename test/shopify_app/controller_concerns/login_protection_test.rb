@@ -92,8 +92,8 @@ class LoginProtectionControllerTest < ActionController::TestCase
       ::ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
         .with(
           @token,
-          { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil},
-          true
+          { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
+          true,
         ).returns(@session.id)
       ::ShopifyAPI::Context.expects(:activate_session)
 
