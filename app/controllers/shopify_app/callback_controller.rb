@@ -18,11 +18,13 @@ module ShopifyApp
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
         )
       rescue => e
-        if e.class.module_parent == ShopifyAPI::Errors
-          return respond_with_error
-        else
-          raise
+        unless e.class.module_parent == ShopifyAPI::Errors
+          ActiveSupport::Deprecation.warn(<<~EOS)
+            An error #{e.class} was rescued. This is not part of `ShopifyAPI::Errors`, which indicates a bug in your app.
+            Future version of the shopify_app gem may re-raise this error rather than rescuing it.
+          EOS
         end
+        return respond_with_error
       end
 
       cookies.encrypted[auth_result[:cookie].name] = {
