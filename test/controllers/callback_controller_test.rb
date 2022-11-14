@@ -47,6 +47,24 @@ module ShopifyApp
       assert_match "sesión", flash[:error]
     end
 
+    test "#callback rescued errors of ShopifyAPI::Error will not emit a deprecation notice" do
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(ShopifyAPI::Errors::MissingRequiredArgumentError)
+      assert_not_deprecated do
+        get :callback,
+          params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+      end
+      assert_equal flash[:error], "Could not log in to Shopify store"
+    end
+
+    test "#callback rescued errors other than ShopifyAPI::Error will emit a deprecation notice" do
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(StandardError)
+      assert_deprecated(/An error of type StandardError was rescued/) do
+        get :callback,
+          params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+      end
+      assert_equal flash[:error], "Could not log in to Shopify store"
+    end
+
     test "#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback" do
       mock_oauth
 

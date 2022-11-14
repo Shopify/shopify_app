@@ -20,8 +20,9 @@ module ShopifyApp
       rescue => e
         unless e.class.module_parent == ShopifyAPI::Errors
           ActiveSupport::Deprecation.warn(<<~EOS)
-            An error #{e.class} was rescued. This is not part of `ShopifyAPI::Errors`, which indicates a bug in your app.
-            Future version of the shopify_app gem may re-raise this error rather than rescuing it.
+            An error of type #{e.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
+            bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
+            than rescuing it.
           EOS
         end
         return respond_with_error
