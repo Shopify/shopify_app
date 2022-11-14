@@ -37,21 +37,21 @@ This gem requires that you have the following credentials:
 rails new my_shopify_app
 ```
 
-2. Add the Shopify App gem to `my_shopify_app`'s Gemfile.
+2. Add the Shopify App gem to the app's Gemfile:
 
 ```sh
 bundle add shopify_app
 ```
 
-3. Create a `.env` file in the root of `my_shopify_app` to specify your full host and Shopify API credentials:
+3. You will need to provide several environment variables to the app.
+There are a variety of way of doing this, but for a development environment we recommended the [`dotenv-rails`](https://github.com/bkeepers/dotenv) gem.
+Create a `.env` file in the root of your Rails app to specify the full host and Shopify API credentials:
 
 ```sh
 HOST=http://localhost:3000
 SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
 ```
-
-> In a development environment, you can use a gem like `dotenv-rails` to manage environment variables.
 
 4. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
 
@@ -71,9 +71,14 @@ rails db:migrate
 rails server
 ```
 
-7. Install the app by visiting the server's URL (e.g. http://127.0.0.1:3000) and specifying the subdomain of the shop where you want it to be installed to.
+7. Within [Shopify Partners](https://www.shopify.com/partners), navigate to your App, then App Setup, and configure the URLs, e.g.:
 
-8. After the app is installed, you're redirected to the embedded app.
+  * App URL: http://locahost:3000/
+  * Allowed redirection URL(s): http://localhost:3000/auth/shopify/callback
+
+8. Install the app by visiting the server's URL (e.g. http://localhost:3000) and specifying the subdomain of the shop where you want it to be installed to.
+
+9. After the app is installed, you're redirected to the embedded app.
 
 This app implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
 
