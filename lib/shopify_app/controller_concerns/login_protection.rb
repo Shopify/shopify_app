@@ -182,6 +182,8 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
+        raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+
         render("shopify_app/shared/redirect", layout: false,
           locals: { url: url, current_shopify_domain: current_shopify_domain })
       else
@@ -190,14 +192,12 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      shopify_domain = sanitized_shop_name || current_shopify_session&.shop
-
-      return shopify_domain if shopify_domain.present?
-
-      raise ::ShopifyApp::ShopifyDomainNotFound
+      sanitized_shop_name || current_shopify_session&.shop
     end
 
     def return_address
+      raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+
       return_address_with_params(shop: current_shopify_domain, host: host)
     rescue ::ShopifyApp::ShopifyDomainNotFound, ::ShopifyApp::ShopifyHostNotFound
       base_return_address
