@@ -135,8 +135,8 @@ module ShopifyApp
     private
 
     def expect_jwt_error(klass, message)
-      message = "[ShopifyApp::JWT] Failed to validate JWT: [#{klass}] #{message}"
-      Rails.logger.expects(:warn).with(message)
+      message = "Failed to validate JWT: [#{klass}] #{message}"
+      ShopifyApp::Logger.expects(:warn).with(message)
     end
 
     def token(payload)
