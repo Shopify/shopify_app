@@ -35,7 +35,7 @@ module ShopifyApp
       payload, _ = parse_token_data(ShopifyApp.configuration&.secret, ShopifyApp.configuration&.old_secret)
       @payload = validate_payload(payload)
     rescue *WARN_EXCEPTIONS => error
-      Rails.logger.warn("[ShopifyApp::JWT] Failed to validate JWT: [#{error.class}] #{error}")
+      ShopifyApp::Logger.warn("Failed to validate JWT: [#{error.class}] #{error}")
       nil
     end
 
