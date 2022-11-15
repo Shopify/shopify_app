@@ -10,9 +10,10 @@ module ShopifyApp
 
     included do
       if ancestors.include?(ShopifyApp::RequireKnownShop)
-        raise ConfigurationError,
-          "You are attempting to use both RequireKnownShop and LoginProtection in the same controller. "\
-            "These are not compatible."
+        ActiveSupport::Deprecation.warn(<<~EOS)
+          We detected the use of incompatible concerns (RequireKnownShop and LoginProtection) in #{name},
+          which may lead to unpredictable behavior. In a future release of this library this will raise an error.
+        EOS
       end
 
       after_action :set_test_cookie

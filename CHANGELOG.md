@@ -2,7 +2,7 @@ Unreleased
 ----------
 * Fixes a bug with `EnsureAuthenticatedLinks` causing deep links to not work [#1549](https://github.com/Shopify/shopify_app/pull/1549)
 * Ensure online token is properly used when using `current_shopify_session` [#1566](https://github.com/Shopify/shopify_app/pull/1566)
-* Detect the use of incompatible controller concerns [#1560](https://github.com/Shopify/shopify_app/pull/1560). Depending on how your app is structured, this may result in an error on startup even though the app was working correctly. However, it is helping exposing an existing flaw that may have caused issues in future.
+* Log a deprecation warning for the use of incompatible controller concerns [#1560](https://github.com/Shopify/shopify_app/pull/1560)
 
 21.2.0 (Oct 25, 2022)
 ----------

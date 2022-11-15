@@ -467,7 +467,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
-    assert_raises ShopifyApp::ConfigurationError do
+    assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
         include ShopifyApp::LoginProtection
         include ShopifyApp::RequireKnownShop
