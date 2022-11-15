@@ -9,6 +9,13 @@ module ShopifyApp
     include ShopifyApp::SanitizedParams
 
     included do
+      if ancestors.include?(ShopifyApp::RequireKnownShop)
+        ActiveSupport::Deprecation.warn(<<~EOS)
+          We detected the use of incompatible concerns (RequireKnownShop and LoginProtection) in #{name},
+          which may lead to unpredictable behavior. In a future release of this library this will raise an error.
+        EOS
+      end
+
       after_action :set_test_cookie
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
