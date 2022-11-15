@@ -60,4 +60,30 @@ class RequireKnownShopTest < ActionController::TestCase
 
     assert_response :ok
   end
+
+  test "detects incompatible controller concerns" do
+    assert_deprecated(/incompatible concerns/) do
+      Class.new(ApplicationController) do
+        include ShopifyApp::RequireKnownShop
+        include ShopifyApp::LoginProtection
+      end
+    end
+
+    assert_deprecated(/incompatible concerns/) do
+      Class.new(ApplicationController) do
+        include ShopifyApp::RequireKnownShop
+        include ShopifyApp::Authenticated # since this indirectly includes LoginProtection
+      end
+    end
+
+    assert_deprecated(/incompatible concerns/) do
+      authenticated_controller = Class.new(ApplicationController) do
+        include ShopifyApp::Authenticated
+      end
+
+      Class.new(authenticated_controller) do
+        include ShopifyApp::RequireKnownShop
+      end
+    end
+  end
 end
