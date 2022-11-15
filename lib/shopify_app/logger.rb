@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  class Logger
+  module Logger
     LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, off: 6 }
     DEFAULT_LOG_LEVEL = :info
 
@@ -34,8 +34,6 @@ module ShopifyApp
 
       ActiveSupport::Deprecation.warn("#{context(:warn)} #{message}")
     end
-
-    private
 
     def self.context(log_level)
       current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
