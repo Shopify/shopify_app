@@ -17,7 +17,14 @@ module ShopifyApp
           },
           auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
         )
-      rescue
+      rescue => e
+        unless e.class.module_parent == ShopifyAPI::Errors
+          ActiveSupport::Deprecation.warn(<<~EOS)
+            An error of type #{e.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
+            bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
+            than rescuing it.
+          EOS
+        end
         return respond_with_error
       end
 
