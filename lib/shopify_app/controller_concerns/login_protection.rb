@@ -103,7 +103,7 @@ module ShopifyApp
     end
 
     def redirect_to_login
-      if request.xhr?
+      if requested_by_javascript?
         add_top_level_redirection_headers(ignore_response_code: true)
         head(:unauthorized)
       else
@@ -241,6 +241,10 @@ module ShopifyApp
       return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
 
       online_token_configured?
+    end
+
+    def requested_by_javascript?
+      request.xhr? || request.content_type == "application/javascript"
     end
   end
 end
