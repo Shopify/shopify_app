@@ -196,7 +196,7 @@ module ShopifyApp
     end
 
     def return_address
-      raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+      return base_return_address if current_shopify_domain.nil?
 
       return_address_with_params(shop: current_shopify_domain, host: host)
     rescue ::ShopifyApp::ShopifyDomainNotFound, ::ShopifyApp::ShopifyHostNotFound
