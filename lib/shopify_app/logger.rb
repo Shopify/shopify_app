@@ -37,12 +37,12 @@ module ShopifyApp
 
     private
 
-    def context(log_level)
+    def self.context(log_level)
       current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
       "[ ShopifyApp | #{log_level.to_s.upcase} | #{current_shop} ]"
     end
 
-    def enabled_for_log_level?(log_level)
+    def self.enabled_for_log_level?(log_level)
       raise(ShopifyApp::ConfigurationError,
         "Invalid Log Level - #{log_level}") unless LOG_LEVELS.keys.include?(log_level)
 
