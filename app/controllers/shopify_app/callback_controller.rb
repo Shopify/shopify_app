@@ -35,7 +35,10 @@ module ShopifyApp
         value: auth_result[:cookie].value,
       }
 
-      session[:shopify_user_id] = auth_result[:session].associated_user.id if auth_result[:session].online?
+      if auth_result[:session].online?
+        session[:shopify_user_id] = auth_result[:session].associated_user.id
+        ShopifyApp::Logger.debug("Saving Shopify user ID to cookie")
+      end
 
       if start_user_token_flow?(auth_result[:session])
         return respond_with_user_token_flow
