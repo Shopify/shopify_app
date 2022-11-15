@@ -7,7 +7,7 @@ module ShopifyApp
 
     included do
       if ancestors.include?(ShopifyApp::LoginProtection)
-        ActiveSupport::Deprecation.warn(<<~EOS)
+        ShopifyApp::Logger.deprecated(<<~EOS)
           We detected the use of incompatible concerns (EnsureInstalled and LoginProtection) in #{name},
           which may lead to unpredictable behavior. In a future release of this library this will raise an error.
         EOS
