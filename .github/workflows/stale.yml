@@ -29,3 +29,4 @@ jobs:
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           exempt-issue-labels: "feature request"
+          close-issue-reason: "not_planned"
