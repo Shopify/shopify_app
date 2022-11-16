@@ -29,10 +29,10 @@ module ShopifyApp
       send_to_logger(:error, message)
     end
 
-    def self.deprecated(message)
+    def self.deprecated(message, version)
       return unless enabled_for_log_level?(:warn)
 
-      ActiveSupport::Deprecation.warn("#{context(:warn)} #{message}")
+      ActiveSupport::Deprecation.warn("[#{version}] #{context(:warn)} #{message}")
     end
 
     def self.context(log_level)
