@@ -48,6 +48,7 @@ class ActiveSupport::TestCase
     ShopifyAppConfigurer.call
     Rails.application.reload_routes!
     ShopifyApp.configuration.log_level = :warn
+    # ActiveSupport::Deprecation.silenced = true
   end
 
   def mock_session(shop: "my-shop.myshopify.com", scope: ShopifyApp.configuration.scope)

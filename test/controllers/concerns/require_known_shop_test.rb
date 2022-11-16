@@ -86,4 +86,15 @@ class RequireKnownShopTest < ActionController::TestCase
       end
     end
   end
+
+  test "detects deprecation message" do
+    ActiveSupport::Deprecation.expects(:warn).with(
+      "[22.0.0] [ ShopifyApp | WARN | Shop Not Found ] "\
+      "RequireKnownShop has been replaced by to EnsureInstalled. "\
+      "Please use EnsureInstalled controller concern for the same behavior")
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
+    end
+  end
 end

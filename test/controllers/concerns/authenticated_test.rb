@@ -19,4 +19,15 @@ class AuthenticatedTest < ActionController::TestCase
     AuthenticatedTestController.include?(ShopifyApp::EmbeddedApp)
     AuthenticatedTestController.include?(ShopifyApp::EnsureBilling)
   end
+
+  test "detects deprecation message" do
+    ActiveSupport::Deprecation.expects(:warn).with(
+      "[22.0.0] [ ShopifyApp | WARN | Shop Not Found ] "\
+      "Authenticated has been replaced by to EnsureHasSession. "\
+      "Please use EnsureHasSession controller concern for the same behavior")
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::Authenticated
+    end
+  end
 end
