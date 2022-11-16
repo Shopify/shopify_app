@@ -32,6 +32,8 @@ module ShopifyApp
     def self.deprecated(message, version)
       return unless enabled_for_log_level?(:warn)
 
+      raise unless ShopifyApp::VERSION < version
+
       ActiveSupport::Deprecation.warn("[#{version}] #{context(:warn)} #{message}")
     end
 
