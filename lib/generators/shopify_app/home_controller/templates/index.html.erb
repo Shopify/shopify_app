@@ -24,7 +24,7 @@
           });
 
           var fetchProducts = function() {
-            var headers = new Headers({ "Authorization": "Bearer " + window.sessionToken });
+            var headers = new Headers({ "Content-Type": "text/javascript", "Authorization": "Bearer " + window.sessionToken });
             return fetch("/products", { headers })
               .then(response => response.json())
               .then(data => {
