@@ -467,12 +467,15 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
+    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
+    ActiveSupport::Deprecation.silenced = false
     assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
         include ShopifyApp::LoginProtection
         include ShopifyApp::RequireKnownShop
       end
     end
+    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
   end
 
   private
