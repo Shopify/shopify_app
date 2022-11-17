@@ -62,6 +62,8 @@ class RequireKnownShopTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
+    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
+    ActiveSupport::Deprecation.silenced = false
     assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
         include ShopifyApp::RequireKnownShop
@@ -85,16 +87,18 @@ class RequireKnownShopTest < ActionController::TestCase
         include ShopifyApp::RequireKnownShop
       end
     end
+    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
   end
 
-  test "detects deprecation message" do
-    ActiveSupport::Deprecation.expects(:warn).with(
-      "[22.0.0] [ ShopifyApp | WARN | Shop Not Found ] "\
-      "RequireKnownShop has been replaced by to EnsureInstalled. "\
-      "Please use EnsureInstalled controller concern for the same behavior")
-
-    Class.new(ApplicationController) do
-      include ShopifyApp::RequireKnownShop
+  test "detects name change deprecation message" do
+    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
+    
+    ActiveSupport::Deprecation.silenced = false
+    assert_deprecated(/RequireKnownShop has been replaced by to EnsureInstalled./) do
+      Class.new(ApplicationController) do
+        include ShopifyApp::RequireKnownShop
+      end
     end
+    ActiveSupport::Deprecation.silenced = parent_deprecation_setting    
   end
 end
