@@ -6,8 +6,6 @@ module ShopifyApp
     include ShopifyApp::RedirectForEmbedded
 
     included do
-      # binding.pry
-
       if ancestors.include?(ShopifyApp::LoginProtection)
         message = <<~EOS
         We detected the use of incompatible concerns (EnsureInstalled and LoginProtection) in #{name},
