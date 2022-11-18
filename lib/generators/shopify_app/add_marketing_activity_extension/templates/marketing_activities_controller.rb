@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class MarketingActivitiesController < ShopifyApp::ExtensionVerificationController
+
+  def initialize
+    ShopifyApp::Logger.deprecated("The MarketingActivitiesController will be removed in an upcoming update","22.0.0")
+  end
+
   def preload_form_data
     preload_data = {
       "form_data": {},
