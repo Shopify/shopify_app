@@ -9,7 +9,7 @@ module ShopifyApp
     include ShopifyApp::SanitizedParams
 
     included do
-      if ancestors.include?(ShopifyApp::RequireKnownShop)
+      if ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
         message = <<~EOS
           We detected the use of incompatible concerns (RequireKnownShop and LoginProtection) in #{name},
           which may lead to unpredictable behavior. In a future release of this library this will raise an error.
@@ -91,6 +91,7 @@ module ShopifyApp
           ShopifyApp::Logger.debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
+            
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
             jwt_payload = ShopifyAPI::Auth::JwtPayload.new(T.must(matches[1]))
             jwt_payload.shop
