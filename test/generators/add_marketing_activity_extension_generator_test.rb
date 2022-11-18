@@ -37,4 +37,14 @@ class AddMarketingActivityExtensionGeneratorTest < Rails::Generators::TestCase
       assert routes_declarations, routes
     end
   end
+
+  test "detect deprecation notice when generating controller" do
+    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
+    ActiveSupport::Deprecation.silenced = false
+    assert_deprecated(/MarketingActivitiesController will be removed/) do
+      provide_existing_routes_file
+      run_generator
+    end
+    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+  end
 end
