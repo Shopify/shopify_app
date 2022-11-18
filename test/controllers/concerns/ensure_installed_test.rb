@@ -66,15 +66,15 @@ class EnsureInstalledTest < ActionController::TestCase
     ActiveSupport::Deprecation.silenced = false
     assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
-        include ShopifyApp::EnsureInstalled
         include ShopifyApp::LoginProtection
+        include ShopifyApp::EnsureInstalled
       end
     end
 
     assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
+        include ShopifyApp::EnsureHasSession # since this indirectly includes LoginProtection
         include ShopifyApp::EnsureInstalled
-        include ShopifyApp::Authenticated # since this indirectly includes LoginProtection
       end
     end
 

@@ -6,6 +6,8 @@ module ShopifyApp
     include ShopifyApp::RedirectForEmbedded
 
     included do
+      # binding.pry
+
       if ancestors.include?(ShopifyApp::LoginProtection)
         message = <<~EOS
         We detected the use of incompatible concerns (EnsureInstalled and LoginProtection) in #{name},
@@ -13,7 +15,6 @@ module ShopifyApp
         EOS
 
         ShopifyApp::Logger.deprecated(message ,"22.0.0")
-
       end
 
       before_action :check_shop_domain
