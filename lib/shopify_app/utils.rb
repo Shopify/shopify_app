@@ -23,7 +23,7 @@ module ShopifyApp
         shop: shop,
         host: host,
         return_to: return_to,
-        reauthorize: 1 if reauthorize,
+        reauthorize: (1 if reauthorize),
       }
 
       url.query = URI.encode_www_form(fields.compact)
