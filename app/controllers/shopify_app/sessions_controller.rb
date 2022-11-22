@@ -39,7 +39,6 @@ module ShopifyApp
     private
 
     def authenticate
-      ShopifyApp::Logger.debug("# authenticate")
       return render_invalid_shop_error unless sanitized_shop_name.present?
 
       copy_return_to_param_to_session

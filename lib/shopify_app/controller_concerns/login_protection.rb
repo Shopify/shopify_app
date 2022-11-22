@@ -96,7 +96,6 @@ module ShopifyApp
           end
         end
 
-        #
         url ||= login_url_with_optional_shop
 
         ShopifyApp::Logger.debug("Setting Reauthorize-Url to #{url}")
