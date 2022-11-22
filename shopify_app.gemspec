@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("byebug")
   s.add_development_dependency("minitest")
   s.add_development_dependency("mocha")
+  s.add_development_dependency("nokogiri")
   s.add_development_dependency("pry")
   s.add_development_dependency("pry-nav")
   s.add_development_dependency("pry-stack_explorer")

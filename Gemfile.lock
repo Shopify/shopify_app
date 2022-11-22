@@ -244,6 +244,7 @@ DEPENDENCIES
   byebug
   minitest
   mocha
+  nokogiri
   pry
   pry-nav
   pry-stack_explorer
