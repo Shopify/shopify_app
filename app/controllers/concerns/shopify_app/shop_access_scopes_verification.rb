@@ -17,7 +17,7 @@ module ShopifyApp
           redirect_for_embedded
         else
           render("shopify_app/shared/redirect", layout: false,
-            locals: { url: shop_login, current_shopify_domain: current_shopify_domain })
+            locals: { url: reauthorized_shop_login_url, current_shopify_domain: current_shopify_domain })
         end
       end
     end
@@ -34,7 +34,7 @@ module ShopifyApp
       ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
     end
 
-    def shop_login
+    def reauthorized_shop_login_url
       ShopifyApp::Utils.shop_login_url(shop: params[:shop], host: params[:host], return_to: request.fullpath,
         reauthorize: true)
     end
