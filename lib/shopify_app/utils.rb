@@ -27,6 +27,7 @@ module ShopifyApp
       }
 
       url.query = URI.encode_www_form(fields.compact)
+      url.to_s
     end
   end
 end
