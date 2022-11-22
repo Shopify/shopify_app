@@ -16,7 +16,8 @@ module ShopifyApp
         if embedded_param?
           redirect_for_embedded
         else
-          redirect_to(shop_login)
+          render("shopify_app/shared/redirect", layout: false,
+            locals: { url: shop_login, current_shopify_domain: current_shopify_domain })
         end
       end
     end
