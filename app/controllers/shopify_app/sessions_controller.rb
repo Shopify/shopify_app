@@ -12,7 +12,11 @@ module ShopifyApp
     end
 
     def new
-      authenticate if sanitized_shop_name.present?
+      if params[:reauthorize].present?
+        flash[:error] = "Due to a change in permissions for this app it needs to be reauthorized."
+      elsif sanitized_shop_name.present?
+        authenticate
+      end
     end
 
     def create
@@ -35,6 +39,7 @@ module ShopifyApp
     private
 
     def authenticate
+      ShopifyApp::Logger.debug("# authenticate")
       return render_invalid_shop_error unless sanitized_shop_name.present?
 
       copy_return_to_param_to_session
