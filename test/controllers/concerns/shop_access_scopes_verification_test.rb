@@ -47,13 +47,13 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
       shop: @shopify_domain,
       host: @host,
       return_to: request.fullpath,
-      reauthorize: 1
+      reauthorize: 1,
     )
     login_url.to_s
   end
 
   def actual_client_side_redirect_url
-    data_target = Nokogiri::HTML(response.body).at('body div#redirection-target').attr('data-target')
-    url = JSON.parse(data_target)["url"]
+    data_target = Nokogiri::HTML(response.body).at("body div#redirection-target").attr("data-target")
+    JSON.parse(data_target)["url"]
   end
 end
