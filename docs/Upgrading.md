@@ -6,6 +6,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [General Advice](#general-advice)
 
+[Upgrading to `v20.3.0`](#upgrading-to-v2030)
+
 [Upgrading to `v20.2.0`](#upgrading-to-v2020)
 
 [Upgrading to `v20.1.0`](#upgrading-to-v2010)
@@ -33,6 +35,9 @@ If you need to upgrade by more than one major version (e.g. from v18 to v20), we
 We also recommend the use of a staging site which matches your production environment as closely as possible.
 
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
+
+## Upgrading to `v20.3.0`
+Calling `LoginProtection#current_shopify_domain` will no longer raise an error if there is no active session. It will now return a nil value. The internal behavior of raising an error on OAuth redirect is still in place, however. If you were calling `current_shopify_domain` in authenticated actions and expecting an error if nil, you'll need to do a presence check and raise that error within your app.
 
 ## Upgrading to `v20.2.0`
 
@@ -114,7 +119,7 @@ Shopify API session, or `nil` if no such session is available.
 
 #### Setting up `ShopifyAPI::Context`
 
-The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template]((https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
+The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template](https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
 
 ## Upgrading to `v18.1.2`
 

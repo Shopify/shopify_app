@@ -425,6 +425,26 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test "#jwt_expire_at returns jwt expire at with 5s gap" do
+    expire_at = 2.hours.from_now.to_i
+
+    with_application_test_routes do
+      request.env["jwt.expire_at"] = expire_at
+      get :index
+
+      assert_equal expire_at - 5.seconds, @controller.jwt_expire_at
+    end
+  end
+
+  test "detects incompatible controller concerns" do
+    assert_deprecated(/incompatible concerns/) do
+      Class.new(ApplicationController) do
+        include ShopifyApp::LoginProtection
+        include ShopifyApp::RequireKnownShop
+      end
+    end
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, _response)

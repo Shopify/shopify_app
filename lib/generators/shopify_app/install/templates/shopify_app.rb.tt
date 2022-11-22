@@ -7,7 +7,7 @@ ShopifyApp.configure do |config|
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'Shop'
-
+  config.log_level = :info
   config.reauth_on_access_scope_changes = true
 
   config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence

@@ -28,6 +28,7 @@ module ShopifyApp
       unless has_payment
         if request.xhr?
           add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
+          ShopifyApp::Logger.debug("Responding with 401 unauthorized")
           head(:unauthorized)
         else
           redirect_to(confirmation_url, allow_other_host: true)
@@ -55,6 +56,7 @@ module ShopifyApp
     end
 
     def has_subscription?(session)
+      ShopifyApp::Logger.debug("Checking if shop has subscription")
       response = run_query(session: session, query: RECURRING_PURCHASES_QUERY)
       subscriptions = response.body["data"]["currentAppInstallation"]["activeSubscriptions"]
 
@@ -70,6 +72,7 @@ module ShopifyApp
     end
 
     def has_one_time_payment?(session)
+      ShopifyApp::Logger.debug("Checking if has one time payment")
       purchases = nil
       end_cursor = nil
 

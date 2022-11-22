@@ -6,6 +6,14 @@ module ShopifyApp
     include ShopifyApp::RedirectForEmbedded
 
     included do
+      if ancestors.include?(ShopifyApp::LoginProtection)
+        ActiveSupport::Deprecation.warn(<<~EOS)
+          We detected the use of incompatible concerns (RequireKnownShop and LoginProtection) in #{name},
+          which may lead to unpredictable behavior. In a future release of this library this will raise an error.
+        EOS
+
+      end
+
       before_action :check_shop_domain
       before_action :check_shop_known
     end

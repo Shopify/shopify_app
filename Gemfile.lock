@@ -10,7 +10,7 @@ PATH
       openssl
       securerandom
       sorbet-runtime
-      zeitwerk (~> 2.5)
+      zeitwerk (~> 2.5, < 2.6.5)
 
 PATH
   remote: .

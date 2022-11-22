@@ -9,7 +9,8 @@ module ShopifyApp
     def callback
       begin
         api_session, cookie = validated_auth_objects
-      rescue
+      rescue => error
+        deprecate_callback_rescue(error) unless error.class.module_parent == ShopifyAPI::Errors
         return respond_with_error
       end
 
@@ -23,6 +24,14 @@ module ShopifyApp
     end
 
     private
+
+    def deprecate_callback_rescue(error)
+      ActiveSupport::Deprecation.warn(<<~EOS)
+        An error of type #{error.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
+        bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
+        than rescuing it.
+      EOS
+    end
 
     def save_session(api_session)
       ShopifyApp::SessionRepository.store_session(api_session)
@@ -55,6 +64,7 @@ module ShopifyApp
       end
 
       session[:shopify_user_id] = api_session.associated_user.id if api_session.online?
+      ShopifyApp::Logger.debug("Saving Shopify user ID to cookie")
     end
 
     def respond_successfully
