@@ -31,12 +31,12 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
     assert_response :ok
   end
 
-  test "#login_on_scope_changes redirects to login when scopes do not match" do
+  test "#login_on_scope_changes redirects to re-authorize when scopes do not match" do
     mock_shop_scopes_mismatch_strategy
 
     get :index, params: { shop: @shopify_domain, host: @host }
 
-    assert_redirected_to expected_redirect_url
+    assert_equal actual_client_side_redirect_url, expected_redirect_url
   end
 
   private
@@ -47,7 +47,13 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
       shop: @shopify_domain,
       host: @host,
       return_to: request.fullpath,
+      reauthorize: 1
     )
     login_url.to_s
+  end
+
+  def actual_client_side_redirect_url
+    data_target = Nokogiri::HTML(response.body).at('body div#redirection-target').attr('data-target')
+    url = JSON.parse(data_target)["url"]
   end
 end
