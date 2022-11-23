@@ -13,3 +13,4 @@ en:
   request_storage_access_body: "This lets the app authenticate you by temporarily storing your personal information. Click continue and allow cookies to use the app."
   request_storage_access_footer: 'Cookies expire after 30 days.'
   request_storage_access_action: 'Continue'
+  reauth_needed: 'Due to a change in required access scopes this app will need to be reauthorized.'

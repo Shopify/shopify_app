@@ -13,10 +13,9 @@ module ShopifyApp
 
     def new
       if params[:reauthorize].present?
-        flash[:error] = "Due to a change in required access scopes this app will need to be reauthorized."
-      elsif sanitized_shop_name.present?
-        authenticate
+        flash[:error] = I18n.t("reauth_needed")
       end
+      authenticate if sanitized_shop_name.present?
     end
 
     def create
