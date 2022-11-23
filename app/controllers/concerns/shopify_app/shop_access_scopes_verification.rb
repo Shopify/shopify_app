@@ -35,8 +35,8 @@ module ShopifyApp
     end
 
     def fullpage_redirect_to(url)
-        render("shopify_app/shared/redirect", layout: false,
-          locals: { url: reauthorized_shop_login_url, current_shopify_domain: current_shopify_domain })
+      render("shopify_app/shared/redirect", layout: false,
+        locals: { url: reauthorized_shop_login_url, current_shopify_domain: current_shopify_domain })
     end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "test_helpers/controller"
 
 class ScopesVerificationController < ActionController::Base
   include ShopifyApp::ShopAccessScopesVerification
@@ -37,23 +38,6 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
     get :index, params: { shop: @shopify_domain, host: @host }
 
     assert_equal actual_client_side_redirect_url, expected_redirect_url
-  end
-
-  private
-
-  def expected_redirect_url
-    login_url = URI(ShopifyApp.configuration.login_url)
-    login_url.query = URI.encode_www_form(
-      shop: @shopify_domain,
-      host: @host,
-      return_to: request.fullpath,
-      reauthorize: 1,
-    )
-    login_url.to_s
-  end
-
-  def actual_client_side_redirect_url
-    data_target = Nokogiri::HTML(response.body).at("body div#redirection-target").attr("data-target")
-    JSON.parse(data_target)["url"]
+    assert_client_side_redirect(expected_redirect_url)
   end
 end
