@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ActionController::TestCase
-  def assert_client_side_redirect(expected_redirect_url)
+module Minitest::Assertions
+  def assert_shopify_client_side_redirect(expected_redirect_url)
     assert_equal expected_redirect_url, actual_client_side_redirect_url
   end
 

@@ -37,7 +37,6 @@ class ShopAccessScopesVerificationControllertest < ActionController::TestCase
 
     get :index, params: { shop: @shopify_domain, host: @host }
 
-    assert_equal actual_client_side_redirect_url, expected_redirect_url
-    assert_client_side_redirect(expected_redirect_url)
+    assert_shopify_client_side_redirect(expected_redirect_url)
   end
 end

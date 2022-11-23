@@ -161,7 +161,6 @@ module ShopifyApp
     def login_url_with_optional_shop(top_level: false)
       url = ShopifyApp.configuration.login_url
 
-      # binding.pry
       query_params = login_url_params(top_level: top_level)
 
       url = "#{url}?#{query_params.to_query}" if query_params.present?
