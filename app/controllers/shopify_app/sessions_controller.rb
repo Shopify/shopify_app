@@ -14,8 +14,9 @@ module ShopifyApp
     def new
       if params[:reauthorize].present?
         flash[:error] = I18n.t("reauth_needed")
+      elsif sanitized_shop_name.present?
+        authenticate
       end
-      authenticate if sanitized_shop_name.present?
     end
 
     def create
