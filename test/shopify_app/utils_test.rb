@@ -33,4 +33,14 @@ class UtilsTest < ActiveSupport::TestCase
       assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
     end
   end
+
+  test "shop_login_url with a reauthorize param" do
+    assert_equal "/login?shop=myshop&host=myhost&return_to=&reauthorize=1",
+      ShopifyApp::Utils.shop_login_url(shop: "myshop", host: "myhost", return_to: "", reauthorize: true)
+  end
+
+  test "shop_login_url without a reauthorize param" do
+    assert_equal "/login?shop=myshop&host=myhost&return_to=",
+      ShopifyApp::Utils.shop_login_url(shop: "myshop", host: "myhost", return_to: "")
+  end
 end
