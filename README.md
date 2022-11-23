@@ -53,6 +53,23 @@ SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
 ```
 
+Optionally, use built-in Rails secret store:
+
+Open the secret store by running:
+
+```sh
+EDITOR="vi" rails credentials:edit --environment=development
+```
+
+Add the following to the file:
+
+```sh
+shopify:
+  host: http://localhost:3000
+  api_key: <Your Shopify API key>
+  api_secret: <Your Shopify API secret>
+```
+
 4. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
 
 ```sh
