@@ -13,12 +13,7 @@ module ShopifyApp
 
     def login_on_scope_changes
       if scopes_mismatch?
-        if embedded_param?
-          redirect_for_embedded
-        else
-          render("shopify_app/shared/redirect", layout: false,
-            locals: { url: reauthorized_shop_login_url, current_shopify_domain: current_shopify_domain })
-        end
+        fullpage_redirect_to(reauthorized_shop_login_url)
       end
     end
 
@@ -37,6 +32,11 @@ module ShopifyApp
     def reauthorized_shop_login_url
       ShopifyApp::Utils.shop_login_url(shop: params[:shop], host: params[:host], return_to: request.fullpath,
         reauthorize: true)
+    end
+
+    def fullpage_redirect_to(url)
+        render("shopify_app/shared/redirect", layout: false,
+          locals: { url: reauthorized_shop_login_url, current_shopify_domain: current_shopify_domain })
     end
   end
 end
