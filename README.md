@@ -73,7 +73,7 @@ rails server
 
 7. Within [Shopify Partners](https://www.shopify.com/partners), navigate to your App, then App Setup, and configure the URLs, e.g.:
 
-  * App URL: http://locahost:3000/
+  * App URL: http://localhost:3000/
   * Allowed redirection URL(s): http://localhost:3000/auth/shopify/callback
 
 8. Install the app by visiting the server's URL (e.g. http://localhost:3000) and specifying the subdomain of the shop where you want it to be installed to.
