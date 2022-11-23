@@ -2,7 +2,7 @@ Unreleased
 ----------
 * Fixes a bug with `EnsureAuthenticatedLinks` causing deep links to not work [#1549](https://github.com/Shopify/shopify_app/pull/1549)
 * Ensure online token is properly used when using `current_shopify_session` [#1566](https://github.com/Shopify/shopify_app/pull/1566)
-* Added debug logs, you can read more about logging (here)[./docs/logging.md]. [#1545](https://github.com/Shopify/shopify_app/pull/1545)
+* Added debug logs, you can read more about logging [here](./docs/logging.md). [#1545](https://github.com/Shopify/shopify_app/pull/1545)
 * Emit a deprecation notice for wrongly-rescued exceptions [#1530](https://github.com/Shopify/shopify_app/pull/1530)
 * Log a deprecation warning for the use of incompatible controller concerns [#1560](https://github.com/Shopify/shopify_app/pull/1560)
 * Fixes bug with expired sessions for embedded apps returning a 500 instead of 401 [#1580](https://github.com/Shopify/shopify_app/pull/1580)
