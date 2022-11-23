@@ -13,6 +13,7 @@ module ShopifyApp
 
     def login_on_scope_changes
       if scopes_mismatch?
+        ShopifyApp::Logger.debug("redirecting due to scope mismatch, target: #{reauthorized_shop_login_url}")
         fullpage_redirect_to(reauthorized_shop_login_url)
       end
     end
