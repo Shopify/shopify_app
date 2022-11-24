@@ -7,7 +7,7 @@ module ShopifyApp
         def update_access_scopes?(shop_domain)
           shop_access_scopes = shop_access_scopes(shop_domain)
           result = configuration_access_scopes != shop_access_scopes
-          ShopifyApp::Logger.debug("#update_access_scopes? result: #{result}")
+          ShopifyApp::Logger.debug("Checking if should update access scopes, result: #{result}")
           result
         end
 
