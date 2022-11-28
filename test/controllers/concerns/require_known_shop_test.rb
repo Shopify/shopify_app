@@ -65,7 +65,7 @@ class RequireKnownShopTest < ActionController::TestCase
     parent_deprecation_setting = ActiveSupport::Deprecation.silenced
     parent_context_log_level = ShopifyAPI::Context.log_level
     ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.log_level = :warn
+    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
     assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
         include ShopifyApp::RequireKnownShop
@@ -90,14 +90,14 @@ class RequireKnownShopTest < ActionController::TestCase
       end
     end
     ActiveSupport::Deprecation.silenced = parent_deprecation_setting
-    ShopifyAPI::Context.log_level = parent_context_log_level
+    
   end
 
   test "detects name change deprecation message" do
     parent_deprecation_setting = ActiveSupport::Deprecation.silenced
     parent_context_log_level = ShopifyAPI::Context.log_level
     ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.log_level = :warn
+    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
 
     assert_deprecated(/RequireKnownShop has been replaced by to EnsureInstalled./) do
       Class.new(ApplicationController) do
@@ -106,6 +106,6 @@ class RequireKnownShopTest < ActionController::TestCase
     end
 
     ActiveSupport::Deprecation.silenced = parent_deprecation_setting
-    ShopifyAPI::Context.log_level = parent_context_log_level
+    
   end
 end
