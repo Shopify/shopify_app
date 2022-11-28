@@ -60,7 +60,7 @@ module ShopifyApp
       parent_deprecation_setting = ActiveSupport::Deprecation.silenced
       parent_context_log_level = ShopifyAPI::Context.log_level
       ActiveSupport::Deprecation.silenced = false
-      ShopifyAPI::Context.log_level = :warn
+      ShopifyAPI::Context.stubs(:log_level).returns(:warn)
 
       ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(StandardError)
       assert_deprecated(/An error of type StandardError was rescued/) do
@@ -69,7 +69,7 @@ module ShopifyApp
       end
       assert_equal flash[:error], "Could not log in to Shopify store"
 
-      ShopifyAPI::Context.log_level = parent_context_log_level
+      
       ActiveSupport::Deprecation.silenced = parent_deprecation_setting
     end
 
