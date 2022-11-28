@@ -56,9 +56,11 @@ Note that the following steps are *optional* and only apply to **embedded** appl
 
 ## Upgrading to `v19.0.0`
 
-*This change introduced a major change of strategy regarding sessions.*  Due to security changes with browsers, support for cookie based sessions was dropped. JWT is now the only supported method for managing sessions.
+There are several major changes in this release:
 
-As part of that change, this update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby) gem.
+* A change of strategy regarding sessions: Due to security changes with browsers, support for cookie based sessions was dropped. JWT is now the only supported method for managing sessions.
+* As part of that change, this update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby) gem.
+* Previously the `shopify_api` gem relied on `ActiveResource`, an outdated library which was [removed](https://github.com/rails/rails/commit/f1637bf2bb00490203503fbd943b73406e043d1d) from Rails in 2012. v10 of `shopify_api` has a replacement approach which aims to provide a similar syntax, but changes will be necessary.
 
 ### High-level process
 
@@ -69,8 +71,7 @@ As part of that change, this update moves API authentication logic from this gem
 - Remove `allow_jwt_authentication=` and `allow_cookie_authentication=` invocations from
   `config/initializers/shopify_app.rb` as the decision logic for which authentication method to use is now handled
   internally by the `shopify_api` gem, using the `ShopifyAPI::Context.embedded_app` setting.
-- `v19.0.0` updates the `shopify_api` dependency to `10.0.0`. This version of `shopify_api` has breaking changes. See
-  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify-api-ruby#breaking-change-notice-for-version-1000).
+- [Follow the guidance for upgrading `shopify-api-ruby`](https://github.com/Shopify/shopify-api-ruby#breaking-change-notice-for-version-1000).
 
 ### Specific cases
 
