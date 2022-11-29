@@ -6,88 +6,114 @@ class ShopMockSessionStoreWithScopes < ActiveRecord::Base
   include ShopifyApp::ShopSessionStorageWithScopes
 end
 
+class BlahUser
+  def self.validates(*args); end
+
+  attr_accessor :shopify_domain, :shopify_token
+
+  include ShopifyApp::UserSessionStorageWithScopes
+end
+
 module ShopifyApp
   class ShopSessionStorageWithScopesTest < ActiveSupport::TestCase
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_TOKEN = "1234567890qwertyuiop"
     TEST_MERCHANT_SCOPES = "read_products, write_orders"
 
-    test ".retrieve can retrieve shop session records by ID" do
-      ShopMockSessionStoreWithScopes.stubs(:find_by).returns(MockShopInstance.new(
-        shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_TOKEN,
-        scopes: TEST_MERCHANT_SCOPES,
-      ))
+    # test ".retrieve can retrieve shop session records by ID" do
+    #   ShopMockSessionStoreWithScopes.stubs(:find_by).returns(MockShopInstance.new(
+    #     shopify_domain: TEST_SHOPIFY_DOMAIN,
+    #     shopify_token: TEST_SHOPIFY_TOKEN,
+    #     scopes: TEST_MERCHANT_SCOPES,
+    #   ))
+    #
+    #   session = ShopMockSessionStoreWithScopes.retrieve(1)
+    #   assert_equal TEST_SHOPIFY_DOMAIN, session.shop
+    #   assert_equal TEST_SHOPIFY_TOKEN, session.access_token
+    #   assert_equal ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES), session.scope
+    # end
+    #
+    # test ".retrieve_by_shopify_domain can retrieve shop session records by JWT" do
+    #   instance = MockShopInstance.new(
+    #     shopify_domain: TEST_SHOPIFY_DOMAIN,
+    #     shopify_token: TEST_SHOPIFY_TOKEN,
+    #     scopes: TEST_MERCHANT_SCOPES,
+    #   )
+    #   ShopMockSessionStoreWithScopes.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
+    #
+    #   expected_session = ShopifyAPI::Auth::Session.new(
+    #     shop: instance.shopify_domain,
+    #     access_token: instance.shopify_token,
+    #     scope: instance.access_scopes,
+    #   )
+    #   shopify_domain = TEST_SHOPIFY_DOMAIN
+    #
+    #   session = ShopMockSessionStoreWithScopes.retrieve_by_shopify_domain(shopify_domain)
+    #   assert_equal expected_session.shop, session.shop
+    #   assert_equal expected_session.access_token, session.access_token
+    #   assert_equal expected_session.scope, session.scope
+    # end
+    #
+    # test ".store can store shop session records" do
+    #   mock_shop_instance = MockShopInstance.new(id: 12345)
+    #   mock_shop_instance.stubs(:save!).returns(true)
+    #
+    #   ShopMockSessionStoreWithScopes.stubs(:find_or_initialize_by).returns(mock_shop_instance)
+    #
+    #   mock_auth_hash = mock
+    #   mock_auth_hash.stubs(:shop).returns(mock_shop_instance.shopify_domain)
+    #   mock_auth_hash.stubs(:access_token).returns("a-new-token!")
+    #   mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES))
+    #   saved_id = ShopMockSessionStoreWithScopes.store(mock_auth_hash)
+    #
+    #   assert_equal "a-new-token!", mock_shop_instance.shopify_token
+    #   assert_equal mock_shop_instance.id, saved_id
+    # end
+    #
+    # test ".retrieve returns nil for non-existent shop" do
+    #   shop_id = "non-existent-id"
+    #   ShopMockSessionStoreWithScopes.stubs(:find_by).with(id: shop_id).returns(nil)
+    #
+    #   refute ShopMockSessionStoreWithScopes.retrieve(shop_id)
+    # end
+    #
+    # test ".retrieve_by_shopify_domain returns nil for non-existent shop" do
+    #   shop_domain = "non-existent-id"
+    #
+    #   ShopMockSessionStoreWithScopes.stubs(:find_by).with(shopify_domain: shop_domain).returns(nil)
+    #
+    #   refute ShopMockSessionStoreWithScopes.retrieve_by_shopify_domain(shop_domain)
+    # end
+    #
+    # test ".retrieve throws NotImplementedError when access_scopes getter is not implemented" do
+    #   mock_shop = MockShopInstance.new(
+    #     shopify_domain: TEST_SHOPIFY_DOMAIN,
+    #     shopify_token: TEST_SHOPIFY_TOKEN,
+    #   )
+    #   mock_shop.stubs(:access_scopes).raises(NotImplementedError)
+    #   ShopMockSessionStoreWithScopes.stubs(:find_by).returns(mock_shop)
+    #
+    #   assert_raises NotImplementedError do
+    #     ShopMockSessionStoreWithScopes.retrieve(1)
+    #   end
+    # end
 
-      session = ShopMockSessionStoreWithScopes.retrieve(1)
-      assert_equal TEST_SHOPIFY_DOMAIN, session.shop
-      assert_equal TEST_SHOPIFY_TOKEN, session.access_token
-      assert_equal ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES), session.scope
-    end
+    test "should store scope and associated user scope as separate fields" do
+      mock_user_instance = BlahUser.new
+      mock_user_instance.stubs(:save!).returns(true)
 
-    test ".retrieve_by_shopify_domain can retrieve shop session records by JWT" do
-      instance = MockShopInstance.new(
-        shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_TOKEN,
-        scopes: TEST_MERCHANT_SCOPES,
-      )
-      ShopMockSessionStoreWithScopes.stubs(:find_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN).returns(instance)
-
-      expected_session = ShopifyAPI::Auth::Session.new(
-        shop: instance.shopify_domain,
-        access_token: instance.shopify_token,
-        scope: instance.access_scopes,
-      )
-      shopify_domain = TEST_SHOPIFY_DOMAIN
-
-      session = ShopMockSessionStoreWithScopes.retrieve_by_shopify_domain(shopify_domain)
-      assert_equal expected_session.shop, session.shop
-      assert_equal expected_session.access_token, session.access_token
-      assert_equal expected_session.scope, session.scope
-    end
-
-    test ".store can store shop session records" do
-      mock_shop_instance = MockShopInstance.new(id: 12345)
-      mock_shop_instance.stubs(:save!).returns(true)
-
-      ShopMockSessionStoreWithScopes.stubs(:find_or_initialize_by).returns(mock_shop_instance)
-
+      BlahUser.stubs(:find_or_initialize_by).returns(mock_user_instance)
       mock_auth_hash = mock
-      mock_auth_hash.stubs(:shop).returns(mock_shop_instance.shopify_domain)
+      mock_auth_hash.stubs(:shop).returns(mock_user_instance.shopify_domain)
       mock_auth_hash.stubs(:access_token).returns("a-new-token!")
-      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES))
-      saved_id = ShopMockSessionStoreWithScopes.store(mock_auth_hash)
 
-      assert_equal "a-new-token!", mock_shop_instance.shopify_token
-      assert_equal mock_shop_instance.id, saved_id
-    end
+      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders,read_themes"))
+      mock_auth_hash.stubs(:associated_user_scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
+      saved_id = BlahUser.store(mock_auth_hash, mock(id: 999))
 
-    test ".retrieve returns nil for non-existent shop" do
-      shop_id = "non-existent-id"
-      ShopMockSessionStoreWithScopes.stubs(:find_by).with(id: shop_id).returns(nil)
-
-      refute ShopMockSessionStoreWithScopes.retrieve(shop_id)
-    end
-
-    test ".retrieve_by_shopify_domain returns nil for non-existent shop" do
-      shop_domain = "non-existent-id"
-
-      ShopMockSessionStoreWithScopes.stubs(:find_by).with(shopify_domain: shop_domain).returns(nil)
-
-      refute ShopMockSessionStoreWithScopes.retrieve_by_shopify_domain(shop_domain)
-    end
-
-    test ".retrieve throws NotImplementedError when access_scopes getter is not implemented" do
-      mock_shop = MockShopInstance.new(
-        shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_TOKEN,
-      )
-      mock_shop.stubs(:access_scopes).raises(NotImplementedError)
-      ShopMockSessionStoreWithScopes.stubs(:find_by).returns(mock_shop)
-
-      assert_raises NotImplementedError do
-        ShopMockSessionStoreWithScopes.retrieve(1)
-      end
+      assert_equal "read_products,write_orders,read_themes", mock_user_instance.scope
+      # failing since not yet implemented
+      assert_equal "read_products,write_orders", mock_user_instance.associated_user_scope
     end
   end
 end

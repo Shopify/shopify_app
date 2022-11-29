@@ -28,6 +28,7 @@ module ShopifyApp
       redirect_query_params[:shop] = sanitized_shop_name
       redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
       redirect_query_params[:host] ||= params[:host] if params[:host].present?
+      redirect_query_params[:reauthorize] ||= params[:reauthorize] if params[:reauthorize].present?
       redirect_uri = "#{redirect_uri}?#{redirect_query_params.to_query}" if redirect_query_params.present?
 
       query_params = sanitized_params.except(:redirect_uri)

@@ -13,6 +13,8 @@ module ShopifyApp
       def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
         shop.shopify_token = auth_session.access_token
+        # wrong?
+        binding.pry
         shop.access_scopes = auth_session.scope.to_s
 
         shop.save!

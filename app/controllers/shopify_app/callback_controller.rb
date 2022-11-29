@@ -41,6 +41,7 @@ module ShopifyApp
       end
 
       if start_user_token_flow?(auth_result[:session])
+        binding.pry
         return respond_with_user_token_flow
       end
 
