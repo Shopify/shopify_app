@@ -12,6 +12,7 @@ module ShopifyApp
     attr_accessor :scope
     attr_writer :shop_access_scopes
     attr_writer :user_access_scopes
+    attr_writer :user_access_scopes_strategy
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
     attr_accessor :webhooks
