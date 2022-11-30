@@ -12,6 +12,11 @@ module ShopifyApp
             "#update_access_scopes? requires user_id or shopify_user_id parameter inputs")
         end
 
+        def covered_scopes?(current_shopify_session)
+          # NOTE: this not Ruby's `covers?` method, it is defined in ShopifyAPI::Auth::AuthScopes
+          current_shopify_session.scope.to_a.empty? || current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
+        end
+
         private
 
         def update_access_scopes_for_user_id?(user_id)
