@@ -83,7 +83,17 @@ module ShopifyApp
       ShopifyApp::AccessScopes::ShopStrategy
     end
 
+    def user_access_scopes_strategy=(class_name)
+      unless class_name.is_a?(String)
+        raise ConfigurationError, "Invalid user access scopes strategy - expected a string"
+      end
+
+      @user_access_scopes_strategy = class_name.safe_constantize
+    end
+
     def user_access_scopes_strategy
+      return @user_access_scopes_strategy if @user_access_scopes_strategy
+
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
 
       ShopifyApp::AccessScopes::UserStrategy
