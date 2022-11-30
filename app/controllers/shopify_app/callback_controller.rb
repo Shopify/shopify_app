@@ -80,6 +80,10 @@ module ShopifyApp
     def update_user_access_scopes?
       return true if session[:shopify_user_id].nil?
 
+      # This is an extra safety check for something should not happen in production, but we may delete the User record
+      # during manual testing, which would cause the shopify_user_id to point to a non-existent record.
+      return true unless User.exists?(shopify_user_id: session["shopify_user_id"])
+
       user_access_scopes_strategy.update_access_scopes?(shopify_user_id: session[:shopify_user_id])
     end
 

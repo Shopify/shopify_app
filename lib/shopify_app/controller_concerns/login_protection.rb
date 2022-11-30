@@ -29,7 +29,8 @@ module ShopifyApp
         return redirect_to_login
       end
 
-      unless ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
+      # Not suitable for wider use in this form, needs thought
+      if ShopifyApp.configuration.user_access_scopes_strategy.update_access_scopes?(shopify_user_id: session[:shopify_user_id])
         clear_shopify_session
         return redirect_to_login
       end
