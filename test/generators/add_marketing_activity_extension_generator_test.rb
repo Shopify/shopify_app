@@ -42,7 +42,7 @@ class AddMarketingActivityExtensionGeneratorTest < Rails::Generators::TestCase
     parent_deprecation_setting = ActiveSupport::Deprecation.silenced
     ActiveSupport::Deprecation.silenced = false
     ShopifyAPI::Context.stubs(:log_level).returns(:warn)
-    
+
     assert_deprecated(/MarketingActivitiesController will be removed/) do
       provide_existing_routes_file
       run_generator

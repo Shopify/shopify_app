@@ -58,7 +58,6 @@ module ShopifyApp
 
     test "#callback rescued errors other than ShopifyAPI::Error will emit a deprecation notice" do
       parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-      parent_context_log_level = ShopifyAPI::Context.log_level
       ActiveSupport::Deprecation.silenced = false
       ShopifyAPI::Context.stubs(:log_level).returns(:warn)
 
@@ -69,7 +68,6 @@ module ShopifyApp
       end
       assert_equal flash[:error], "Could not log in to Shopify store"
 
-      
       ActiveSupport::Deprecation.silenced = parent_deprecation_setting
     end
 

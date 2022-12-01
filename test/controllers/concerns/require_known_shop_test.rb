@@ -63,7 +63,6 @@ class RequireKnownShopTest < ActionController::TestCase
 
   test "detects incompatible controller concerns" do
     parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    parent_context_log_level = ShopifyAPI::Context.log_level
     ActiveSupport::Deprecation.silenced = false
     ShopifyAPI::Context.stubs(:log_level).returns(:warn)
     assert_deprecated(/incompatible concerns/) do
@@ -90,12 +89,10 @@ class RequireKnownShopTest < ActionController::TestCase
       end
     end
     ActiveSupport::Deprecation.silenced = parent_deprecation_setting
-    
   end
 
   test "detects name change deprecation message" do
     parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    parent_context_log_level = ShopifyAPI::Context.log_level
     ActiveSupport::Deprecation.silenced = false
     ShopifyAPI::Context.stubs(:log_level).returns(:warn)
 
@@ -106,6 +103,5 @@ class RequireKnownShopTest < ActionController::TestCase
     end
 
     ActiveSupport::Deprecation.silenced = parent_deprecation_setting
-    
   end
 end

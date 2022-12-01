@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 require "action_controller"
 require "action_controller/base"

@@ -5,7 +5,7 @@ module ShopifyApp
   module Itp
     extend ActiveSupport::Concern
     included do
-      ShopifyApp::Logger.deprecated("Itp will be removed in an upcoming version","22.0.0")
+      ShopifyApp::Logger.deprecated("Itp will be removed in an upcoming version", "22.0.0")
     end
 
     private

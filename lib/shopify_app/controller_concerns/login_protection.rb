@@ -91,7 +91,7 @@ module ShopifyApp
           ShopifyApp::Logger.debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
-            
+
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
             jwt_payload = ShopifyAPI::Auth::JwtPayload.new(T.must(matches[1]))
             jwt_payload.shop
