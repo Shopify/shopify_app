@@ -29,7 +29,7 @@ module ShopifyApp
         return redirect_to_login
       end
 
-      unless ShopifyApp.configuration.user_access_scopes_strategy.covered_scopes?(current_shopify_session)
+      unless ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
         clear_shopify_session
         return redirect_to_login
       end

@@ -8,7 +8,7 @@ module ShopifyApp
           false
         end
 
-        def covered_scopes?(*_args)
+        def covers_scopes?(*_args)
           true
         end
       end
