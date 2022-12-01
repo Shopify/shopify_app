@@ -30,9 +30,7 @@ module ShopifyApp
         return redirect_to_login
       end
 
-      unless current_shopify_session.scope.to_a.empty? ||
-          current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
-
+      unless ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
         clear_shopify_session
         return redirect_to_login
       end
