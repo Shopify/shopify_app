@@ -12,11 +12,11 @@ class CustomersDataRequestJob < ActiveJob::Base
 
     if shop.nil?
       logger.error("#{self.class} failed: cannot find shop with domain '#{shop_domain}'")
-      return
+      
+      raise StandardError, "Shop Not Found"
     end
 
     shop.with_shopify_session do
-      logger.info("#{self.class} started for shop '#{shop_domain}'")
     end
   end
 end
