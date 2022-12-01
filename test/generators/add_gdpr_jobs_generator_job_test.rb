@@ -21,8 +21,8 @@ class AddGdprJobsGeneratorJobTest < Rails::Generators::TestCase
   test "creates app uninstalled job file" do
     run_generator
 
-    assert_file "app/jobs/customer_data_request_job.rb"
+    assert_file "app/jobs/customers_data_request_job.rb"
     assert_file "app/jobs/shop_redact_job.rb"
-    assert_file "app/jobs/customer_redact_job.rb"
+    assert_file "app/jobs/customers_redact_job.rb"
   end
 end
