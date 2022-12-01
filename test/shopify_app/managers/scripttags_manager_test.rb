@@ -118,6 +118,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
   test "deprecation message is found on initialization" do
     parent_deprecation_setting = ActiveSupport::Deprecation.silenced
     ActiveSupport::Deprecation.silenced = false
+    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
     assert_deprecated(/ScripttagsManager will become deprecated/) do
       ShopifyApp::ScripttagsManager.new("scripttags", "shop_domain")
     end
