@@ -56,10 +56,10 @@ module ShopifyApp
           is_online: online_token_configured?,
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError
-        ShopifyApp::Logger.info("No cookies have been found - cookie name: #{cookie_name}")
+        ShopifyApp::Logger.warn("No cookies have been found - cookie name: #{cookie_name}")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        ShopifyApp::Logger.info("Invalid JWT token for current Shopify session")
+        ShopifyApp::Logger.warn("Invalid JWT token for current Shopify session")
         nil
       end
     end
