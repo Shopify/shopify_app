@@ -11,7 +11,7 @@ module ShopifyApp
     included do
       if ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
         message = <<~EOS
-          We detected the use of incompatible concerns (RequireKnownShop and LoginProtection) in #{name},
+          We detected the use of incompatible concerns (RequireKnownShop/EnsureInstalled and LoginProtection) in #{name},
           which may lead to unpredictable behavior. In a future release of this library this will raise an error.
         EOS
         ShopifyApp::Logger.deprecated(message, "22.0.0")

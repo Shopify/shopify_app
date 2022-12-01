@@ -26,13 +26,12 @@ class AuthenticatedTest < ActionController::TestCase
     ActiveSupport::Deprecation.silenced = false
     ShopifyAPI::Context.stubs(:log_level).returns(:warn)
 
-    assert_deprecated(/Authenticated has been replaced by to EnsureHasSession./) do
+    assert_deprecated(/Authenticated has been replaced by EnsureHasSession./) do
       Class.new(ApplicationController) do
         include ShopifyApp::Authenticated
       end
     end
 
     ActiveSupport::Deprecation.silenced = parent_deprecation_setting
-    
   end
 end
