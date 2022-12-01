@@ -13,7 +13,7 @@ class AppUninstalledJob < ActiveJob::Base
     if shop.nil?
       logger.error("#{self.class} failed: cannot find shop with domain '#{shop_domain}'")
       
-      raise StandardError, "Shop Not Found"
+      raise ActiveRecord::RecordNotFound, "Shop Not Found"
     end
 
     logger.info("#{self.class} started for shop '#{shop_domain}'")
