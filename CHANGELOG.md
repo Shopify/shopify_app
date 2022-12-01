@@ -8,6 +8,7 @@ Unreleased
 * Emit a deprecation notice for wrongly-rescued exceptions [#1530](https://github.com/Shopify/shopify_app/pull/1530)
 * Log a deprecation warning for the use of incompatible controller concerns [#1560](https://github.com/Shopify/shopify_app/pull/1560)
 * Fixes bug with expired sessions for embedded apps returning a 500 instead of 401 [#1580](https://github.com/Shopify/shopify_app/pull/1580)
+* Generator properly handles uninstall [#1597](https://github.com/Shopify/shopify_app/pull/1597)
 
 21.2.0 (Oct 25, 2022)
 ----------
