@@ -20,7 +20,10 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      return if params[:shop].blank?
+    if params[:shop].blank?
+      ShopifyApp::Logger.info("Could not identify installed store from current_shopify_domain")
+      return
+    end
 
       @shopify_domain ||= ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
       ShopifyApp::Logger.info("Installed store:  #{@shopify_domain} - deduced from Shopify Admin params")
