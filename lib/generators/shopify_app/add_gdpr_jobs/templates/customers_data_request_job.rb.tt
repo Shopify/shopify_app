@@ -1,4 +1,4 @@
-class <%= @job_class_name %> < ActiveJob::Base
+class CustomersDataRequestJob < ActiveJob::Base
   extend ShopifyAPI::Webhooks::Handler
 
   class << self

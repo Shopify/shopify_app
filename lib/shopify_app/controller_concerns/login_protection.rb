@@ -30,9 +30,7 @@ module ShopifyApp
         return redirect_to_login
       end
 
-      unless current_shopify_session.scope.to_a.empty? ||
-          current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
-
+      unless ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
         clear_shopify_session
         return redirect_to_login
       end
@@ -121,7 +119,7 @@ module ShopifyApp
     end
 
     def redirect_to_login
-      if request.xhr?
+      if requested_by_javascript?
         add_top_level_redirection_headers(ignore_response_code: true)
         ShopifyApp::Logger.debug("Login redirect request is a XHR")
         head(:unauthorized)
@@ -204,6 +202,8 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
+        raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+
         render("shopify_app/shared/redirect", layout: false,
           locals: { url: url, current_shopify_domain: current_shopify_domain })
       else
@@ -213,14 +213,13 @@ module ShopifyApp
 
     def current_shopify_domain
       shopify_domain = sanitized_shop_name || current_shopify_session&.shop
-
       ShopifyApp::Logger.info("Current Shopify Domain - #{shopify_domain}")
-      return shopify_domain if shopify_domain.present?
-
-      raise ::ShopifyApp::ShopifyDomainNotFound
+      shopify_domain
     end
 
     def return_address
+      return base_return_address if current_shopify_domain.nil?
+
       return_address_with_params(shop: current_shopify_domain, host: host)
     rescue ::ShopifyApp::ShopifyDomainNotFound, ::ShopifyApp::ShopifyHostNotFound
       base_return_address
@@ -264,6 +263,12 @@ module ShopifyApp
       return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
 
       online_token_configured?
+    end
+
+    def requested_by_javascript?
+      request.xhr? ||
+        request.content_type == "text/javascript" ||
+        request.content_type == "application/javascript"
     end
   end
 end
