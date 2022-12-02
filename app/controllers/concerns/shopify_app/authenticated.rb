@@ -6,7 +6,7 @@ module ShopifyApp
 
     included do
       ShopifyApp::Logger.deprecated("Authenticated has been replaced by EnsureHasSession."\
-        " Please use EnsureHasSession controller concern for the same behavior", "22.0.0")
+        " Please use the EnsureHasSession controller concern for the same behavior", "22.0.0")
     end
 
     include ShopifyApp::EnsureHasSession

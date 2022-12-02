@@ -96,7 +96,7 @@ class RequireKnownShopTest < ActionController::TestCase
     ActiveSupport::Deprecation.silenced = false
     ShopifyAPI::Context.stubs(:log_level).returns(:warn)
 
-    assert_deprecated(/RequireKnownShop has been replaced by to EnsureInstalled./) do
+    assert_deprecated(/RequireKnownShop has been replaced by EnsureInstalled./) do
       Class.new(ApplicationController) do
         include ShopifyApp::RequireKnownShop
       end
