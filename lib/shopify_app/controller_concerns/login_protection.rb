@@ -214,6 +214,7 @@ module ShopifyApp
     def current_shopify_domain
       shopify_domain = sanitized_shop_name || current_shopify_session&.shop
 
+      ShopifyApp::Logger.info("Current Shopify Domain - #{shopify_domain}")
       return shopify_domain if shopify_domain.present?
 
       raise ::ShopifyApp::ShopifyDomainNotFound

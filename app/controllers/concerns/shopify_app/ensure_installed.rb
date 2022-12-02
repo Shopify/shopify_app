@@ -23,6 +23,8 @@ module ShopifyApp
       return if params[:shop].blank?
 
       @shopify_domain ||= ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
+      ShopifyApp::Logger.info("Current Shopify Domain - #{@shopify_domain}")
+      @shopify_domain
     end
 
     private
