@@ -213,7 +213,7 @@ module ShopifyApp
 
     def current_shopify_domain
       shopify_domain = sanitized_shop_name || current_shopify_session&.shop
-      ShopifyApp::Logger.info("Current Shopify Domain - #{shopify_domain}")
+      ShopifyApp::Logger.info("Installed store  - #{shopify_domain} deduced from user session")
       shopify_domain
     end
 
