@@ -2,7 +2,7 @@
 
 class HomeController < ApplicationController
   include ShopifyApp::EmbeddedApp
-  include ShopifyApp::RequireKnownShop
+  include ShopifyApp::EnsureInstalled
 
   def index
     "index"

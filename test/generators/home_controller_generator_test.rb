@@ -25,7 +25,7 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
       assert_match "HomeController < ApplicationController", file
       assert_match "include ShopifyApp::ShopAccessScopesVerification", file
       assert_match "include ShopifyApp::EmbeddedApp", file
-      assert_match "include ShopifyApp::RequireKnownShop", file
+      assert_match "include ShopifyApp::EnsureInstalled", file
     end
     assert_file "app/views/home/index.html.erb"
   end

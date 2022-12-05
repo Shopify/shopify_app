@@ -75,13 +75,13 @@ class RequireKnownShopTest < ActionController::TestCase
     assert_deprecated(/incompatible concerns/) do
       Class.new(ApplicationController) do
         include ShopifyApp::RequireKnownShop
-        include ShopifyApp::Authenticated # since this indirectly includes LoginProtection
+        include ShopifyApp::EnsureHasSession # since this indirectly includes LoginProtection
       end
     end
 
     assert_deprecated(/incompatible concerns/) do
       authenticated_controller = Class.new(ApplicationController) do
-        include ShopifyApp::Authenticated
+        include ShopifyApp::EnsureHasSession
       end
 
       Class.new(authenticated_controller) do
