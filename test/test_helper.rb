@@ -59,4 +59,8 @@ class ActiveSupport::TestCase
 
     mock_session
   end
+
+  def assert_within_deprecation_schedule(version_number)
+    assert Gem::Version.create(ShopifyApp::VERSION) < Gem::Version.create(version_number)
+  end
 end
