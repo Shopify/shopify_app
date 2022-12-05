@@ -56,19 +56,30 @@ module ShopifyApp
       assert_equal flash[:error], "Could not log in to Shopify store"
     end
 
-    test "#callback rescued errors other than ShopifyAPI::Error will emit a deprecation notice" do
-      parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-      ActiveSupport::Deprecation.silenced = false
-      ShopifyAPI::Context.stubs(:log_level).returns(:warn)
+    test "#callback rescued shopify errors will not be deprecated" do
 
-      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(StandardError)
-      assert_deprecated(/An error of type StandardError was rescued/) do
-        get :callback,
-          params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
-      end
-      assert_equal flash[:error], "Could not log in to Shopify store"
+      response = ShopifyAPI::Clients::HttpResponse.new(code: 500, headers: {}, body: "")
+      error = ShopifyAPI::Errors::HttpResponseError.new(response: response)
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(error)
+      
+      ShopifyApp::Logger.expects(:deprecated).never
+      get :callback, params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+    end
 
-      ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+    test "#callback rescued non-shopify errors will be deprecated" do
+      error = StandardError.new
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(error)
+
+      message = <<~EOS
+        An error of type #{error.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
+        bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
+        than rescuing it.
+      EOS
+      version = "22.0.0"
+
+      assert_within_deprecation_schedule(version)
+      ShopifyApp::Logger.expects(:deprecated).with(message, version)
+      get :callback, params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
     test "#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback" do
