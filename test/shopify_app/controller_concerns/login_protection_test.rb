@@ -32,11 +32,13 @@ class LoginProtectionController < ActionController::Base
   end
 
   def raise_unauthorized
-    raise ShopifyAPI::Errors::HttpResponseError.new(code: 401), "unauthorized"
+    unauthorized_response = ShopifyAPI::Clients::HttpResponse.new(code: 401, headers: {}, body: "")
+    raise ShopifyAPI::Errors::HttpResponseError.new(response: unauthorized_response), "unauthorized"
   end
 
   def raise_not_found
-    raise ShopifyAPI::Errors::HttpResponseError.new(code: 404), "not found"
+    not_found_response = ShopifyAPI::Clients::HttpResponse.new(code: 404, headers: {}, body: "")
+    raise ShopifyAPI::Errors::HttpResponseError.new(response: not_found_response), "not found"
   end
 end
 
