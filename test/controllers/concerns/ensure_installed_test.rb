@@ -65,7 +65,7 @@ class EnsureInstalledTest < ActionController::TestCase
     version = "22.0.0"
     ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
     ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", "22.0.0")
-    
+
     Class.new(ApplicationController) do
       include ShopifyApp::LoginProtection
       include ShopifyApp::EnsureInstalled

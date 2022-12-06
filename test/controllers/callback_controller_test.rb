@@ -57,13 +57,13 @@ module ShopifyApp
     end
 
     test "#callback rescued shopify errors will not be deprecated" do
-
       response = ShopifyAPI::Clients::HttpResponse.new(code: 500, headers: {}, body: "")
       error = ShopifyAPI::Errors::HttpResponseError.new(response: response)
       ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(error)
-      
+
       ShopifyApp::Logger.expects(:deprecated).never
-      get :callback, params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
     test "#callback rescued non-shopify errors will be deprecated" do
@@ -79,7 +79,8 @@ module ShopifyApp
 
       assert_within_deprecation_schedule(version)
       ShopifyApp::Logger.expects(:deprecated).with(message, version)
-      get :callback, params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
     test "#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback" do

@@ -24,7 +24,7 @@ module ShopifyApp
             bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
             than rescuing it.
           EOS
-          ShopifyApp::Logger.deprecated(message, "22.0.0") 
+          ShopifyApp::Logger.deprecated(message, "22.0.0")
         end
         return respond_with_error
       end
