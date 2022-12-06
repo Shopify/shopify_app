@@ -10,14 +10,14 @@ module ShopifyApp
       ActiveSupport::Deprecation.warn("[#{version}] #{context(:warn)} #{message}")
     end
 
+    private
+
     def self.context(log_level)
       current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
       "[ ShopifyApp | #{log_level.to_s.upcase} | #{current_shop} ]"
     end
 
-    private
-
-    def valid_version(version)
+    def self.valid_version(version)
       current_version = Gem::Version.create(ShopifyApp::VERSION)
       deprecate_version = Gem::Version.create(version)
       current_version < deprecate_version
