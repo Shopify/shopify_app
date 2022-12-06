@@ -59,7 +59,9 @@ class ActiveSupport::TestCase
 
     mock_session
   end
-
+##
+# If a test fails with this assertion it means the behavior should now be removed from the codebase. 
+# The deprecation schedule gives users time to upgrade before the functionality can safely removed.
   def assert_within_deprecation_schedule(version_number)
     assert Gem::Version.create(ShopifyApp::VERSION) < Gem::Version.create(version_number)
   end
