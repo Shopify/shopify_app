@@ -469,18 +469,17 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
-    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
+    version = "22.0.0"
 
-    assert_deprecated(/incompatible concerns/) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::LoginProtection
-        include ShopifyApp::EnsureInstalled
-      end
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::LoginProtection
+      include ShopifyApp::EnsureInstalled
     end
 
-    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+    assert_within_deprecation_schedule(version)
   end
 
   private

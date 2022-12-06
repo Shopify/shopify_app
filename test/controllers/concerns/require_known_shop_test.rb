@@ -62,46 +62,52 @@ class RequireKnownShopTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
-    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
-    assert_deprecated(/incompatible concerns/) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::RequireKnownShop
-        include ShopifyApp::LoginProtection
-      end
+    replaced_message = "RequireKnownShop has been replaced by EnsureInstalled."\
+      " Please use the EnsureInstalled controller concern for the same behavior"
+
+    version = "22.0.0"
+
+    
+    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
+    ShopifyApp::Logger.stubs(:deprecated).with(replaced_message, version)
+
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
+      include ShopifyApp::LoginProtection
     end
 
-    assert_deprecated(/incompatible concerns/) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::RequireKnownShop
-        include ShopifyApp::EnsureHasSession # since this indirectly includes LoginProtection
-      end
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
+      include ShopifyApp::EnsureHasSession # since this indirectly includes LoginProtection
     end
 
-    assert_deprecated(/incompatible concerns/) do
-      authenticated_controller = Class.new(ApplicationController) do
-        include ShopifyApp::EnsureHasSession
-      end
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
 
-      Class.new(authenticated_controller) do
-        include ShopifyApp::RequireKnownShop
-      end
+    authenticated_controller = Class.new(ApplicationController) do
+      include ShopifyApp::EnsureHasSession
     end
-    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+
+    Class.new(authenticated_controller) do
+      include ShopifyApp::RequireKnownShop
+    end
+
+    assert_within_deprecation_schedule(version)
   end
 
   test "detects name change deprecation message" do
-    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
+    message = "RequireKnownShop has been replaced by EnsureInstalled."\
+      " Please use the EnsureInstalled controller concern for the same behavior"
+    version = "22.0.0"
+    ShopifyApp::Logger.expects(:deprecated).with(message, version)
 
-    assert_deprecated(/RequireKnownShop has been replaced by EnsureInstalled./) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::RequireKnownShop
-      end
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
     end
 
-    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+    assert_within_deprecation_schedule(version)
   end
 end

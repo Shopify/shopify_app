@@ -21,16 +21,13 @@ class AuthenticatedTest < ActionController::TestCase
   end
 
   test "detects deprecation message" do
-    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
-
-    assert_deprecated(/Authenticated has been replaced by EnsureHasSession./) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::Authenticated
-      end
+    version = "22.0.0"
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/Authenticated has been replaced by EnsureHasSession./), version)
+    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
+    Class.new(ApplicationController) do
+      include ShopifyApp::Authenticated
     end
 
-    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+    assert_within_deprecation_schedule(version)
   end
 end

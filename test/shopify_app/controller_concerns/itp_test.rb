@@ -7,14 +7,15 @@ require "action_view/testing/resolvers"
 
 class ItpTest < ActionController::TestCase
   test "detects deprecation notice" do
-    parent_deprecation_setting = ActiveSupport::Deprecation.silenced
-    ActiveSupport::Deprecation.silenced = false
-    ShopifyAPI::Context.stubs(:log_level).returns(:warn)
-    assert_deprecated(/Itp will be removed/) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::Itp
-      end
+    message = "Itp will be removed in an upcoming version"
+    version = "22.0.0"
+
+    ShopifyApp::Logger.expects(:deprecated).with(message, version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::Itp
     end
-    ActiveSupport::Deprecation.silenced = parent_deprecation_setting
+
+    assert_within_deprecation_schedule(version)
   end
 end
