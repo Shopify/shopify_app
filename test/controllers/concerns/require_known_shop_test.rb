@@ -67,7 +67,6 @@ class RequireKnownShopTest < ActionController::TestCase
 
     version = "22.0.0"
 
-    
     ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
     ShopifyApp::Logger.stubs(:deprecated).with(replaced_message, version)
 
