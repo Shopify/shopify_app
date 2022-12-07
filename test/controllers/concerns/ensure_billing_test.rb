@@ -24,16 +24,13 @@ class EnsureBillingTest < ActionController::TestCase
       get "/billing", to: "ensure_billing_test/billing_test#index"
     end
 
-    ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
-
     @session = ShopifyAPI::Auth::Session.new(
       id: "1234",
       shop: SHOP,
       access_token: "access-token",
       scope: ["read_products"],
     )
-    ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session).returns(@session)
+    @controller.stubs(:current_shopify_session).returns(@session)
 
     @api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
     ShopifyApp.configuration.api_version = @api_version
