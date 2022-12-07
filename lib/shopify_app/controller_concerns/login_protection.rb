@@ -9,11 +9,12 @@ module ShopifyApp
     include ShopifyApp::SanitizedParams
 
     included do
-      if ancestors.include?(ShopifyApp::RequireKnownShop)
-        ActiveSupport::Deprecation.warn(<<~EOS)
-          We detected the use of incompatible concerns (RequireKnownShop and LoginProtection) in #{name},
+      if ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
+        message = <<~EOS
+          We detected the use of incompatible concerns (RequireKnownShop/EnsureInstalled and LoginProtection) in #{name},
           which may lead to unpredictable behavior. In a future release of this library this will raise an error.
         EOS
+        ShopifyApp::Logger.deprecated(message, "22.0.0")
       end
 
       after_action :set_test_cookie
@@ -53,10 +54,10 @@ module ShopifyApp
           is_online: online_token_configured?,
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError
-        ShopifyApp::Logger.info("No cookies have been found - cookie name: #{cookie_name}")
+        ShopifyApp::Logger.warn("No cookies have been found - cookie name: #{cookie_name}")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        ShopifyApp::Logger.info("Invalid JWT token for current Shopify session")
+        ShopifyApp::Logger.warn("Invalid JWT token for current Shopify session")
         nil
       end
     end
@@ -88,6 +89,7 @@ module ShopifyApp
           ShopifyApp::Logger.debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
+
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
             jwt_payload = ShopifyAPI::Auth::JwtPayload.new(T.must(matches[1]))
             jwt_payload.shop
@@ -210,7 +212,9 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      sanitized_shop_name || current_shopify_session&.shop
+      shopify_domain = sanitized_shop_name || current_shopify_session&.shop
+      ShopifyApp::Logger.info("Installed store  - #{shopify_domain} deduced from user session")
+      shopify_domain
     end
 
     def return_address

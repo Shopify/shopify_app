@@ -32,11 +32,13 @@ class LoginProtectionController < ActionController::Base
   end
 
   def raise_unauthorized
-    raise ShopifyAPI::Errors::HttpResponseError.new(code: 401), "unauthorized"
+    unauthorized_response = ShopifyAPI::Clients::HttpResponse.new(code: 401, headers: {}, body: "")
+    raise ShopifyAPI::Errors::HttpResponseError.new(response: unauthorized_response), "unauthorized"
   end
 
   def raise_not_found
-    raise ShopifyAPI::Errors::HttpResponseError.new(code: 404), "not found"
+    not_found_response = ShopifyAPI::Clients::HttpResponse.new(code: 404, headers: {}, body: "")
+    raise ShopifyAPI::Errors::HttpResponseError.new(response: not_found_response), "not found"
   end
 end
 
@@ -467,12 +469,17 @@ class LoginProtectionControllerTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
-    assert_deprecated(/incompatible concerns/) do
-      Class.new(ApplicationController) do
-        include ShopifyApp::LoginProtection
-        include ShopifyApp::RequireKnownShop
-      end
+    version = "22.0.0"
+
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::LoginProtection
+      include ShopifyApp::EnsureInstalled
     end
+
+    assert_within_deprecation_schedule(version)
   end
 
   private

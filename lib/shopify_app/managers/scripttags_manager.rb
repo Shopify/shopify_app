@@ -24,6 +24,7 @@ module ShopifyApp
     attr_reader :required_scripttags, :shop_domain
 
     def initialize(scripttags, shop_domain)
+      ShopifyApp::Logger.deprecated("The ScripttagsManager will become deprecated in an upcoming version", "22.0.0")
       @required_scripttags = scripttags
       @shop_domain = shop_domain
     end

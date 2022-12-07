@@ -2,9 +2,9 @@
 
 require "test_helper"
 
-class RequireKnownShopTest < ActionController::TestCase
+class EnsureInstalledTest < ActionController::TestCase
   class UnauthenticatedTestController < ActionController::Base
-    include ShopifyApp::RequireKnownShop
+    include ShopifyApp::EnsureInstalled
 
     def index
       render(html: "<h1>Success</ h1>")
@@ -15,7 +15,7 @@ class RequireKnownShopTest < ActionController::TestCase
 
   setup do
     Rails.application.routes.draw do
-      get "/unauthenticated_test", to: "require_known_shop_test/unauthenticated_test#index"
+      get "/unauthenticated_test", to: "ensure_installed_test/unauthenticated_test#index"
     end
   end
 
@@ -62,49 +62,27 @@ class RequireKnownShopTest < ActionController::TestCase
   end
 
   test "detects incompatible controller concerns" do
-    replaced_message = "RequireKnownShop has been replaced by EnsureInstalled."\
-      " Please use the EnsureInstalled controller concern for the same behavior"
-
     version = "22.0.0"
-
-    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
-    ShopifyApp::Logger.stubs(:deprecated).with(replaced_message, version)
-
     ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", "22.0.0")
 
     Class.new(ApplicationController) do
-      include ShopifyApp::RequireKnownShop
       include ShopifyApp::LoginProtection
+      include ShopifyApp::EnsureInstalled
     end
 
     ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
-
     Class.new(ApplicationController) do
-      include ShopifyApp::RequireKnownShop
       include ShopifyApp::EnsureHasSession # since this indirectly includes LoginProtection
+      include ShopifyApp::EnsureInstalled
     end
 
     ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
-
     authenticated_controller = Class.new(ApplicationController) do
       include ShopifyApp::EnsureHasSession
     end
-
     Class.new(authenticated_controller) do
-      include ShopifyApp::RequireKnownShop
-    end
-
-    assert_within_deprecation_schedule(version)
-  end
-
-  test "detects name change deprecation message" do
-    message = "RequireKnownShop has been replaced by EnsureInstalled."\
-      " Please use the EnsureInstalled controller concern for the same behavior"
-    version = "22.0.0"
-    ShopifyApp::Logger.expects(:deprecated).with(message, version)
-
-    Class.new(ApplicationController) do
-      include ShopifyApp::RequireKnownShop
+      include ShopifyApp::EnsureInstalled
     end
 
     assert_within_deprecation_schedule(version)

@@ -37,6 +37,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
               is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
               is_embedded: ShopifyApp.configuration.embedded_app,
               session_storage: ShopifyApp::SessionRepository,
+              log_level: :info,
               logger: Rails.logger,
               private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
               user_agent_prefix: "ShopifyApp/\#{ShopifyApp::VERSION}"
