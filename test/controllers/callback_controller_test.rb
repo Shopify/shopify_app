@@ -28,23 +28,22 @@ module ShopifyApp
       ShopifyApp::SessionRepository.user_storage = nil
       ShopifyAppConfigurer.setup_context
       I18n.locale = :en
-
+      @stubbed_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token")
+      @stubbed_cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now)
+      host = Base64.strict_encode64("#{ShopifyAPI::Context.host_name}/admin")
+      @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
+                           hmac: "hmac", }
+      @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
       request.env["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)"\
         "AppleWebKit/537.36 (KHTML, like Gecko)"\
         "Chrome/69.0.3497.100 Safari/537.36"
-    end
-
-    test "#callback flashes error when omniauth is not present" do
-      get :callback,
-        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
-      assert_equal flash[:error], "Could not log in to Shopify store"
+      ShopifyApp::SessionRepository.stubs(:store_session)
     end
 
     test "#callback flashes error in Spanish" do
-      I18n.locale = :es
+      I18n.expects(:t).with("could_not_log_in")
       get :callback,
         params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
-      assert_match "sesión", flash[:error]
     end
 
     test "#callback rescued errors of ShopifyAPI::Error will not emit a deprecation notice" do
@@ -87,6 +86,53 @@ module ShopifyApp
       mock_oauth
 
       get :callback, params: @callback_params
+    end
+
+    test "#callback saves the session when validated by API library" do
+      mock_oauth
+      ShopifyApp::SessionRepository.expects(:store_session).with(@stubbed_session)
+
+      get :callback, params: @callback_params
+    end
+
+    test "#callback sets the shopify_user_id in the Rails session when session is online" do
+      associated_user = ShopifyAPI::Auth::AssociatedUser.new(
+        id: 42,
+        first_name: "LeeeEEeeeeee3roy",
+        last_name: "Jenkins",
+        email: "dat_email@tho.com",
+        email_verified: true,
+        locale: "en",
+        collaborator: true,
+        account_owner: true,
+      )
+      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: true,
+        associated_user: associated_user)
+      mock_oauth(session: mock_session)
+      get :callback, params: @callback_params
+      assert_equal session[:shopify_user_id], associated_user.id
+    end
+
+    test "#callback DOES NOT set the shopify_user_id in the Rails session when session is offline" do
+      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: false)
+      mock_oauth(session: mock_session)
+      get :callback, params: @callback_params
+      assert_nil session[:shopify_user_id]
+    end
+
+    test "#callback sets encrypted cookie if API library returns cookie object" do
+      cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "snickerdoodle", expires: Time.now + 1.day)
+      mock_oauth(cookie: cookie)
+
+      get :callback, params: @callback_params
+      assert_equal cookies.encrypted[cookie.name], cookie.value
+    end
+
+    test "#callback does not set encrypted cookie if API library returns empty cookie" do
+      mock_oauth
+
+      get :callback, params: @callback_params
+      refute_equal cookies.encrypted[@stubbed_cookie.name], @stubbed_cookie.value
     end
 
     test "#callback starts the WebhooksManager if webhooks are configured" do
@@ -238,11 +284,7 @@ module ShopifyApp
 
     private
 
-    def mock_oauth
-      host = Base64.strict_encode64("#{ShopifyAPI::Context.host_name}/admin")
-      @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
-                           hmac: "hmac", }
-      @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
+    def mock_oauth(cookie: @stubbed_cookie, session: @stubbed_session)
       ShopifyAPI::Auth::Oauth::AuthQuery.stubs(:new).with(**@callback_params).returns(@auth_query)
 
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "nonce"
@@ -253,8 +295,8 @@ module ShopifyApp
             cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
         }, auth_query: @auth_query)
         .returns({
-          cookie: ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now),
-          session: ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token"),
+          cookie: cookie,
+          session: session,
         })
     end
   end
