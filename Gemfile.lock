@@ -151,6 +151,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.13.9-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.13.9-x86_64-linux)
+      racc (~> 1.4)
     oj (3.13.23)
     openssl (3.0.1)
     parallel (1.22.1)
@@ -237,6 +239,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     sqlite3 (1.5.4-arm64-darwin)
+    sqlite3 (1.5.4-x86_64-linux)
     syntax_tree (4.3.0)
       prettier_print (>= 1.0.2)
     thor (1.2.1)
@@ -255,6 +258,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   byebug
