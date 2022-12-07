@@ -1,19 +1,4 @@
 PATH
-  remote: ../shopify-api-ruby
-  specs:
-    shopify_api (12.3.0)
-      activesupport
-      concurrent-ruby
-      hash_diff
-      httparty
-      jwt
-      oj
-      openssl
-      securerandom
-      sorbet-runtime
-      zeitwerk (~> 2.5, < 2.6.5)
-
-PATH
   remote: .
   specs:
     shopify_app (21.2.0)
@@ -151,6 +136,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.13.9-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.13.9-x86_64-darwin)
+      racc (~> 1.4)
     nokogiri (1.13.9-x86_64-linux)
       racc (~> 1.4)
     oj (3.13.23)
@@ -230,6 +217,17 @@ GEM
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     securerandom (0.2.1)
+    shopify_api (12.3.0)
+      activesupport
+      concurrent-ruby
+      hash_diff
+      httparty
+      jwt
+      oj
+      openssl
+      securerandom
+      sorbet-runtime
+      zeitwerk (~> 2.5, < 2.6.5)
     sorbet-runtime (0.5.10576)
     sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
@@ -239,6 +237,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     sqlite3 (1.5.4-arm64-darwin)
+    sqlite3 (1.5.4-x86_64-darwin)
     sqlite3 (1.5.4-x86_64-linux)
     syntax_tree (4.3.0)
       prettier_print (>= 1.0.2)
@@ -258,6 +257,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-darwin-19
   x86_64-linux
 
 DEPENDENCIES
@@ -273,7 +273,6 @@ DEPENDENCIES
   rb-readline
   rubocop-shopify
   ruby-lsp
-  shopify_api!
   shopify_app!
   sqlite3 (~> 1.4)
   webmock
