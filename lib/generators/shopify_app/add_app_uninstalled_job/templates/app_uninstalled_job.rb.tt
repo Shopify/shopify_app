@@ -1,4 +1,4 @@
-class <%= @job_class_name %> < ActiveJob::Base
+class AppUninstalledJob < ActiveJob::Base
   extend ShopifyAPI::Webhooks::Handler
 
   class << self
@@ -16,7 +16,7 @@ class <%= @job_class_name %> < ActiveJob::Base
       raise ActiveRecord::RecordNotFound, "Shop Not Found"
     end
 
-    shop.with_shopify_session do
-    end
+    logger.info("#{self.class} started for shop '#{shop_domain}'")
+    shop.destroy
   end
 end

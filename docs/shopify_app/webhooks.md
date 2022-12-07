@@ -3,6 +3,7 @@
 #### Table of contents
 
 [Manage webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
+[Mandatory GDPR Webhooks](#mandatory-gdpr-webhooks)
 
 ## Manage webhooks using `ShopifyApp::WebhooksManager`
 
@@ -70,3 +71,15 @@ rails g shopify_app:add_webhook --topic carts/update --path webhooks/carts_updat
 ```
 
 Where `--topic` is the topic and `--path` is the path the webhook should be sent to.
+
+## Mandatory GDPR Webhooks
+
+We have three mandatory GDPR webhooks
+
+1. `customers/data_request`
+2. `customer/redact`
+3. `shop/redact`
+
+The `generate shopify_app` command generated three job templates corresponding to all three of these webhooks.
+To pass our approval process you will need to set these webhooks in your partner dashboard.
+You can read more about that [here](https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks).
