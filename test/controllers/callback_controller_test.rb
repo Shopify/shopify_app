@@ -96,7 +96,7 @@ module ShopifyApp
       get :callback, params: @callback_params
     end
 
-    test "#callback returns not found if the host in the param doesn't match configuration indicating a potential phishing attack" do
+    test "#callback returns to root if the host in the param doesn't match configuration indicating a potential phishing attack" do
       host = "hackerman-evil-site.com/hide-yo-wife-hide-yo-kids"
       encoded_host = Base64.strict_encode64(host + "/admin")
       hacker_params = @callback_params.dup
@@ -108,7 +108,7 @@ module ShopifyApp
       })
 
       get :callback, params: hacker_params
-      assert_response 404
+      assert_redirected_to ShopifyApp.configuration.root_url
     end
 
     test "#callback sets the shopify_user_id in the Rails session when session is online" do
