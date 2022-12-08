@@ -5,7 +5,6 @@ require "browser_sniffer"
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
-    include ShopifyApp::Itp
     include ShopifyApp::SanitizedParams
 
     included do
@@ -17,7 +16,6 @@ module ShopifyApp
         ShopifyApp::Logger.deprecated(message, "22.0.0")
       end
 
-      after_action :set_test_cookie
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
