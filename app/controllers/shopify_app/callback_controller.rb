@@ -79,7 +79,7 @@ module ShopifyApp
     end
 
     def decoded_host
-      @decoded_hots ||= ShopifyAPI::Auth.embedded_app_url(params[:host])
+      @decoded_host ||= ShopifyAPI::Auth.embedded_app_url(params[:host])
     end
 
     # host param doesn't match the configured myshopify_domain
