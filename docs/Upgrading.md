@@ -39,7 +39,7 @@ We also recommend the use of a staging site which matches your production enviro
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
 
 ## Upgrading to 21.3.0
-The `Itp` controller concern has been removed from `LoginProtection`.
+The `Itp` controller concern has been removed from `LoginProtection` which is included by the `Authenticated` controller concern.
 If any of your controllers are dependant on methods from `Itp` then you can include `ShopifyApp::Itp` directly.
 You may notice a deprecation notice saying, `Itp will be removed in an upcoming version`.
 This is because we intend on removing `Itp` completely in `v22.0.0`, but this will work in the meantime.
