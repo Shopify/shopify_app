@@ -71,7 +71,8 @@ module ShopifyApp
     def redirect_to_app
       if ShopifyAPI::Context.embedded?
         return_to = session.delete(:return_to) || ""
-        return head :not_found if deduced_phishing_attack?
+        return head(:not_found) if deduced_phishing_attack?
+
         redirect_to(sanitized_host + return_to, allow_other_host: true)
       else
         redirect_to(return_address)
