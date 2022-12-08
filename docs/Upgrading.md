@@ -6,6 +6,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [General Advice](#general-advice)
 
+[Unreleased](#unreleased)
+
 [Upgrading to `v20.3.0`](#upgrading-to-v2030)
 
 [Upgrading to `v20.2.0`](#upgrading-to-v2020)
@@ -35,6 +37,12 @@ If you need to upgrade by more than one major version (e.g. from v18 to v20), we
 We also recommend the use of a staging site which matches your production environment as closely as possible.
 
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
+
+## Unreleased
+The `Itp` controller concern has been removed from `LoginProtection`.
+If any of your controllers are dependant on methods from `Itp` then you can include `ShopifyApp::Itp` directly.
+You may notice a deprecation notice saying, `Itp will be removed in an upcoming version`.
+This is because we intend on removing `Itp` completely in `v22.0.0`, but this will work in the meantime.
 
 ## Upgrading to `v20.3.0`
 Calling `LoginProtection#current_shopify_domain` will no longer raise an error if there is no active session. It will now return a nil value. The internal behavior of raising an error on OAuth redirect is still in place, however. If you were calling `current_shopify_domain` in authenticated actions and expecting an error if nil, you'll need to do a presence check and raise that error within your app.
