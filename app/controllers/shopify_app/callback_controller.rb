@@ -70,7 +70,7 @@ module ShopifyApp
 
     def redirect_to_app
       if ShopifyAPI::Context.embedded?
-        return_to = "#{sanitized_host}#{session.delete(:return_to)}"
+        return_to = "#{decoded_host}#{session.delete(:return_to)}"
         return_to = ShopifyApp.configuration.root_url if deduced_phishing_attack?
         redirect_to(return_to, allow_other_host: true)
       else
@@ -78,16 +78,14 @@ module ShopifyApp
       end
     end
 
-    def deduced_phishing_attack?
-      # host param doesn't match the configured myshopify_domain
-      sanitized_host.nil?
+    def decoded_host
+      @decoded_hots ||= ShopifyAPI::Auth.embedded_app_url(params[:host])
     end
 
-    def sanitized_host
-      @sanitized_host ||= begin
-        decoded_host = ShopifyAPI::Auth.embedded_app_url(params[:host])
-        ShopifyApp::Utils.sanitize_shop_domain(decoded_host)
-      end
+    # host param doesn't match the configured myshopify_domain
+    def deduced_phishing_attack?
+      sanitized_host = ShopifyApp::Utils.sanitize_shop_domain(URI(decoded_host).host)
+      sanitized_host.nil?
     end
 
     def respond_with_error

@@ -256,10 +256,9 @@ module ShopifyApp
     test "#callback redirects to the embedded app url for embedded" do
       mock_oauth
 
-      @controller.stubs(:session).returns({ return_to: "/admin/apps/key" })
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      assert_redirected_to "#{@host}/admin/apps/key"
+      assert_redirected_to "https://#{@host}/admin/apps/key"
     end
 
     test "#callback performs install_webhook job after authentication" do
