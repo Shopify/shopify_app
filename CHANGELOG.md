@@ -11,6 +11,7 @@ Unreleased
 * Generator properly handles uninstall [#1597](https://github.com/Shopify/shopify_app/pull/1597)
 * Move ownership for session persistence from library to this gem [#1563](https://github.com/Shopify/shopify_app/pull/1563)
 * Patch phishing vulnerability [#1605](https://github.com/Shopify/shopify_app/pull/1605)
+* Remove `Itp` from `LoginProtection`. See the [upgrading docs](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for more information. [#1604](https://github.com/Shopify/shopify_app/pull/1604)
 
 21.2.0 (Oct 25, 2022)
 ----------
