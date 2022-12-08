@@ -30,7 +30,8 @@ module ShopifyApp
       I18n.locale = :en
       @stubbed_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token")
       @stubbed_cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now)
-      host = Base64.strict_encode64("#{ShopifyAPI::Context.host_name}/admin")
+      @host = "little-shoppe-of-horrors.#{ShopifyApp.configuration.myshopify_domain}"
+      host = Base64.strict_encode64(@host + "/admin")
       @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
                            hmac: "hmac", }
       @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
@@ -93,6 +94,21 @@ module ShopifyApp
       ShopifyApp::SessionRepository.expects(:store_session).with(@stubbed_session)
 
       get :callback, params: @callback_params
+    end
+
+    test "#callback returns not found if the host in the param doesn't match configuration indicating a potential phishing attack" do
+      host = "hackerman-evil-site.com/hide-yo-wife-hide-yo-kids"
+      encoded_host = Base64.strict_encode64(host + "/admin")
+      hacker_params = @callback_params.dup
+      hacker_params[:host] = encoded_host
+      ShopifyAPI::Auth::Oauth::AuthQuery.stubs(:new).with(**hacker_params).returns(@auth_query)
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).returns({
+        cookie: @stubbed_cookie,
+        session: @stubbed_session,
+      })
+
+      get :callback, params: hacker_params
+      assert_response 404
     end
 
     test "#callback sets the shopify_user_id in the Rails session when session is online" do
@@ -230,17 +246,20 @@ module ShopifyApp
       ShopifyAppConfigurer.setup_context # to reset the context, as there's no attr_writer for embedded
       mock_oauth
 
+      non_embedded_host = "not-real.little-test-shoppe-of-horrs.com"
+      @controller.stubs(:return_address).returns(non_embedded_host)
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      assert_redirected_to "/?host=#{@callback_params[:host]}&shop=#{@callback_params[:shop]}.myshopify.com"
+      assert_redirected_to non_embedded_host
     end
 
     test "#callback redirects to the embedded app url for embedded" do
       mock_oauth
 
+      @controller.stubs(:session).returns({ return_to: "/admin/apps/key" })
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      assert_redirected_to "https://test.host/admin/apps/key"
+      assert_redirected_to "#{@host}/admin/apps/key"
     end
 
     test "#callback performs install_webhook job after authentication" do
