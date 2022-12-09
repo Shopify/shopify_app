@@ -20,7 +20,7 @@ module ShopifyApp
       return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
       perform_post_authenticate_jobs(api_session)
-      respond_successfully if check_billing(api_session)
+      redirect_to_app if check_billing(api_session)
     end
 
     private
@@ -68,13 +68,24 @@ module ShopifyApp
       ShopifyApp::Logger.debug("Saving Shopify user ID to cookie")
     end
 
-    def respond_successfully
+    def redirect_to_app
       if ShopifyAPI::Context.embedded?
-        return_to = session.delete(:return_to) || ""
-        redirect_to(ShopifyAPI::Auth.embedded_app_url(params[:host]) + return_to, allow_other_host: true)
+        return_to = "#{decoded_host}#{session.delete(:return_to)}"
+        return_to = ShopifyApp.configuration.root_url if deduced_phishing_attack?
+        redirect_to(return_to, allow_other_host: true)
       else
         redirect_to(return_address)
       end
+    end
+
+    def decoded_host
+      @decoded_host ||= ShopifyAPI::Auth.embedded_app_url(params[:host])
+    end
+
+    # host param doesn't match the configured myshopify_domain
+    def deduced_phishing_attack?
+      sanitized_host = ShopifyApp::Utils.sanitize_shop_domain(URI(decoded_host).host)
+      sanitized_host.nil?
     end
 
     def respond_with_error
