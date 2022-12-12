@@ -1,6 +1,10 @@
 Unreleased
 ----------
 
+21.3.1 (Dec 12, 2022)
+----------
+* Fix bug with stores using the new unified admin that were falsely being flagged as phishing attempts [#1608](https://github.com/Shopify/shopify_app/pull/1608)
+
 21.3.0 (Dec 9, 2022)
 ----------
 * Move covered scopes check into user access strategy [#1600](https://github.com/Shopify/shopify_app/pull/1600)
