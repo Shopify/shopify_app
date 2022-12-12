@@ -26,6 +26,10 @@ class UtilsTest < ActiveSupport::TestCase
     assert ShopifyApp::Utils.sanitize_shop_domain("MY-shop.myshopify.com")
   end
 
+  test "unified admin is still trusted as a sanitzed domain" do
+    assert ShopifyApp::Utils.sanitize_shop_domain("admin.shopify.com/some_shope_over_the_rainbow")
+  end
+
   ["myshop.com", "myshopify.com", "shopify.com", "two words", "store.myshopify.com.evil.com",
    "/foo/bar", "foo.myshopify.io.evil.ru", "%0a123.myshopify.io",
    "foo.bar.myshopify.io",].each do |bad_url|
