@@ -4,7 +4,7 @@ module ShopifyApp
   module Utils
     TRUSTED_SHOPIFY_DOMAINS = [
       "shopify.com",
-      "shopify.io",
+      "myshopify.io",
       "myshopify.com",
     ].freeze
 
