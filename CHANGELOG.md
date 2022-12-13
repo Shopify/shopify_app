@@ -1,6 +1,6 @@
 Unreleased
 ----------
-* Remove Logged output for rescued JWT exceptions [#1610](https://github.com/Shopify/shopify_app/pull/1610)
+* Removed Logged output for rescued JWT exceptions [#1610](https://github.com/Shopify/shopify_app/pull/1610)
 
 21.3.1 (Dec 12, 2022)
 ----------
