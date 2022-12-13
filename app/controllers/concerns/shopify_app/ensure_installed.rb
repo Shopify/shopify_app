@@ -17,6 +17,7 @@ module ShopifyApp
 
       before_action :check_shop_domain
       before_action :check_shop_known
+      before_action :validate_emebedded_session_is_active, if: :embedded_param?
     end
 
     def current_shopify_domain
@@ -28,6 +29,10 @@ module ShopifyApp
       @shopify_domain ||= ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
       ShopifyApp::Logger.info("Installed store:  #{@shopify_domain} - deduced from Shopify Admin params")
       @shopify_domain
+    end
+
+    def installed_shop_session
+      @installed_shop_session ||= @shop
     end
 
     private
@@ -57,6 +62,13 @@ module ShopifyApp
       )
 
       url.to_s
+    end
+
+    def validate_emebedded_session_is_active
+      client = ShopifyAPI::Clients::Rest::Admin.new(session: installed_shop_session)
+      client.get(path: "shop")
+    rescue ShopifyAPI::Errors::HttpResponseError
+      redirect_for_embedded
     end
   end
 end

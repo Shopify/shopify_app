@@ -87,4 +87,26 @@ class EnsureInstalledTest < ActionController::TestCase
 
     assert_within_deprecation_schedule(version)
   end
+
+  test "redirects to redirect_for_embedded if app is no longer installed according to the API but not the session repository" do
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    uninstalled_http_error = ShopifyAPI::Errors::HttpResponseError.new(
+      response: ShopifyAPI::Clients::HttpResponse.new(
+        code: 404,
+        headers: {},
+        body: "Invalid API key or access token (unrecognized login or wrong password)",
+      ),
+    )
+    client.expects(:get).with(path: "shop").raises(uninstalled_http_error)
+
+    embedded_redirect_url = "reverse_card_on_reverse_card.embedded.joke"
+    ShopifyApp.configuration.stubs(:embedded_redirect_url).returns(embedded_redirect_url)
+
+    @controller.expects(:redirect_for_embedded)
+    get :index, params: { shop: "shop1.myshopify.com", embedded: "1" }
+  end
 end
