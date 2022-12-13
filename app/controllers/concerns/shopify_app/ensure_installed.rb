@@ -17,7 +17,7 @@ module ShopifyApp
 
       before_action :check_shop_domain
       before_action :check_shop_known
-      before_action :validate_emebedded_session_is_active, if: :loaded_directly_from_admin?
+      before_action :validate_emebedded_session_is_active
     end
 
     def current_shopify_domain
@@ -65,6 +65,8 @@ module ShopifyApp
     end
 
     def validate_emebedded_session_is_active
+      return unless loaded_directly_from_admin?
+
       client = ShopifyAPI::Clients::Rest::Admin.new(session: installed_shop_session)
       client.get(path: "shop")
     rescue ShopifyAPI::Errors::HttpResponseError => error
