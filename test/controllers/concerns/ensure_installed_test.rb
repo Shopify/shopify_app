@@ -96,7 +96,7 @@ class EnsureInstalledTest < ActionController::TestCase
     ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
     uninstalled_http_error = ShopifyAPI::Errors::HttpResponseError.new(
       response: ShopifyAPI::Clients::HttpResponse.new(
-        code: 404,
+        code: 401,
         headers: {},
         body: "Invalid API key or access token (unrecognized login or wrong password)",
       ),

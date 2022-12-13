@@ -17,7 +17,7 @@ module ShopifyApp
 
       before_action :check_shop_domain
       before_action :check_shop_known
-      before_action :validate_emebedded_session_is_active, if: :embedded_param?
+      before_action :validate_emebedded_session_is_active, if: :loaded_directly_from_admin?
     end
 
     def current_shopify_domain
@@ -32,7 +32,7 @@ module ShopifyApp
     end
 
     def installed_shop_session
-      @installed_shop_session ||= @shop
+      @installed_shop_session ||= SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
     end
 
     private
@@ -42,7 +42,7 @@ module ShopifyApp
     end
 
     def check_shop_known
-      @shop = SessionRepository.retrieve_shop_session_by_shopify_domain(current_shopify_domain)
+      @shop = installed_shop_session
       unless @shop
         if embedded_param?
           redirect_for_embedded
@@ -67,8 +67,8 @@ module ShopifyApp
     def validate_emebedded_session_is_active
       client = ShopifyAPI::Clients::Rest::Admin.new(session: installed_shop_session)
       client.get(path: "shop")
-    rescue ShopifyAPI::Errors::HttpResponseError
-      redirect_for_embedded
+    rescue ShopifyAPI::Errors::HttpResponseError => error
+      redirect_for_embedded if error.code == 401 # unauthorized due to uninstall
     end
   end
 end
