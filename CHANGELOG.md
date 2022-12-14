@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Validates shop's offline session token is still valid when using `EnsureInstalled`[#1612](https://github.com/Shopify/shopify_app/pull/1612)
 
 21.3.1 (Dec 12, 2022)
 ----------
