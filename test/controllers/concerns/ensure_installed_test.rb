@@ -82,9 +82,17 @@ class EnsureInstalledTest < ActionController::TestCase
     client.expects(:get).with(path: "shop").raises(uninstalled_http_error)
 
     shopify_domain = "shop1.myshopify.com"
-    get :index, params: { shop: shopify_domain }
+    host = "https://tunnel.vision.for.webhooks.com"
 
-    assert_response :redirect
+    get :index, params: { shop: shopify_domain, host: host }
+
+    url = URI(ShopifyApp.configuration.login_url)
+    url.query = URI.encode_www_form(
+      shop: shopify_domain,
+      host: host,
+      return_to: request.fullpath,
+    )
+    assert_redirected_to url.to_s
   end
 
   test "throws an error if the shopify error isn't a 401" do
@@ -104,7 +112,7 @@ class EnsureInstalledTest < ActionController::TestCase
 
     shopify_domain = "shop1.myshopify.com"
 
-   assert_raises ShopifyAPI::Errors::HttpResponseError do
+    assert_raises ShopifyAPI::Errors::HttpResponseError do
       get :index, params: { shop: shopify_domain }
     end
   end
@@ -119,7 +127,7 @@ class EnsureInstalledTest < ActionController::TestCase
 
     shopify_domain = "shop1.myshopify.com"
 
-   assert_raises RuntimeError do
+    assert_raises RuntimeError do
       get :index, params: { shop: shopify_domain }
     end
   end
