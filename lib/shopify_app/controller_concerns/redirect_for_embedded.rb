@@ -15,7 +15,7 @@ module ShopifyApp
     end
 
     def loaded_directly_from_admin?
-      params[:embedded] == "1"
+      ShopifyApp.configuration.embedded_app? && params[:embedded] == "1"
     end
 
     def redirect_for_embedded

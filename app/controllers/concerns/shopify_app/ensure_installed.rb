@@ -65,12 +65,12 @@ module ShopifyApp
     end
 
     def validate_emebedded_session_is_active
-      return unless loaded_directly_from_admin?
+      return if loaded_directly_from_admin?
 
       client = ShopifyAPI::Clients::Rest::Admin.new(session: installed_shop_session)
       client.get(path: "shop")
     rescue ShopifyAPI::Errors::HttpResponseError => error
-      redirect_for_embedded if error.code == 401 # unauthorized due to uninstall
+      redirect_to(shop_login) if error.code == 401
     end
   end
 end
