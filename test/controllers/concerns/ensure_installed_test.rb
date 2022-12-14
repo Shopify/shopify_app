@@ -67,8 +67,6 @@ class EnsureInstalledTest < ActionController::TestCase
   end
 
   test "redirects to login_url (oauth path) to reinstall the app if the store's session token is no longer valid" do
-    ShopifyApp.configuration.stubs(:embedded_app?).returns(true)
-
     session = mock
     ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
 
@@ -87,6 +85,43 @@ class EnsureInstalledTest < ActionController::TestCase
     get :index, params: { shop: shopify_domain }
 
     assert_response :redirect
+  end
+
+  test "throws an error if the shopify error isn't a 401" do
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    uninstalled_http_error = ShopifyAPI::Errors::HttpResponseError.new(
+      response: ShopifyAPI::Clients::HttpResponse.new(
+        code: 404,
+        headers: {},
+        body: "Insert generic message about how we can't find your requests here.",
+      ),
+    )
+    client.expects(:get).with(path: "shop").raises(uninstalled_http_error)
+
+    shopify_domain = "shop1.myshopify.com"
+
+   assert_raises ShopifyAPI::Errors::HttpResponseError do
+      get :index, params: { shop: shopify_domain }
+    end
+  end
+
+  test "throws an error if the request session validation API check fails with an" do
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    client.expects(:get).with(path: "shop").raises(RuntimeError)
+
+    shopify_domain = "shop1.myshopify.com"
+
+   assert_raises RuntimeError do
+      get :index, params: { shop: shopify_domain }
+    end
   end
 
   test "does not perform a session validation check if coming from an embedded" do

@@ -71,6 +71,7 @@ module ShopifyApp
       client.get(path: "shop")
     rescue ShopifyAPI::Errors::HttpResponseError => error
       redirect_to(shop_login) if error.code == 401
+      raise error if error.code != 401
     end
   end
 end
