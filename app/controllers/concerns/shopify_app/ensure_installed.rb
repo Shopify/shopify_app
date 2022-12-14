@@ -17,7 +17,7 @@ module ShopifyApp
 
       before_action :check_shop_domain
       before_action :check_shop_known
-      before_action :validate_emebedded_session_is_active
+      before_action :validate_non_embedded_session
     end
 
     def current_shopify_domain
@@ -64,7 +64,7 @@ module ShopifyApp
       url.to_s
     end
 
-    def validate_emebedded_session_is_active
+    def validate_non_embedded_session
       return if loaded_directly_from_admin?
 
       client = ShopifyAPI::Clients::Rest::Admin.new(session: installed_shop_session)
