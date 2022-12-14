@@ -72,17 +72,8 @@ end
 
 1. Run the `user_model` generator as mentioned above.
 2. Ensure that both your `Shop` model and `User` model includes the necessary concerns `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage`.
-3. Make changes to 2 initializer files as shown below:
+3. Make changes to the `shopify_app.rb` initializer file as shown below:
 ```ruby
-# In the `omniauth.rb` initializer:
-provider :shopify,
-  ...
-  setup: lambda { |env|
-    configuration = ShopifyApp::OmniAuthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
-    configuration.build_options
-  }
-
-# In the `shopify_app.rb` initializer:
 config.shop_session_repository = {YOUR_SHOP_MODEL_CLASS}
 config.user_session_repository = {YOUR_USER_MODEL_CLASS}
 ```
