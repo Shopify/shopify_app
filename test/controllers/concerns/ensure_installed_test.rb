@@ -52,13 +52,48 @@ class EnsureInstalledTest < ActionController::TestCase
   end
 
   test "returns :ok if the shop is installed" do
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(true)
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    client.expects(:get)
 
     shopify_domain = "shop1.myshopify.com"
 
     get :index, params: { shop: shopify_domain }
 
     assert_response :ok
+  end
+
+  test "redirects to login_url (oauth path) to reinstall the app if the store's session token is no longer valid" do
+    ShopifyApp.configuration.stubs(:embedded_app?).returns(true)
+
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    uninstalled_http_error = ShopifyAPI::Errors::HttpResponseError.new(
+      response: ShopifyAPI::Clients::HttpResponse.new(
+        code: 401,
+        headers: {},
+        body: "Invalid API key or access token (unrecognized login or wrong password)",
+      ),
+    )
+    client.expects(:get).with(path: "shop").raises(uninstalled_http_error)
+
+    shopify_domain = "shop1.myshopify.com"
+    get :index, params: { shop: shopify_domain }
+
+    assert_response :redirect
+  end
+
+  test "does not perform a session validation check if coming from an embedded" do
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain)
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).never
+
+    get :index, params: { shop: "shop1.myshopify.com" }
   end
 
   test "detects incompatible controller concerns" do
@@ -86,27 +121,5 @@ class EnsureInstalledTest < ActionController::TestCase
     end
 
     assert_within_deprecation_schedule(version)
-  end
-
-  test "redirects to redirect_for_embedded if app is no longer installed according to the API but not the session repository" do
-    session = mock
-    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
-
-    client = mock
-    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
-    uninstalled_http_error = ShopifyAPI::Errors::HttpResponseError.new(
-      response: ShopifyAPI::Clients::HttpResponse.new(
-        code: 401,
-        headers: {},
-        body: "Invalid API key or access token (unrecognized login or wrong password)",
-      ),
-    )
-    client.expects(:get).with(path: "shop").raises(uninstalled_http_error)
-
-    embedded_redirect_url = "reverse_card_on_reverse_card.embedded.joke"
-    ShopifyApp.configuration.stubs(:embedded_redirect_url).returns(embedded_redirect_url)
-
-    @controller.expects(:redirect_for_embedded)
-    get :index, params: { shop: "shop1.myshopify.com", embedded: "1" }
   end
 end

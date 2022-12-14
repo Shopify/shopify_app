@@ -52,7 +52,12 @@ class RequireKnownShopTest < ActionController::TestCase
   end
 
   test "returns :ok if the shop is installed" do
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(true)
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    client.expects(:get)
 
     shopify_domain = "shop1.myshopify.com"
 
