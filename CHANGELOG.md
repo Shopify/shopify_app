@@ -1,7 +1,26 @@
 Unreleased
 ----------
 * Fixes a bug with `ShopifyApp::WebhooksManager.destroy_webhooks` causing not passing session arguments to [unregister](https://github.com/Shopify/shopify-api-ruby/blob/main/lib/shopify_api/webhooks/registry.rb#L99) method [#1569](https://github.com/Shopify/shopify_app/pull/1569)
+* Validates shop's offline session token is still valid when using `EnsureInstalled`[#1612](https://github.com/Shopify/shopify_app/pull/1612)
+
+21.3.1 (Dec 12, 2022)
+----------
+* Fix bug with stores using the new unified admin that were falsely being flagged as phishing attempts [#1608](https://github.com/Shopify/shopify_app/pull/1608)
+
+21.3.0 (Dec 9, 2022)
+----------
+* Move covered scopes check into user access strategy [#1600](https://github.com/Shopify/shopify_app/pull/1600)
+* Add configuration option for user access strategy [#1599](https://github.com/Shopify/shopify_app/pull/1599)
 * Fixes a bug with `EnsureAuthenticatedLinks` causing deep links to not work [#1549](https://github.com/Shopify/shopify_app/pull/1549)
+* Ensure online token is properly used when using `current_shopify_session` [#1566](https://github.com/Shopify/shopify_app/pull/1566)
+* Added debug logs, you can read more about logging [here](./docs/logging.md). [#1545](https://github.com/Shopify/shopify_app/pull/1545)
+* Emit a deprecation notice for wrongly-rescued exceptions [#1530](https://github.com/Shopify/shopify_app/pull/1530)
+* Log a deprecation warning for the use of incompatible controller concerns [#1560](https://github.com/Shopify/shopify_app/pull/1560)
+* Fixes bug with expired sessions for embedded apps returning a 500 instead of 401 [#1580](https://github.com/Shopify/shopify_app/pull/1580)
+* Generator properly handles uninstall [#1597](https://github.com/Shopify/shopify_app/pull/1597)
+* Move ownership for session persistence from library to this gem [#1563](https://github.com/Shopify/shopify_app/pull/1563)
+* Patch phishing vulnerability [#1605](https://github.com/Shopify/shopify_app/pull/1605)
+* Remove `Itp` from `LoginProtection`. See the [upgrading docs](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for more information. [#1604](https://github.com/Shopify/shopify_app/pull/1604)
 
 21.2.0 (Oct 25, 2022)
 ----------

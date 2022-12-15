@@ -7,8 +7,14 @@ ShopifyApp.configure do |config|
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'Shop'
-
+  config.log_level = :info
   config.reauth_on_access_scope_changes = true
+  config.webhooks = [
+    { topic: "app/uninstalled", address: "webhooks/app_uninstalled"},
+    { topic: "customers/data_request", address: "webhooks/customers_data_request" },
+    { topic: "customer/redact", address: "webhooks/customers_redact"},
+    { topic: "shop/redact", address: "webhooks/shop_redact"}
+  ]
 
   config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence
   config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence
@@ -42,7 +48,7 @@ Rails.application.config.after_initialize do
       scope: ShopifyApp.configuration.scope,
       is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
       is_embedded: ShopifyApp.configuration.embedded_app,
-      session_storage: ShopifyApp::SessionRepository,
+      log_level: :info,
       logger: Rails.logger,
       private_shop: ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', nil),
       user_agent_prefix: "ShopifyApp/#{ShopifyApp::VERSION}"

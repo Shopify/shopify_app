@@ -72,7 +72,7 @@ class EnsureAuthenticatedLinksTest < ActionController::TestCase
   private
 
   def expect_redirect_error(klass, message)
-    expected_message = "[ShopifyApp::EnsureAuthenticatedLinks] Redirecting to login: [#{klass}] #{message}"
-    Rails.logger.expects(:warn).once.with(expected_message)
+    expected_message = "Redirecting to login: [#{klass}] #{message}"
+    ShopifyApp::Logger.expects(:warn).once.with(expected_message)
   end
 end

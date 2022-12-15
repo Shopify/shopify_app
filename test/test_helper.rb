@@ -47,6 +47,8 @@ class ActiveSupport::TestCase
     ShopifyApp::InMemorySessionStore.clear
     ShopifyAppConfigurer.call
     Rails.application.reload_routes!
+    ShopifyApp.configuration.log_level = :warn
+    ActiveSupport::Deprecation.silenced = true
   end
 
   def mock_session(shop: "my-shop.myshopify.com", scope: ShopifyApp.configuration.scope)
@@ -54,7 +56,15 @@ class ActiveSupport::TestCase
     mock_session.stubs(:shop).returns(shop)
     mock_session.stubs(:access_token).returns("a-new-user_token!")
     mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(scope))
+    mock_session.stubs(:shopify_session_id).returns(1)
 
     mock_session
+  end
+
+  ##
+  # If a test fails with this assertion it means the behavior should now be removed from the codebase.
+  # The deprecation schedule gives users time to upgrade before the functionality can safely removed.
+  def assert_within_deprecation_schedule(version_number)
+    assert Gem::Version.create(ShopifyApp::VERSION) < Gem::Version.create(version_number)
   end
 end

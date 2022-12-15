@@ -6,6 +6,10 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [General Advice](#general-advice)
 
+[Unreleased](#unreleased)
+
+[Upgrading to `v20.3.0`](#upgrading-to-v2030)
+
 [Upgrading to `v20.2.0`](#upgrading-to-v2020)
 
 [Upgrading to `v20.1.0`](#upgrading-to-v2010)
@@ -34,6 +38,15 @@ We also recommend the use of a staging site which matches your production enviro
 
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
 
+## Upgrading to 21.3.0
+The `Itp` controller concern has been removed from `LoginProtection` which is included by the `Authenticated` controller concern.
+If any of your controllers are dependant on methods from `Itp` then you can include `ShopifyApp::Itp` directly.
+You may notice a deprecation notice saying, `Itp will be removed in an upcoming version`.
+This is because we intend on removing `Itp` completely in `v22.0.0`, but this will work in the meantime.
+
+## Upgrading to `v20.3.0`
+Calling `LoginProtection#current_shopify_domain` will no longer raise an error if there is no active session. It will now return a nil value. The internal behavior of raising an error on OAuth redirect is still in place, however. If you were calling `current_shopify_domain` in authenticated actions and expecting an error if nil, you'll need to do a presence check and raise that error within your app.
+
 ## Upgrading to `v20.2.0`
 
 All custom errors defined inline within the `ShopifyApp` gem have been moved to `lib/shopify_app/errors.rb`.
@@ -51,9 +64,11 @@ Note that the following steps are *optional* and only apply to **embedded** appl
 
 ## Upgrading to `v19.0.0`
 
-*This change introduced a major change of strategy regarding sessions.*  Due to security changes with browsers, support for cookie based sessions was dropped. JWT is now the only supported method for managing sessions.
+There are several major changes in this release:
 
-As part of that change, this update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby) gem.
+* A change of strategy regarding sessions: Due to security changes with browsers, support for cookie based sessions was dropped. JWT is now the only supported method for managing sessions.
+* As part of that change, this update moves API authentication logic from this gem to the [`shopify_api`](https://github.com/Shopify/shopify-api-ruby) gem.
+* Previously the `shopify_api` gem relied on `ActiveResource`, an outdated library which was [removed](https://github.com/rails/rails/commit/f1637bf2bb00490203503fbd943b73406e043d1d) from Rails in 2012. v10 of `shopify_api` has a replacement approach which aims to provide a similar syntax, but changes will be necessary.
 
 ### High-level process
 
@@ -64,8 +79,7 @@ As part of that change, this update moves API authentication logic from this gem
 - Remove `allow_jwt_authentication=` and `allow_cookie_authentication=` invocations from
   `config/initializers/shopify_app.rb` as the decision logic for which authentication method to use is now handled
   internally by the `shopify_api` gem, using the `ShopifyAPI::Context.embedded_app` setting.
-- `v19.0.0` updates the `shopify_api` dependency to `10.0.0`. This version of `shopify_api` has breaking changes. See
-  the documentation for addressing these breaking changes on GitHub [here](https://github.com/Shopify/shopify-api-ruby#breaking-change-notice-for-version-1000).
+- [Follow the guidance for upgrading `shopify-api-ruby`](https://github.com/Shopify/shopify-api-ruby#breaking-change-notice-for-version-1000).
 
 ### Specific cases
 
@@ -114,7 +128,7 @@ Shopify API session, or `nil` if no such session is available.
 
 #### Setting up `ShopifyAPI::Context`
 
-The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template]((https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
+The `shopify_app` initializer must configure the `ShopifyAPI::Context`. The Rails generator will generate a block in the `shopify_app` initializer. To do so manually, you can refer to `after_initialize` block in the [template](https://github.com/Shopify/shopify_app/blob/main/lib/generators/shopify_app/install/templates/shopify_app.rb.tt).
 
 ## Upgrading to `v18.1.2`
 

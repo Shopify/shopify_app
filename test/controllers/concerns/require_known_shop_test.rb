@@ -52,12 +52,66 @@ class RequireKnownShopTest < ActionController::TestCase
   end
 
   test "returns :ok if the shop is installed" do
-    ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(true)
+    session = mock
+    ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain).returns(session)
+
+    client = mock
+    ShopifyAPI::Clients::Rest::Admin.expects(:new).with(session: session).returns(client)
+    client.expects(:get)
 
     shopify_domain = "shop1.myshopify.com"
 
     get :index, params: { shop: shopify_domain }
 
     assert_response :ok
+  end
+
+  test "detects incompatible controller concerns" do
+    replaced_message = "RequireKnownShop has been replaced by EnsureInstalled."\
+      " Please use the EnsureInstalled controller concern for the same behavior"
+
+    version = "22.0.0"
+
+    ShopifyApp::Logger.stubs(:deprecated).with("Itp will be removed in an upcoming version", version)
+    ShopifyApp::Logger.stubs(:deprecated).with(replaced_message, version)
+
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
+      include ShopifyApp::LoginProtection
+    end
+
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
+      include ShopifyApp::EnsureHasSession # since this indirectly includes LoginProtection
+    end
+
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/incompatible concerns/), version)
+
+    authenticated_controller = Class.new(ApplicationController) do
+      include ShopifyApp::EnsureHasSession
+    end
+
+    Class.new(authenticated_controller) do
+      include ShopifyApp::RequireKnownShop
+    end
+
+    assert_within_deprecation_schedule(version)
+  end
+
+  test "detects name change deprecation message" do
+    message = "RequireKnownShop has been replaced by EnsureInstalled."\
+      " Please use the EnsureInstalled controller concern for the same behavior"
+    version = "22.0.0"
+    ShopifyApp::Logger.expects(:deprecated).with(message, version)
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::RequireKnownShop
+    end
+
+    assert_within_deprecation_schedule(version)
   end
 end

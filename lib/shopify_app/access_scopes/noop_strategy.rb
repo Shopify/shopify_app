@@ -7,6 +7,10 @@ module ShopifyApp
         def update_access_scopes?(*_args)
           false
         end
+
+        def covers_scopes?(*_args)
+          true
+        end
       end
     end
   end
