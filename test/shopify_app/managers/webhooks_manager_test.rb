@@ -78,8 +78,10 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
+    session = ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com")
+
     ShopifyAPI::Webhooks::Registry.expects(:register_all)
-    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated")
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated", session: session)
     ShopifyApp::WebhooksManager.expects(:add_registrations).twice
 
     ShopifyApp.configure do |config|
@@ -88,7 +90,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       ]
     end
     ShopifyApp::WebhooksManager.add_registrations
-    ShopifyApp::WebhooksManager.recreate_webhooks!(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
+    ShopifyApp::WebhooksManager.recreate_webhooks!(session: session)
   end
 
   test "#recreate_webhooks! does not call unregister if there is no webhook" do
@@ -101,5 +103,26 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     end
     ShopifyApp::WebhooksManager.add_registrations
     ShopifyApp::WebhooksManager.recreate_webhooks!(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
+  end
+
+  test "#destroy_webhooks destroy all webhooks" do
+    session = ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com")
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated", session: session)
+
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", path: "webhooks" },
+      ]
+    end
+    ShopifyApp::WebhooksManager.destroy_webhooks(session: session)
+  end
+
+  test "#destroy_webhooks does not call unregister if there is no webhook" do
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).never
+
+    ShopifyApp.configure do |config|
+      config.webhooks = []
+    end
+    ShopifyApp::WebhooksManager.destroy_webhooks(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
   end
 end
