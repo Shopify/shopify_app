@@ -4,7 +4,7 @@ require "test_helper"
 
 class UtilsTest < ActiveSupport::TestCase
   setup do
-    ShopifyApp.configuration = nil
+    ShopifyApp.configuration.stubs(:myshopify_domain).returns("myshopify.com")
   end
 
   ["my-shop", "my-shop.myshopify.com",
@@ -22,20 +22,27 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
+  test "sanitize_shop_domain URL shopify spin.dev custom myshopify_domain" do
+    myshop_domain ="http://shopify.foobar-part-onboard-0d6x.asdf-rygus.us.spin.dev"
+    ShopifyApp.configuration.stubs(:myshopify_domain).returns(myshop_domain)
+    unified_admin_url = myshop_domain + "/store/shop1/apps/cool_app_hansel"
+
+    assert ShopifyApp::Utils.sanitize_shop_domain(unified_admin_url)
+  end
+
   test "sanitize_shop_domain for url with uppercase characters" do
     assert ShopifyApp::Utils.sanitize_shop_domain("MY-shop.myshopify.com")
   end
 
-  test "unified admin is still trusted as a sanitzed domain" do
+  test "unified admin is still trusted as a sanitzed domain ZZZZ" do
     ShopifyApp.configuration.stubs(:myshpoify_domain).returns("totally.cool.domain.com")
     assert ShopifyApp::Utils.sanitize_shop_domain("admin.shopify.com/some_shoppe_over_the_rainbow")
     assert ShopifyApp::Utils.sanitize_shop_domain("some-shoppe-over-the-rainbow.myshopify.com")
     assert ShopifyApp::Utils.sanitize_shop_domain("some-shoppe-over-the-rainbow.myshopify.io")
   end
 
-  ["myshop.com", "myshopify.com", "shopify.com", "two words", "store.myshopify.com.evil.com",
-   "/foo/bar", "foo.myshopify.io.evil.ru", "%0a123.myshopify.io",
-   "foo.bar.myshopify.io",].each do |bad_url|
+  ["myshop.com", "two words", "store.myshopify.com.evil.com",
+   "/foo/bar", "foo.myshopify.io.evil.ru",].each do |bad_url|
     test "sanitize_shop_domain for a non-myshopify URL (#{bad_url})" do
       assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
     end

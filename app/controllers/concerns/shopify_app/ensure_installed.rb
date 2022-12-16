@@ -70,6 +70,7 @@ module ShopifyApp
       client = ShopifyAPI::Clients::Rest::Admin.new(session: installed_shop_session)
       client.get(path: "shop")
     rescue ShopifyAPI::Errors::HttpResponseError => error
+      ShopifyApp::Logger.info("Shop offline session no longer valid. Redirecting to OAuth install")
       redirect_to(shop_login) if error.code == 401
       raise error if error.code != 401
     end

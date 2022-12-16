@@ -3,6 +3,7 @@ PATH
   specs:
     shopify_app (21.3.1)
       activeresource
+      addressable (~> 2.7)
       browser_sniffer (~> 2.0)
       jwt (>= 2.2.3)
       rails (> 5.2.1)

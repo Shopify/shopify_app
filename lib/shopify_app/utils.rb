@@ -6,19 +6,25 @@ module ShopifyApp
       "shopify.com",
       "myshopify.io",
       "myshopify.com",
+      "spin.dev"
     ].freeze
 
     def self.sanitize_shop_domain(shop_domain)
       myshopify_domain = ShopifyApp.configuration.myshopify_domain
       name = shop_domain.to_s.downcase.strip
+      name = "https://" + name unless name.include?("http")
       name += ".#{myshopify_domain}" if !name.include?(myshopify_domain.to_s) && !name.include?(".")
-      name.sub!(%r|https?://|, "")
-      trusted_domains = TRUSTED_SHOPIFY_DOMAINS.dup.push(myshopify_domain)
+      uri = Addressable::URI.parse(name)
 
-      u = URI("http://#{name}")
-      regex = /^[a-z0-9][a-z0-9\-]*[a-z0-9]\.(#{trusted_domains.join("|")})$/
-      u.host if u.host&.match(regex)
-    rescue URI::InvalidURIError
+      trusted_domains = TRUSTED_SHOPIFY_DOMAINS.dup
+      trusted_domains.push(myshopify_domain) if myshopify_domain
+
+      if trusted_domains.any? { |trusted_domain| trusted_domain == uri.domain}
+        return uri.host
+      else
+        return nil
+      end
+    rescue Addressable::URI::InvalidURIError
       nil
     end
 

@@ -13,6 +13,7 @@ module ShopifyApp
         deprecate_callback_rescue(error) unless error.class.module_parent == ShopifyAPI::Errors
         return respond_with_error
       end
+      binding.pry
 
       save_session(api_session) if api_session
       update_rails_cookie(api_session, cookie)

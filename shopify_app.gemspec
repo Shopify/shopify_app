@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("redirect_safely", "~> 1.0")
   s.add_runtime_dependency("shopify_api", "~> 12.3")
   s.add_runtime_dependency("sprockets-rails", ">= 2.0.0")
+  s.add_runtime_dependency("addressable", "~> 2.7")
 
   s.add_development_dependency("byebug")
   s.add_development_dependency("minitest")
