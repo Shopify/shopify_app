@@ -23,7 +23,7 @@ class UtilsTest < ActiveSupport::TestCase
   end
 
   test "sanitize_shop_domain URL shopify spin.dev custom myshopify_domain" do
-    myshop_domain ="http://shopify.foobar-part-onboard-0d6x.asdf-rygus.us.spin.dev"
+    myshop_domain = "http://shopify.foobar-part-onboard-0d6x.asdf-rygus.us.spin.dev"
     ShopifyApp.configuration.stubs(:myshopify_domain).returns(myshop_domain)
     unified_admin_url = myshop_domain + "/store/shop1/apps/cool_app_hansel"
 

@@ -13,7 +13,6 @@ module ShopifyApp
         deprecate_callback_rescue(error) unless error.class.module_parent == ShopifyAPI::Errors
         return respond_with_error
       end
-      binding.pry
 
       save_session(api_session) if api_session
       update_rails_cookie(api_session, cookie)
@@ -86,6 +85,9 @@ module ShopifyApp
     # host param doesn't match the configured myshopify_domain
     def deduced_phishing_attack?
       sanitized_host = ShopifyApp::Utils.sanitize_shop_domain(URI(decoded_host).host)
+      if sanitized_host.nil?
+        ShopifyApp::Logger.info("host param from callback is not from a trusted domain")
+      end
       sanitized_host.nil?
     end
 
