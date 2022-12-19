@@ -19,9 +19,18 @@ module ShopifyApp
       trusted_domains = TRUSTED_SHOPIFY_DOMAINS.dup
       trusted_domains.push(myshopify_domain) if myshopify_domain
 
-      if trusted_domains.any? { |trusted_domain| trusted_domain == uri.domain }
-        uri.host
+      trusted_domains.each do |trusted_domain|
+        no_shop_name_in_subdomain = uri.host == trusted_domain
+        from_trusted_domain = trusted_domain == uri.domain
+        invalid_characters = uri.host.split("").any? do |character|
+          character !~ /([a-zA-Z]|\d+|-|_|\.)/
+        end
+
+        return nil if no_shop_name_in_subdomain || uri.host.empty? || invalid_characters
+        return uri.host if from_trusted_domain
       end
+
+      nil
     rescue Addressable::URI::InvalidURIError
       nil
     end
