@@ -17,16 +17,13 @@ module ShopifyApp
       uri = Addressable::URI.parse(name)
 
       trusted_domains = TRUSTED_SHOPIFY_DOMAINS.dup
-      trusted_domains.push(myshopify_domain) if myshopify_domain
+      trusted_domains.append(myshopify_domain).uniq! if myshopify_domain
 
       trusted_domains.each do |trusted_domain|
         no_shop_name_in_subdomain = uri.host == trusted_domain
         from_trusted_domain = trusted_domain == uri.domain
-        invalid_characters = uri.host.split("").any? do |character|
-          character !~ /([a-zA-Z]|\d+|-|_|\.)/
-        end
 
-        return nil if no_shop_name_in_subdomain || uri.host.empty? || invalid_characters
+        return nil if no_shop_name_in_subdomain || uri.host.empty?
         return uri.host if from_trusted_domain
       end
 
