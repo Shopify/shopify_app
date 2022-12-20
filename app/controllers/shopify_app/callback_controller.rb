@@ -8,7 +8,7 @@ module ShopifyApp
 
     def callback
       begin
-        api_session, cookie = validated_auth_objects
+        api_session, cookie, oauth_payload = validated_auth_objects
       rescue => error
         deprecate_callback_rescue(error) unless error.class.module_parent == ShopifyAPI::Errors
         return respond_with_error
@@ -51,7 +51,7 @@ module ShopifyApp
       api_session = oauth_payload.dig(:session)
       cookie = oauth_payload.dig(:cookie)
 
-      [api_session, cookie]
+      [api_session, cookie, oauth_payload]
     end
 
     def update_rails_cookie(api_session, cookie)
