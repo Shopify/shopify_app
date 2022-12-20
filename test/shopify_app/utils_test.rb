@@ -15,7 +15,8 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
-  ["my-shop", "my-shop.myshopify.io", "https://my-shop.myshopify.io", "http://my-shop.myshopify.io"].each do |good_url|
+  ["my-shop", "my-shop.myshopify.io", "http-shop-from-qa-hell.myshopify.com",
+   "https://my-shop.myshopify.io", "http://my-shop.myshopify.io",].each do |good_url|
     test "sanitize_shop_domain URL (#{good_url}) with custom myshopify_domain" do
       ShopifyApp.configuration.myshopify_domain = "myshopify.io"
       assert ShopifyApp::Utils.sanitize_shop_domain(good_url)

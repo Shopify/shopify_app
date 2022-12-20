@@ -12,7 +12,7 @@ module ShopifyApp
     def self.sanitize_shop_domain(shop_domain)
       myshopify_domain = ShopifyApp.configuration.myshopify_domain
       name = shop_domain.to_s.downcase.strip
-      name = "https://" + name unless name.include?("http")
+      name = "https://" + name unless name.include?("http://") || name.include?("https://")
       name += ".#{myshopify_domain}" if !name.include?(myshopify_domain.to_s) && !name.include?(".")
       uri = Addressable::URI.parse(name)
 
