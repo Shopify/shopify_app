@@ -8,7 +8,9 @@ module ShopifyApp
     include ShopifyApp::SanitizedParams
 
     included do
-      if ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
+      if defined?(ShopifyApp::RequireKnownShop) &&
+          defined?(ShopifyApp::EnsureInstalled) &&
+          ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
         message = <<~EOS
           We detected the use of incompatible concerns (RequireKnownShop/EnsureInstalled and LoginProtection) in #{name},
           which may lead to unpredictable behavior. In a future release of this library this will raise an error.
