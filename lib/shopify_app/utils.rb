@@ -56,7 +56,7 @@ module ShopifyApp
         name += ".#{myshopify_domain}" if !name.include?(myshopify_domain.to_s) && !name.include?(".")
         uri = Addressable::URI.parse(name)
 
-        if uri.host.nil? && uri.scheme.nil?
+        if uri.scheme.nil?
           name = "https://" + name
           uri = Addressable::URI.parse(name)
         end
