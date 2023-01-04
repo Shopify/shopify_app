@@ -85,6 +85,10 @@ module ShopifyApp
     # host param doesn't match the configured myshopify_domain
     def deduced_phishing_attack?
       sanitized_host = ShopifyApp::Utils.sanitize_shop_domain(URI(decoded_host).host)
+      if sanitized_host.nil?
+        ShopifyApp::Logger.info("host param from callback is not from a trusted domain")
+        ShopifyApp::Logger.info("redirecting to root as this is likely a phishing attack")
+      end
       sanitized_host.nil?
     end
 

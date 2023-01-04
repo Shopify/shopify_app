@@ -4,6 +4,8 @@ Unreleased
 * Removed Logged output for rescued JWT exceptions [#1610](https://github.com/Shopify/shopify_app/pull/1610)
 * Fixes a bug with `ShopifyApp::WebhooksManager.destroy_webhooks` causing not passing session arguments to [unregister](https://github.com/Shopify/shopify-api-ruby/blob/main/lib/shopify_api/webhooks/registry.rb#L99) method [#1569](https://github.com/Shopify/shopify_app/pull/1569)
 * Validates shop's offline session token is still valid when using `EnsureInstalled`[#1612](https://github.com/Shopify/shopify_app/pull/1612)
+* Allows use of multiple subdomains with myshopify_domain [#1620](https://github.com/Shopify/shopify_app/pull/1620)
+* Added a `setup_shopify_session` test helper to stub a valid session
 
 21.3.1 (Dec 12, 2022)
 ----------
