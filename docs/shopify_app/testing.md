@@ -11,20 +11,42 @@
 A test helper that will allow you to test `ShopifyApp::WebhookVerification` in the controller from your app, to use this test, you need to `require` it directly inside your app `test/controllers/webhook_verification_test.rb`.
 
 ```ruby
-    require 'test_helper'
-    require 'action_controller'
-    require 'action_controller/base'
-    require 'shopify_app/test_helpers/webhook_verification_helper'
+require 'test_helper'
+require 'action_controller'
+require 'action_controller/base'
+require 'shopify_app/test_helpers/webhook_verification_helper'
 ```
 
-Or you can require in your `test/test_helper.rb`.
+A test helper that allows you to stub out a shopify_app session in controllers that include `ShopifyApp::LoginProtection`, to use this helper, you need to `require` it directly.
+
+Example Usage:
 
 ```ruby
-  ENV['RAILS_ENV'] ||= 'test'
-  require_relative '../config/environment'
-  require 'rails/test_help'
-  require 'byebug'
-  require 'shopify_app/test_helpers/all'
+require 'shopify_app/test_helpers/shopify_session_helper'
+
+class MyAuthenticatedControllerTest < ActionController::TestCase
+  include ShopifyApp::TestHelpers::ShopifySessionHelper
+
+  test "does not redirect when there is a valid shopify session" do
+    # note shop_domain should be the same as your shopify domain
+    shop_domain = "my-shop.myshopify.com"
+    setup_shopify_session(session_id: "1", shop_domain: shop_domain)
+
+    get :index
+
+    assert_response :ok
+  end
+end
+```
+
+Or you can require all shopify_app test helpers in your `test/test_helper.rb`.
+
+```ruby
+ENV['RAILS_ENV'] ||= 'test'
+require_relative '../config/environment'
+require 'rails/test_help'
+require 'byebug'
+require 'shopify_app/test_helpers/all'
 ```
 
 With `lib/shopify_app/test_helpers/all'` more tests can be added and will only need to be required in once in your library.
