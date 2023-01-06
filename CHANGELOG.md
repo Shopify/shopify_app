@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Set `access_scopes` column to string by default [#1636](https://github.com/Shopify/shopify_app/pull/1636)
+
 21.4.0 (Jan 5, 2023)
 ----------
 * Updated shopify_api to 12.4.0 [#1633](https://github.com/Shopify/shopify_app/pull/1633)
