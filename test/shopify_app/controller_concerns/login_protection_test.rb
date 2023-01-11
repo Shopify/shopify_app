@@ -78,6 +78,68 @@ class LoginProtectionControllerTest < ActionController::TestCase
       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
   end
 
+  test "force reauthentication when reauth_on_access_scope_changes enabled" do
+    ShopifyApp.configuration.scope = "read_retail_private_data"
+    ShopifyApp.configuration.reauth_on_access_scope_changes = true
+
+    ShopifyAPI::Context.setup(
+      api_key: ShopifyApp.configuration.api_key,
+      api_secret_key: ShopifyApp.configuration.secret,
+      old_api_secret_key: ShopifyApp.configuration.old_secret,
+      api_version: ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION,
+      host_name: "host.example.io",
+      scope: ShopifyApp.configuration.scope,
+      session_storage: ShopifyApp::SessionRepository,
+      is_private: false,
+      is_embedded: true,
+    )
+
+    with_application_test_routes do
+      request.headers["HTTP_AUTHORIZATION"] = @token
+
+      ::ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
+        .with(
+          @token,
+          { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
+          true,
+        ).returns(@session.id)
+      ::ShopifyAPI::Context.expects(:activate_session).never
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "don't force reauthentication when reauth_on_access_scope_changes disabled" do
+    ShopifyApp.configuration.scope = "read_retail_private_data"
+    ShopifyApp.configuration.reauth_on_access_scope_changes = false
+
+    ShopifyAPI::Context.setup(
+      api_key: ShopifyApp.configuration.api_key,
+      api_secret_key: ShopifyApp.configuration.secret,
+      old_api_secret_key: ShopifyApp.configuration.old_secret,
+      api_version: ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION,
+      host_name: "host.example.io",
+      scope: ShopifyApp.configuration.scope,
+      session_storage: ShopifyApp::SessionRepository,
+      is_private: false,
+      is_embedded: true,
+    )
+
+    with_application_test_routes do
+      request.headers["HTTP_AUTHORIZATION"] = @token
+
+      ::ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
+        .with(
+          @token,
+          { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
+          true,
+        ).returns(@session.id)
+      ::ShopifyAPI::Context.expects(:activate_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
   test "#current_shopify_session returns nil when session is nil" do
     with_application_test_routes do
       ::ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).raises(ShopifyAPI::Errors::CookieNotFoundError)
