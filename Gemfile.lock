@@ -96,7 +96,7 @@ GEM
     crass (1.0.6)
     debug_inspector (1.1.0)
     erubi (1.11.0)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     hash_diff (1.1.1)
     hashdiff (1.0.1)
