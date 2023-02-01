@@ -135,7 +135,7 @@ module ShopifyApp
           },
           returnUrl: return_url,
           test: ShopifyApp.configuration.billing.test,
-        }
+        },
       )
 
       response.body
