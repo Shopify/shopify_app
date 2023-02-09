@@ -5,6 +5,7 @@ require "shopify_app/version"
 # deps
 require "shopify_api"
 require "redirect_safely"
+require "addressable"
 
 module ShopifyApp
   def self.rails6?
