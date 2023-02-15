@@ -3,6 +3,7 @@
 #### Table of contents
 
 [Using test helpers inside your application](#using-test-helpers-inside-your-application)
+- [Using with RSpec](#using-with-rspec)
 
 [Testing an embedded app outside the Shopify admin](#testing-an-embedded-app-outside-the-shopify-admin)
 
@@ -50,6 +51,36 @@ require 'shopify_app/test_helpers/all'
 ```
 
 With `lib/shopify_app/test_helpers/all'` more tests can be added and will only need to be required in once in your library.
+
+### Using with RSpec
+
+To use the test helper with RSpec, use the RSpec helper.
+
+```ruby
+require 'shopify_app/test_helpers/shopify_rspec_session_helper'
+
+RSpec.describe MyAuthenticatedController, type: :request do
+  include ShopifyApp::TestHelpers::ShopifyRSpecSessionHelper
+
+  describe "index"
+    it "does not redirect when there is a valid shopify session" do
+      shop_domain = "my-shop.myshopify.com"
+      setup_shopify_session(session_id: "1", shop_domain: shop_domain)
+
+      get :index
+
+      expect(response).to have_http_status(:success)
+    end
+  end
+end
+```
+
+Similarly to minitest, you can require the `shopify_app/test_helpers/all` file in `spec_helper.rb`,
+which will include the RSpec helper.
+
+```ruby
+require 'shopify_app/test_helpers/all'
+```
 
 ## Testing an embedded app outside the Shopify admin
 
