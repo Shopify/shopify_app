@@ -30,7 +30,8 @@ module ShopifyApp
         return redirect_to_login
       end
 
-      unless ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
+      if ShopifyApp.configuration.reauth_on_access_scope_changes &&
+          !ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
         clear_shopify_session
         return redirect_to_login
       end
