@@ -3,6 +3,10 @@ Unreleased
 
 * Set `access_scopes` column to string by default [#1636](https://github.com/Shopify/shopify_app/pull/1636)
 
+21.4.1 (Feb 21, 2023)
+----------
+* Fixed bug where authentication redirect could still happen even though `reauth_on_access_scope_changes` is set to `false` [#1639](https://github.com/Shopify/shopify_app/pull/1639)
+
 21.4.0 (Jan 5, 2023)
 ----------
 * Updated shopify_api to 12.4.0 [#1633](https://github.com/Shopify/shopify_app/pull/1633)
