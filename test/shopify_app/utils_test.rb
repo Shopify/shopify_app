@@ -42,6 +42,16 @@ class UtilsTest < ActiveSupport::TestCase
     assert ShopifyApp::Utils.sanitize_shop_domain("some-shoppe-over-the-rainbow.myshopify.io")
   end
 
+  test "convert unified admin to old domain" do
+    trailing_forward_slash_url = "https://admin.shopify.com/store/store-name/"
+    unified_admin_url = "https://admin.shopify.com/store/store-name"
+
+    expected = "store-name.myshopify.com"
+
+    assert_equal expected, ShopifyApp::Utils.sanitize_shop_domain(trailing_forward_slash_url)
+    assert_equal expected, ShopifyApp::Utils.sanitize_shop_domain(unified_admin_url)
+  end
+
   ["myshop.com", "myshopify.com", "shopify.com", "two words", "store.myshopify.com.evil.com",
    "/foo/bar", "foo.myshopify.io.evil.ru",].each do |bad_url|
     test "sanitize_shop_domain for a non-myshopify URL (#{bad_url})" do

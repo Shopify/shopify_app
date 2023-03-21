@@ -18,10 +18,10 @@ module ShopifyApp
           no_shop_name_in_subdomain = uri.host == trusted_domain
           from_trusted_domain = trusted_domain == uri.domain
 
+          return myshopify_domain_from_unified_admin(uri) if unified_admin?(uri) && from_trusted_domain
           return nil if no_shop_name_in_subdomain || uri.host&.empty?
           return uri.host if from_trusted_domain
         end
-
         nil
       end
 
@@ -64,6 +64,16 @@ module ShopifyApp
         uri
       rescue Addressable::URI::InvalidURIError
         nil
+      end
+
+      def unified_admin?(uri)
+        uri.host.split(".").first == "admin"
+      end
+
+      def myshopify_domain_from_unified_admin(uri)
+        shop = uri.path.split("/").last
+
+        "#{shop}.myshopify.com"
       end
     end
   end
