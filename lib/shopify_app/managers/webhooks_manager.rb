@@ -45,12 +45,13 @@ module ShopifyApp
         ShopifyApp::Logger.debug("Adding registrations to webhooks")
         ShopifyApp.configuration.webhooks.each do |attributes|
           webhook_path = path(attributes)
+          delivery_method = attributes[:delivery_method] || :http
 
           ShopifyAPI::Webhooks::Registry.add_registration(
             topic: attributes[:topic],
-            delivery_method: attributes[:delivery_method] || :http,
+            delivery_method: delivery_method,
             path: webhook_path,
-            handler: webhook_job_klass(webhook_path),
+            handler: delivery_method == :http ? webhook_job_klass(webhook_path) : nil,
             fields: attributes[:fields],
           )
         end
