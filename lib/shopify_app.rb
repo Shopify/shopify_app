@@ -5,6 +5,7 @@ require "shopify_app/version"
 # deps
 require "shopify_api"
 require "redirect_safely"
+require "addressable"
 
 module ShopifyApp
   def self.rails6?
@@ -34,11 +35,20 @@ module ShopifyApp
   # utils
   require "shopify_app/utils"
 
+  # errors
+  require "shopify_app/errors"
+
+  require "shopify_app/logger"
+
   # controller concerns
   require "shopify_app/controller_concerns/csrf_protection"
   require "shopify_app/controller_concerns/localization"
+  require "shopify_app/controller_concerns/frame_ancestors"
   require "shopify_app/controller_concerns/itp"
+  require "shopify_app/controller_concerns/sanitized_params"
+  require "shopify_app/controller_concerns/redirect_for_embedded"
   require "shopify_app/controller_concerns/login_protection"
+  require "shopify_app/controller_concerns/ensure_billing"
   require "shopify_app/controller_concerns/embedded_app"
   require "shopify_app/controller_concerns/payload_verification"
   require "shopify_app/controller_concerns/app_proxy_verification"

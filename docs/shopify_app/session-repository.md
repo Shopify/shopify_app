@@ -20,7 +20,7 @@
 
 Storing tokens on the store model means that any user login associated with the store will have equal access levels to whatever the original user granted the app.
 ```sh
-$ rails generate shopify_app:shop_model
+rails generate shopify_app:shop_model
 ```
 This will generate a shop model which will be the storage for the tokens necessary for authentication.
 
@@ -28,8 +28,8 @@ This will generate a shop model which will be the storage for the tokens necessa
 
 A more granular control over the level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained if you are running background jobs so that you can make use of them when necessary.
 ```sh
-$ rails generate shopify_app:shop_model
-$ rails generate shopify_app:user_model
+rails generate shopify_app:shop_model
+rails generate shopify_app:user_model
 ```
 This will generate a shop model and user model, which will be the storage for the tokens necessary for authentication.
 
@@ -72,17 +72,8 @@ end
 
 1. Run the `user_model` generator as mentioned above.
 2. Ensure that both your `Shop` model and `User` model includes the necessary concerns `ShopifyApp::ShopSessionStorage` and `ShopifyApp::UserSessionStorage`.
-3. Make changes to 2 initializer files as shown below:
+3. Make changes to the `shopify_app.rb` initializer file as shown below:
 ```ruby
-# In the `omniauth.rb` initializer:
-provider :shopify,
-  ...
-  setup: lambda { |env|
-    configuration = ShopifyApp::OmniAuthConfiguration.new(env['omniauth.strategy'], Rack::Request.new(env))
-    configuration.build_options
-  }
-
-# In the `shopify_app.rb` initializer:
 config.shop_session_repository = {YOUR_SHOP_MODEL_CLASS}
 config.user_session_repository = {YOUR_USER_MODEL_CLASS}
 ```

@@ -13,6 +13,9 @@ module ShopifyApp
       class_option :embedded, type: :string, default: "true"
       class_option :api_version, type: :string, default: nil
 
+      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/"
+      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/"
+
       def create_shopify_app_initializer
         @application_name = format_array_argument(options["application_name"])
         @scope = format_array_argument(options["scope"])
@@ -51,14 +54,34 @@ module ShopifyApp
       end
 
       def insert_hosts_into_development_config
-        inject_into_file(
-          "config/environments/development.rb",
-          "  config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.ngrok\\.io/\n",
-          after: "Rails.application.configure do\n"
-        )
+        "Rails.application.configure do\n"
+          .then { insert_tunnel_host_rules("ngrok", _1, NGROK_HOST + "\n") }
+          .then { insert_tunnel_host_rules("Cloudflare", _1, CLOUDFLARE_HOST + "\n") }
       end
 
       private
+
+      def add_comment_explaining_tunnel_host(provider_name, insert_after_line)
+        comment = "  # Allow #{provider_name} tunnels for secure Shopify OAuth redirects\n"
+        inject_into_file(
+          "config/environments/development.rb",
+          comment,
+          after: insert_after_line,
+        )
+        comment
+      end
+
+      def insert_tunnel_host_rules(provider_name, insert_after_line, provider_host_domain)
+        explaination_comment = add_comment_explaining_tunnel_host(provider_name, insert_after_line)
+        host_line = "  config.hosts = (config.hosts rescue []) << #{provider_host_domain}"
+
+        inject_into_file(
+          "config/environments/development.rb",
+          host_line,
+          after: explaination_comment,
+        )
+        host_line
+      end
 
       def embedded_app?
         options["embedded"] == "true"

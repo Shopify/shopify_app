@@ -20,10 +20,13 @@ module ShopifyApp
     attr_accessor :api_version
 
     attr_accessor :reauth_on_access_scope_changes
+    attr_accessor :log_level
 
     # customise urls
     attr_accessor :root_url
     attr_writer :login_url
+    attr_writer :login_callback_url
+    attr_accessor :embedded_redirect_url
 
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
@@ -38,6 +41,9 @@ module ShopifyApp
     # allow namespacing webhook jobs
     attr_accessor :webhook_jobs_namespace
 
+    # takes a ShopifyApp::BillingConfiguration object
+    attr_accessor :billing
+
     def initialize
       @root_url = "/"
       @myshopify_domain = "myshopify.com"
@@ -48,6 +54,11 @@ module ShopifyApp
 
     def login_url
       @login_url || File.join(@root_url, "login")
+    end
+
+    def login_callback_url
+      # Not including @root_url to keep historic behaviour
+      @login_callback_url || File.join("auth/shopify/callback")
     end
 
     def user_session_repository=(klass)
@@ -68,11 +79,23 @@ module ShopifyApp
 
     def shop_access_scopes_strategy
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+
       ShopifyApp::AccessScopes::ShopStrategy
     end
 
+    def user_access_scopes_strategy=(class_name)
+      unless class_name.is_a?(String)
+        raise ConfigurationError, "Invalid user access scopes strategy - expected a string"
+      end
+
+      @user_access_scopes_strategy = class_name.safe_constantize
+    end
+
     def user_access_scopes_strategy
+      return @user_access_scopes_strategy if @user_access_scopes_strategy
+
       return ShopifyApp::AccessScopes::NoopStrategy unless reauth_on_access_scope_changes
+
       ShopifyApp::AccessScopes::UserStrategy
     end
 
@@ -84,12 +107,34 @@ module ShopifyApp
       scripttags.present?
     end
 
+    def requires_billing?
+      billing.present?
+    end
+
     def shop_access_scopes
       @shop_access_scopes || scope
     end
 
     def user_access_scopes
       @user_access_scopes || scope
+    end
+  end
+
+  class BillingConfiguration
+    INTERVAL_ONE_TIME = "ONE_TIME"
+    INTERVAL_EVERY_30_DAYS = "EVERY_30_DAYS"
+    INTERVAL_ANNUAL = "ANNUAL"
+
+    attr_reader :charge_name
+    attr_reader :amount
+    attr_reader :currency_code
+    attr_reader :interval
+
+    def initialize(charge_name:, amount:, interval:, currency_code: "USD")
+      @charge_name = charge_name
+      @amount = amount
+      @currency_code = currency_code
+      @interval = interval
     end
   end
 

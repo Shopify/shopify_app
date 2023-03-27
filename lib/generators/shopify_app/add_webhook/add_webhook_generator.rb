@@ -7,7 +7,7 @@ module ShopifyApp
     class AddWebhookGenerator < Rails::Generators::Base
       source_root File.expand_path("../templates", __FILE__)
       class_option :topic, type: :string, aliases: "-t", required: true
-      class_option :address, type: :string, aliases: "-a", required: true
+      class_option :path, type: :string, aliases: "-p", required: true
 
       hook_for :test_framework, as: :job, in: :rails do |instance, generator|
         instance.invoke(generator, [instance.send(:job_file_name)])
@@ -20,7 +20,7 @@ module ShopifyApp
         inject_into_file(
           "config/initializers/shopify_app.rb",
           "  config.webhooks = [\n  ]\n",
-          after: /ShopifyApp\.configure.*\n/
+          after: /ShopifyApp\.configure.*\n/,
         )
       end
 
@@ -28,7 +28,7 @@ module ShopifyApp
         inject_into_file(
           "config/initializers/shopify_app.rb",
           webhook_config,
-          after: "config.webhooks = ["
+          after: "config.webhooks = [",
         )
 
         initializer = load_initializer
@@ -47,7 +47,7 @@ module ShopifyApp
       private
 
       def job_file_name
-        address.split("/").last
+        path.split("/").last
       end
 
       def load_initializer
@@ -55,15 +55,15 @@ module ShopifyApp
       end
 
       def webhook_config
-        "\n    { topic: \"#{topic}\", address: \"#{address}\" },"
+        "\n    { topic: \"#{topic}\", path: \"#{path}\" },"
       end
 
       def topic
         options["topic"]
       end
 
-      def address
-        options["address"]
+      def path
+        options["path"]
       end
     end
   end

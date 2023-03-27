@@ -3,6 +3,7 @@
 module ShopifyApp
   class SessionsController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::RedirectForEmbedded
 
     layout false, only: :new
 
@@ -26,6 +27,8 @@ module ShopifyApp
     def destroy
       reset_session
       flash[:notice] = I18n.t(".logged_out")
+      ShopifyApp::Logger.debug("Session destroyed")
+      ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -36,7 +39,14 @@ module ShopifyApp
 
       copy_return_to_param_to_session
 
-      if top_level?
+      if embedded_redirect_url?
+        ShopifyApp::Logger.debug("Embedded URL within / authenticate")
+        if embedded_param?
+          redirect_for_embedded
+        else
+          start_oauth
+        end
+      elsif top_level?
         start_oauth
       else
         redirect_auth_to_top_level
@@ -44,10 +54,13 @@ module ShopifyApp
     end
 
     def start_oauth
+      callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
+      ShopifyApp::Logger.debug("Starting OAuth with the following callback URL: #{callback_url}")
+
       auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
         shop: sanitized_shop_name,
-        redirect_path: "/auth/shopify/callback",
-        is_online: user_session_expected?
+        redirect_path: "/#{callback_url}",
+        is_online: user_session_expected?,
       )
       cookies.encrypted[auth_attributes[:cookie].name] = {
         expires: auth_attributes[:cookie].expires,
@@ -56,7 +69,10 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
-      redirect_to(auth_attributes[:auth_route], allow_other_host: true)
+      auth_route = auth_attributes[:auth_route]
+
+      ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_route}")
+      redirect_to(auth_route, allow_other_host: true)
     end
 
     def validate_shop_presence
@@ -80,11 +96,14 @@ module ShopifyApp
 
     def top_level?
       return true unless ShopifyApp.configuration.embedded_app?
+
       !params[:top_level].nil?
     end
 
     def redirect_auth_to_top_level
-      fullpage_redirect_to(login_url_with_optional_shop(top_level: true))
+      url = login_url_with_optional_shop(top_level: true)
+      ShopifyApp::Logger.debug("Redirecting to top level - #{url}")
+      fullpage_redirect_to(url)
     end
   end
 end

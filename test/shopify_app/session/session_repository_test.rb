@@ -37,7 +37,7 @@ module ShopifyApp
       assert_kind_of InMemoryShopSessionStore.class, SessionRepository.user_storage
 
       SessionRepository.shop_storage = nil
-      assert_raises(SessionRepository::ConfigurationError) { SessionRepository.shop_storage }
+      assert_raises(::ShopifyApp::ConfigurationError) { SessionRepository.shop_storage }
     end
 
     test ".shop_storage accepts a String as argument" do
@@ -106,7 +106,7 @@ module ShopifyApp
       user = mock_associated_user
       session.stubs(:associated_user).returns(user)
 
-      InMemoryUserSessionStore.expects(:store).with(session, user.id.to_s)
+      InMemoryUserSessionStore.expects(:store).with(session, user)
 
       SessionRepository.store_session(session)
     end
@@ -171,7 +171,7 @@ module ShopifyApp
       ShopifyAPI::Auth::Session.new(
         shop: mock_shopify_domain,
         access_token: "abracadabra",
-        scope: "read_products"
+        scope: "read_products",
       )
     end
 
@@ -184,7 +184,7 @@ module ShopifyApp
         email_verified: true,
         account_owner: false,
         locale: "en",
-        collaborator: true
+        collaborator: true,
       )
     end
   end

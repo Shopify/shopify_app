@@ -12,7 +12,7 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
       { event: "onload", src: ->(domain) { "https://example-app.com/#{domain}-123.js" } },
     ]
 
-    ShopifyAPI::Context.load_rest_resources(api_version: "2022-01")
+    ShopifyAPI::Context.load_rest_resources(api_version: ShopifyApp.configuration.api_version)
     ShopifyAPI::Context.activate_session(ShopifyAPI::Auth::Session.new(shop: "some-shop.myshopify.com"))
     @manager = ShopifyApp::ScripttagsManager.new(@scripttags, "example-app.com")
   end
@@ -42,9 +42,10 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     ShopifyAPI::ScriptTag.stubs(all: [])
     scripttag = ShopifyAPI::ScriptTag.new
     ShopifyAPI::ScriptTag.stubs(:new).returns(scripttag)
-    scripttag.stubs(:save!).raises(ShopifyAPI::Errors::HttpResponseError.new(code: 401), "Error message")
+    a_response = ShopifyAPI::Clients::HttpResponse.new(code: 401, headers: {}, body: "")
+    scripttag.stubs(:save!).raises(ShopifyAPI::Errors::HttpResponseError.new(response: a_response), "Error message")
 
-    e = assert_raise ShopifyApp::ScripttagsManager::CreationFailed do
+    e = assert_raise ::ShopifyApp::CreationFailed do
       @manager.create_scripttags
     end
 
@@ -113,6 +114,13 @@ class ShopifyApp::ScripttagsManagerTest < ActiveSupport::TestCase
     assert_enqueued_with(job: ShopifyApp::ScripttagsManagerJob, args: [args]) do
       ShopifyApp::ScripttagsManager.queue(args[:shop_domain], args[:shop_token], @scripttags[-1, 1])
     end
+  end
+
+  test "deprecation message is found on initialization" do
+    version = "22.0.0"
+    ShopifyApp::Logger.expects(:deprecated).with(regexp_matches(/ScripttagsManager will become deprecated/), version)
+    ShopifyApp::ScripttagsManager.new("scripttags", "shop_domain")
+    assert_within_deprecation_schedule(version)
   end
 
   private

@@ -11,7 +11,7 @@ module ShopifyApp
 
     class_methods do
       def store(auth_session, user)
-        user = find_or_initialize_by(shopify_user_id: user[:id])
+        user = find_or_initialize_by(shopify_user_id: user.id)
         user.shopify_token = auth_session.access_token
         user.shopify_domain = auth_session.shop
         user.access_scopes = auth_session.scope.to_s
@@ -43,7 +43,7 @@ module ShopifyApp
           email_verified: false,
           account_owner: false,
           locale: "",
-          collaborator: false
+          collaborator: false,
         )
 
         ShopifyAPI::Auth::Session.new(
@@ -51,7 +51,7 @@ module ShopifyApp
           access_token: user.shopify_token,
           scope: user.access_scopes,
           associated_user_scope: user.access_scopes,
-          associated_user: associated_user
+          associated_user: associated_user,
         )
       end
     end

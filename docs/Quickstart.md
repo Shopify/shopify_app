@@ -4,23 +4,33 @@ This guide assumes you have completed the steps to create a new Rails app using 
 
 #### Table of contents
 
-[Make your app available to the internet](#make-your-app-available-to-the-internet)
+[Optionally Setup SSH tunnel for development](#setup-ssh-tunnel-for-development)
 
 [Use Shopify App Bridge to embed your app in the Shopify Admin](#use-shopify-app-bridge-to-embed-your-app-in-the-shopify-admin)
 
-## Make your app available to the internet
+## Optionally Setup SSH tunnel for development
 
-Your local app needs to be accessible from the public Internet in order to install it on a Shopify store, to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
+Local development supports both `http` and `https` schemes. By default `http` and localhost are used.
 
-Use a tunneling service like [ngrok](https://ngrok.com/), [Beeceptor](https://beeceptor.com/), [Mockbin](http://mockbin.org/), or [Hookbin](https://hookbin.com/) to make your development environment accessible to the internet.
+To use `https`, your local app needs to be accessible from the public Internet in order to install it on a Shopify store to use the [App Proxy Controller](/lib/generators/shopify_app/app_proxy_controller/templates/app_proxy_controller.rb) or receive [webhooks](/docs/shopify_app/webhooks.md).
 
-For example with [ngrok](https://ngrok.com/), run this command to set up a tunnel proxy to Rails' default port:
+In order to receive requests securely, you'll need to setup a tunnel from the internet to localhost. You can use [Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) for this.
+
+To do so, [install the `cloudflared` CLI tool](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/), and run:
 
 ```sh
-ngrok http 3000
+# The port must be the same as the one you run the Rails app on later. We use the Rails default below.
+cloudflared tunnel --url http://localhost:3000
 ```
 
-See the [*Embed the app in Shopify*](https://shopify.dev/tutorials/build-rails-react-app-that-uses-app-bridge-authentication#embed-the-app-in-shopify) section of [*Build a Shopify app with Rails, React, and App Bridge*](https://shopify.dev/tutorials/build-rails-react-app-that-uses-app-bridge-authentication) to learn more.
+Keep this window running to keep the tunnel and make note of the URL this command prints out. The URL will look like `https://some-random-words.trycloudflare.com`.
+
+Visit the "App Setup" section for your app in the [Shopify Partners dashboard](https://partners.shopify.com/organizations). Set the URL as "App URL" on this settings page and add it to the "Allowed redirection URL(s)", after appending `/auth/shopify/callback` to the end (e.g. `https://some-random-words.trycloudflare.com/auth/shopify/callback`).
+
+Add the same URL as `HOST` in your `.env` file e.g.
+```sh
+HOST='https://some-random-words.trycloudflare.com/'
+```
 
 ## Use Shopify App Bridge to embed your app in the Shopify Admin
 

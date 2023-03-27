@@ -12,7 +12,7 @@ jobs:
     name: Ruby ${{ matrix.version }}
     strategy:
       matrix:
-        version: ['2.6', '2.7', '3.0']
+        version: ['2.7', '3.0']
 
     steps:
       - uses: actions/checkout@v2
@@ -28,13 +28,12 @@ jobs:
           ruby-version: ${{ matrix.version }}
           bundler-cache: true
       - name: Set up Node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v3
         with:
           node-version: '12'
-      - name: Install Dependencies
-        run: |
-          yarn
-      - name: Run Tests
-        run: |
-          yarn test
-          bundle exec rake test
+      - name: Install Yarn Dependencies
+        run: yarn
+      - name: Run Yarn Tests
+        run: yarn test
+      - name: Run Ruby Tests
+        run: bundle exec rake test

@@ -37,4 +37,12 @@ class AddMarketingActivityExtensionGeneratorTest < Rails::Generators::TestCase
       assert routes_declarations, routes
     end
   end
+
+  test "detect deprecation notice when generating controller" do
+    message = "MarketingActivitiesController will be removed in an upcoming version"
+    version = "22.0.0"
+    ShopifyApp::Logger.expects(:deprecated).with(message, version)
+    run_generator
+    assert_within_deprecation_schedule(version)
+  end
 end

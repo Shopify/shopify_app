@@ -14,7 +14,7 @@ module ShopifyApp
     test ".retrieve can retrieve shop session records by ID" do
       ShopMockSessionStore.stubs(:find_by).returns(MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_TOKEN
+        shopify_token: TEST_SHOPIFY_TOKEN,
       ))
 
       session = ShopMockSessionStore.retrieve(1)
@@ -49,6 +49,7 @@ module ShopifyApp
       mock_auth_hash = mock
       mock_auth_hash.stubs(:shop).returns(mock_shop_instance.shopify_domain)
       mock_auth_hash.stubs(:access_token).returns("a-new-token!")
+      mock_auth_hash.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new("read_products,write_orders"))
       saved_id = ShopMockSessionStore.store(mock_auth_hash)
 
       assert_equal "a-new-token!", mock_shop_instance.shopify_token
