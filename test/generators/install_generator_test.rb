@@ -49,8 +49,16 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "creates the ShopifyApp initializer with args" do
-    run_generator ["--application_name", "Test", "Name", "--api_version", "unstable", "--scope", "read_orders",
-                   "write_products",]
+    run_generator [
+      "--application_name",
+      "Test",
+      "Name",
+      "--api_version",
+      "unstable",
+      "--scope",
+      "read_orders",
+      "write_products",
+    ]
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
       assert_match "config.api_key = ENV.fetch('SHOPIFY_API_KEY', '')", shopify_app
@@ -98,9 +106,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/environments/development.rb" do |config|
       assert_match "Allow ngrok tunnels for secure Shopify OAuth redirects\n", config
-      assert_match "config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.ngrok\\.io/\n", config
+      assert_match "config.hosts = (config.hosts rescue []) << /[-\\w]+\\.ngrok\\.io/\n", config
       assert_match "Allow Cloudflare tunnels for secure Shopify OAuth redirects\n", config
-      assert_match "config.hosts = (config.hosts rescue []) << /\[-\\w]+\\.trycloudflare\\.com/\n", config
+      assert_match "config.hosts = (config.hosts rescue []) << /[-\\w]+\\.trycloudflare\\.com/\n", config
     end
   end
 end

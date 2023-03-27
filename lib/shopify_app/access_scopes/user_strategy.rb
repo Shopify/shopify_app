@@ -8,8 +8,10 @@ module ShopifyApp
           return update_access_scopes_for_user_id?(user_id) if user_id
           return update_access_scopes_for_shopify_user_id?(shopify_user_id) if shopify_user_id
 
-          raise(::ShopifyApp::InvalidInput,
-            "#update_access_scopes? requires user_id or shopify_user_id parameter inputs")
+          raise(
+            ::ShopifyApp::InvalidInput,
+            "#update_access_scopes? requires user_id or shopify_user_id parameter inputs",
+          )
         end
 
         def covers_scopes?(current_shopify_session)

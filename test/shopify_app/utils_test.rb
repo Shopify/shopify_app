@@ -7,16 +7,24 @@ class UtilsTest < ActiveSupport::TestCase
     ShopifyApp.configuration.stubs(:myshopify_domain).returns("myshopify.com")
   end
 
-  ["my-shop", "my-shop.myshopify.com",
-   "https://my-shop.myshopify.com",
-   "http://my-shop.myshopify.com",].each do |good_url|
+  [
+    "my-shop",
+    "my-shop.myshopify.com",
+    "https://my-shop.myshopify.com",
+    "http://my-shop.myshopify.com",
+  ].each do |good_url|
     test "sanitize_shop_domain for (#{good_url})" do
       assert ShopifyApp::Utils.sanitize_shop_domain(good_url)
     end
   end
 
-  ["my-shop", "my-shop.myshopify.io", "http-shop-from-qa-hell.myshopify.com",
-   "https://my-shop.myshopify.io", "http://my-shop.myshopify.io",].each do |good_url|
+  [
+    "my-shop",
+    "my-shop.myshopify.io",
+    "http-shop-from-qa-hell.myshopify.com",
+    "https://my-shop.myshopify.io",
+    "http://my-shop.myshopify.io",
+  ].each do |good_url|
     test "sanitize_shop_domain URL (#{good_url}) with custom myshopify_domain" do
       ShopifyApp.configuration.myshopify_domain = "myshopify.io"
       assert ShopifyApp::Utils.sanitize_shop_domain(good_url)
@@ -52,8 +60,15 @@ class UtilsTest < ActiveSupport::TestCase
     assert_equal expected, ShopifyApp::Utils.sanitize_shop_domain(unified_admin_url)
   end
 
-  ["myshop.com", "myshopify.com", "shopify.com", "two words", "store.myshopify.com.evil.com",
-   "/foo/bar", "foo.myshopify.io.evil.ru",].each do |bad_url|
+  [
+    "myshop.com",
+    "myshopify.com",
+    "shopify.com",
+    "two words",
+    "store.myshopify.com.evil.com",
+    "/foo/bar",
+    "foo.myshopify.io.evil.ru",
+  ].each do |bad_url|
     test "sanitize_shop_domain for a non-myshopify URL (#{bad_url})" do
       assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
     end

@@ -304,8 +304,14 @@ module ShopifyApp
       end
     end
 
-    ["myshop.com", "myshopify.com", "shopify.com", "two words",
-     "store.myshopify.com.evil.com", "/foo/bar",].each do |bad_url|
+    [
+      "myshop.com",
+      "myshopify.com",
+      "shopify.com",
+      "two words",
+      "store.myshopify.com.evil.com",
+      "/foo/bar",
+    ].each do |bad_url|
       test "#create should return an error for a non-myshopify URL (#{bad_url})" do
         post :create, params: { shop: bad_url }
         assert_response :redirect
