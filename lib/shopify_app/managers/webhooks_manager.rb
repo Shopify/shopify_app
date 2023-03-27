@@ -80,8 +80,10 @@ module ShopifyApp
       def webhook_job_klass_name(path)
         job_file_name = Pathname(path.to_s).basename
 
-        [ShopifyApp.configuration.webhook_jobs_namespace,
-         "#{job_file_name}_job",].compact.join("/").classify
+        [
+          ShopifyApp.configuration.webhook_jobs_namespace,
+          "#{job_file_name}_job",
+        ].compact.join("/").classify
       end
     end
   end

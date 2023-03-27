@@ -205,8 +205,11 @@ module ShopifyApp
       if ShopifyApp.configuration.embedded_app?
         raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
 
-        render("shopify_app/shared/redirect", layout: false,
-          locals: { url: url, current_shopify_domain: current_shopify_domain })
+        render(
+          "shopify_app/shared/redirect",
+          layout: false,
+          locals: { url: url, current_shopify_domain: current_shopify_domain },
+        )
       else
         redirect_to(url)
       end

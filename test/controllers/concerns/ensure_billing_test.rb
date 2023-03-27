@@ -239,7 +239,8 @@ class EnsureBillingTest < ActionController::TestCase
             {
               node: {
                 name: TEST_CHARGE_NAME,
-                test: true, status: "ACTIVE",
+                test: true,
+                status: "ACTIVE",
               },
             },
           ],

@@ -13,8 +13,11 @@ module TestHelpers
     attr_reader :error_on_save, :error_on_delete
 
     sig do
-      params(sessions: T.nilable(T::Hash[String, ShopifyAPI::Auth::Session]), error_on_save: T.nilable(T::Boolean),
-        error_on_delete: T.nilable(T::Boolean)).void
+      params(
+        sessions: T.nilable(T::Hash[String, ShopifyAPI::Auth::Session]),
+        error_on_save: T.nilable(T::Boolean),
+        error_on_delete: T.nilable(T::Boolean),
+      ).void
     end
     def initialize(sessions: {}, error_on_save: false, error_on_delete: false)
       @sessions = T.must(sessions)

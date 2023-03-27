@@ -38,8 +38,11 @@ module ShopifyApp
     private
 
     def send_webhook(name, data)
-      post(shopify_app.webhooks_path(name), params: data,
-        headers: headers(name))
+      post(
+        shopify_app.webhooks_path(name),
+        params: data,
+        headers: headers(name),
+      )
     end
 
     def headers(name)
