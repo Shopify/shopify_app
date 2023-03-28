@@ -273,6 +273,7 @@ DEPENDENCIES
   rb-readline
   rubocop-shopify
   ruby-lsp
+  shopify_api (~> 12.4)
   shopify_app!
   sqlite3 (~> 1.4)
   webmock

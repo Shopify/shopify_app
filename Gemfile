@@ -11,3 +11,5 @@ gem "rails", "< 7" # temporary: https://github.com/Shopify/shopify_app/pull/1561
 group :rubocop do
   gem "rubocop-shopify", require: false
 end
+
+gem "shopify_api", "~> 12.4"

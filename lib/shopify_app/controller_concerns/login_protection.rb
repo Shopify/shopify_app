@@ -47,10 +47,17 @@ module ShopifyApp
     end
 
     def current_shopify_session
+      header = if request.headers["HTTP_X_SHOPIFY_SESSION_TOKEN"]
+        "Bearer #{request.headers["HTTP_X_SHOPIFY_SESSION_TOKEN"]}"
+      elsif request.params["session_token"]
+        "Bearer #{request.params["session_token"]}"
+      else
+        nil
+      end
       @current_shopify_session ||= begin
         cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
         load_current_session(
-          auth_header: request.headers["HTTP_AUTHORIZATION"],
+          auth_header: header,
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: online_token_configured?,
         )
