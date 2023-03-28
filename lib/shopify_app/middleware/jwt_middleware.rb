@@ -9,7 +9,7 @@ module ShopifyApp
     end
 
     def call(env)
-      return call_next(env) unless authorization_header(env)
+      return call_next(env) unless session_token(env)
 
       token = session_token(env)
       return call_next(env) unless token
