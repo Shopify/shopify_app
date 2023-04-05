@@ -1,6 +1,7 @@
 suite('appBridgeRedirect', () => {
   const sandbox = sinon.createSandbox();
   const url = '/settings';
+  const originalAppBridge = window['app-bridge'];
 
   setup(() => {
     window['app-bridge'] = {
@@ -25,7 +26,7 @@ suite('appBridgeRedirect', () => {
 
   teardown(() => {
     sandbox.restore();
-    delete window['app-bridge'];
+    window['app-bridge'] = originalAppBridge;
   });
 
 
