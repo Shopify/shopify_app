@@ -1,12 +1,14 @@
 # frozen_string_literal: true
-require 'rails/generators/base'
+
+require "rails/generators/base"
 
 module ShopifyApp
   module Generators
     class AddMarketingActivityExtensionGenerator < Rails::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path("../templates", __FILE__)
 
       def generate_app_extension
+        ShopifyApp::Logger.deprecated("MarketingActivitiesController will be removed in an upcoming version", "22.0.0")
         template("marketing_activities_controller.rb", "app/controllers/marketing_activities_controller.rb")
         generate_routes
       end
@@ -15,9 +17,9 @@ module ShopifyApp
 
       def generate_routes
         inject_into_file(
-          'config/routes.rb',
+          "config/routes.rb",
           optimize_indentation(routes, 2),
-          after: "root :to => 'home#index'\n"
+          after: "root :to => 'home#index'\n",
         )
       end
 

@@ -1,21 +1,19 @@
 # Shopify App
 
-**Shopify is doubling our engineering staff in 2021! [Join our team and work on libraries like this one.](https://smrtr.io/5GGrK)**
-
-[![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI) ![Supported Rails version][supported_rails_version]
+[![Version][gem]][gem_url] [![Build Status](https://github.com/Shopify/shopify_app/workflows/CI/badge.svg)](https://github.com/Shopify/shopify_app/actions?query=workflow%3ACI)
 
 [gem]: https://img.shields.io/gem/v/shopify_app.svg
 [gem_url]: https://rubygems.org/gems/shopify_app
-[supported_rails_version]: https://img.shields.io/badge/rails-%3C6.2.0-orange
 
 This gem builds Rails applications that can be embedded in the Shopify Admin.
 
-[Introduction](#introduction) | 
-[Requirements](#requirements) | 
-[Usage](#usage) | 
-[Documentation](#documentation) | 
+[Introduction](#introduction) |
+[Requirements](#requirements) |
+[Usage](#usage) |
+[Documentation](#documentation) |
 [Contributing](/CONTRIBUTING.md) |
 [License](/LICENSE)
+
 
 ## Introduction
 
@@ -24,58 +22,63 @@ This gem includes a Rails engine, generators, modules, and mixins that help crea
 <!-- This section is linked to in `templates/shopify_app.rb.tt`. Be careful renaming this heading. -->
 ## Requirements
 
-> **Rails compatibility** 
-> * Use Shopify App `<= v7.2.8` if you need to work with Rails 4.
-
 To become a Shopify app developer, you will need a [Shopify Partners](https://www.shopify.com/partners) account. Explore the [Shopify dev docs](https://shopify.dev/concepts/shopify-introduction) to learn more about [building Shopify apps](https://shopify.dev/concepts/apps).
 
 This gem requires that you have the following credentials:
 
-- **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
-- **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations). 
+- **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations).
+- **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations).
 
 ## Usage
 
 1. To get started, create a new Rails app:
 
 ``` sh
-$ rails new my_shopify_app
+rails new my_shopify_app
 ```
 
-2. Add the Shopify App gem to `my_shopify_app`'s Gemfile.
+2. Add the Shopify App gem to the app's Gemfile:
 
 ```sh
-$ bundle add shopify_app
+bundle add shopify_app
 ```
 
-3. Create a `.env` file in the root of `my_shopify_app` to specify your Shopify API credentials:
+3. You will need to provide several environment variables to the app.
+There are a variety of way of doing this, but for a development environment we recommended the [`dotenv-rails`](https://github.com/bkeepers/dotenv) gem.
+Create a `.env` file in the root of your Rails app to specify the full host and Shopify API credentials:
 
-```
+```sh
+HOST=http://localhost:3000
 SHOPIFY_API_KEY=<Your Shopify API key>
 SHOPIFY_API_SECRET=<Your Shopify API secret>
 ```
 
-> In a development environment, you can use a gem like `dotenv-rails` to manage environment variables. 
-
 4. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
 
 ```sh
-$ rails generate shopify_app
+rails generate shopify_app
 ```
 
 5. Run a migration to create the necessary tables in your database:
 
 ```sh
-$ rails db:migrate
+rails db:migrate
 ```
 
 6. Run the app:
 
 ```sh
-$ rails server
+rails server
 ```
 
-See [*Quickstart*](/docs/Quickstart.md) to learn how to install your app on a shop.
+7. Within [Shopify Partners](https://www.shopify.com/partners), navigate to your App, then App Setup, and configure the URLs, e.g.:
+
+  * App URL: http://localhost:3000/
+  * Allowed redirection URL(s): http://localhost:3000/auth/shopify/callback
+
+8. Install the app by visiting the server's URL (e.g. http://localhost:3000) and specifying the subdomain of the shop where you want it to be installed to.
+
+9. After the app is installed, you're redirected to the embedded app.
 
 This app implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
 
@@ -101,12 +104,15 @@ You can find documentation on gem usage, concepts, mixins, installation, and mor
 [Shopify App](/docs/shopify_app)
   * [Authentication](/docs/shopify_app/authentication.md)
   * [Engine](/docs/shopify_app/engine.md)
+  * [Controller Concerns](/docs/shopify_app/controller-concerns.md)
   * [Generators](/docs/shopify_app/generators.md)
   * [ScriptTags](/docs/shopify_app/script-tags.md)
   * [Session repository](/docs/shopify_app/session-repository.md)
   * [Handling changes in access scopes](/docs/shopify_app/handling-access-scopes-changes.md)
   * [Testing](/docs/shopify_app/testing.md)
   * [Webhooks](/docs/shopify_app/webhooks.md)
+  * [Content Security Policy](/docs/shopify_app/content-security-policy.md)
+  * [Logging](/docs/shopify_app/logging.md)
 
 ### Engine
 
@@ -128,4 +134,4 @@ To learn more about how this gem authenticates with Shopify, see [*Authenticatio
 
 [Shopify's API is versioned](https://shopify.dev/concepts/about-apis/versioning). With Shopify App `v1.11.0`, the included Shopify API gem allows developers to specify and update the Shopify API version they want their app or service to use. The Shopify API gem also surfaces warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).
 
-See the [Shopify API gem README](https://github.com/Shopify/shopify_api/) for more information.
+See the [Shopify API gem README](https://github.com/Shopify/shopify-api-ruby/) for more information.

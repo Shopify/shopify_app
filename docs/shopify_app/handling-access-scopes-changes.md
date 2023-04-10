@@ -1,5 +1,15 @@
 # Handling changes in access scopes
-The Shopify App gem provides handling changes to scopes for both shop/offline and user/online tokens. To enable your app to login via OAuth on scope changes, you can set the following configuration flag in your `config/initializers/shopify_app.rb`:
+## Updating the list of scopes the app requests
+
+Your app specifies the [access scopes](https://shopify.dev/api/usage/access-scopes) it requires in the Shopify App initializer, located at`config/initializers/shopify_app.rb`. To modify this list, update the comma-delimited configuration option:
+
+```ruby
+config.scope = "read_products,write_discounts"
+```
+
+## Requesting new scopes from merchants
+
+The Shopify App gem will automatically request new scopes from merchants for both shop/offline and user/online tokens. To enable your app to reauth via OAuth on scope changes, you can set the following configuration flag in your `config/initializers/shopify_app.rb`:
 ```ruby
 config.reauth_on_access_scope_changes = true
 ```

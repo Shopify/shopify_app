@@ -1,100 +1,128 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
+
+class OrdersUpdatedJob < ActiveJob::Base
+  extend ShopifyAPI::Webhooks::Handler
+
+  class << self
+    def handle(topic:, shop:, body:)
+      perform_later(topic: topic, shop_domain: shop, webhook: body)
+    end
+  end
+
+  def perform; end
+end
 
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
-  setup do
-    @webhooks = [
-      { topic: 'app/uninstalled', address: "https://example-app.com/webhooks/app_uninstalled" },
-      { topic: 'orders/create', address: "https://example-app.com/webhooks/order_create" },
-      { topic: 'orders/updated', address: "https://example-app.com/webhooks/order_updated" },
-    ]
+  test "#add_registrations makes calls to library's add_registration" do
+    expected_hash = {
+      topic: "orders/updated",
+      delivery_method: :http,
+      path: "webhooks/orders_updated",
+      handler: OrdersUpdatedJob,
+      fields: nil,
+    }
 
-    @manager = ShopifyApp::WebhooksManager.new(@webhooks)
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", path: "webhooks/orders_updated" },
+      ]
+    end
+    ShopifyApp::WebhooksManager.add_registrations
   end
 
-  test "#create_webhooks makes calls to create webhooks" do
-    ShopifyAPI::Webhook.stubs(all: [])
+  test "#add_registrations deduces path from address" do
+    expected_hash = {
+      topic: "orders/updated",
+      delivery_method: :http,
+      path: "/webhooks/orders_updated",
+      handler: OrdersUpdatedJob,
+      fields: nil,
+    }
 
-    expect_webhook_creation('app/uninstalled', "https://example-app.com/webhooks/app_uninstalled")
-    expect_webhook_creation('orders/create', "https://example-app.com/webhooks/order_create")
-    expect_webhook_creation('orders/updated', "https://example-app.com/webhooks/order_updated")
-
-    @manager.create_webhooks
-  end
-
-  test "#create_webhooks handles no webhooks present as nil" do
-    ShopifyAPI::Webhook.stubs(all: nil)
-
-    expect_webhook_creation('app/uninstalled', "https://example-app.com/webhooks/app_uninstalled")
-    expect_webhook_creation('orders/create', "https://example-app.com/webhooks/order_create")
-    expect_webhook_creation('orders/updated', "https://example-app.com/webhooks/order_updated")
-
-    @manager.create_webhooks
-  end
-
-  test "#create_webhooks when creating a webhook fails, raises an error" do
-    ShopifyAPI::Webhook.stubs(all: [])
-    webhook = stub(persisted?: false, errors: stub(full_messages: ['topic already taken']))
-    ShopifyAPI::Webhook.stubs(create: webhook)
-
-    e = assert_raise ShopifyApp::WebhooksManager::CreationFailed do
-      @manager.create_webhooks
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        {
+          topic: "orders/updated",
+          address: "https://some.domain.over.the.rainbow.com/webhooks/orders_updated",
+        },
+      ]
     end
 
-    assert_equal 'topic already taken', e.message
+    ShopifyApp::WebhooksManager.add_registrations
   end
 
-  test "#create_webhooks doesn't create webhooks that are already created" do
-    ShopifyAPI::Webhook.stubs(all: all_mock_webhooks)
-    @manager.expects(:create_webhook).never
+  test "#add_registrations raises an error when missing path and address" do
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        {
+          topic: "orders/updated",
+        },
+      ]
+    end
 
-    assert_nothing_raised { @manager.create_webhooks }
+    assert_raises ::ShopifyApp::MissingWebhookJobError do
+      ShopifyApp::WebhooksManager.add_registrations
+    end
+  end
+
+  test "#add_registrations does not makes calls to library's add_registration when there are no webhooks" do
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).never
+    ShopifyApp.configure do |config|
+      config.webhooks = []
+    end
+    ShopifyApp::WebhooksManager.add_registrations
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
-    @manager.expects(:destroy_webhooks)
-    @manager.expects(:create_webhooks)
+    session = ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com")
 
-    @manager.recreate_webhooks!
+    ShopifyAPI::Webhooks::Registry.expects(:register_all)
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated", session: session)
+    ShopifyApp::WebhooksManager.expects(:add_registrations).twice
+
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", path: "webhooks" },
+      ]
+    end
+    ShopifyApp::WebhooksManager.add_registrations
+    ShopifyApp::WebhooksManager.recreate_webhooks!(session: session)
   end
 
-  test "#destroy_webhooks doesnt freak out if there are no webhooks" do
-    ShopifyAPI::Webhook.stubs(:all).returns(nil)
+  test "#recreate_webhooks! does not call unregister if there is no webhook" do
+    ShopifyAPI::Webhooks::Registry.expects(:register_all).never
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).never
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).never
 
-    @manager.destroy_webhooks
+    ShopifyApp.configure do |config|
+      config.webhooks = []
+    end
+    ShopifyApp::WebhooksManager.add_registrations
+    ShopifyApp::WebhooksManager.recreate_webhooks!(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
   end
 
-  test "#destroy_webhooks makes calls to destroy webhooks" do
-    ShopifyAPI::Webhook.stubs(:all).returns(Array.wrap(all_mock_webhooks.first))
-    ShopifyAPI::Webhook.expects(:delete).with(all_mock_webhooks.first.id)
+  test "#destroy_webhooks destroy all webhooks" do
+    session = ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com")
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated", session: session)
 
-    @manager.destroy_webhooks
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", path: "webhooks" },
+      ]
+    end
+    ShopifyApp::WebhooksManager.destroy_webhooks(session: session)
   end
 
-  test "#destroy_webhooks does not destroy webhooks that do not have a matching address" do
-    ShopifyAPI::Webhook.stubs(:all).returns([stub(address: 'http://something-or-the-other.com/webhooks/product_update',
-                                                  id: 7214109)])
-    ShopifyAPI::Webhook.expects(:delete).never
+  test "#destroy_webhooks does not call unregister if there is no webhook" do
+    ShopifyAPI::Webhooks::Registry.expects(:unregister).never
 
-    @manager.destroy_webhooks
-  end
-
-  private
-
-  def expect_webhook_creation(topic, address)
-    stub_webhook = stub(persisted?: true)
-    ShopifyAPI::Webhook.expects(:create).with(topic: topic, address: address, format: 'json').returns(stub_webhook)
-  end
-
-  def all_webhook_topics
-    @webhooks ||= ['app/uninstalled', 'orders/create', 'orders/updated']
-  end
-
-  def all_mock_webhooks
-    [
-      stub(id: 1, address: "https://example-app.com/webhooks/app_uninstalled", topic: 'app/uninstalled'),
-      stub(id: 2, address: "https://example-app.com/webhooks/order_create", topic: 'orders/create'),
-      stub(id: 3, address: "https://example-app.com/webhooks/order_updated", topic: 'orders/updated'),
-    ]
+    ShopifyApp.configure do |config|
+      config.webhooks = []
+    end
+    ShopifyApp::WebhooksManager.destroy_webhooks(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
   end
 end

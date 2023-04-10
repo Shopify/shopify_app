@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'generators/shopify_app/rotate_shopify_token_job/rotate_shopify_token_job_generator'
+require "test_helper"
+require "generators/shopify_app/rotate_shopify_token_job/rotate_shopify_token_job_generator"
 
 class RotateShopifyTokenJobGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::RotateShopifyTokenJobGenerator

@@ -11,6 +11,6 @@ zh-CN:
   top_level_interaction_body: 您的浏览器要求类似 %{app} 的应用向您申请访问 Cookie，之后 Shopify 才能为您打开它。
   top_level_interaction_action: 继续
   request_storage_access_heading: "%{app} 需要访问 Cookie"
-  request_storage_access_body: 这使此应用能够通过暂时存储您的个人信息来验证您的身份。单击继续并启用 Cookie 以使用此应用。
+  request_storage_access_body: 这使此应用能够通过暂时存储您的个人信息来验证您的身份。点击继续并启用 Cookie 以使用此应用。
   request_storage_access_footer: Cookie 将在 30 天后过期。
   request_storage_access_action: 继续

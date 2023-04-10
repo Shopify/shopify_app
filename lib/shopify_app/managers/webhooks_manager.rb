@@ -1,62 +1,90 @@
 # frozen_string_literal: true
+
+require "uri"
+
 module ShopifyApp
   class WebhooksManager
-    class CreationFailed < StandardError; end
-
-    def self.queue(shop_domain, shop_token, webhooks)
-      ShopifyApp::WebhooksManagerJob.perform_later(
-        shop_domain: shop_domain,
-        shop_token: shop_token,
-        webhooks: webhooks
-      )
-    end
-
-    attr_reader :required_webhooks
-
-    def initialize(webhooks)
-      @required_webhooks = webhooks
-    end
-
-    def recreate_webhooks!
-      destroy_webhooks
-      create_webhooks
-    end
-
-    def create_webhooks
-      return unless required_webhooks.present?
-
-      required_webhooks.each do |webhook|
-        create_webhook(webhook) unless webhook_exists?(webhook[:topic])
-      end
-    end
-
-    def destroy_webhooks
-      ShopifyAPI::Webhook.all.to_a.each do |webhook|
-        ShopifyAPI::Webhook.delete(webhook.id) if required_webhook?(webhook)
+    class << self
+      def queue(shop_domain, shop_token)
+        ShopifyApp::WebhooksManagerJob.perform_later(
+          shop_domain: shop_domain,
+          shop_token: shop_token,
+        )
       end
 
-      @current_webhooks = nil
-    end
+      def create_webhooks(session:)
+        return unless ShopifyApp.configuration.has_webhooks?
 
-    private
+        ShopifyApp::Logger.debug("Creating webhooks #{ShopifyApp.configuration.webhooks}")
 
-    def required_webhook?(webhook)
-      required_webhooks.map { |w| w[:address] }.include?(webhook.address)
-    end
+        ShopifyAPI::Webhooks::Registry.register_all(session: session)
+      end
 
-    def create_webhook(attributes)
-      attributes.reverse_merge!(format: 'json')
-      webhook = ShopifyAPI::Webhook.create(attributes)
-      raise CreationFailed, webhook.errors.full_messages.to_sentence unless webhook.persisted?
-      webhook
-    end
+      def recreate_webhooks!(session:)
+        destroy_webhooks(session: session)
+        return unless ShopifyApp.configuration.has_webhooks?
 
-    def webhook_exists?(topic)
-      current_webhooks[topic]
-    end
+        add_registrations
 
-    def current_webhooks
-      @current_webhooks ||= ShopifyAPI::Webhook.all.to_a.index_by(&:topic)
+        ShopifyApp::Logger.debug("Recreating webhooks")
+        ShopifyAPI::Webhooks::Registry.register_all(session: session)
+      end
+
+      def destroy_webhooks(session:)
+        return unless ShopifyApp.configuration.has_webhooks?
+
+        ShopifyApp::Logger.debug("Destroying webhooks")
+        ShopifyApp.configuration.webhooks.each do |attributes|
+          ShopifyAPI::Webhooks::Registry.unregister(topic: attributes[:topic], session: session)
+        end
+      end
+
+      def add_registrations
+        return unless ShopifyApp.configuration.has_webhooks?
+
+        ShopifyApp::Logger.debug("Adding registrations to webhooks")
+        ShopifyApp.configuration.webhooks.each do |attributes|
+          webhook_path = path(attributes)
+
+          ShopifyAPI::Webhooks::Registry.add_registration(
+            topic: attributes[:topic],
+            delivery_method: attributes[:delivery_method] || :http,
+            path: webhook_path,
+            handler: webhook_job_klass(webhook_path),
+            fields: attributes[:fields],
+          )
+        end
+      end
+
+      private
+
+      def path(webhook_attributes)
+        path = webhook_attributes[:path]
+        address = webhook_attributes[:address]
+        uri = URI(address) if address
+
+        if path.present?
+          path
+        elsif uri&.path&.present?
+          uri.path
+        else
+          raise ::ShopifyApp::MissingWebhookJobError,
+            "The :path attribute is required for webhook registration."
+        end
+      end
+
+      def webhook_job_klass(path)
+        webhook_job_klass_name(path).safe_constantize || raise(::ShopifyApp::MissingWebhookJobError)
+      end
+
+      def webhook_job_klass_name(path)
+        job_file_name = Pathname(path.to_s).basename
+
+        [
+          ShopifyApp.configuration.webhook_jobs_namespace,
+          "#{job_file_name}_job",
+        ].compact.join("/").classify
+      end
     end
   end
 end

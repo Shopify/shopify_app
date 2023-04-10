@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,7 +7,7 @@
   <title>Redirecting…</title>
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body>
+<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= current_shopify_domain %>" data-host="<%= params[:host] %>" >
   <%=
   content_tag(:div, nil,
     id: 'redirection-target',

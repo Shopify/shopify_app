@@ -1,21 +1,22 @@
 # frozen_string_literal: true
-require 'rails/generators/base'
-require 'rails/generators/active_record'
+
+require "rails/generators/base"
+require "rails/generators/active_record"
 
 module ShopifyApp
   module Generators
     class ShopModelGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path("../templates", __FILE__)
 
       class_option :new_shopify_cli_app, type: :boolean, default: false
 
       def create_shop_model
-        copy_file('shop.rb', 'app/models/shop.rb')
+        copy_file("shop.rb", "app/models/shop.rb")
       end
 
       def create_shop_migration
-        migration_template('db/migrate/create_shops.erb', 'db/migrate/create_shops.rb')
+        migration_template("db/migrate/create_shops.erb", "db/migrate/create_shops.rb")
       end
 
       def create_shop_with_access_scopes_migration
@@ -33,24 +34,24 @@ module ShopifyApp
 
         if new_shopify_cli_app? || Rails.env.test? || yes?(scopes_column_prompt)
           migration_template(
-            'db/migrate/add_shop_access_scopes_column.erb',
-            'db/migrate/add_shop_access_scopes_column.rb'
+            "db/migrate/add_shop_access_scopes_column.erb",
+            "db/migrate/add_shop_access_scopes_column.rb",
           )
         end
       end
 
       def update_shopify_app_initializer
-        gsub_file('config/initializers/shopify_app.rb', 'ShopifyApp::InMemoryShopSessionStore', 'Shop')
+        gsub_file("config/initializers/shopify_app.rb", "ShopifyApp::InMemoryShopSessionStore", "Shop")
       end
 
       def create_shop_fixtures
-        copy_file('shops.yml', 'test/fixtures/shops.yml')
+        copy_file("shops.yml", "test/fixtures/shops.yml")
       end
 
       private
 
       def new_shopify_cli_app?
-        options['new_shopify_cli_app']
+        options["new_shopify_cli_app"]
       end
 
       def rails_migration_version

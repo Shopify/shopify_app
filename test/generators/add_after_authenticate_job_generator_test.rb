@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require 'test_helper'
-require 'generators/shopify_app/add_after_authenticate_job/add_after_authenticate_job_generator'
+
+require "test_helper"
+require "generators/shopify_app/add_after_authenticate_job/add_after_authenticate_job_generator"
 
 class AddAfterAuthenticateJobGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AddAfterAuthenticateJobGenerator
@@ -10,7 +11,7 @@ class AddAfterAuthenticateJobGeneratorTest < Rails::Generators::TestCase
     prepare_destination
   end
 
-  test 'adds enable_after_authenticate_actions config' do
+  test "adds enable_after_authenticate_actions config" do
     provide_existing_initializer_file
 
     run_generator

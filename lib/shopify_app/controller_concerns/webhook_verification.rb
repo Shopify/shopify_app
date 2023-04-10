@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   module WebhookVerification
     extend ActiveSupport::Concern
@@ -13,11 +14,14 @@ module ShopifyApp
 
     def verify_request
       data = request.raw_post
-      return head(:unauthorized) unless hmac_valid?(data)
+      unless hmac_valid?(data)
+        ShopifyApp::Logger.debug("Webhook verification failed - HMAC invalid")
+        head(:unauthorized)
+      end
     end
 
     def shop_domain
-      request.headers['HTTP_X_SHOPIFY_SHOP_DOMAIN']
+      request.headers["HTTP_X_SHOPIFY_SHOP_DOMAIN"]
     end
   end
 end

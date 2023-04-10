@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# This file exists to prevent the Spin infrastucture from infering that this is a Rails application:
+# https://github.com/Shopify/wave/issues/244
+
+set -ex
+
+bundle install

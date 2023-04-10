@@ -12,11 +12,11 @@ module ShopifyApp
         private
 
         def shop_access_scopes(shop_domain)
-          ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(shop_domain)&.access_scopes
+          ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(shop_domain)&.scope
         end
 
         def configuration_access_scopes
-          ShopifyAPI::ApiAccess.new(ShopifyApp.configuration.shop_access_scopes)
+          ShopifyAPI::Auth::AuthScopes.new(ShopifyApp.configuration.shop_access_scopes)
         end
       end
     end

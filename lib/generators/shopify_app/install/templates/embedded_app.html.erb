@@ -7,6 +7,8 @@
     <%= stylesheet_link_tag 'application' %>
     <% if ShopifyApp.use_webpacker? %>
       <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <% elsif ShopifyApp.use_importmap? %>
+      <%= javascript_importmap_tags %>
     <% else %>
       <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
     <% end %>
@@ -28,7 +30,7 @@
 
     <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
       api_key: ShopifyApp.configuration.api_key,
-      shop_origin: @shop_origin || (@current_shopify_session.domain if @current_shopify_session),
+      shop_origin: @shop_origin || (@current_shopify_session.shop if @current_shopify_session),
       host: @host,
       debug: Rails.env.development?
     } ) %>

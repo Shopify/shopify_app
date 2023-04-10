@@ -11,9 +11,9 @@ module ShopifyApp
 
     class_methods do
       def store(auth_session, *_args)
-        shop = find_or_initialize_by(shopify_domain: auth_session.domain)
-        shop.shopify_token = auth_session.token
-        shop.access_scopes = auth_session.access_scopes
+        shop = find_or_initialize_by(shopify_domain: auth_session.shop)
+        shop.shopify_token = auth_session.access_token
+        shop.access_scopes = auth_session.scope.to_s
 
         shop.save!
         shop.id
@@ -34,11 +34,10 @@ module ShopifyApp
       def construct_session(shop)
         return unless shop
 
-        ShopifyAPI::Session.new(
-          domain: shop.shopify_domain,
-          token: shop.shopify_token,
-          api_version: shop.api_version,
-          access_scopes: shop.access_scopes
+        ShopifyAPI::Auth::Session.new(
+          shop: shop.shopify_domain,
+          access_token: shop.shopify_token,
+          scope: shop.access_scopes,
         )
       end
     end

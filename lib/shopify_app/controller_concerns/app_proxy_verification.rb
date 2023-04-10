@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   module AppProxyVerification
     extend ActiveSupport::Concern
@@ -16,22 +17,22 @@ module ShopifyApp
     def query_string_valid?(query_string)
       query_hash = Rack::Utils.parse_query(query_string)
 
-      signature = query_hash.delete('signature')
+      signature = query_hash.delete("signature")
       return false if signature.nil?
 
       ActiveSupport::SecurityUtils.secure_compare(
         calculated_signature(query_hash),
-        signature
+        signature,
       )
     end
 
     def calculated_signature(query_hash_without_signature)
-      sorted_params = query_hash_without_signature.collect { |k, v| "#{k}=#{Array(v).join(',')}" }.sort.join
+      sorted_params = query_hash_without_signature.collect { |k, v| "#{k}=#{Array(v).join(",")}" }.sort.join
 
       OpenSSL::HMAC.hexdigest(
-        OpenSSL::Digest.new('sha256'),
+        OpenSSL::Digest.new("sha256"),
         ShopifyApp.configuration.secret,
-        sorted_params
+        sorted_params,
       )
     end
   end

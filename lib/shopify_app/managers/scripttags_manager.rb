@@ -1,20 +1,20 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   class ScripttagsManager
-    class CreationFailed < StandardError; end
-
     def self.queue(shop_domain, shop_token, scripttags)
       ShopifyApp::ScripttagsManagerJob.perform_later(
         shop_domain: shop_domain,
         shop_token: shop_token,
         # Procs cannot be serialized so we interpolate now, if necessary
-        scripttags: build_src(scripttags, shop_domain)
+        scripttags: build_src(scripttags, shop_domain),
       )
     end
 
     def self.build_src(scripttags, domain)
       scripttags.map do |tag|
         next tag unless tag[:src].respond_to?(:call)
+
         tag = tag.dup
         tag[:src] = tag[:src].call(domain)
         tag
@@ -24,6 +24,7 @@ module ShopifyApp
     attr_reader :required_scripttags, :shop_domain
 
     def initialize(scripttags, shop_domain)
+      ShopifyApp::Logger.deprecated("The ScripttagsManager will become deprecated in an upcoming version", "22.0.0")
       @required_scripttags = scripttags
       @shop_domain = shop_domain
     end
@@ -44,7 +45,7 @@ module ShopifyApp
     def destroy_scripttags
       scripttags = expanded_scripttags
       ShopifyAPI::ScriptTag.all.each do |tag|
-        ShopifyAPI::ScriptTag.delete(tag.id) if required_scripttag?(scripttags, tag)
+        tag.delete if required_scripttag?(scripttags, tag)
       end
 
       @current_scripttags = nil
@@ -61,9 +62,15 @@ module ShopifyApp
     end
 
     def create_scripttag(attributes)
-      attributes.reverse_merge!(format: 'json')
-      scripttag = ShopifyAPI::ScriptTag.create(attributes)
-      raise CreationFailed, scripttag.errors.full_messages.to_sentence unless scripttag.persisted?
+      scripttag = ShopifyAPI::ScriptTag.new
+      attributes.each { |key, value| scripttag.public_send("#{key}=", value) }
+
+      begin
+        scripttag.save!
+      rescue ShopifyAPI::Errors::HttpResponseError => e
+        raise ::ShopifyApp::CreationFailed, e.message
+      end
+
       scripttag
     end
 

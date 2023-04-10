@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ShopifyApp
   module ShopSessionStorage
     extend ActiveSupport::Concern
@@ -10,8 +11,8 @@ module ShopifyApp
 
     class_methods do
       def store(auth_session, *_args)
-        shop = find_or_initialize_by(shopify_domain: auth_session.domain)
-        shop.shopify_token = auth_session.token
+        shop = find_or_initialize_by(shopify_domain: auth_session.shop)
+        shop.shopify_token = auth_session.access_token
         shop.save!
         shop.id
       end
@@ -31,10 +32,9 @@ module ShopifyApp
       def construct_session(shop)
         return unless shop
 
-        ShopifyAPI::Session.new(
-          domain: shop.shopify_domain,
-          token: shop.shopify_token,
-          api_version: shop.api_version,
+        ShopifyAPI::Auth::Session.new(
+          shop: shop.shopify_domain,
+          access_token: shop.shopify_token,
         )
       end
     end

@@ -1,23 +1,31 @@
 # frozen_string_literal: true
+
 ShopifyApp::Engine.routes.draw do
+  login_url = ShopifyApp.configuration.login_url.gsub(/^#{ShopifyApp.configuration.root_url}/, "")
+  login_callback_url = ShopifyApp.configuration.login_callback_url.gsub(/^#{ShopifyApp.configuration.root_url}/, "")
+
   controller :sessions do
-    get 'login' => :new, :as => :login
-    post 'login' => :create, :as => :authenticate
-    get 'enable_cookies' => :enable_cookies, :as => :enable_cookies
-    get 'top_level_interaction' =>
-      :top_level_interaction,
-        :as => :top_level_interaction
-    get 'granted_storage_access' =>
-      :granted_storage_access,
-        :as => :granted_storage_access
-    get 'logout' => :destroy, :as => :logout
+    get login_url => :new, :as => :login
+    post login_url => :create, :as => :authenticate
+    get "logout" => :destroy, :as => :logout
+
+    # Kept to prevent apps relying on these routes from breaking
+    if login_url.gsub(%r{^/}, "") != "login"
+      get "login" => :new, :as => :default_login
+      post "login" => :create, :as => :default_authenticate
+    end
   end
 
   controller :callback do
-    get 'auth/shopify/callback' => :callback
+    get login_callback_url => :callback
+
+    # Kept to prevent apps relying on these routes from breaking
+    if login_callback_url.gsub(%r{^/}, "") != "auth/shopify/callback"
+      get "auth/shopify/callback" => :default_callback
+    end
   end
 
   namespace :webhooks do
-    post ':type' => :receive
+    post ":type" => :receive
   end
 end

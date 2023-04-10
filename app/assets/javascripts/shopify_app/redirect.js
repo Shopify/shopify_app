@@ -1,4 +1,7 @@
-(function() {
+//= require ./app_bridge_redirect.js
+//= require ./app_bridge_utils_3.1.1.js
+
+(function () {
   function redirect() {
     var redirectTargetElement = document.getElementById("redirection-target");
 
@@ -6,21 +9,14 @@
       return;
     }
 
-    var targetInfo = JSON.parse(redirectTargetElement.dataset.target)
+    var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
 
-    if (window.top == window.self) {
-      // If the current window is the 'parent', change the URL by setting location.href
-      window.top.location.href = targetInfo.url;
+    var appBridgeUtils = window['app-bridge-utils'];
+
+    if (appBridgeUtils.isShopifyEmbedded()) {
+      window.appBridgeRedirect(targetInfo.url);
     } else {
-      // If the current window is the 'child', change the parent's URL with postMessage
-      normalizedLink = document.createElement('a');
-      normalizedLink.href = targetInfo.url;
-
-      data = JSON.stringify({
-        message: 'Shopify.API.remoteRedirect',
-        data: {location: normalizedLink.href}
-      });
-      window.parent.postMessage(data, targetInfo.myshopifyUrl);
+      window.top.location.href = targetInfo.url;
     }
   }
 

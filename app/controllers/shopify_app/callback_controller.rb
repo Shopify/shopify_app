@@ -4,180 +4,143 @@ module ShopifyApp
   # Performs login after OAuth completes
   class CallbackController < ActionController::Base
     include ShopifyApp::LoginProtection
+    include ShopifyApp::EnsureBilling
 
     def callback
-      return respond_with_error if invalid_request?
-
-      store_access_token_and_build_session
-
-      if start_user_token_flow?
-        return respond_with_user_token_flow
+      begin
+        api_session, cookie = validated_auth_objects
+      rescue => error
+        deprecate_callback_rescue(error) unless error.class.module_parent == ShopifyAPI::Errors
+        return respond_with_error
       end
 
-      perform_post_authenticate_jobs
+      save_session(api_session) if api_session
+      update_rails_cookie(api_session, cookie)
 
-      respond_successfully
+      return respond_with_user_token_flow if start_user_token_flow?(api_session)
+
+      perform_post_authenticate_jobs(api_session)
+      redirect_to_app if check_billing(api_session)
     end
 
     private
 
-    def respond_successfully
-      if jwt_request?
-        head(:ok)
+    def deprecate_callback_rescue(error)
+      message = <<~EOS
+        An error of type #{error.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
+        bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
+        than rescuing it.
+      EOS
+      ShopifyApp::Logger.deprecated(message, "22.0.0")
+    end
+
+    def save_session(api_session)
+      ShopifyApp::SessionRepository.store_session(api_session)
+    end
+
+    def validated_auth_objects
+      filtered_params = request.parameters.symbolize_keys.slice(:code, :shop, :timestamp, :state, :host, :hmac)
+
+      oauth_payload = ShopifyAPI::Auth::Oauth.validate_auth_callback(
+        cookies: {
+          ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
+            cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
+        },
+        auth_query: ShopifyAPI::Auth::Oauth::AuthQuery.new(**filtered_params),
+      )
+      api_session = oauth_payload.dig(:session)
+      cookie = oauth_payload.dig(:cookie)
+
+      [api_session, cookie]
+    end
+
+    def update_rails_cookie(api_session, cookie)
+      if cookie.value.present?
+        cookies.encrypted[cookie.name] = {
+          expires: cookie.expires,
+          secure: true,
+          http_only: true,
+          value: cookie.value,
+        }
+      end
+
+      session[:shopify_user_id] = api_session.associated_user.id if api_session.online?
+      ShopifyApp::Logger.debug("Saving Shopify user ID to cookie")
+    end
+
+    def redirect_to_app
+      if ShopifyAPI::Context.embedded?
+        return_to = "#{decoded_host}#{session.delete(:return_to)}"
+        return_to = ShopifyApp.configuration.root_url if deduced_phishing_attack?
+        redirect_to(return_to, allow_other_host: true)
       else
         redirect_to(return_address)
       end
+    end
+
+    def decoded_host
+      @decoded_host ||= ShopifyAPI::Auth.embedded_app_url(params[:host])
+    end
+
+    # host param doesn't match the configured myshopify_domain
+    def deduced_phishing_attack?
+      sanitized_host = ShopifyApp::Utils.sanitize_shop_domain(URI(decoded_host).host)
+      if sanitized_host.nil?
+        ShopifyApp::Logger.info("host param from callback is not from a trusted domain")
+        ShopifyApp::Logger.info("redirecting to root as this is likely a phishing attack")
+      end
+      sanitized_host.nil?
+    end
+
+    def respond_with_error
+      flash[:error] = I18n.t("could_not_log_in")
+      redirect_to(login_url_with_optional_shop)
     end
 
     def respond_with_user_token_flow
       redirect_to(login_url_with_optional_shop)
     end
 
-    def store_access_token_and_build_session
-      if native_browser_request?
-        reset_session_options
-      end
-      set_shopify_session
-    end
+    def start_user_token_flow?(shopify_session)
+      return false unless ShopifyApp::SessionRepository.user_storage.present?
+      return false if shopify_session.online?
 
-    def invalid_request?
-      return true unless auth_hash
-
-      jwt_request? && !valid_jwt_auth?
-    end
-
-    def native_browser_request?
-      !jwt_request?
-    end
-
-    def perform_post_authenticate_jobs
-      install_webhooks
-      install_scripttags
-      perform_after_authenticate_job
-    end
-
-    def respond_with_error
-      if jwt_request?
-        head(:unauthorized)
-      else
-        flash[:error] = I18n.t('could_not_log_in')
-        redirect_to(login_url_with_optional_shop)
-      end
-    end
-
-    # Override user_session_by_cookie from LoginProtection to bypass allow_cookie_authentication
-    # setting check because session cookies are justified at top level
-    def user_session_by_cookie
-      return unless session[:user_id].present?
-      ShopifyApp::SessionRepository.retrieve_user_session(session[:user_id])
-    end
-
-    def start_user_token_flow?
-      if jwt_request?
-        false
-      else
-        return false unless ShopifyApp::SessionRepository.user_storage.present?
-        update_user_access_scopes?
-      end
+      update_user_access_scopes?
     end
 
     def update_user_access_scopes?
-      return true if user_session.blank?
-      user_access_scopes_strategy.update_access_scopes?(user_id: session[:user_id])
+      return true if session[:shopify_user_id].nil?
+
+      user_access_scopes_strategy.update_access_scopes?(shopify_user_id: session[:shopify_user_id])
     end
 
     def user_access_scopes_strategy
       ShopifyApp.configuration.user_access_scopes_strategy
     end
 
-    def jwt_request?
-      jwt_shopify_domain || jwt_shopify_user_id
+    def perform_post_authenticate_jobs(session)
+      install_webhooks(session)
+      install_scripttags(session)
+      perform_after_authenticate_job(session)
     end
 
-    def valid_jwt_auth?
-      auth_hash && jwt_shopify_domain == shop_name && jwt_shopify_user_id == associated_user_id
-    end
-
-    def auth_hash
-      request.env['omniauth.auth']
-    end
-
-    def shop_name
-      auth_hash.uid
-    end
-
-    def offline_access_token
-      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(shop_name)&.token
-    end
-
-    def online_access_token
-      ShopifyApp::SessionRepository.retrieve_user_session_by_shopify_user_id(associated_user_id)&.token
-    end
-
-    def associated_user
-      return unless auth_hash.dig('extra', 'associated_user').present?
-
-      auth_hash['extra']['associated_user'].merge('scope' => auth_hash['extra']['associated_user_scope'])
-    end
-
-    def associated_user_id
-      associated_user && associated_user['id']
-    end
-
-    def token
-      auth_hash['credentials']['token']
-    end
-
-    def access_scopes
-      auth_hash.dig('extra', 'scope')
-    end
-
-    def reset_session_options
-      request.session_options[:renew] = true
-      session.delete(:_csrf_token)
-    end
-
-    def set_shopify_session
-      session_store = ShopifyAPI::Session.new(
-        domain: shop_name,
-        token: token,
-        api_version: ShopifyApp.configuration.api_version,
-        access_scopes: access_scopes
-      )
-
-      session[:shopify_user] = associated_user
-      if session[:shopify_user].present?
-        session[:shop_id] = nil if shop_session && shop_session.domain != shop_name
-        session[:user_id] = ShopifyApp::SessionRepository.store_user_session(session_store, associated_user)
-      else
-        session[:shop_id] = ShopifyApp::SessionRepository.store_shop_session(session_store)
-        session[:user_id] = nil if user_session && user_session.domain != shop_name
-      end
-      session[:shopify_domain] = shop_name
-      session[:user_session] = auth_hash&.extra&.session
-    end
-
-    def install_webhooks
+    def install_webhooks(session)
       return unless ShopifyApp.configuration.has_webhooks?
 
-      WebhooksManager.queue(
-        shop_name,
-        offline_access_token || online_access_token,
-        ShopifyApp.configuration.webhooks
-      )
+      WebhooksManager.queue(session.shop, session.access_token)
     end
 
-    def install_scripttags
+    def install_scripttags(session)
       return unless ShopifyApp.configuration.has_scripttags?
 
       ScripttagsManager.queue(
-        shop_name,
-        offline_access_token || online_access_token,
-        ShopifyApp.configuration.scripttags
+        session.shop,
+        session.access_token,
+        ShopifyApp.configuration.scripttags,
       )
     end
 
-    def perform_after_authenticate_job
+    def perform_after_authenticate_job(session)
       config = ShopifyApp.configuration.after_authenticate_job
 
       return unless config && config[:job].present?
@@ -186,9 +149,9 @@ module ShopifyApp
       job = job.constantize if job.is_a?(String)
 
       if config[:inline] == true
-        job.perform_now(shop_domain: session[:shopify_domain])
+        job.perform_now(shop_domain: session.shop)
       else
-        job.perform_later(shop_domain: session[:shopify_domain])
+        job.perform_later(shop_domain: session.shop)
       end
     end
   end

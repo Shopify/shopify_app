@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
@@ -8,254 +8,191 @@ module Shopify
   end
 end
 
+class CartsUpdateJob < ActiveJob::Base
+  extend ShopifyAPI::Webhooks::Handler
+
+  class << self
+    def handle(topic:, shop:, body:)
+      perform_later(topic: topic, shop_domain: shop, webhook: body)
+    end
+  end
+
+  def perform; end
+end
+
 module ShopifyApp
   class CallbackControllerTest < ActionController::TestCase
-    TEST_SHOPIFY_DOMAIN = "shop.myshopify.com"
-    TEST_ASSOCIATED_USER = { 'id' => 'test-shopify-user' }
-    ASSOCIATED_USER_SCOPE = "read_products"
-    TEST_ASSOCIATED_USER_WITH_SCOPE = TEST_ASSOCIATED_USER.merge('scope' => ASSOCIATED_USER_SCOPE)
-    TEST_SESSION = "this.is.a.user.session"
-
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp.configuration = nil
-      ShopifyApp.configuration.embedded_app = true
-      ShopifyApp.configuration.reauth_on_access_scope_changes = true
-      mock_user_scopes_match_strategy
-
+      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
+      ShopifyApp::SessionRepository.user_storage = nil
+      ShopifyAppConfigurer.setup_context
       I18n.locale = :en
-
-      request.env['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'\
-                                       'AppleWebKit/537.36 (KHTML, like Gecko)'\
-                                       'Chrome/69.0.3497.100 Safari/537.36'
+      @stubbed_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token")
+      @stubbed_cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now)
+      @host = "little-shoppe-of-horrors.#{ShopifyApp.configuration.myshopify_domain}"
+      host = Base64.strict_encode64(@host + "/admin")
+      @callback_params = {
+        shop: "shop",
+        code: "code",
+        state: "state",
+        timestamp: "timestamp",
+        host: host,
+        hmac: "hmac",
+      }
+      @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
+      request.env["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)"\
+        "AppleWebKit/537.36 (KHTML, like Gecko)"\
+        "Chrome/69.0.3497.100 Safari/537.36"
+      ShopifyApp::SessionRepository.stubs(:store_session)
     end
 
-    test '#callback flashes error when omniauth is not present' do
-      get :callback, params: { shop: 'shop' }
-      assert_equal flash[:error], 'Could not log in to Shopify store'
+    test "#callback flashes error in Spanish" do
+      I18n.expects(:t).with("could_not_log_in")
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
-    test '#callback flashes error in Spanish' do
-      I18n.locale = :es
-      get :callback, params: { shop: 'shop' }
-      assert_match 'sesión', flash[:error]
+    test "#callback rescued errors of ShopifyAPI::Error will not emit a deprecation notice" do
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(ShopifyAPI::Errors::MissingRequiredArgumentError)
+      assert_not_deprecated do
+        get :callback,
+          params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+      end
+      assert_equal flash[:error], "Could not log in to Shopify store"
     end
 
-    test '#callback sets up a shop session for shop token setup' do
-      mock_shopify_omniauth
+    test "#callback rescued shopify errors will not be deprecated" do
+      response = ShopifyAPI::Clients::HttpResponse.new(code: 500, headers: {}, body: "")
+      error = ShopifyAPI::Errors::HttpResponseError.new(response: response)
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(error)
 
-      ShopifyApp::SessionRepository.expects(:store_shop_session).returns('1234')
-      get :callback, params: { shop: 'shop' }
-      assert_equal '1234', session[:shop_id]
-      assert_nil session[:user_id]
-      assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
+      ShopifyApp::Logger.expects(:deprecated).never
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
-    test '#callback sets up a user session for user token setup' do
-      mock_shopify_user_omniauth
+    test "#callback rescued non-shopify errors will be deprecated" do
+      error = StandardError.new
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(error)
 
-      ShopifyApp::SessionRepository.expects(:store_user_session).returns('435')
-      get :callback, params: { shop: 'shop' }
-      assert_nil session[:shop_id]
-      assert_equal '435', session[:user_id]
-      assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
+      message = <<~EOS
+        An error of type #{error.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
+        bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
+        than rescuing it.
+      EOS
+      version = "22.0.0"
+
+      assert_within_deprecation_schedule(version)
+      ShopifyApp::Logger.expects(:deprecated).with(message, version)
+      get :callback,
+        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
-    test '#callback clears a stale shopify_user session if none is provided in latest callback' do
-      session[:shopify_user] = 'user_object'
-      mock_shopify_omniauth
+    test "#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback" do
+      mock_oauth
 
-      get :callback, params: { shop: 'shop' }
-      assert_not_nil session[:shop_id]
-      assert_nil session[:shopify_user]
+      get :callback, params: @callback_params
     end
 
-    test '#callback keeps the user_id if shop session is for the same shop' do
-      mock_shopify_omniauth
-      session[:user_id] = 'valid-user-id'
-      user_shop_session = ShopifyAPI::Session.new(
-        domain: TEST_SHOPIFY_DOMAIN,
-        token: '1234',
-        api_version: nil,
+    test "#callback saves the session when validated by API library" do
+      mock_oauth
+      ShopifyApp::SessionRepository.expects(:store_session).with(@stubbed_session)
+
+      get :callback, params: @callback_params
+    end
+
+    test "#callback returns to root if the host in the param doesn't match configuration indicating a potential phishing attack" do
+      host = "hackerman-evil-site.com/hide-yo-wife-hide-yo-kids"
+      encoded_host = Base64.strict_encode64(host + "/admin")
+      hacker_params = @callback_params.dup
+      hacker_params[:host] = encoded_host
+      ShopifyAPI::Auth::Oauth::AuthQuery.stubs(:new).with(**hacker_params).returns(@auth_query)
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).returns({
+        cookie: @stubbed_cookie,
+        session: @stubbed_session,
+      })
+
+      get :callback, params: hacker_params
+      assert_redirected_to ShopifyApp.configuration.root_url
+    end
+
+    test "#callback sets the shopify_user_id in the Rails session when session is online" do
+      associated_user = ShopifyAPI::Auth::AssociatedUser.new(
+        id: 42,
+        first_name: "LeeeEEeeeeee3roy",
+        last_name: "Jenkins",
+        email: "dat_email@tho.com",
+        email_verified: true,
+        locale: "en",
+        collaborator: true,
+        account_owner: true,
       )
-      ShopifyApp::SessionRepository.stubs(:retrieve_user_session).with('valid-user-id').returns(user_shop_session)
-
-      get :callback, params: { shop: 'shop' }
-      assert_equal 'valid-user-id', session[:user_id]
-      assert_not_nil session[:shop_id]
-    end
-
-    test '#callback clears stale user_id if shop session is for a different shop' do
-      mock_shopify_omniauth
-      session[:user_id] = 'valid-user-id'
-      user_shop_session = ShopifyAPI::Session.new(
-        domain: 'other-shop.myshopify.io',
-        token: '1234',
-        api_version: nil,
+      mock_session = ShopifyAPI::Auth::Session.new(
+        shop: "shop",
+        access_token: "token",
+        is_online: true,
+        associated_user: associated_user,
       )
-      ShopifyApp::SessionRepository.stubs(:retrieve_user_session).with('valid-user-id').returns(user_shop_session)
-
-      get :callback, params: { shop: 'shop' }
-      assert_nil session[:user_id]
-      assert_not_nil session[:shop_id]
+      mock_oauth(session: mock_session)
+      get :callback, params: @callback_params
+      assert_equal session[:shopify_user_id], associated_user.id
     end
 
-    test '#callback keeps shop_id if user session is for the same shop' do
-      mock_shopify_user_omniauth
-      session[:shop_id] = 'valid-shop-id'
-      shop_session = ShopifyAPI::Session.new(
-        domain: TEST_SHOPIFY_DOMAIN,
-        token: '1234',
-        api_version: nil,
-      )
-      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(shop_session)
-
-      get :callback, params: { shop: 'shop' }
-      assert_not_nil session[:user_id]
-      assert_equal 'valid-shop-id', session[:shop_id]
+    test "#callback DOES NOT set the shopify_user_id in the Rails session when session is offline" do
+      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: false)
+      mock_oauth(session: mock_session)
+      get :callback, params: @callback_params
+      assert_nil session[:shopify_user_id]
     end
 
-    test '#callback clears a stale shop_id if user session is for a different shop when using cookie auth' do
-      ShopifyApp.configuration.allow_jwt_authentication = false
-      ShopifyApp.configuration.allow_cookie_authentication = true
-      mock_shopify_user_omniauth
-      session[:shop_id] = 'valid-shop-id'
-      other_shop_session = ShopifyAPI::Session.new(
-        domain: 'other-domain.myshopify.io',
-        token: '1234',
-        api_version: nil,
-      )
-      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session).with('valid-shop-id').returns(other_shop_session)
+    test "#callback sets encrypted cookie if API library returns cookie object" do
+      cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "snickerdoodle", expires: Time.now + 1.day)
+      mock_oauth(cookie: cookie)
 
-      get :callback, params: { shop: 'shop' }
-      assert_not_nil session[:user_id]
-      assert_nil session[:shop_id]
+      get :callback, params: @callback_params
+      assert_equal cookies.encrypted[cookie.name], cookie.value
     end
 
-    test '#callback sets up a shopify session with a user for online mode' do
-      mock_shopify_user_omniauth
+    test "#callback does not set encrypted cookie if API library returns empty cookie" do
+      mock_oauth
 
-      ShopifyApp::SessionRepository.expects(:store_user_session).returns('4321')
-      get :callback, params: { shop: 'shop' }
-      assert_equal '4321', session[:user_id]
-      assert_equal TEST_SHOPIFY_DOMAIN, session[:shopify_domain]
-      assert_equal TEST_ASSOCIATED_USER_WITH_SCOPE, session[:shopify_user]
-      assert_equal TEST_SESSION, session[:user_session]
+      get :callback, params: @callback_params
+      refute_equal cookies.encrypted[@stubbed_cookie.name], @stubbed_cookie.value
     end
 
-    test '#callback starts the WebhooksManager if webhooks are configured' do
+    test "#callback starts the WebhooksManager if webhooks are configured" do
       ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+        config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue)
+      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token")
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
     test "#callback doesn't run the WebhooksManager if no webhooks are configured" do
       ShopifyApp.configure do |config|
         config.webhooks = []
       end
+      ShopifyApp::WebhooksManager.add_registrations
 
       ShopifyApp::WebhooksManager.expects(:queue).never
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
-    test '#jwt_callback persists the user token' do
-      mock_shopify_user_omniauth
-      mock_shopify_jwt
-      session = mock_user_session
-
-      ShopifyApp::SessionRepository.expects(:store_user_session).with(session, TEST_ASSOCIATED_USER_WITH_SCOPE)
-
-      get :callback
-      assert_response :ok
-    end
-
-    test '#jwt_callback returns unauthorized if no omniauth data' do
-      mock_shopify_jwt
-
-      get :callback
-      assert_response :unauthorized
-    end
-
-    test '#jwt_callback returns unauthorized if the jwt user does not match omniauth user' do
-      mock_shopify_user_omniauth
-      mock_shopify_jwt
-      request.env['jwt.shopify_user_id'] = 'bad-user'
-
-      get :callback
-      assert_response :unauthorized
-    end
-
-    test '#jwt_callback returns unauthorized if the jwt shop does not match omniauth shop' do
-      mock_shopify_user_omniauth
-      mock_shopify_jwt
-      request.env['jwt.shopify_domain'] = 'bad-shop'
-
-      get :callback
-      assert_response :unauthorized
-    end
-
-    test '#install_webhooks uses the shop token for shop strategy' do
-      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '1234', api_version: '2019-1')
-      ShopifyApp::SessionRepository
-        .expects(:retrieve_shop_session_by_shopify_domain)
-        .returns(shop_session)
-      ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
-      end
-
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '1234', ShopifyApp.configuration.webhooks)
-
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test '#install_webhooks still uses the shop token for user strategy' do
-      shop_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
-      ShopifyApp::SessionRepository.stubs(:retrieve_shop_session_by_shopify_domain)
-        .with(TEST_SHOPIFY_DOMAIN)
-        .returns(shop_session)
-
-      ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
-      end
-
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321', ShopifyApp.configuration.webhooks)
-
-      session[:shop_id] = '135'
-      mock_shopify_user_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test '#install_webhooks falls back to user token for user strategy if shop is not in session' do
-      user_session = ShopifyAPI::Session.new(domain: 'shop', token: '4321', api_version: '2019-1')
-      ShopifyApp::SessionRepository.expects(:retrieve_shop_session_by_shopify_domain).returns(nil)
-      ShopifyApp::SessionRepository.expects(:retrieve_user_session_by_shopify_user_id).returns(user_session)
-      ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
-      end
-
-      ShopifyApp::WebhooksManager.expects(:queue).with(TEST_SHOPIFY_DOMAIN, '4321', ShopifyApp.configuration.webhooks)
-
-      mock_shopify_user_omniauth
-      get :callback, params: { shop: 'shop' }
-    end
-
-    test '#callback calls #perform_after_authenticate_job and performs inline when inline is true' do
+    test "#callback calls #perform_after_authenticate_job and performs inline when inline is true" do
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_now)
+      Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: "shop")
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
     test "#callback calls #perform_after_authenticate_job and performs asynchronous when inline isn't true" do
@@ -263,10 +200,10 @@ module ShopifyApp
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_later)
+      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: "shop")
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
     test "#callback doesn't call #perform_after_authenticate_job if job is nil" do
@@ -276,8 +213,8 @@ module ShopifyApp
 
       Shopify::AfterAuthenticateJob.expects(:perform_later).never
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
     test "#callback calls #perform_after_authenticate_job and performs async if inline isn't present" do
@@ -285,10 +222,10 @@ module ShopifyApp
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_later)
+      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: "shop")
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
     test "#callback calls #perform_after_authenticate_job constantizes from a string to a class" do
@@ -296,10 +233,10 @@ module ShopifyApp
         config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_later)
+      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: "shop")
 
-      mock_shopify_omniauth
-      get :callback, params: { shop: 'shop' }
+      mock_oauth
+      get :callback, params: @callback_params
     end
 
     test "#callback calls #perform_after_authenticate_job raises if the string is not a valid job class" do
@@ -307,143 +244,91 @@ module ShopifyApp
         config.after_authenticate_job = { job: "InvalidJobClassThatDoesNotExist", inline: false }
       end
 
-      mock_shopify_omniauth
+      mock_oauth
 
       assert_raise NameError do
-        get :callback, params: { shop: 'shop' }
+        get :callback, params: @callback_params
       end
     end
 
-    test "#callback redirects to the root_url when not using JWT authentication" do
-      ShopifyApp.configuration.allow_jwt_authentication = false
-      ShopifyApp.configuration.allow_cookie_authentication = true
+    test "#callback redirects to the root_url with shop and host parameter for non-embedded" do
+      ShopifyApp.configuration.embedded_app = false
+      ShopifyAppConfigurer.setup_context # to reset the context, as there's no attr_writer for embedded
+      mock_oauth
 
-      mock_shopify_omniauth
+      non_embedded_host = "not-real.little-test-shoppe-of-horrs.com"
+      @controller.stubs(:return_address).returns(non_embedded_host)
+      get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      get :callback, params: { shop: 'shop' }
-
-      assert_redirected_to '/'
+      assert_redirected_to non_embedded_host
     end
 
-    test "#callback redirects to the root_url with shop and host parameter when not using JWT authentication" do
-      ShopifyApp.configuration.allow_jwt_authentication = false
-      ShopifyApp.configuration.allow_cookie_authentication = true
+    test "#callback redirects to the embedded app url for embedded" do
+      mock_oauth
 
-      mock_shopify_omniauth
+      get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      get :callback, params: { shop: 'shop', host: 'test-host' }
-
-      assert_redirected_to "/?host=test-host&shop=#{TEST_SHOPIFY_DOMAIN}"
+      assert_redirected_to "https://#{@host}/admin/apps/key"
     end
 
-    test "#callback redirects to the root_url with shop and host parameter when using JWT authentication" do
-      ShopifyApp.configuration.allow_jwt_authentication = true
-      mock_shopify_omniauth
-
-      get :callback, params: { shop: 'shop', host: 'test-host' } # host is required for App Bridge 2.0
-
-      assert_redirected_to "/?host=test-host&shop=#{TEST_SHOPIFY_DOMAIN}"
-    end
-
-    test "#callback performs install_webhook job after JWT authentication" do
-      mock_shopify_user_omniauth
-      mock_shopify_jwt
+    test "#callback performs install_webhook job after authentication" do
+      mock_oauth
 
       ShopifyApp.configure do |config|
-        config.webhooks = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+        config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue)
+      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token")
 
-      get :callback
-      assert_response :ok
+      get :callback, params: @callback_params
+      assert_response 302
     end
 
-    test "#callback performs install_scripttags job after JWT authentication" do
-      mock_shopify_user_omniauth
-      mock_shopify_jwt
+    test "#callback performs install_scripttags job after authentication" do
+      mock_oauth
 
       ShopifyApp.configure do |config|
-        config.scripttags = [{ topic: 'carts/update', address: 'example-app.com/webhooks' }]
+        config.scripttags = [{ event: "onload", src: "https://example.com/fancy.js" }]
       end
 
-      ShopifyApp::ScripttagsManager.expects(:queue)
+      ShopifyApp::ScripttagsManager.expects(:queue).with("shop", "token", ShopifyApp.configuration.scripttags)
 
-      get :callback
-      assert_response :ok
+      get :callback, params: @callback_params
+      assert_response 302
     end
 
-    test "#callback performs after_authenticate job after JWT authentication" do
-      mock_shopify_user_omniauth
-      mock_shopify_jwt
+    test "#callback performs after_authenticate job after authentication" do
+      mock_oauth
 
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_now)
+      Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: "shop")
 
-      get :callback
-      assert_response :ok
-    end
-
-    test "#callback redirects to login for user token flow if user session access scopes mismatch by user_id" do
-      mock_user_scopes_mismatch_strategy
-      mock_shopify_user_omniauth
-      _session = mock_user_session
-
-      get :callback
-
-      assert_redirected_to ShopifyApp.configuration.login_url
+      get :callback, params: @callback_params
+      assert_response 302
     end
 
     private
 
-    def mock_shopify_jwt
-      request.env['jwt.shopify_domain'] = TEST_SHOPIFY_DOMAIN
-      request.env['jwt.shopify_user_id'] = TEST_ASSOCIATED_USER['id']
-    end
+    def mock_oauth(cookie: @stubbed_cookie, session: @stubbed_session)
+      ShopifyAPI::Auth::Oauth::AuthQuery.stubs(:new).with(**@callback_params).returns(@auth_query)
 
-    def mock_user_session
-      ShopifyAPI::Session.new(
-        token: '1234',
-        domain: TEST_SHOPIFY_DOMAIN,
-        api_version: ShopifyApp.configuration.api_version,
-        access_scopes: "read_products"
-      )
-    end
+      cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "nonce"
 
-    def mock_shopify_omniauth
-      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      ShopifyApp::SessionRepository.user_storage = nil
-      OmniAuth.config.add_mock(
-        :shopify,
-        provider: :shopify,
-        uid: TEST_SHOPIFY_DOMAIN,
-        credentials: { token: '1234' },
-        extra: { scope: "read_products" }
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(
+        cookies:
+                {
+                  ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
+                    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
+                },
+        auth_query: @auth_query,
       )
-      request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
-    end
-
-    def mock_shopify_user_omniauth
-      ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
-      OmniAuth.config.add_mock(
-        :shopify,
-        provider: :shopify,
-        uid: TEST_SHOPIFY_DOMAIN,
-        credentials: { token: '1234' },
-        extra: {
-          associated_user: TEST_ASSOCIATED_USER,
-          associated_user_scope: ASSOCIATED_USER_SCOPE,
-          scope: "read_products",
-          session: TEST_SESSION,
-        }
-      )
-      request.env['omniauth.auth'] = OmniAuth.config.mock_auth[:shopify] if request
-      request.env['omniauth.params'] = { shop: TEST_SHOPIFY_DOMAIN } if request
+        .returns({
+          cookie: cookie,
+          session: session,
+        })
     end
   end
 end

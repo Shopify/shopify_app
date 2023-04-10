@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'test_helper'
+
+require "test_helper"
 
 module ShopifyApp
   module AccessScopes
@@ -11,14 +12,14 @@ module ShopifyApp
       def setup
         @user_id = 1
         @shopify_user_id = 2
-        @shopify_domain = 'test-shop.myshopify.com'
+        @shopify_domain = "test-shop.myshopify.com"
       end
 
       def test_scopes_match_for_db_generated_user_id
         ShopifyApp.configuration.user_access_scopes = "read_products"
         ShopifyApp::SessionRepository
           .stubs(:retrieve_user_session).with(user_id)
-          .returns(mock_user_session('read_products'))
+          .returns(mock_user_session("read_products"))
 
         refute ShopifyApp::AccessScopes::UserStrategy.update_access_scopes?(user_id: user_id)
       end
@@ -27,7 +28,7 @@ module ShopifyApp
         ShopifyApp.configuration.user_access_scopes = "write_products"
         ShopifyApp::SessionRepository
           .stubs(:retrieve_user_session).with(user_id)
-          .returns(mock_user_session('read_products'))
+          .returns(mock_user_session("read_products"))
 
         assert ShopifyApp::AccessScopes::UserStrategy.update_access_scopes?(user_id: user_id)
       end
@@ -37,7 +38,7 @@ module ShopifyApp
         ShopifyApp::SessionRepository
           .stubs(:retrieve_user_session_by_shopify_user_id)
           .with(shopify_user_id)
-          .returns(mock_user_session('write_orders, read_products'))
+          .returns(mock_user_session("write_orders, read_products"))
 
         refute ShopifyApp::AccessScopes::UserStrategy.update_access_scopes?(shopify_user_id: shopify_user_id)
       end
@@ -47,13 +48,13 @@ module ShopifyApp
         ShopifyApp::SessionRepository
           .stubs(:retrieve_user_session_by_shopify_user_id)
           .with(shopify_user_id)
-          .returns(mock_user_session('write_orders, read_products'))
+          .returns(mock_user_session("write_orders, read_products"))
 
         assert ShopifyApp::AccessScopes::UserStrategy.update_access_scopes?(shopify_user_id: shopify_user_id)
       end
 
       def test_assert_invalid_input_error_when_no_parameters_passed_in
-        assert_raises ShopifyApp::AccessScopes::UserStrategy::InvalidInput do
+        assert_raises ::ShopifyApp::InvalidInput do
           assert ShopifyApp::AccessScopes::UserStrategy.update_access_scopes?
         end
       end
@@ -61,11 +62,10 @@ module ShopifyApp
       private
 
       def mock_user_session(scopes)
-        ShopifyAPI::Session.new(
-          domain: shopify_domain,
-          token: 'access_token',
-          api_version: '2021-02',
-          access_scopes: scopes
+        ShopifyAPI::Auth::Session.new(
+          shop: shopify_domain,
+          access_token: "access_token",
+          scope: scopes,
         )
       end
     end

@@ -3,7 +3,7 @@
 #### Table of contents
 
 [Generators](#generators)
-  * [The `shopify_app:install` generator hangs](#the-shopifyappinstall-generator-hangs)
+  * [The `shopify_app:install` generator hangs](#the-shopify_appinstall-generator-hangs)
 
 [Rails](#rails)
   * [Known issues with Rails `v6.1`](#known-issues-with-rails-v61)
@@ -16,8 +16,9 @@
 [JWT session tokens](#jwt-session-tokens)
   * [My app is still using cookies to authenticate](#my-app-is-still-using-cookies-to-authenticate)
   * [My app can't make requests to the Shopify API](#my-app-cant-make-requests-to-the-shopify-api)
+  * [I'm stuck in a redirect loop after OAuth](#im-stuck-in-a-redirect-loop-after-oauth)
 
-[Migrating to App Bridge 2.0](#migrating-to-app-bridge-2.0)
+[Debugging Tips](#debugging-tips)
 
 ## Generators
 
@@ -26,7 +27,7 @@
 Rails uses spring by default to speed up development. To run the generator, spring has to be stopped:
 
 ```sh
-$ bundle exec spring stop
+bundle exec spring stop
 ```
 
 Run shopify_app generator again.
@@ -87,9 +88,6 @@ Edit `config/initializer/shopify_app.rb` and ensure the following configurations
 ```diff
 + config.embedded_app = true
 
-+ config.allow_jwt_authentication = true
-+ config.allow_cookie_authentication = false
-
 # This line should already exist if you're using shopify_app gem 13.x.x+
 + config.shop_session_repository = 'Shop'
 ```
@@ -147,13 +145,43 @@ X-Shopify-API-Request-Failure-Unauthorized: true
 
 Then, use the [Shopify App Bridge Redirect](https://shopify.dev/tools/app-bridge/actions/navigation/redirect) action to redirect your app frontend to the app login URL if this header is set.
 
-## Migrating to App Bridge 2.0
+### I'm stuck in a redirect loop after OAuth
 
-In order to upgrade your embedded app to the latest App Bridge 2.0 version, please refer to the [migration guide](https://shopify.dev/tutorials/migrate-your-app-to-app-bridge-2).
+In previous versions of `ShopifyApp::Authenticated` controller concern, App Bridge embedded apps were able to include the `Authenticated` controller concern in the `HomeController` and other embedded controllers. This is no longer supported due to browsers blocking 3rd party cookies to increase privacy. App Bridge 3 is needed to handle all embedded sessions.
 
-To ensure that your app's embedded layout doesn't import App Bridge 2.0 before fully migrating, make the following change to bind it to v1.x.
+For more details on how to handle embeded sessions, refer to [the session token documentation](https://shopify.dev/apps/auth/oauth/session-tokens).
 
-```diff
- - <script src="https://unpkg.com/@shopify/app-bridge"></script>
- + <script src="https://unpkg.com/@shopify/app-bridge@1"></script>
-``` 
+### `redirect_uri is not whitelisted`
+
+* Ensure you have set the `HOST` environment variable to match your host's URL, e.g. `http://localhost:3000` or `https://my-host-name.trycloudflare.com`.
+* Update the app's URL and whitelisted URLs in App Setup on https://partners.shopify.com
+
+### `This app can’t load due to an issue with browser cookies`
+
+This can be caused by an infinite redirect due to a coding error
+To investigate the cause, you can add a breakpoint or logging to the `rescue` clause of `ShopifyApp::CallbackController`.
+
+One possible cause is that for XHR requests, the `Authenticated` concern should be used, rather than `RequireKnownShop`.
+See below for further details.
+
+## Controller Concerns
+### Authenticated vs RequireKnownShop
+The gem heavily relies on the `current_shopify_domain` helper to contextualize a request to a given Shopify shop. This helper is set in different and conflicting ways if the request is authenticated or not.
+
+Because of these conflicting approaches the `Authenticated` (for use in authenticated requests) and `RequireKnownShop` (for use in unauthenticated requests) controller concerns must *never* be included within the same controller.
+
+#### Authenticated Requests
+For authenticated requests, use the [`Authenticated` controller concern](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/authenticated.rb). The `current_shopify_domain` is set from the JWT for these requests.
+
+#### Unauthenticated Requests
+For unauthenticated requests, use the [`RequireKnownShop` controller concern](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/require_known_shop.rb). The `current_shopify_domain` is set from the query string parameters that are passed.
+
+## Debugging Tips
+
+If you do run into issues with the gem there are two useful techniques to apply: Adding log statements, and using an interactive debugger, such as `pry`.
+
+You can temporarily add log statements or debugger calls to the `shopify_app` or `shopify-api-ruby` gems:
+  * You can modify a gem using [`bundle open`](https://boringrails.com/tips/bundle-open-debug-gems)
+  * Alternatively, you can your modify your `Gemfile` to use local locally checked out gems with the the [`path` option](https://bundler.io/man/gemfile.5.html).
+
+Note that if you make changes to a gem, you will need to restart the app for the changes to be applied.
