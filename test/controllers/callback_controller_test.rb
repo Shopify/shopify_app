@@ -32,8 +32,14 @@ module ShopifyApp
       @stubbed_cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now)
       @host = "little-shoppe-of-horrors.#{ShopifyApp.configuration.myshopify_domain}"
       host = Base64.strict_encode64(@host + "/admin")
-      @callback_params = { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: host,
-                           hmac: "hmac", }
+      @callback_params = {
+        shop: "shop",
+        code: "code",
+        state: "state",
+        timestamp: "timestamp",
+        host: host,
+        hmac: "hmac",
+      }
       @auth_query = ShopifyAPI::Auth::Oauth::AuthQuery.new(**@callback_params)
       request.env["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)"\
         "AppleWebKit/537.36 (KHTML, like Gecko)"\
@@ -122,8 +128,12 @@ module ShopifyApp
         collaborator: true,
         account_owner: true,
       )
-      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: true,
-        associated_user: associated_user)
+      mock_session = ShopifyAPI::Auth::Session.new(
+        shop: "shop",
+        access_token: "token",
+        is_online: true,
+        associated_user: associated_user,
+      )
       mock_oauth(session: mock_session)
       get :callback, params: @callback_params
       assert_equal session[:shopify_user_id], associated_user.id
@@ -307,11 +317,14 @@ module ShopifyApp
 
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "nonce"
 
-      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(cookies:
-        {
-          ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
-            cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
-        }, auth_query: @auth_query)
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).with(
+        cookies:
+                {
+                  ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME =>
+                    cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME],
+                },
+        auth_query: @auth_query,
+      )
         .returns({
           cookie: cookie,
           session: session,
