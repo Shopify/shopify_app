@@ -11,7 +11,7 @@ module ShopifyApp
 
     def with_shopify_session(&block)
       ShopifyAPI::Auth::Session.temp(shop: shopify_domain, access_token: shopify_token) do |session|
-        block.call session
+        block.call(session)
       end
     end
   end
