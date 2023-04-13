@@ -4,7 +4,7 @@ Unreleased
 * Set the appropriate CSP `frame-ancestor` directive in controllers using the `EmbeddedApp` concern. [#1474](https://github.com/Shopify/shopify_app/pull/1474)
 * Allow [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) hosts in `config/environments/development.rb`.
 * Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare/) as example tunnel in readme/docs.
-* Modifies SessionStorage#with_shopify_session to call a block with a supplied session instance #1488
+* Modifies SessionStorage#with_shopify_session to call a block with a supplied session instance [#1488](https://github.com/Shopify/shopify_app/pull/1488)
 
 20.0.2 (July 7, 2022)
 ----------
