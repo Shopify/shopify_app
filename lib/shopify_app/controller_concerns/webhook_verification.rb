@@ -14,7 +14,10 @@ module ShopifyApp
 
     def verify_request
       data = request.raw_post
-      return head(:unauthorized) unless hmac_valid?(data)
+      unless hmac_valid?(data)
+        ShopifyApp::Logger.debug("Webhook verification failed - HMAC invalid")
+        head(:unauthorized)
+      end
     end
 
     def shop_domain

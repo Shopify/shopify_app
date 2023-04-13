@@ -18,7 +18,7 @@ module ShopifyApp
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
-        scopes: TEST_MERCHANT_SCOPES
+        scopes: TEST_MERCHANT_SCOPES,
       ))
 
       session = UserMockSessionStoreWithScopes.retrieve(shopify_user_id: TEST_SHOPIFY_USER_ID)
@@ -33,15 +33,15 @@ module ShopifyApp
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
-        api_version: "2020-01",
-        scopes: TEST_MERCHANT_SCOPES
+        api_version: ShopifyApp.configuration.api_version,
+        scopes: TEST_MERCHANT_SCOPES,
       )
       UserMockSessionStoreWithScopes.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
       expected_session = ShopifyAPI::Auth::Session.new(
         shop: instance.shopify_domain,
         access_token: instance.shopify_token,
-        scope: TEST_MERCHANT_SCOPES
+        scope: TEST_MERCHANT_SCOPES,
       )
 
       user_id = TEST_SHOPIFY_USER_ID
@@ -60,9 +60,9 @@ module ShopifyApp
       saved_id = UserMockSessionStoreWithScopes.store(
         mock_session(
           shop: mock_user_instance.shopify_domain,
-          scope: TEST_MERCHANT_SCOPES
+          scope: TEST_MERCHANT_SCOPES,
         ),
-        mock_associated_user
+        mock_associated_user,
       )
 
       assert_equal "a-new-user_token!", mock_user_instance.shopify_token
@@ -87,7 +87,7 @@ module ShopifyApp
       mock_user = MockUserInstance.new(
         shopify_user_id: TEST_SHOPIFY_USER_ID,
         shopify_domain: TEST_SHOPIFY_DOMAIN,
-        shopify_token: TEST_SHOPIFY_USER_TOKEN
+        shopify_token: TEST_SHOPIFY_USER_TOKEN,
       )
       mock_user.stubs(:access_scopes).raises(NotImplementedError)
       UserMockSessionStoreWithScopes.stubs(:find_by).returns(mock_user)
@@ -108,7 +108,7 @@ module ShopifyApp
         email_verified: true,
         account_owner: false,
         locale: "en",
-        collaborator: true
+        collaborator: true,
       )
     end
   end

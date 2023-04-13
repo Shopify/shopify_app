@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  class MissingWebhookJobError < StandardError; end
-
   class WebhooksController < ActionController::Base
     include ShopifyApp::WebhookVerification
 
@@ -10,7 +8,7 @@ module ShopifyApp
       params.permit!
 
       ShopifyAPI::Webhooks::Registry.process(
-        ShopifyAPI::Webhooks::Request.new(raw_body: request.raw_post, headers: request.headers.to_h)
+        ShopifyAPI::Webhooks::Request.new(raw_body: request.raw_post, headers: request.headers.to_h),
       )
       head(:ok)
     end

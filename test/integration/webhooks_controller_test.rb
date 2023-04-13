@@ -30,7 +30,7 @@ module ShopifyApp
     end
 
     test "returns error for webhook with no job class" do
-      assert_raises ShopifyApp::MissingWebhookJobError do
+      assert_raises ::ShopifyApp::MissingWebhookJobError do
         ShopifyApp::WebhooksManager.send(:webhook_job_klass, "test")
       end
     end
@@ -38,15 +38,18 @@ module ShopifyApp
     private
 
     def send_webhook(name, data)
-      post(shopify_app.webhooks_path(name), params: data,
-        headers: headers(name))
+      post(
+        shopify_app.webhooks_path(name),
+        params: data,
+        headers: headers(name),
+      )
     end
 
     def headers(name)
       hmac = OpenSSL::HMAC.digest(
         OpenSSL::Digest.new("sha256"),
         "API_SECRET_KEY",
-        "{}"
+        "{}",
       )
       headers = {
         "x-shopify-topic" => name,

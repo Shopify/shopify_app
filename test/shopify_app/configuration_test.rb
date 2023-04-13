@@ -25,6 +25,10 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "/login", ShopifyApp.configuration.login_url
   end
 
+  test "defaults login_callback_url" do
+    assert_equal "auth/shopify/callback", ShopifyApp.configuration.login_callback_url
+  end
+
   test "can set root_url which affects login_url" do
     original_root = ShopifyApp.configuration.root_url
 
@@ -204,5 +208,24 @@ class ConfigurationTest < ActiveSupport::TestCase
 
     assert_equal ShopifyApp::AccessScopes::ShopStrategy, ShopifyApp.configuration.shop_access_scopes_strategy
     assert_equal ShopifyApp::AccessScopes::UserStrategy, ShopifyApp.configuration.user_access_scopes_strategy
+  end
+
+  test "user access scopes strategy is configurable with a string" do
+    my_strategy = "Object"
+    ShopifyApp.configure do |config|
+      config.user_access_scopes_strategy = my_strategy
+    end
+
+    assert_equal ShopifyApp::AccessScopes::NoopStrategy, ShopifyApp.configuration.shop_access_scopes_strategy
+    assert_equal Object, ShopifyApp.configuration.user_access_scopes_strategy
+  end
+
+  test "user access scopes strategy is not configurable with a constant" do
+    error = assert_raises ShopifyApp::ConfigurationError do
+      ShopifyApp.configure do |config|
+        config.user_access_scopes_strategy = Object
+      end
+    end
+    assert_equal "Invalid user access scopes strategy - expected a string", error.message
   end
 end

@@ -17,7 +17,7 @@ module ShopifyApp
         digest = OpenSSL::Digest.new("sha256")
         ActiveSupport::SecurityUtils.secure_compare(
           shopify_hmac,
-          Base64.strict_encode64(OpenSSL::HMAC.digest(digest, secret, data))
+          Base64.strict_encode64(OpenSSL::HMAC.digest(digest, secret, data)),
         )
       end
     end

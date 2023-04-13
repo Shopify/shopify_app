@@ -3,6 +3,7 @@
 #### Table of contents
 
 [Manage webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
+[Mandatory GDPR Webhooks](#mandatory-gdpr-webhooks)
 
 ## Manage webhooks using `ShopifyApp::WebhooksManager`
 
@@ -12,7 +13,7 @@ ShopifyApp can manage your app's webhooks for you if you set which webhooks you 
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'carts/update', address: 'https://example.com/webhooks/carts_update'}
+    {topic: 'carts/update', path: 'webhooks/carts_update'}
   ]
 end
 ```
@@ -34,7 +35,7 @@ If you are only interested in particular fields, you can optionally filter the d
 ```ruby
 ShopifyApp.configure do |config|
   config.webhooks = [
-    {topic: 'products/update', address: 'https://example.com/webhooks/products_update', fields: ['title', 'vendor']}
+    {topic: 'products/update', path: 'webhooks/products_update', fields: ['title', 'vendor']}
   ]
 end
 ```
@@ -66,7 +67,19 @@ The WebhooksManager uses ActiveJob. If ActiveJob is not configured then by defau
 ShopifyApp can create webhooks for you using the `add_webhook` generator. This will add the new webhook to your config and create the required job class for you.
 
 ```
-rails g shopify_app:add_webhook -t carts/update -a /webhooks/carts_update
+rails g shopify_app:add_webhook --topic carts/update --path webhooks/carts_update
 ```
 
-Where `-t` is the topic and `-a` is the address the webhook should be sent to.
+Where `--topic` is the topic and `--path` is the path the webhook should be sent to.
+
+## Mandatory GDPR Webhooks
+
+We have three mandatory GDPR webhooks
+
+1. `customers/data_request`
+2. `customer/redact`
+3. `shop/redact`
+
+The `generate shopify_app` command generated three job templates corresponding to all three of these webhooks.
+To pass our approval process you will need to set these webhooks in your partner dashboard.
+You can read more about that [here](https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks).

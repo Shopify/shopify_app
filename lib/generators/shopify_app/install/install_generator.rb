@@ -13,8 +13,8 @@ module ShopifyApp
       class_option :embedded, type: :string, default: "true"
       class_option :api_version, type: :string, default: nil
 
-      NGROK_HOST = "/\[-\\w]+\\.ngrok\\.io/"
-      CLOUDFLARE_HOST = "/\[-\\w]+\\.trycloudflare\\.com/"
+      NGROK_HOST = "/[-\\w]+\\.ngrok\\.io/"
+      CLOUDFLARE_HOST = "/[-\\w]+\\.trycloudflare\\.com/"
 
       def create_shopify_app_initializer
         @application_name = format_array_argument(options["application_name"])
@@ -66,7 +66,7 @@ module ShopifyApp
         inject_into_file(
           "config/environments/development.rb",
           comment,
-          after: insert_after_line
+          after: insert_after_line,
         )
         comment
       end
@@ -78,7 +78,7 @@ module ShopifyApp
         inject_into_file(
           "config/environments/development.rb",
           host_line,
-          after: explaination_comment
+          after: explaination_comment,
         )
         host_line
       end

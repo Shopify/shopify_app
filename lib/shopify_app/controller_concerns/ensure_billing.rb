@@ -2,24 +2,13 @@
 
 module ShopifyApp
   module EnsureBilling
-    class BillingError < StandardError
-      attr_accessor :message
-      attr_accessor :errors
-
-      def initialize(message, errors)
-        super
-        @message = message
-        @errors = errors
-      end
-    end
-
     extend ActiveSupport::Concern
 
     RECURRING_INTERVALS = [BillingConfiguration::INTERVAL_EVERY_30_DAYS, BillingConfiguration::INTERVAL_ANNUAL]
 
     included do
       before_action :check_billing, if: :billing_required?
-      rescue_from BillingError, with: :handle_billing_error
+      rescue_from ::ShopifyApp::BillingError, with: :handle_billing_error
     end
 
     private
@@ -39,7 +28,10 @@ module ShopifyApp
       unless has_payment
         if request.xhr?
           add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
+          ShopifyApp::Logger.debug("Responding with 401 unauthorized")
           head(:unauthorized)
+        elsif ShopifyApp.configuration.embedded_app?
+          fullpage_redirect_to(confirmation_url)
         else
           redirect_to(confirmation_url, allow_other_host: true)
         end
@@ -66,6 +58,7 @@ module ShopifyApp
     end
 
     def has_subscription?(session)
+      ShopifyApp::Logger.debug("Checking if shop has subscription")
       response = run_query(session: session, query: RECURRING_PURCHASES_QUERY)
       subscriptions = response.body["data"]["currentAppInstallation"]["activeSubscriptions"]
 
@@ -81,6 +74,7 @@ module ShopifyApp
     end
 
     def has_one_time_payment?(session)
+      ShopifyApp::Logger.debug("Checking if has one time payment")
       purchases = nil
       end_cursor = nil
 
@@ -109,7 +103,7 @@ module ShopifyApp
     def request_payment(session)
       shop = session.shop
       host = Base64.encode64("#{shop}/admin")
-      return_url = "https://#{ShopifyAPI::Context.host_name}?shop=#{shop}&host=#{host}"
+      return_url = "#{ShopifyAPI::Context.host}?shop=#{shop}&host=#{host}"
 
       if recurring?
         data = request_recurring_payment(session: session, return_url: return_url)
@@ -119,7 +113,7 @@ module ShopifyApp
         data = data["data"]["appPurchaseOneTimeCreate"]
       end
 
-      raise BillingError.new("Error while billing the store", data["userErrros"]) unless data["userErrors"].empty?
+      raise BillingError.new("Error while billing the store", data["userErrors"]) unless data["userErrors"].empty?
 
       data["confirmationUrl"]
     end
@@ -143,7 +137,7 @@ module ShopifyApp
           },
           returnUrl: return_url,
           test: !Rails.env.production?,
-        }
+        },
       )
 
       response.body
@@ -161,7 +155,7 @@ module ShopifyApp
           },
           returnUrl: return_url,
           test: !Rails.env.production?,
-        }
+        },
       )
 
       response.body

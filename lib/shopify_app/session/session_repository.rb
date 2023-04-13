@@ -4,8 +4,6 @@ module ShopifyApp
   class SessionRepository
     extend ShopifyAPI::Auth::SessionStorage
 
-    class ConfigurationError < StandardError; end
-
     class << self
       attr_writer :shop_storage
 
@@ -36,7 +34,10 @@ module ShopifyApp
       end
 
       def shop_storage
-        load_shop_storage || raise(ConfigurationError, "ShopifySessionRepository.shop_storage is not configured!")
+        load_shop_storage || raise(
+          ::ShopifyApp::ConfigurationError,
+          "ShopifySessionRepository.shop_storage is not configured!",
+        )
       end
 
       def user_storage
@@ -46,8 +47,11 @@ module ShopifyApp
       # ShopifyAPI::Auth::SessionStorage override
       def store_session(session)
         if session.online?
-          user_storage.store(session, session.associated_user)
+          user = session.associated_user
+          ShopifyApp::Logger.debug("Storing online user session - session: #{session.id}")
+          user_storage.store(session, user)
         else
+          ShopifyApp::Logger.debug("Storing offline store session - session: #{session.id}")
           shop_storage.store(session)
         end
       end
@@ -56,9 +60,13 @@ module ShopifyApp
       def load_session(id)
         match = id.match(/^offline_(.*)/)
         if match
-          retrieve_shop_session_by_shopify_domain(match[1])
+          domain = match[1]
+          ShopifyApp::Logger.debug("Loading session by domain - domain: #{domain}")
+          retrieve_shop_session_by_shopify_domain(domain)
         else
-          retrieve_user_session_by_shopify_user_id(id.split("_").last)
+          user = id.split("_").last
+          ShopifyApp::Logger.debug("Loading session by user_id - user: #{user}")
+          retrieve_user_session_by_shopify_user_id(user)
         end
       end
 
@@ -67,9 +75,13 @@ module ShopifyApp
         match = id.match(/^offline_(.*)/)
 
         record = if match
+          domain = match[1]
+          ShopifyApp::Logger.debug("Destroying session by domain - domain: #{domain}")
           Shop.find_by(shopify_domain: match[1])
         else
-          User.find_by(shopify_user_id: id.split("_").last)
+          shopify_user_id = id.split("_").last
+          ShopifyApp::Logger.debug("Destroying session by user - user_id: #{shopify_user_id}")
+          User.find_by(shopify_user_id: shopify_user_id)
         end
 
         record.destroy

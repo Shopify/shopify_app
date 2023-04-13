@@ -1,5 +1,5 @@
 class AddUserAccessScopesColumn < ActiveRecord::Migration[<%= rails_migration_version %>]
   def change
-    add_column :users, :access_scopes, :string
+    add_column :users, :access_scopes, :string, default: "", null: false
   end
 end

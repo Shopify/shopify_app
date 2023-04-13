@@ -24,29 +24,17 @@ class EnsureBillingTest < ActionController::TestCase
       get "/billing", to: "ensure_billing_test/billing_test#index"
     end
 
-    ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
-    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
-
     @session = ShopifyAPI::Auth::Session.new(
       id: "1234",
       shop: SHOP,
       access_token: "access-token",
       scope: ["read_products"],
     )
-    ShopifyAPI::Utils::SessionUtils.stubs(:load_current_session).returns(@session)
+    @controller.stubs(:current_shopify_session).returns(@session)
 
     @api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
-
-    ShopifyAPI::Context.setup(
-      api_key: "api_key",
-      api_secret_key: "api_secret_key",
-      api_version: @api_version,
-      host_name: "host.example.io",
-      scope: "read_products",
-      session_storage: ShopifyApp::SessionRepository,
-      is_private: false,
-      is_embedded: true,
-    )
+    ShopifyApp.configuration.api_version = @api_version
+    ShopifyAppConfigurer.setup_context
   end
 
   test "requires single payment if none exists and non recurring" do
@@ -68,7 +56,7 @@ class EnsureBillingTest < ActionController::TestCase
 
     get :index
 
-    assert_redirected_to(%r{^https://totally-real-url})
+    assert_client_side_redirection "https://totally-real-url"
 
     get :index, xhr: true
 
@@ -105,7 +93,7 @@ class EnsureBillingTest < ActionController::TestCase
 
     get :index
 
-    assert_redirected_to(%r{^https://totally-real-url})
+    assert_client_side_redirection "https://totally-real-url"
 
     get :index, xhr: true
 
@@ -171,7 +159,7 @@ class EnsureBillingTest < ActionController::TestCase
 
     get :index
 
-    assert_redirected_to(%r{^https://totally-real-url})
+    assert_client_side_redirection "https://totally-real-url"
 
     get :index, xhr: true
 
@@ -216,12 +204,18 @@ class EnsureBillingTest < ActionController::TestCase
 
   private
 
+  def assert_client_side_redirection(url)
+    assert_response :success
+    assert_match "Redirecting", response.body
+    assert_match(url, response.body)
+  end
+
   def stub_graphql_requests(*requests)
     requests.each do |request|
       stub_request(:post, "https://my-shop.myshopify.com/admin/api/#{@api_version}/graphql.json")
         .with(
           body: request[:request_body],
-          headers: { "X-Shopify-Access-Token": "access-token" }
+          headers: { "X-Shopify-Access-Token": "access-token" },
         )
         .to_return(
           status: 200,
@@ -251,7 +245,8 @@ class EnsureBillingTest < ActionController::TestCase
             {
               node: {
                 name: TEST_CHARGE_NAME,
-                test: true, status: "ACTIVE",
+                test: true,
+                status: "ACTIVE",
               },
             },
           ],

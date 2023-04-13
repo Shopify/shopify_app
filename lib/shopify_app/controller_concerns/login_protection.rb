@@ -5,14 +5,19 @@ require "browser_sniffer"
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
-    include ShopifyApp::Itp
-
-    class ShopifyDomainNotFound < StandardError; end
-
-    class ShopifyHostNotFound < StandardError; end
+    include ShopifyApp::SanitizedParams
 
     included do
-      after_action :set_test_cookie
+      if defined?(ShopifyApp::RequireKnownShop) &&
+          defined?(ShopifyApp::EnsureInstalled) &&
+          ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
+        message = <<~EOS
+          We detected the use of incompatible concerns (RequireKnownShop/EnsureInstalled and LoginProtection) in #{name},
+          which may lead to unpredictable behavior. In a future release of this library this will raise an error.
+        EOS
+        ShopifyApp::Logger.deprecated(message, "22.0.0")
+      end
+
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
@@ -21,20 +26,22 @@ module ShopifyApp
     def activate_shopify_session
       if current_shopify_session.blank?
         signal_access_token_required
+        ShopifyApp::Logger.debug("No session found, redirecting to login")
         return redirect_to_login
       end
 
-      unless current_shopify_session.scope.to_a.empty? ||
-          current_shopify_session.scope.covers?(ShopifyAPI::Context.scope)
-
+      if ShopifyApp.configuration.reauth_on_access_scope_changes &&
+          !ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
         clear_shopify_session
         return redirect_to_login
       end
 
       begin
+        ShopifyApp::Logger.debug("Activating Shopify session")
         ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
       ensure
+        ShopifyApp::Logger.debug("Deactivating session")
         ShopifyAPI::Context.deactivate_session
       end
     end
@@ -42,14 +49,16 @@ module ShopifyApp
     def current_shopify_session
       @current_shopify_session ||= begin
         cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
-        ShopifyAPI::Utils::SessionUtils.load_current_session(
+        load_current_session(
           auth_header: request.headers["HTTP_AUTHORIZATION"],
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
-          is_online: user_session_expected?
+          is_online: online_token_configured?,
         )
       rescue ShopifyAPI::Errors::CookieNotFoundError
+        ShopifyApp::Logger.warn("No cookies have been found - cookie name: #{cookie_name}")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
+        ShopifyApp::Logger.warn("Invalid JWT token for current Shopify session")
         nil
       end
     end
@@ -57,6 +66,7 @@ module ShopifyApp
     def login_again_if_different_user_or_shop
       return unless session_id_conflicts_with_params || session_shop_conflicts_with_params
 
+      ShopifyApp::Logger.debug("Clearing session and redirecting to login")
       clear_shopify_session
       redirect_to_login
     end
@@ -74,10 +84,13 @@ module ShopifyApp
 
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
+        ShopifyApp::Logger.debug("Adding top level redirection headers")
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
+          ShopifyApp::Logger.debug("Setting current shop session")
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
+
           elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
             jwt_payload = ShopifyAPI::Auth::JwtPayload.new(T.must(matches[1]))
             jwt_payload.shop
@@ -86,6 +99,7 @@ module ShopifyApp
 
         url ||= login_url_with_optional_shop
 
+        ShopifyApp::Logger.debug("Setting Reauthorize-Url to #{url}")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
         response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
       end
@@ -106,8 +120,9 @@ module ShopifyApp
     end
 
     def redirect_to_login
-      if request.xhr?
+      if requested_by_javascript?
         add_top_level_redirection_headers(ignore_response_code: true)
+        ShopifyApp::Logger.debug("Login redirect request is a XHR")
         head(:unauthorized)
       else
         if request.get?
@@ -116,15 +131,19 @@ module ShopifyApp
         else
           referer = URI(request.referer || "/")
           path = referer.path
-          query = "#{referer.query}&#{sanitized_params.to_query}"
+          query = Rack::Utils.parse_nested_query(referer.query)
+          query = query.merge(sanitized_params).to_query
         end
         session[:return_to] = query.blank? ? path.to_s : "#{path}?#{query}"
+        ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
         redirect_to(login_url_with_optional_shop)
       end
     end
 
     def close_session
       clear_shopify_session
+      ShopifyApp::Logger.debug("Closing session")
+      ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
       redirect_to(login_url_with_optional_shop)
     end
 
@@ -169,6 +188,10 @@ module ShopifyApp
         query_params[:host] ||= host
       end
 
+      if params[:access_scopes].present?
+        query_params[:scope] = params[:access_scopes].join(",")
+      end
+
       query_params[:top_level] = true if top_level
       query_params
     end
@@ -180,8 +203,13 @@ module ShopifyApp
 
     def fullpage_redirect_to(url)
       if ShopifyApp.configuration.embedded_app?
-        render("shopify_app/shared/redirect", layout: false,
-          locals: { url: url, current_shopify_domain: current_shopify_domain })
+        raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+
+        render(
+          "shopify_app/shared/redirect",
+          layout: false,
+          locals: { url: url, current_shopify_domain: current_shopify_domain },
+        )
       else
         redirect_to(url)
       end
@@ -189,44 +217,15 @@ module ShopifyApp
 
     def current_shopify_domain
       shopify_domain = sanitized_shop_name || current_shopify_session&.shop
-
-      return shopify_domain if shopify_domain.present?
-
-      raise ShopifyDomainNotFound
-    end
-
-    def sanitized_shop_name
-      @sanitized_shop_name ||= sanitize_shop_param(params)
-    end
-
-    def referer_sanitized_shop_name
-      return unless request.referer.present?
-
-      @referer_sanitized_shop_name ||= begin
-        referer_uri = URI(request.referer)
-        query_params = Rack::Utils.parse_query(referer_uri.query)
-
-        sanitize_shop_param(query_params.with_indifferent_access)
-      end
-    end
-
-    def sanitize_shop_param(params)
-      return unless params[:shop].present?
-
-      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
-    end
-
-    def sanitized_params
-      request.query_parameters.clone.tap do |query_params|
-        if params[:shop].is_a?(String)
-          query_params[:shop] = sanitize_shop_param(params)
-        end
-      end
+      ShopifyApp::Logger.info("Installed store  - #{shopify_domain} deduced from user session")
+      shopify_domain
     end
 
     def return_address
+      return base_return_address if current_shopify_domain.nil?
+
       return_address_with_params(shop: current_shopify_domain, host: host)
-    rescue ShopifyDomainNotFound, ShopifyHostNotFound
+    rescue ::ShopifyApp::ShopifyDomainNotFound, ::ShopifyApp::ShopifyHostNotFound
       base_return_address
     end
 
@@ -259,11 +258,30 @@ module ShopifyApp
       ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(sanitize_shop_param(params))
     end
 
+    def online_token_configured?
+      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+    end
+
     def user_session_expected?
       return false if shop_session.nil?
       return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
 
-      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+      online_token_configured?
+    end
+
+    def load_current_session(auth_header: nil, cookies: nil, is_online: false)
+      return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
+
+      session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(auth_header, cookies, is_online)
+      return nil unless session_id
+
+      ShopifyApp::SessionRepository.load_session(session_id)
+    end
+
+    def requested_by_javascript?
+      request.xhr? ||
+        request.content_type == "text/javascript" ||
+        request.content_type == "application/javascript"
     end
   end
 end

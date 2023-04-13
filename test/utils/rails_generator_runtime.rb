@@ -20,7 +20,7 @@ module Utils
         suppress_output do
           generator_class.start(
             additional_args + ["--skip-bundle", "--skip-bootsnap"],
-            { destination_root: destination }
+            { destination_root: destination },
           )
         end
       end
@@ -79,15 +79,15 @@ module Utils
         original_embedded_app = ShopifyApp.configuration.embedded_app
         ShopifyApp.configuration.embedded_app = false unless is_embedded
         ShopifyAPI::Context.setup(
-          api_key: "API_KEY",
-          api_secret_key: "API_SECRET_KEY",
-          api_version: "2022-01",
+          api_key: ShopifyApp.configuration.api_key,
+          api_secret_key: ShopifyApp.configuration.secret,
+          api_version: ShopifyApp.configuration.api_version,
           host_name: "app-address.com",
-          scope: ["scope1", "scope2"],
+          scope: ShopifyApp.configuration.scope,
           is_private: is_private,
           is_embedded: is_embedded,
           session_storage: TestHelpers::FakeSessionStorage.new,
-          user_agent_prefix: nil
+          user_agent_prefix: nil,
         )
         ShopifyAPI::Context.activate_session(ShopifyAPI::Auth::Session.new(shop: "my-shop"))
 

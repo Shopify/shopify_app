@@ -21,12 +21,15 @@ module ShopifyApp
         inject_into_file(
           "config/initializers/shopify_app.rb",
           after_authenticate_job_config,
-          before: "end"
+          before: "end",
         )
 
         unless initializer.include?(after_authenticate_job_config)
-          shell.say("Error adding after_authenticate_job to config. Add this line manually: "\
-            "#{after_authenticate_job_config}", :red)
+          shell.say(
+            "Error adding after_authenticate_job to config. Add this line manually: "\
+              "#{after_authenticate_job_config}",
+            :red,
+          )
         end
       end
 
