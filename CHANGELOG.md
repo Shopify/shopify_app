@@ -3,6 +3,7 @@ Unreleased
 
 * Support Unified Admin [#1658](https://github.com/Shopify/shopify_app/pull/1658)
 * Set `access_scopes` column to string by default [#1636](https://github.com/Shopify/shopify_app/pull/1636)
+* Fixes a bug with `EnsureBilling` causing infinite redirect in embedded apps [#1578](https://github.com/Shopify/shopify_app/pull/1578)
 
 21.4.1 (Feb 21, 2023)
 ----------
@@ -16,7 +17,6 @@ Unreleased
 * Validates shop's offline session token is still valid when using `EnsureInstalled`[#1612](https://github.com/Shopify/shopify_app/pull/1612)
 * Allows use of multiple subdomains with myshopify_domain [#1620](https://github.com/Shopify/shopify_app/pull/1620)
 * Added a `setup_shopify_session` test helper to stub a valid session
-* Fixes a bug with `EnsureBilling` causing infinite redirect in embedded apps [#1578](https://github.com/Shopify/shopify_app/pull/1578)
 
 21.3.1 (Dec 12, 2022)
 ----------
