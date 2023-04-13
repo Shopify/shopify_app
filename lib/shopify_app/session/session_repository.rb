@@ -34,8 +34,10 @@ module ShopifyApp
       end
 
       def shop_storage
-        load_shop_storage || raise(::ShopifyApp::ConfigurationError,
-          "ShopifySessionRepository.shop_storage is not configured!")
+        load_shop_storage || raise(
+          ::ShopifyApp::ConfigurationError,
+          "ShopifySessionRepository.shop_storage is not configured!",
+        )
       end
 
       def user_storage
