@@ -56,7 +56,7 @@ class EnsureBillingTest < ActionController::TestCase
 
     get :index
 
-    assert_redirected_to(%r{^https://totally-real-url})
+    assert_client_side_redirection "https://totally-real-url"
 
     get :index, xhr: true
 
@@ -93,7 +93,7 @@ class EnsureBillingTest < ActionController::TestCase
 
     get :index
 
-    assert_redirected_to(%r{^https://totally-real-url})
+    assert_client_side_redirection "https://totally-real-url"
 
     get :index, xhr: true
 
@@ -159,7 +159,7 @@ class EnsureBillingTest < ActionController::TestCase
 
     get :index
 
-    assert_redirected_to(%r{^https://totally-real-url})
+    assert_client_side_redirection "https://totally-real-url"
 
     get :index, xhr: true
 
@@ -203,6 +203,12 @@ class EnsureBillingTest < ActionController::TestCase
   end
 
   private
+
+  def assert_client_side_redirection(url)
+    assert_response :success
+    assert_match "Redirecting", response.body
+    assert_match(url, response.body)
+  end
 
   def stub_graphql_requests(*requests)
     requests.each do |request|

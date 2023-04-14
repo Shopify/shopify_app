@@ -3,6 +3,8 @@ Unreleased
 
 * Support Unified Admin [#1658](https://github.com/Shopify/shopify_app/pull/1658)
 * Set `access_scopes` column to string by default [#1636](https://github.com/Shopify/shopify_app/pull/1636)
+* Fixes a bug with `EnsureBilling` causing infinite redirect in embedded apps [#1578](https://github.com/Shopify/shopify_app/pull/1578)
+* Modifies SessionStorage#with_shopify_session to call a block with a supplied session instance [#1488](https://github.com/Shopify/shopify_app/pull/1488)
 * Fix registration of event_bridge and pub_sub webhooks [#1635](https://github.com/Shopify/shopify_app/pull/1635)
 
 21.4.1 (Feb 21, 2023)
