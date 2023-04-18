@@ -1,5 +1,4 @@
 //= require ./app_bridge_redirect.js
-//= require ./app_bridge_utils_3.1.1.js
 
 (function () {
   function redirect() {
@@ -11,7 +10,7 @@
 
     var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
 
-    var appBridgeUtils = window['app-bridge-utils'];
+    var appBridgeUtils = window['app-bridge'].utilities;
 
     if (appBridgeUtils.isShopifyEmbedded()) {
       window.appBridgeRedirect(targetInfo.url);
