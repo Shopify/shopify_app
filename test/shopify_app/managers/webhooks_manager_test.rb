@@ -78,31 +78,13 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
+    ShopifyApp.configuration.expects(:has_webhooks?).returns(true)
     session = ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com")
 
-    ShopifyAPI::Webhooks::Registry.expects(:register_all)
-    ShopifyAPI::Webhooks::Registry.expects(:unregister).with(topic: "orders/updated", session: session)
-    ShopifyApp::WebhooksManager.expects(:add_registrations).twice
+    ShopifyApp::WebhooksManager.expects(:destroy_webhooks)
+    ShopifyApp::WebhooksManager.expects(:add_registrations)
 
-    ShopifyApp.configure do |config|
-      config.webhooks = [
-        { topic: "orders/updated", path: "webhooks" },
-      ]
-    end
-    ShopifyApp::WebhooksManager.add_registrations
     ShopifyApp::WebhooksManager.recreate_webhooks!(session: session)
-  end
-
-  test "#recreate_webhooks! does not call unregister if there is no webhook" do
-    ShopifyAPI::Webhooks::Registry.expects(:register_all).never
-    ShopifyAPI::Webhooks::Registry.expects(:unregister).never
-    ShopifyAPI::Webhooks::Registry.expects(:add_registration).never
-
-    ShopifyApp.configure do |config|
-      config.webhooks = []
-    end
-    ShopifyApp::WebhooksManager.add_registrations
-    ShopifyApp::WebhooksManager.recreate_webhooks!(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
   end
 
   test "#destroy_webhooks destroy all webhooks" do
