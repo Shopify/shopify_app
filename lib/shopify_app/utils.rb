@@ -4,9 +4,10 @@ module ShopifyApp
   module Utils
     class << self
       TRUSTED_SHOPIFY_DOMAINS = [
-        "shopify.com",
         "myshopify.io",
         "myshopify.com",
+        "shopify.com",
+        "shopifysvc.com",
         "spin.dev",
       ].freeze
 
