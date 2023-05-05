@@ -6,6 +6,7 @@ Unreleased
 * Fixes a bug with `EnsureBilling` causing infinite redirect in embedded apps [#1578](https://github.com/Shopify/shopify_app/pull/1578)
 * Modifies SessionStorage#with_shopify_session to call a block with a supplied session instance [#1488](https://github.com/Shopify/shopify_app/pull/1488)
 * Refactors `ShopifyApp::WebhhooksManager#recreate_webhooks!` to have a uniform webhook inventory that doesn't clash with the API library. Updates webhook generator to use supplied session. [#1686](https://github.com/Shopify/shopify_app/pull/1686)
+* Adds support for toggling test charges within `EnsureBilling` by adding `test` field to `BillingConfiguration` and pulling in environment variable 
 
 21.4.1 (Feb 21, 2023)
 ----------
