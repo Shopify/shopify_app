@@ -30,6 +30,7 @@ ShopifyApp.configure do |config|
   #   amount: 5,
   #   interval: ShopifyApp::BillingConfiguration::INTERVAL_EVERY_30_DAYS,
   #   currency_code: "USD", # Only supports USD for now
+  #   test: ENV.fetch('SHOPIFY_TEST_CHARGES', !Rails.env.production?)
   # )
 
   if defined? Rails::Server
