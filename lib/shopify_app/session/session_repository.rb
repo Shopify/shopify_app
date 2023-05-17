@@ -2,8 +2,6 @@
 
 module ShopifyApp
   class SessionRepository
-    extend ShopifyAPI::Auth::SessionStorage
-
     class << self
       attr_writer :shop_storage
 
