@@ -1,7 +1,7 @@
 Unreleased
 ----------
 
-21.5.1 (May 18, 2023)
+21.5.0 (May 18, 2023)
 ----------
 * Support Unified Admin [#1658](https://github.com/Shopify/shopify_app/pull/1658)
 * Set `access_scopes` column to string by default [#1636](https://github.com/Shopify/shopify_app/pull/1636)
