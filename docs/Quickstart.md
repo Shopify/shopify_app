@@ -27,10 +27,15 @@ Keep this window running to keep the tunnel and make note of the URL this comman
 
 Visit the "App Setup" section for your app in the [Shopify Partners dashboard](https://partners.shopify.com/organizations). Set the URL as "App URL" on this settings page and add it to the "Allowed redirection URL(s)", after appending `/auth/shopify/callback` to the end (e.g. `https://some-random-words.trycloudflare.com/auth/shopify/callback`).
 
-Add the same URL as `HOST` in your `.env` file e.g.
+Add the same URL as `SHOPIFY_APP_URL` in your `.env` file e.g.
 ```sh
-HOST='https://some-random-words.trycloudflare.com/'
+SHOPIFY_APP_URL='https://some-random-words.trycloudflare.com/'
 ```
+
+<!-- TODO Update CLI version here -->
+> **Note**: For apps created using Shopify CLI vX.Y.Z or earlier, some of the environment variables above use different names.
+>
+> For more information, refer to [Shopify CLI app structure](https://shopify.dev/docs/apps/tools/cli/structure#web-component-conventions).
 
 ## Use Shopify App Bridge to embed your app in the Shopify Admin
 

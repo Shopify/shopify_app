@@ -153,8 +153,13 @@ For more details on how to handle embeded sessions, refer to [the session token 
 
 ### `redirect_uri is not whitelisted`
 
-* Ensure you have set the `HOST` environment variable to match your host's URL, e.g. `http://localhost:3000` or `https://my-host-name.trycloudflare.com`.
+* Ensure you have set the `SHOPIFY_APP_URL` environment variable to match your host's URL, e.g. `http://localhost:3000` or `https://my-host-name.trycloudflare.com`.
 * Update the app's URL and whitelisted URLs in App Setup on https://partners.shopify.com
+
+<!-- TODO Update CLI version here -->
+> **Note**: For apps created using Shopify CLI vX.Y.Z or earlier, some of the environment variables above use different names.
+>
+> For more information, refer to [Shopify CLI app structure](https://shopify.dev/docs/apps/tools/cli/structure#web-component-conventions).
 
 ### `This app can’t load due to an issue with browser cookies`
 

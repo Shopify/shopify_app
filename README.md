@@ -48,10 +48,15 @@ There are a variety of way of doing this, but for a development environment we r
 Create a `.env` file in the root of your Rails app to specify the full host and Shopify API credentials:
 
 ```sh
-HOST=http://localhost:3000
-SHOPIFY_API_KEY=<Your Shopify API key>
-SHOPIFY_API_SECRET=<Your Shopify API secret>
+SHOPIFY_APP_URL=http://localhost:3000
+SHOPIFY_APP_API_KEY=<Your Shopify API key>
+SHOPIFY_APP_API_SECRET=<Your Shopify API secret>
 ```
+
+<!-- TODO Update CLI version here -->
+> **Note**: For apps created using Shopify CLI vX.Y.Z or earlier, some of the environment variables above use different names.
+>
+> For more information, refer to [Shopify CLI app structure](https://shopify.dev/docs/apps/tools/cli/structure#web-component-conventions).
 
 4. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
 

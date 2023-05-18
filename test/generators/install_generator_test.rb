@@ -20,8 +20,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "My Shopify App"', shopify_app
-      assert_match "config.api_key = ENV.fetch('SHOPIFY_API_KEY', '')", shopify_app
-      assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
+      assert_match "config.api_key = ENV.fetch('SHOPIFY_APP_API_KEY', ENV.fetch('SHOPIFY_API_KEY', '')).presence",
+        shopify_app
+      assert_match "config.secret = ENV.fetch('SHOPIFY_APP_API_SECRET', ENV.fetch('SHOPIFY_API_SECRET', '')).presence",
+        shopify_app
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
       assert_match "config.api_version = \"#{ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION}\"", shopify_app
@@ -32,7 +34,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
               api_key: ShopifyApp.configuration.api_key,
               api_secret_key: ShopifyApp.configuration.secret,
               api_version: ShopifyApp.configuration.api_version,
-              host: ENV['HOST'],
+              host: ENV['SHOPIFY_APP_URL'] || ENV['HOST'],
               scope: ShopifyApp.configuration.scope,
               is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
               is_embedded: ShopifyApp.configuration.embedded_app,
@@ -61,8 +63,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     ]
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
-      assert_match "config.api_key = ENV.fetch('SHOPIFY_API_KEY', '')", shopify_app
-      assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
+      assert_match "config.api_key = ENV.fetch('SHOPIFY_APP_API_KEY', ENV.fetch('SHOPIFY_API_KEY', '')).presence",
+        shopify_app
+      assert_match "config.secret = ENV.fetch('SHOPIFY_APP_API_SECRET', ENV.fetch('SHOPIFY_API_SECRET', '')).presence",
+        shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
@@ -74,8 +78,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator ["--application_name", "Test", "Name", "--scope", "read_orders", "write_products"]
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match 'config.application_name = "Test Name"', shopify_app
-      assert_match "config.api_key = ENV.fetch('SHOPIFY_API_KEY', '')", shopify_app
-      assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
+      assert_match "config.api_key = ENV.fetch('SHOPIFY_APP_API_KEY', ENV.fetch('SHOPIFY_API_KEY', '')).presence",
+        shopify_app
+      assert_match "config.secret = ENV.fetch('SHOPIFY_APP_API_SECRET', ENV.fetch('SHOPIFY_API_SECRET', '')).presence",
+        shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
       assert_match "config.shop_session_repository = 'Shop'", shopify_app

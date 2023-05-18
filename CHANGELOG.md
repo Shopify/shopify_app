@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Add support for new CLI env variables [#1691](https://github.com/Shopify/shopify_app/pull/1691)
+
 21.5.0 (May 18, 2023)
 ----------
 * Support Unified Admin [#1658](https://github.com/Shopify/shopify_app/pull/1658)

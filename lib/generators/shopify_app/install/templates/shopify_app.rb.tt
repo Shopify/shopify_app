@@ -16,8 +16,8 @@ ShopifyApp.configure do |config|
     { topic: "shop/redact", address: "webhooks/shop_redact"}
   ]
 
-  config.api_key = ENV.fetch('SHOPIFY_API_KEY', '').presence
-  config.secret = ENV.fetch('SHOPIFY_API_SECRET', '').presence
+  config.api_key = ENV.fetch('SHOPIFY_APP_API_KEY', ENV.fetch('SHOPIFY_API_KEY', '')).presence
+  config.secret = ENV.fetch('SHOPIFY_APP_API_SECRET', ENV.fetch('SHOPIFY_API_SECRET', '')).presence
 
   # You may want to charge merchants for using your app. Setting the billing configuration will cause the Authenticated
   # controller concern to check that the session is for a merchant that has an active one-time payment or subscription.
@@ -33,8 +33,8 @@ ShopifyApp.configure do |config|
   # )
 
   if defined? Rails::Server
-    raise('Missing SHOPIFY_API_KEY. See https://github.com/Shopify/shopify_app#requirements') unless config.api_key
-    raise('Missing SHOPIFY_API_SECRET. See https://github.com/Shopify/shopify_app#requirements') unless config.secret
+    raise('Missing SHOPIFY_APP_API_KEY. See https://github.com/Shopify/shopify_app#requirements') unless config.api_key
+    raise('Missing SHOPIFY_APP_API_SECRET. See https://github.com/Shopify/shopify_app#requirements') unless config.secret
   end
 end
 
@@ -44,7 +44,7 @@ Rails.application.config.after_initialize do
       api_key: ShopifyApp.configuration.api_key,
       api_secret_key: ShopifyApp.configuration.secret,
       api_version: ShopifyApp.configuration.api_version,
-      host: ENV['HOST'],
+      host: ENV['SHOPIFY_APP_URL'] || ENV['HOST'],
       scope: ShopifyApp.configuration.scope,
       is_private: !ENV.fetch('SHOPIFY_APP_PRIVATE_SHOP', '').empty?,
       is_embedded: ShopifyApp.configuration.embedded_app,
