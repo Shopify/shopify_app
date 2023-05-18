@@ -69,7 +69,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
       api_version: ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION,
       host_name: "host.example.io",
       scope: ShopifyApp.configuration.scope,
-      session_storage: ShopifyApp::SessionRepository,
       is_private: false,
       is_embedded: true,
     )
@@ -89,7 +88,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
       api_version: ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION,
       host_name: "host.example.io",
       scope: ShopifyApp.configuration.scope,
-      session_storage: ShopifyApp::SessionRepository,
       is_private: false,
       is_embedded: true,
     )
@@ -120,7 +118,6 @@ class LoginProtectionControllerTest < ActionController::TestCase
       api_version: ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION,
       host_name: "host.example.io",
       scope: ShopifyApp.configuration.scope,
-      session_storage: ShopifyApp::SessionRepository,
       is_private: false,
       is_embedded: true,
     )

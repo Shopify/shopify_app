@@ -24,10 +24,8 @@ module ShopifyApp
         destroy_webhooks(session: session)
         return unless ShopifyApp.configuration.has_webhooks?
 
-        add_registrations
-
         ShopifyApp::Logger.debug("Recreating webhooks")
-        ShopifyAPI::Webhooks::Registry.register_all(session: session)
+        add_registrations
       end
 
       def destroy_webhooks(session:)
