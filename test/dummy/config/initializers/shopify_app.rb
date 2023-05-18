@@ -33,7 +33,6 @@ class ShopifyAppConfigurer
       scope: ShopifyApp.configuration.scope,
       is_private: false,
       is_embedded: ShopifyApp.configuration.embedded_app,
-      session_storage: ShopifyApp::SessionRepository,
       log_level: :off,
     )
   end
