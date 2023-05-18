@@ -4,7 +4,6 @@
 module TestHelpers
   class FakeSessionStorage
     extend T::Sig
-    include ShopifyAPI::Auth::SessionStorage
 
     sig { returns(T::Hash[String, ShopifyAPI::Auth::Session]) }
     attr_reader :sessions
