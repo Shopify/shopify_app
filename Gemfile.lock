@@ -228,7 +228,7 @@ GEM
       securerandom
       sorbet-runtime
       zeitwerk (~> 2.5, < 2.6.5)
-    sorbet-runtime (0.5.10832)
+    sorbet-runtime (0.5.10835)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
