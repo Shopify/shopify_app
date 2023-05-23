@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+* Adds support for toggling test charges within `EnsureBilling` by adding `test` field to `BillingConfiguration` and pulling in environment variable [#1688](https://github.com/Shopify/shopify_app/pull/1688)
+
 21.5.0 (May 18, 2023)
 ----------
 * Support Unified Admin [#1658](https://github.com/Shopify/shopify_app/pull/1658)
