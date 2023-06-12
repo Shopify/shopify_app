@@ -37,6 +37,25 @@ class EnsureBillingTest < ActionController::TestCase
     ShopifyAppConfigurer.setup_context
   end
 
+  test "billing configuration with test charges default" do
+    ShopifyApp.configuration.billing = ShopifyApp::BillingConfiguration.new(
+      charge_name: TEST_CHARGE_NAME,
+      amount: 5,
+      interval: ShopifyApp::BillingConfiguration::INTERVAL_ONE_TIME,
+    )
+    assert(ShopifyApp.configuration.billing.test)
+  end
+
+  test "billing configuration with real" do
+    ShopifyApp.configuration.billing = ShopifyApp::BillingConfiguration.new(
+      charge_name: TEST_CHARGE_NAME,
+      amount: 5,
+      interval: ShopifyApp::BillingConfiguration::INTERVAL_ONE_TIME,
+      test: false,
+    )
+    assert_not(ShopifyApp.configuration.billing.test)
+  end
+
   test "requires single payment if none exists and non recurring" do
     ShopifyApp.configuration.billing = ShopifyApp::BillingConfiguration.new(
       charge_name: TEST_CHARGE_NAME,
