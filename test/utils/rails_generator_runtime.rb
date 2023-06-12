@@ -86,7 +86,6 @@ module Utils
           scope: ShopifyApp.configuration.scope,
           is_private: is_private,
           is_embedded: is_embedded,
-          session_storage: TestHelpers::FakeSessionStorage.new,
           user_agent_prefix: nil,
         )
         ShopifyAPI::Context.activate_session(ShopifyAPI::Auth::Session.new(shop: "my-shop"))
