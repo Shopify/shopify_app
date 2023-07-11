@@ -8,7 +8,7 @@ PATH
       jwt (>= 2.2.3)
       rails (> 5.2.1)
       redirect_safely (~> 1.0)
-      shopify_api (~> 13.0)
+      shopify_api (~> 13.1)
       sprockets-rails (>= 2.0.0)
 
 GEM
@@ -217,7 +217,7 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.2.2)
-    shopify_api (13.0.0)
+    shopify_api (13.1.0)
       activesupport
       concurrent-ruby
       hash_diff
@@ -227,7 +227,7 @@ GEM
       openssl
       securerandom
       sorbet-runtime
-      zeitwerk (~> 2.5, < 2.6.5)
+      zeitwerk (~> 2.5)
     sorbet-runtime (0.5.10835)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
