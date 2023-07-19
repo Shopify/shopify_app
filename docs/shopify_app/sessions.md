@@ -54,8 +54,8 @@ Read more about Online vs. Offline access [here](https://shopify.dev/apps/auth/o
 ### Loading Sessions
 By using the appropriate controller concern, sessions are loaded for you.  Note -- these controller concerns cannot both be included in the same controller.
 
-#### Shop Sessions - `RequireKnownShop`
-`RequireKnownShop` controller concern will load a shop session with the `installed_shop_session` helper. If a shop session is not found, meaning the app wasn't installed for this shop, the request will be redirected to be installed.
+#### Shop Sessions - `EnsureInstalled`
+`EnsureInstalled` controller concern will load a shop session with the `installed_shop_session` helper. If a shop session is not found, meaning the app wasn't installed for this shop, the request will be redirected to be installed.
 
 This controller concern should NOT be used if you don't need your app to make calls on behalf of a user.
 
