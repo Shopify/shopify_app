@@ -35,7 +35,6 @@ A more granular control over the level of access per user on an app might be nec
 rails generate shopify_app:shop_model
 rails generate shopify_app:user_model
 ```
-This will generate a shop model and user model, which will be the storage for the tokens necessary for authentication.
 
 This will generate a user and shop model which will be the storage for the tokens necessary for authentication. To enable session persistance, you'll need to configure your `/initializers/shopify_app.rb` accordingly:
 
@@ -53,7 +52,17 @@ Read more about Online vs. Offline access [here](https://shopify.dev/apps/auth/o
 `ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. These methods are already implemented as part of the `ShopifyApp::SessionStorage` concern but can be overridden for custom implementation.
 
 ### Loading Sessions
-By using the appropriate controller concern, sessions are loaded for you. `RequireKnownShop` controller concern will load a shop session with the `installed_shop_session` helper. `EnsureHasSession` controller concern will load a user session via `current_shopify_session`. Note -- these controller concerns cannot both be included in the same controller.
+By using the appropriate controller concern, sessions are loaded for you.  Note -- these controller concerns cannot both be included in the same controller.
+
+#### Shop Sessions - `RequireKnownShop`
+`RequireKnownShop` controller concern will load a shop session with the `installed_shop_session` helper. If a shop session is not found, meaning the app wasn't installed for this shop, the request will be redirected to be installed.
+
+This controller concern should NOT be used if you don't need your app to make calls on behalf of a user.
+
+#### User Sessions - `EnsureHasSession`
+ `EnsureHasSession` controller concern will load a user session via `current_shopify_session`. As part of loading this session, this concern will also ensure that the user session has the appropriate scopes needed for the application. If the user isn't found or has fewer permitted scopes than are required, they will be prompted to authorize the application.
+
+This controller concern should be used if you don't need your app to make calls on behalf of a user. With that in mind, there are a few other embedded concerns that are mixed in to ensure that embedding, CSRF, localization, and billing allow the action for the user.
 
 ## Access scopes
 
