@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fixes typo in webhook generator [#1704](https://github.com/Shopify/shopify_app/pull/1704))
 
 21.6.0 (July 11, 2023)
 ----------
