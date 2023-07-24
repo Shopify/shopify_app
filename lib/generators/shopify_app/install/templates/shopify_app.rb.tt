@@ -12,7 +12,7 @@ ShopifyApp.configure do |config|
   config.webhooks = [
     { topic: "app/uninstalled", address: "webhooks/app_uninstalled"},
     { topic: "customers/data_request", address: "webhooks/customers_data_request" },
-    { topic: "customer/redact", address: "webhooks/customers_redact"},
+    { topic: "customers/redact", address: "webhooks/customers_redact"},
     { topic: "shop/redact", address: "webhooks/shop_redact"}
   ]
 
