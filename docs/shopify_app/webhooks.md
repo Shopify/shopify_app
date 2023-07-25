@@ -83,3 +83,37 @@ We have three mandatory GDPR webhooks
 The `generate shopify_app` command generated three job templates corresponding to all three of these webhooks.
 To pass our approval process you will need to set these webhooks in your partner dashboard.
 You can read more about that [here](https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks).
+
+## EventBridge and PubSub Webhooks
+
+You can also register webhooks for delivery to Amazon EventBridge or Google Cloud Pub/Sub. In this case the `path` argument to needs to be of a specific form.
+
+For EventBridge, the `path` must be the ARN of the partner event source.
+
+```rb
+ShopifyApp.configure do |config|
+  config.webhooks = [
+    {
+      delivery_method: :event_bridge,
+      topic: 'carts/update',
+      path: 'arn:aws:events....'
+    }
+  ]
+end
+```
+
+For Pub/Sub, the `path` must be of the form `pubsub://[PROJECT-ID]:[PUB-SUB-TOPIC-ID]`. For example, if you created a topic with id `red` in the project `blue`, then the value of path would be `pubsub://blue:red`.
+
+```rb
+ShopifyApp.configure do |config|
+  config.webhooks = [
+    {
+      delivery_method: :pub_sub,
+      topic: 'carts/update',
+      path: 'pubsub://project-id:pub-sub-topic-id'
+    }
+  ]
+end
+```
+
+When registering for an EventBridge or PubSub Webhook you'll need to implement a handler that will fetch webhooks from the queue and process them yourself.
