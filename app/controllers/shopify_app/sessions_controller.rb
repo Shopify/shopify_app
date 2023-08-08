@@ -69,7 +69,7 @@ module ShopifyApp
         value: auth_attributes[:cookie].value,
       }
 
-      auth_route = auth_attributes[:auth_route]
+      auth_route = auth_attributes[:auth_route].gsub("#{shop}/admin", Base64.decode64(params[:host]))
 
       ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_route}")
       redirect_to(auth_route, allow_other_host: true)
