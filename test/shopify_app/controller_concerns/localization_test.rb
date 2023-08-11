@@ -18,7 +18,12 @@ class LocalizationTest < ActionController::TestCase
   tests LocalizationController
 
   setup do
+    @original_default_locale = I18n.default_locale
     I18n.available_locales = [:en, :de, :es, :ja, :fr]
+  end
+
+  teardown do
+    I18n.default_locale = @original_default_locale
   end
 
   test "falls back to I18n.default if locale param is not present" do
@@ -34,6 +39,13 @@ class LocalizationTest < ActionController::TestCase
     with_test_routes do
       get :index, params: { locale: "de" }
       assert_equal :de, I18n.locale
+    end
+  end
+
+  test "set I18n.locale to the 2 letter language code if fully-qualified locale param requested is not supported" do
+    with_test_routes do
+      get :index, params: { locale: "es-ES" }
+      assert_equal :es, I18n.locale
     end
   end
 
