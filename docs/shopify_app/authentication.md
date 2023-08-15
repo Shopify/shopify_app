@@ -24,14 +24,56 @@ See [*Getting started with session token authentication*](https://shopify.dev/do
 
 >️ **Note:** In Shopify App version 8.4.0, we have extracted the callback logic in its own controller. If you are upgrading from a version older than 8.4.0 the callback action and related helper methods were defined in `ShopifyApp::SessionsController` ==> you will have to extend `ShopifyApp::CallbackController` instead and port your logic to the new controller.
 
-Upon completing the OAuth flow, Shopify calls the app at the `callback_path`. If the app needs to do some extra work, it can define and configure the route to a custom callback controller, inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods. The default callback controller already provides the following behaviour:
-* Logging into the shop and resetting the session
-* [Installing Webhooks](/docs/shopify_app/webhooks.md)
-* [Setting Scripttags](/docs/shopify_app/script-tags.md)
-* [Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
-* Redirecting to the return address
+Upon completing the OAuth flow, Shopify calls the app at `ShopifyApp.configuration.login_callback_url`.
 
-## Run jobs after the OAuth flow
+The default callback controller [`ShopifyApp::CallbackController`](../../app/controllers/shopify_app/callback_controller.rb) provides the following behaviour:
+
+1. Logging into the shop and resetting the session
+2. Storing the session to the `SessionRepository`
+3. [Installing Webhooks](/docs/shopify_app/webhooks.md)
+4. [Setting Scripttags](/docs/shopify_app/script-tags.md)
+5. [Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
+6. Redirecting to the return address
+
+
+#### Customizing callback controller
+If the app needs to do some extra work, it can define and configure the route to a custom callback controller.
+Inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods.
+
+Example:
+
+1. Create the new custom callback controller
+```ruby
+# web/app/controllers/my_custom_callback_controller.rb
+
+class MyCustomCallbackController < ShopifyApp::CallbackController
+  private
+
+  def install_webhooks(session)
+    # My custom override/definition to install webhooks
+  end
+end
+```
+
+2. Override callback routing to this controller
+
+```ruby
+# web/config/routes.rb
+
+Rails.application.routes.draw do
+  root to: "home#index"
+
+  # Overriding the callback controller to the new custom one.
+  # This must be added before mounting the ShopifyApp::Engine
+  get ShopifyApp.configuration.login_callback_url, to: 'my_custom_callback#callback'
+
+  mount ShopifyApp::Engine, at: "/api"
+
+  # other routes
+end
+```
+
+### Run jobs after the OAuth flow
 
 See [`ShopifyApp::AfterAuthenticateJob`](/lib/generators/shopify_app/add_after_authenticate_job/templates/after_authenticate_job.rb).
 
