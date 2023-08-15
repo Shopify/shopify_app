@@ -4,7 +4,7 @@ The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authent
 
 By default, the gem generates an embedded app frontend that uses [Shopify App Bridge](https://shopify.dev/tools/app-bridge) to fetch [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens). Session tokens are used by the embedded app to make authenticated requests to the app backend. 
 
-See [*Authenticate an embedded app using session tokens*](https://shopify.dev/tutorials/authenticate-your-app-using-session-tokens) to learn more. 
+See [*Getting started with session token authentication*](https://shopify.dev/docs/apps/auth/oauth/session-tokens/getting-started) to learn more. 
 
 > ⚠️ Be sure you understand the differences between the types of authentication schemes before reading this guide.
 
