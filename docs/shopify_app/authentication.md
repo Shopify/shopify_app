@@ -1,6 +1,6 @@
 # Authentication
 
-The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) to get [access tokens](https://shopify.dev/concepts/about-apis/authentication#api-access-modes). These are used to authenticate requests made by the app to the Shopify API. 
+The Shopify App gem implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) to get [session tokens](https://shopify.dev/concepts/about-apis/authentication#api-access-modes). These are used to authenticate requests made by the app to the Shopify API.
 
 By default, the gem generates an embedded app frontend that uses [Shopify App Bridge](https://shopify.dev/tools/app-bridge) to fetch [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens). Session tokens are used by the embedded app to make authenticated requests to the app backend. 
 
@@ -10,15 +10,11 @@ See [*Getting started with session token authentication*](https://shopify.dev/do
 
 #### Table of contents
 
-[OAuth callback](#oauth-callback)
-
-[Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
-
-[Rotate API credentials](#rotate-api-credentials)
-
-[Available authentication mixins](#available-authentication-mixins)
-  * [`ShopifyApp::Authenticated`](#shopifyappauthenticated)
-  * [`ShopifyApp::EnsureAuthenticatedLinks`](#shopifyappensureauthenticatedlinks)
+* [OAuth callback](#oauth-callback)
+  * [Customizing callback controller](#customizing-callback-controller)
+* [Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
+* [Rotate API credentials](#rotate-api-credentials)
+* [Making authenticated API requests after authorization](#making-authenticated-api-requests-after-authorization)
 
 ## OAuth callback
 
@@ -105,7 +101,7 @@ If you want to perform that action only once, e.g. send a welcome email to the u
 
 ## Rotate API credentials
 
-If your Shopify secret key is leaked, you can use the RotateShopifyTokenJob to perform [API Credential Rotation](https://help.shopify.com/en/api/getting-started/authentication/oauth/api-credential-rotation).
+If your Shopify secret key is leaked, you can use the `RotateShopifyTokenJob` to perform [API Credential Rotation](https://help.shopify.com/en/api/getting-started/authentication/oauth/api-credential-rotation).
 
 Before running the job, you'll need to generate a new secret key from your Shopify Partner dashboard, and update the `/config/initializers/shopify_app.rb` to hold your new and old secret keys:
 
@@ -128,43 +124,10 @@ strategy.options[:old_client_secret] = ShopifyApp.configuration.old_secret
 
 > **Note:** If you are updating `shopify_app` from a version prior to 8.4.2 (and do not wish to run the default/install generator again), you will need to add [the following line](https://github.com/Shopify/shopify_app/blob/4f7e6cca2a472d8f7af44b938bd0fcafe4d8e88a/lib/generators/shopify_app/install/templates/shopify_provider.rb#L18) to `config/initializers/omniauth.rb`:
 
-## Available authentication mixins
+## Making authenticated API requests after authorization
+After the app is installed onto a shop and has been granted all necessary permission, a new session record will be added to `SessionRepository#shop_storage`, or `SessionRepository#user_storage` if online sessions are enabled.
 
-### `ShopifyApp::Authenticated`
+When your app needs to make API requests to Shopify, `ShopifyApp`'s `ActiveSupport` controller concerns can help you retrieve the active session token from the repository to make the authenticate API call.
 
-The engine provides a [`ShopifyApp::Authenticated`](/app/controllers/concerns/shopify_app/authenticated.rb) concern which should be included in any controller that is intended to be behind Shopify OAuth. It adds `before_action`s to ensure that the user is authenticated and will redirect to the Shopify login page if not. It is best practice to include this concern in a base controller inheriting from your `ApplicationController`, from which all controllers that require Shopify authentication inherit.
-
-*Example:*
-
-```rb
-class AuthenticatedController < ApplicationController
-  include ShopifyApp::Authenticated
-end
-
-class ApiController < AuthenticatedController
-  # Actions in this controller are protected
-end
-```
-
-For backwards compatibility, the engine still provides a controller called `ShopifyApp::AuthenticatedController` which includes the `ShopifyApp::Authenticated` concern. Note that it inherits directly from `ActionController::Base`, so you will not be able to share functionality between it and your application's `ApplicationController`.
-
-#### Embedded apps and `ShopifyApp::Authenticated`
-
-Embedded Shopify Admin apps can only use the `ShopifyApp::Authenticated` controller concern *if* the requests originate from App Bridge's `authenticatedFetch` method. Those who include this concern in the `HomeController` or some other embedded controller will see what looks like an OAuth redirect loop as the `ShopifyApp::Authenticated` concern will be fighting with the App Bridge. For more details on how to handle embedded sessions, refer to [the session token documentation](https://shopify.dev/apps/auth/oauth/session-tokens).
-
-### `ShopifyApp::EnsureAuthenticatedLinks`
-
-The [`ShopifyApp::EnsureAuthenticatedLinks`](/app/controllers/concerns/shopify_app/ensure_authenticated_links.rb) concern helps authenticate users that access protected pages of your app directly.
-
-Include this concern in your app's `AuthenticatedController` if your app uses session tokens with [Turbolinks](https://github.com/turbolinks/turbolinks). It adds a `before_action` filter that detects whether a session token is present or not. If a session token is not found, the user is redirected to your app's splash page path (`root_path`) along with `return_to` and `shop` parameters.
-
-*Example:*
-
-```rb
-class AuthenticatedController < ApplicationController
-  include ShopifyApp::EnsureAuthenticatedLinks
-  include ShopifyApp::Authenticated
-end
-```
-
-See [Authenticate server-side rendered embedded apps using Rails and Turbolinks](https://shopify.dev/tutorials/authenticate-server-side-rendered-embedded-apps-using-rails-and-turbolinks) for more information.
+- ⚠️ See [Sessions](./sessions.md) page to understand how sessions work.
+- ⚠️ See [Controller Concerns](./controller-concerns.md) page to understand when to use which concern.
