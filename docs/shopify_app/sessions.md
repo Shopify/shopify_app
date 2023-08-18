@@ -4,48 +4,63 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
 
 #### Table of contents
 
-[Sessions](#sessions)
-  * [Shop-based token storage](#shop-based-token-storage)
-  * [User-based token storage](#user-based-token-storage)
+- [Sessions](#sessions-2)
+  - [Types of session tokens](#types-of-session-tokens) - Shop (offline) v.s. User (online)
+  - [Session token storage](#session-token-storage)
+      * [Shop (offline) token storage](#shop-(offline)-token-storage)
+      * [User (online) token storage](#user-(online)-token-storage)
   * [`ShopifyApp::SessionRepository`](#shopifyappsessionrepository)
   * [Loading Sessions](#loading-sessions)
-
-[Access scopes](#access-scopes)
+- [Access scopes](#access-scopes)
   * [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyappshopsessionstoragewithscopes)
   * [``ShopifyApp::UserSessionStorageWithScopes``](#shopifyappusersessionstoragewithscopes)
+- [Migrating from shop-based to user-based token strategy](#migrating-from-shop-based-to-user-based-token-strategy)
 
-[Migrating from shop-based to user-based token strategy](#migrating-from-shop-based-to-user-based-token-strategy)
+## Sessions
+#### Types of session tokens
+- **Shop** ([offline access](https://shopify.dev/docs/apps/auth/oauth/access-modes#offline-access))
+  - Access token is linked to the store
+  - Meant for long-term access to a store, where no user interaction is involved
+  - Ideal for background jobs or maintenance work
+- **User** ([online access](https://shopify.dev/docs/apps/auth/oauth/access-modes#online-access))
+  - Access token is linked to an individual user on a store
+  - Meant to be used when a user is interacting with your app through the web
 
-### Shop-based token storage (offline token)
+⚠️  [Read more about Online vs. Offline access here](https://shopify.dev/apps/auth/oauth/access-modes).
 
-Storing tokens on the store model means that any user login associated with the store will have equal access levels to whatever the original user granted the app.
+#### Session token storage
+##### Shop (offline) token storage
+⚠️ All apps must have a shop session storage, if you started from the [Ruby App Template](https://github.com/Shopify/shopify-app-template-ruby), it's already configured to have a Shop model by default.
+
+1. If you don't already have a repository to store the access tokens, run the following generator to create a shop model to store the access tokens:
+
 ```sh
 rails generate shopify_app:shop_model
 ```
-This will generate a shop model which will be the storage for the tokens necessary for authentication. To enable session persistance, you'll need to configure your `/initializers/shopify_app.rb` accordingly:
+
+2. Configure your `/initializers/shopify_app.rb` to enable shop session token persistance:
 
 ```ruby
 config.shop_session_repository = 'Shop'
 ```
 
-### User-based token storage (online token)
+##### User (online) token storage
+If your app has user interactions and would like to control permission based on individual users, you need to configure a User token storage to persist unique tokens for each user.
 
-A more granular control over the level of access per user on an app might be necessary, to which the shop-based token strategy is not sufficient. Shopify supports a user-based token storage strategy where a unique token to each user can be managed. Shop tokens must still be maintained if you are running background jobs so that you can make use of them when necessary.
+[Shop (offline) tokens must still be maintained](#shop-(offline)-token-storage).
+
+1. Run the following generator to create a user model to store the individual based access tokens
 ```sh
-rails generate shopify_app:shop_model
 rails generate shopify_app:user_model
 ```
 
-This will generate a user and shop model which will be the storage for the tokens necessary for authentication. To enable session persistance, you'll need to configure your `/initializers/shopify_app.rb` accordingly:
+2. Configure your `/initializers/shopify_app.rb` to enable user session token persistance:
 
 ```ruby
-config.shop_session_repository = 'Shop'
 config.user_session_repository = 'User'
 ```
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
-
-Read more about Online vs. Offline access [here](https://shopify.dev/apps/auth/oauth/access-modes).
 
 ### Customized Session Storage - ShopifyApp::SessionRepository
 
