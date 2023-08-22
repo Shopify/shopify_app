@@ -242,3 +242,11 @@ end
 config.shop_session_repository = {YOUR_SHOP_MODEL_CLASS}
 config.user_session_repository = {YOUR_USER_MODEL_CLASS}
 ```
+
+## Migrating from `ShopifyApi::Auth::SessionStorage` to ShopifyApp session storage
+- Support for using `ShopifyApi::Auth::SessionStorage` was removed from ShopifyApi [version 13.0.0](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#1300)
+- Sessions storage are now handled with [ShopifyApp::SessionRepository](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/session_repository.rb)
+- To migrate and specify your shop or user session storage method:
+  1. Remove `session_storage` configuration from `config/initializers/shopify_app.rb`
+  2. Follow ["Session Token Storage" instructions](#session-token-storage) to specify the storage repository for shop and user sessions.
+     - [Customizing session storage](#customizing-session-storage-with-shopifyapp%3A%3Asessionrepository)
