@@ -9,7 +9,7 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
   - [Session token storage](#session-token-storage)
       * [Shop (offline) token storage](#shop-(offline)-token-storage)
       * [User (online) token storage](#user-(online)-token-storage)
-  * [`ShopifyApp::SessionRepository`](#shopifyappsessionrepository)
+      * [Customizing Session Storage with `ShopifyApp::SessionRepository`](#customizing-session-storage-with-shopifyapp%3A%3Asessionrepository)
   * [Loading Sessions](#loading-sessions)
 - [Access scopes](#access-scopes)
   * [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyappshopsessionstoragewithscopes)
@@ -38,7 +38,7 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
 rails generate shopify_app:shop_model
 ```
 
-2. Configure your `/initializers/shopify_app.rb` to enable shop session token persistance:
+2. Configure `config/initializers/shopify_app.rb` to enable shop session token persistance:
 
 ```ruby
 config.shop_session_repository = 'Shop'
@@ -54,7 +54,7 @@ If your app has user interactions and would like to control permission based on 
 rails generate shopify_app:user_model
 ```
 
-2. Configure your `/initializers/shopify_app.rb` to enable user session token persistance:
+2. Configure `config/initializers/shopify_app.rb` to enable user session token persistance:
 
 ```ruby
 config.user_session_repository = 'User'
@@ -62,13 +62,48 @@ config.user_session_repository = 'User'
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 
-### Customized Session Storage - ShopifyApp::SessionRepository
+##### Customizing Session Storage with `ShopifyApp::SessionRepository`
 
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The `SessionRepository` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object that implements `self.store(auth_session, *args)` which stores the session and returns a unique identifier and `self.retrieve(id)` which returns a `ShopifyAPI::Session` for the passed id. These methods are already implemented as part of the `ShopifyApp::SessionStorage` concern but can be overridden for custom implementation.
+`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The specific repository for `shop` & `user` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object.
+
+```ruby
+# config/initializers/shopify_app.rb
+
+config.shop_session_repository = MyCustomShopSessionRepository
+config.user_session_repository = MyCustomUserSessionRepository
+```
+
+⚠️  **Requirements:**
+
+The custom **Shop** repository must implement the following methods:
+- `self.store(auth_session)`
+  - `auth_session` is `ShopifyAPI::Auth::Session` type
+- `self.retrieve(id)`
+  - `id` is a `String`
+  - Returns a `ShopifyAPI::Auth::Session`
+- `self.retrieve_by_shopify_domain(shopify_domain)`
+  - `shopify_domain` is a `String`
+  - Returns a `ShopifyAPI::Auth::Session`
+
+The custom **User** repository must implement the following methods:
+- `self.store(auth_session, user) #`
+    - `auth_session` is `ShopifyAPI::Auth::Session` type
+    - `user` is `ShopifyAPI::Auth::Session#associated_user` type `ShopifyAPI::Auth::AssociatedUser`
+- `self.retrieve(id)`
+  - `id` is a `String`
+  - Returns a `ShopifyAPI::Auth::Session`
+- `self.retrieve_by_shopify_user_id(user_id)`
+  - `user_id` is a `String`
+  - Returns a `ShopifyAPI::Auth::Session`
+
+These methods are already implemented as a part of the `User` and `Shop` models generated from this gem's generator.
+- `Shop` model includes the [ShopSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/shop_session_storage_with_scopes.rb) concern.
+- `User` model includes the [UserSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/user_session_storage_with_scopes.rb) concern.
 
 ### Loading Sessions
 By using the appropriate controller concern, sessions are loaded for you.  Note -- these controller concerns cannot both be included in the same controller.
 
+#### Getting Sessions with Controller Concerns
 #### Shop Sessions - `EnsureInstalled`
 `EnsureInstalled` controller concern will load a shop session with the `installed_shop_session` helper. If a shop session is not found, meaning the app wasn't installed for this shop, the request will be redirected to be installed.
 
