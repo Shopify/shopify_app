@@ -35,7 +35,8 @@ module ShopifyApp
         load_shop_storage || raise(
           ::ShopifyApp::ConfigurationError,
           "ShopifyApp::Configuration.shop_session_repository is not configured!\n
-          See docs here: https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/sessions.md#sessions")
+          See docs here: https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/sessions.md#sessions",
+        )
       end
 
       def user_storage
@@ -92,14 +93,18 @@ module ShopifyApp
       def load_shop_storage
         return unless @shop_storage
 
-       shop_storage_class = @shop_storage.respond_to?(:safe_constantize) ? @shop_storage.safe_constantize : @shop_storage
+        shop_storage_class =
+          @shop_storage.respond_to?(:safe_constantize) ? @shop_storage.safe_constantize : @shop_storage
 
         [
           :store,
           :retrieve,
           :retrieve_by_shopify_domain,
         ].each do |method|
-          raise(::ShopifyApp::ConfigurationError, missing_method_message("shop", method.to_s)) unless shop_storage_class.respond_to?(method)
+          raise(
+            ::ShopifyApp::ConfigurationError,
+            missing_method_message("shop", method.to_s),
+          ) unless shop_storage_class.respond_to?(method)
         end
 
         shop_storage_class
@@ -108,14 +113,18 @@ module ShopifyApp
       def load_user_storage
         return NullUserSessionStore unless @user_storage
 
-        user_storage_class = @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
+        user_storage_class =
+          @user_storage.respond_to?(:safe_constantize) ? @user_storage.safe_constantize : @user_storage
 
         [
           :store,
           :retrieve,
           :retrieve_by_shopify_user_id,
         ].each do |method|
-          raise(::ShopifyApp::ConfigurationError, missing_method_message("user", method.to_s)) unless user_storage_class.respond_to?(method)
+          raise(
+            ::ShopifyApp::ConfigurationError,
+            missing_method_message("user", method.to_s),
+          ) unless user_storage_class.respond_to?(method)
         end
 
         user_storage_class
