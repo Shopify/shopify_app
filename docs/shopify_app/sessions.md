@@ -4,22 +4,23 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
 
 #### Table of contents
 
-- [Sessions](#sessions-2)
+- [Sessions](#sessions-1)
   - [Types of session tokens](#types-of-session-tokens) - Shop (offline) v.s. User (online)
   - [Session token storage](#session-token-storage)
-      - [Shop (offline) token storage](#shop-(offline)-token-storage)
-      - [User (online) token storage](#user-(online)-token-storage)
-      - [In-Memory Session Storage](#in-memory-session-storage)
-      - [Customizing Session Storage with `ShopifyApp::SessionRepository`](#customizing-session-storage-with-shopifyapp%3A%3Asessionrepository)
+      - [Shop (offline) token storage](#shop-offline-token-storage)
+      - [User (online) token storage](#user-online-token-storage)
+      - [In-Memory Session Storage for Testing](#in-memory-session-storage-for-testing)
+      - [Customizing Session Storage with `ShopifyApp::SessionRepository`](#customizing-session-storage-with-shopifyappsessionrepository)
   - [Loading Sessions](#loading-sessions)
       - [Getting Sessions with Controller Concerns](#getting-sessions-with-controller-concerns)
         - [Shop session - "EnsureInstalled" ](#shop-sessions---ensureinstalled)
         - [User session - "EnsureHasSession" ](#user-sessions---ensurehassession)
-      - [Getting Sessions from a Shop or User model record - "with_shopify_session"](#getting-sessions-from-a-shop-or-user-model-record---‘with_shopify_session’)
+      - [Getting Sessions from a Shop or User model record - "with_shopify_session"](#getting-sessions-from-a-shop-or-user-model-record---with_shopify_session)
 - [Access scopes](#access-scopes)
-  - [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyapp%3A%3Ashopsessionstoragewithscopes)
-  - [``ShopifyApp::UserSessionStorageWithScopes``](#shopifyapp%3A%3Ausersessionstoragewithscopes)
+  - [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyappshopsessionstoragewithscopes)
+  - [``ShopifyApp::UserSessionStorageWithScopes``](#shopifyappusersessionstoragewithscopes)
 - [Migrating from shop-based to user-based token strategy](#migrating-from-shop-based-to-user-based-token-strategy)
+- [Migrating from ShopifyApi::Auth::SessionStorage to ShopifyApp::SessionStorage](#migrating-from-shopifyapiauthsessionstorage-to-shopifyappsessionstorage)
 
 ## Sessions
 #### Types of session tokens
@@ -52,7 +53,7 @@ config.shop_session_repository = 'Shop'
 ##### User (online) token storage
 If your app has user interactions and would like to control permission based on individual users, you need to configure a User token storage to persist unique tokens for each user.
 
-[Shop (offline) tokens must still be maintained](#shop-(offline)-token-storage).
+[Shop (offline) tokens must still be maintained](#shop-offline-token-storage).
 
 1. Run the following generator to create a user model to store the individual based access tokens
 ```sh
@@ -177,7 +178,7 @@ end
 The [ShopifyApp::SessionStorage#with_shopify_session](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/session_storage.rb#L12)
 helper allows you to make API calls within the context of a user or shop, by using that record's access token.
 
-This mixin is already included in ActiveSupport [concerns](#available-activesupport%3A%3Aconcerns-that-contains-implementation-of-the-above-methods) from this gem.
+This mixin is already included in ActiveSupport [concerns](#available-activesupportconcerns-that-contains-implementation-of-the-above-methods) from this gem.
 If you're using a custom implementation of session storage, you can include the [ShopifyApp::SessionStorage](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/session_storage.rb) concern.
 
 All calls made within the block passed into this helper will be made in that context:
@@ -232,8 +233,8 @@ end
 
 ## Migrating from shop-based to user-based token strategy
 
-1. Run the `user_model` generator as [mentioned above](#user-(online)-token-storage).
-2. Ensure that both your `Shop` model and `User` model includes the [necessary concerns](#available-activesupport%3A%3Aconcerns-that-contains-implementation-of-the-above-methods)
+1. Run the `user_model` generator as [mentioned above](#user-online-token-storage).
+2. Ensure that both your `Shop` model and `User` model includes the [necessary concerns](#available-activesupportconcerns-that-contains-implementation-of-the-above-methods)
 3. Update the configuration file to use the new session storage.
 
 ```ruby
@@ -243,10 +244,10 @@ config.shop_session_repository = {YOUR_SHOP_MODEL_CLASS}
 config.user_session_repository = {YOUR_USER_MODEL_CLASS}
 ```
 
-## Migrating from `ShopifyApi::Auth::SessionStorage` to ShopifyApp session storage
+## Migrating from `ShopifyApi::Auth::SessionStorage` to `ShopifyApp::SessionStorage`
 - Support for using `ShopifyApi::Auth::SessionStorage` was removed from ShopifyApi [version 13.0.0](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#1300)
 - Sessions storage are now handled with [ShopifyApp::SessionRepository](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/session_repository.rb)
 - To migrate and specify your shop or user session storage method:
   1. Remove `session_storage` configuration from `config/initializers/shopify_app.rb`
   2. Follow ["Session Token Storage" instructions](#session-token-storage) to specify the storage repository for shop and user sessions.
-     - [Customizing session storage](#customizing-session-storage-with-shopifyapp%3A%3Asessionrepository)
+     - [Customizing session storage](#customizing-session-storage-with-shopifyappsessionrepository)
