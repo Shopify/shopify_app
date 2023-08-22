@@ -112,11 +112,11 @@ module ShopifyApp
     end
 
     test ".store_session stores a shop session" do
-      SessionRepository.shop_storage = InMemoryUserSessionStore
+      SessionRepository.shop_storage = InMemoryShopSessionStore
 
       session = mock_shopify_session
 
-      InMemoryUserSessionStore.expects(:store).with(session)
+      InMemoryShopSessionStore.expects(:store).with(session)
 
       SessionRepository.store_session(session)
     end
