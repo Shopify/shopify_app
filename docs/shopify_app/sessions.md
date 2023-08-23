@@ -83,7 +83,7 @@ config.user_session_repository = ShopifyApp::InMemoryUserSessionStore
 
 ##### Customizing Session Storage with `ShopifyApp::SessionRepository`
 
-`ShopifyApp::SessionRepository` allows you as a developer to define how your sessions are stored and retrieved for shops. The specific repository for `shop` & `user` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object.
+In the rare event that you would like to break Rails convention for storing/retrieving records, the `ShopifyApp::SessionRepository` allows you to define how your sessions are stored and retrieved for shops. The specific repository for `shop` & `user` is configured in the `config/initializers/shopify_app.rb` file and can be set to any object.
 
 ```ruby
 # config/initializers/shopify_app.rb
