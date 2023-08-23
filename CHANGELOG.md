@@ -4,7 +4,10 @@ Unreleased
 * Fix registration of event_bridge and pub_sub webhooks [#1635](https://github.com/Shopify/shopify_app/pull/1635)
 * Adds support for adding any number of trial days within `EnsureBilling` by adding the `trial_days` field to `BillingConfiguration`
 * Updated AppBridge to 3.7.8 [#1680](https://github.com/Shopify/shopify_app/pull/1680)
+* Support falling back to 2 letter language code locales [#1711](https://github.com/Shopify/shopify_app/pull/1711)
+* Fix locale leaks across requests [#1711](https://github.com/Shopify/shopify_app/pull/1711)
 * Fix bug in `InMemoryUserSessionStore#store`, this can now be used out of box. [#1716](https://github.com/Shopify/shopify_app/pull/1716)
+
 
 21.6.0 (July 11, 2023)
 ----------
