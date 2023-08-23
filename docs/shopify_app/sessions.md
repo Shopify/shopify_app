@@ -38,7 +38,9 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
 ##### Shop (offline) token storage
 ⚠️ All apps must have a shop session storage, if you started from the [Ruby App Template](https://github.com/Shopify/shopify-app-template-ruby), it's already configured to have a Shop model by default.
 
-1. If you don't already have a repository to store the access tokens, run the following generator to create a shop model to store the access tokens:
+If you don't already have a repository to store the access tokens:
+
+1. Run the following generator to create a shop model to store the access tokens
 
 ```sh
 rails generate shopify_app:shop_model
@@ -69,11 +71,11 @@ config.user_session_repository = 'User'
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
 
 ##### In-memory Session Storage for testing
-The `ShopifyApp` gem includes methods for in-memory storage for both shop and user sessions.
+The `ShopifyApp` gem includes methods for in-memory storage for both shop and user sessions. In-memory storage is intended to be used in a testing environment, please use a persistent storage for your application.
 - [InMemoryShopSessionStore](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/in_memory_shop_session_store.rb)
 - [InMemoryUserSessionStore](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/in_memory_user_session_store.rb)
 
-You can configure the `ShopifyApp` configuration to use the in-memory storage method instead:
+You can configure the `ShopifyApp` configuration to use the in-memory storage method during manual testing:
 ```ruby
 # config/initializers/shopify_app.rb
 
@@ -92,28 +94,23 @@ config.shop_session_repository = MyCustomShopSessionRepository
 config.user_session_repository = MyCustomUserSessionRepository
 ```
 
-⚠️  **Requirements:**
+##### ⚠️  Custom Session Storage Requirements
 
 The custom **Shop** repository must implement the following methods:
-- `self.store(auth_session)`
-  - `auth_session` is `ShopifyAPI::Auth::Session` type
-- `self.retrieve(id)`
-  - `id` is a `String`
-  - Returns a `ShopifyAPI::Auth::Session`
-- `self.retrieve_by_shopify_domain(shopify_domain)`
-  - `shopify_domain` is a `String`
-  - Returns a `ShopifyAPI::Auth::Session`
+
+| Method                                            | Parameters                                 | Return Type               |
+|---------------------------------------------------|--------------------------------------------|---------------------------|
+| `self.store(auth_session)`                        | `auth_session` (ShopifyAPI::Auth::Session) | -                         |
+| `self.retrieve(id)`                               | `id` (String)                              | ShopifyAPI::Auth::Session |
+| `self.retrieve_by_shopify_domain(shopify_domain)` | `shopify_domain` (String)                  | ShopifyAPI::Auth::Session |
 
 The custom **User** repository must implement the following methods:
-- `self.store(auth_session, user) #`
-    - `auth_session` is `ShopifyAPI::Auth::Session` type
-    - `user` is `ShopifyAPI::Auth::Session#associated_user` type `ShopifyAPI::Auth::AssociatedUser`
-- `self.retrieve(id)`
-  - `id` is a `String`
-  - Returns a `ShopifyAPI::Auth::Session`
-- `self.retrieve_by_shopify_user_id(user_id)`
-  - `user_id` is a `String`
-  - Returns a `ShopifyAPI::Auth::Session`
+| Method                                      | Parameters                          | Return Type                  |
+|---------------------------------------------|-------------------------------------|------------------------------|
+| `self.store(auth_session, user)`            | <li>`auth_session` (ShopifyAPI::Auth::Session)<br><li>`user` (ShopifyAPI::Auth::AssociatedUser) | - |
+| `self.retrieve(id)`                         | `id` (String)                       | `ShopifyAPI::Auth::Session`  |
+| `self.retrieve_by_shopify_user_id(user_id)` | `user_id` (String)                  | `ShopifyAPI::Auth::Session`  |
+
 
 These methods are already implemented as a part of the `User` and `Shop` models generated from this gem's generator.
 - `Shop` model includes the [ShopSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/shop_session_storage_with_scopes.rb) concern.
