@@ -78,11 +78,11 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
   end
 
   test "#recreate_webhooks! destroys all webhooks and recreates" do
-    ShopifyApp.configuration.expects(:has_webhooks?).returns(true)
+    ShopifyApp.configuration.expects(:has_webhooks?).at_least(1).times.returns(true)
     session = ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com")
 
     ShopifyApp::WebhooksManager.expects(:destroy_webhooks)
-    ShopifyApp::WebhooksManager.expects(:add_registrations)
+    ShopifyApp::WebhooksManager.expects(:create_webhooks)
 
     ShopifyApp::WebhooksManager.recreate_webhooks!(session: session)
   end
