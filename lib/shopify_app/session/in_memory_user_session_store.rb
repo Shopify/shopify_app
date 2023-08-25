@@ -5,7 +5,7 @@ module ShopifyApp
     class << self
       def store(session, user)
         id = super
-        repo[user.shopify_user_id] = session
+        repo[user.id.to_s] = session
         id
       end
 

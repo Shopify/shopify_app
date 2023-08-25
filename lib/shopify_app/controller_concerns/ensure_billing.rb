@@ -136,6 +136,7 @@ module ShopifyApp
             },
           },
           returnUrl: return_url,
+          trialDays: ShopifyApp.configuration.billing.trial_days,
           test: ShopifyApp.configuration.billing.test,
         },
       )
@@ -208,12 +209,14 @@ module ShopifyApp
         $name: String!
         $lineItems: [AppSubscriptionLineItemInput!]!
         $returnUrl: URL!
+        $trialDays: Int
         $test: Boolean
       ) {
         appSubscriptionCreate(
           name: $name
           lineItems: $lineItems
           returnUrl: $returnUrl
+          trialDays: $trialDays
           test: $test
         ) {
           confirmationUrl

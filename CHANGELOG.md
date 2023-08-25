@@ -1,7 +1,18 @@
 Unreleased
 ----------
+* Fixes typo in webhook generator [#1704](https://github.com/Shopify/shopify_app/pull/1704)
+* Fix registration of event_bridge and pub_sub webhooks [#1635](https://github.com/Shopify/shopify_app/pull/1635)
+* Adds support for adding any number of trial days within `EnsureBilling` by adding the `trial_days` field to `BillingConfiguration`
+* Updated AppBridge to 3.7.8 [#1680](https://github.com/Shopify/shopify_app/pull/1680)
+* Support falling back to 2 letter language code locales [#1711](https://github.com/Shopify/shopify_app/pull/1711)
+* Fix locale leaks across requests [#1711](https://github.com/Shopify/shopify_app/pull/1711)
+* Fix bug in `InMemoryUserSessionStore#store`, this can now be used out of box. [#1716](https://github.com/Shopify/shopify_app/pull/1716)
 
+
+21.6.0 (July 11, 2023)
+----------
 * Adds support for toggling test charges within `EnsureBilling` by adding `test` field to `BillingConfiguration` and pulling in environment variable [#1688](https://github.com/Shopify/shopify_app/pull/1688)
+* Adds support for 2023-07 API version [#1706](https://github.com/Shopify/shopify_app/pull/1706)
 
 21.5.0 (May 18, 2023)
 ----------
