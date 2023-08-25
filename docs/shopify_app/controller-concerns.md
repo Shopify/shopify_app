@@ -37,7 +37,7 @@ Designed to be more of a lightweight session concern specifically for XHR reques
 ## ShopAccessScopesVerification
 If scopes for the session don't match configuration of scopes defined in `config/initializers/shopify_app.rb` the user will be redirected to login or the `embedded_redirect_url`.
 
-### Private Concerns used with EnsureHasSession
+# Private Concerns used with EnsureHasSession
 These concerns shouldn't be included directly, but we provide some documentation as to their functionality that are included with `EnsureHasSession`. Concerns defined in `lib/shopify_app/controller_concerns` are designed to be private and are not meant to be included directly into your controllers.
 
 #### LoginProtection - Session Management
