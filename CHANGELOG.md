@@ -124,7 +124,7 @@ Unreleased
 
 19.0.0 (April 6, 2022)
 ----------
-* Use v10 of the Shopify API (https://github.com/Shopify/shopify-api-ruby). This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md) for details.
+* Use v10 of the [Shopify API](https://github.com/Shopify/shopify-api-ruby) gem. This update requires changes to an app - please refer to the [migration guide](https://github.com/Shopify/shopify_app/blob/main/docs/Upgrading.md#upgrading-to-v1900) for details.
 BREAKING, please see migration notes.
 
 18.1.2 (Mar 3, 2022)
