@@ -23,7 +23,7 @@ Shopify has an official message board with dedicated forums to discuss all thing
 * [Shopify Apps](https://community.shopify.com/c/Shopify-Apps/bd-p/shopify-apps)
 * [Shopify APIs & SDKs](https://community.shopify.com/c/Shopify-APIs-SDKs/bd-p/shopify-apis-and-technology)
 
-If you prefer to chat instead, join the [Shopify Partners Slack Community group](https://www.shopify.com/partners/community#conversation). This Slack group hosts an active community of thousands of app developers.
+If you prefer to chat instead, join the [Shopify Partners Slack Community group](https://community.shopify.com/c/partners-and-developers/ct-p/appdev). This Slack group hosts an active community of thousands of app developers.
 
 By participating in the Community forum or Slack group, you agree to adhere to the forum [Code of Conduct](https://community.shopify.com/c/Announcements/Code-of-Conduct/m-p/491969#M23) outlined.
 
