@@ -7,7 +7,7 @@ Unreleased
 * Support falling back to 2 letter language code locales [#1711](https://github.com/Shopify/shopify_app/pull/1711)
 * Fix locale leaks across requests [#1711](https://github.com/Shopify/shopify_app/pull/1711)
 * Fix bug in `InMemoryUserSessionStore#store`, this can now be used out of box. [#1716](https://github.com/Shopify/shopify_app/pull/1716)
-
+* Adds support for 2023-10 API version [#1734](https://github.com/Shopify/shopify_app/pull/1734)
 
 21.6.0 (July 11, 2023)
 ----------
