@@ -49,6 +49,7 @@ module ShopifyApp
   require "shopify_app/controller_concerns/redirect_for_embedded"
   require "shopify_app/controller_concerns/login_protection"
   require "shopify_app/controller_concerns/ensure_billing"
+  require "shopify_app/controller_concerns/oauth_strategy"
   require "shopify_app/controller_concerns/embedded_app"
   require "shopify_app/controller_concerns/payload_verification"
   require "shopify_app/controller_concerns/app_proxy_verification"

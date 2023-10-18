@@ -46,6 +46,7 @@ module ShopifyApp
 
     def handle_billing_error(error)
       logger.info("#{error.message}: #{error.errors}")
+      # Why does this need to go through login?
       redirect_to_login
     end
 
