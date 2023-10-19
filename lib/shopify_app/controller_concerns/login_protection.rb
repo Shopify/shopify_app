@@ -140,10 +140,7 @@ module ShopifyApp
 
     # External
     def user_session_expected?
-      return false if shop_session.nil?
-      return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
-
-      online_token_configured?
+      auth_strategy.user_session_expected?
     end
   end
 end

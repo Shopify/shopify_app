@@ -54,25 +54,7 @@ module ShopifyApp
     end
 
     def start_oauth
-      callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
-      ShopifyApp::Logger.debug("Starting OAuth with the following callback URL: #{callback_url}")
-
-      auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
-        shop: sanitized_shop_name,
-        redirect_path: "/#{callback_url}",
-        is_online: user_session_expected?,
-      )
-      cookies.encrypted[auth_attributes[:cookie].name] = {
-        expires: auth_attributes[:cookie].expires,
-        secure: true,
-        http_only: true,
-        value: auth_attributes[:cookie].value,
-      }
-
-      auth_route = auth_attributes[:auth_route]
-
-      ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_route}")
-      redirect_to(auth_route, allow_other_host: true)
+      auth_strategy.start_install
     end
 
     def validate_shop_presence

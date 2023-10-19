@@ -35,6 +35,35 @@ module ShopifyApp
       end
     end
 
+    def start_install
+      callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
+      ShopifyApp::Logger.debug("Starting OAuth with the following callback URL: #{callback_url}")
+
+      auth_attributes = ShopifyAPI::Auth::Oauth.begin_auth(
+        shop: sanitized_shop_name,
+        redirect_path: "/#{callback_url}",
+        is_online: user_session_expected?,
+      )
+      cookies.encrypted[auth_attributes[:cookie].name] = {
+        expires: auth_attributes[:cookie].expires,
+        secure: true,
+        http_only: true,
+        value: auth_attributes[:cookie].value,
+      }
+
+      auth_route = auth_attributes[:auth_route]
+
+      ShopifyApp::Logger.debug("Redirecting to auth_route - #{auth_route}")
+      redirect_to(auth_route, allow_other_host: true)
+    end
+
+    def user_session_expected?
+      return false if shop_session.nil?
+      return false if ShopifyApp.configuration.shop_access_scopes_strategy.update_access_scopes?(shop_session.shop)
+
+      online_token_configured?
+    end
+
     def current_shopify_session
       @current_shopify_session ||= begin
         cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
@@ -128,6 +157,10 @@ module ShopifyApp
 
     private
 
+    def shop_session
+      ShopifyApp::SessionRepository.retrieve_shop_session_by_shopify_domain(sanitize_shop_param(params))
+    end
+    
     # Internal
     def close_session
       clear_shopify_session
