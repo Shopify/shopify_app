@@ -4,7 +4,7 @@ require "rails/generators/base"
 
 module ShopifyApp
   module Generators
-    class AddGdprJobsGenerator < Rails::Generators::Base
+    class AddPrivacyJobsGenerator < Rails::Generators::Base
       source_root File.expand_path("../templates", __FILE__)
 
       def add_customer_data_request_job
