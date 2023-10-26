@@ -3,7 +3,7 @@
 #### Table of contents
 
 [Manage webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
-[Mandatory GDPR Webhooks](#mandatory-gdpr-webhooks)
+[Mandatory Privacy Webhooks](#mandatory-privacy-webhooks)
 
 ## Manage webhooks using `ShopifyApp::WebhooksManager`
 
@@ -72,9 +72,9 @@ rails g shopify_app:add_webhook --topic carts/update --path webhooks/carts_updat
 
 Where `--topic` is the topic and `--path` is the path the webhook should be sent to.
 
-## Mandatory GDPR Webhooks
+## Mandatory Privacy Webhooks
 
-We have three mandatory GDPR webhooks
+We have three mandatory privacy webhooks
 
 1. `customers/data_request`
 2. `customer/redact`
