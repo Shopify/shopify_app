@@ -26,6 +26,7 @@ module ShopifyApp
 
         ShopifyApp::Logger.debug("Recreating webhooks")
         add_registrations
+        create_webhooks(session:)
       end
 
       def destroy_webhooks(session:)
