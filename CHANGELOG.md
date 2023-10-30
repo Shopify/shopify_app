@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fixes bug with `WebhooksManager#create_webhooks`[#1743](https://github.com/Shopify/shopify_app/pull/1704)
 
 21.7.0 (Oct 12, 2023)
 ----------
