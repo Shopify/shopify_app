@@ -83,7 +83,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
 
     ShopifyApp::WebhooksManager.expects(:destroy_webhooks)
     ShopifyApp::WebhooksManager.expects(:add_registrations)
-    ShopifyApp::WebhooksManager.expects(:create_webhooks).with(session:)
+    ShopifyApp::WebhooksManager.expects(:create_webhooks).with(session: session)
 
     ShopifyApp::WebhooksManager.recreate_webhooks!(session: session)
   end
