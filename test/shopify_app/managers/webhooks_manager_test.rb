@@ -22,6 +22,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       path: "webhooks/orders_updated",
       handler: OrdersUpdatedJob,
       fields: nil,
+      metafield_namespaces: nil,
     }
 
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
@@ -40,6 +41,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       path: "/webhooks/orders_updated",
       handler: OrdersUpdatedJob,
       fields: nil,
+      metafield_namespaces: nil,
     }
 
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
