@@ -25,7 +25,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       metafield_namespaces: nil,
     }
 
-    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(**expected_hash).once
     ShopifyApp.configure do |config|
       config.webhooks = [
         { topic: "orders/updated", path: "webhooks/orders_updated" },
@@ -44,7 +44,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       metafield_namespaces: nil,
     }
 
-    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(expected_hash).once
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(**expected_hash).once
     ShopifyApp.configure do |config|
       config.webhooks = [
         {
