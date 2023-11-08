@@ -10,7 +10,7 @@ module ShopifyApp
 
       def run_all_generators
         generate("shopify_app:add_app_uninstalled_job")
-        generate("shopify_app:add_gdpr_jobs")
+        generate("shopify_app:add_privacy_jobs")
         generate("shopify_app:install #{@opts.join(" ")}")
         generate("shopify_app:shop_model #{@opts.join(" ")}")
         generate("shopify_app:authenticated_controller")

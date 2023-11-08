@@ -1,5 +1,9 @@
 Unreleased
 ----------
+* Fixes bug with `WebhooksManager#recreate_webhooks!` where we failed to register topics in the registry[#1743](https://github.com/Shopify/shopify_app/pull/1704)
+
+21.7.0 (Oct 12, 2023)
+----------
 * Fixes typo in webhook generator [#1704](https://github.com/Shopify/shopify_app/pull/1704)
 * Fix registration of event_bridge and pub_sub webhooks [#1635](https://github.com/Shopify/shopify_app/pull/1635)
 * Adds support for adding any number of trial days within `EnsureBilling` by adding the `trial_days` field to `BillingConfiguration`
@@ -7,7 +11,7 @@ Unreleased
 * Support falling back to 2 letter language code locales [#1711](https://github.com/Shopify/shopify_app/pull/1711)
 * Fix locale leaks across requests [#1711](https://github.com/Shopify/shopify_app/pull/1711)
 * Fix bug in `InMemoryUserSessionStore#store`, this can now be used out of box. [#1716](https://github.com/Shopify/shopify_app/pull/1716)
-
+* Adds support for 2023-10 API version [#1734](https://github.com/Shopify/shopify_app/pull/1734)
 
 21.6.0 (July 11, 2023)
 ----------

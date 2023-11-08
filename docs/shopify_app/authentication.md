@@ -87,7 +87,7 @@ If you need the job to run synchronously add the `inline` flag:
 
 ```ruby
 ShopifyApp.configure do |config|
-  config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
+  config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: true }
 end
 ```
 

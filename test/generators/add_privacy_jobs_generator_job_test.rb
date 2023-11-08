@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "generators/shopify_app/add_gdpr_jobs/add_gdpr_jobs_generator"
+require "generators/shopify_app/add_privacy_jobs/add_privacy_jobs_generator"
 
-class AddGdprJobsGeneratorJobTest < Rails::Generators::TestCase
-  tests ShopifyApp::Generators::AddGdprJobsGenerator
+class AddPrivacyJobsGeneratorJobTest < Rails::Generators::TestCase
+  tests ShopifyApp::Generators::AddPrivacyJobsGenerator
   destination File.expand_path("../tmp", File.dirname(__FILE__))
 
   setup do

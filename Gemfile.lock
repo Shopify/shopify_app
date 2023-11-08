@@ -1,14 +1,14 @@
 PATH
   remote: .
   specs:
-    shopify_app (21.6.0)
+    shopify_app (21.7.0)
       activeresource
       addressable (~> 2.7)
       browser_sniffer (~> 2.0)
       jwt (>= 2.2.3)
       rails (> 5.2.1)
       redirect_safely (~> 1.0)
-      shopify_api (~> 13.1)
+      shopify_api (~> 13.2)
       sprockets-rails (>= 2.0.0)
 
 GEM
@@ -217,7 +217,7 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.2.2)
-    shopify_api (13.1.0)
+    shopify_api (13.2.0)
       activesupport
       concurrent-ruby
       hash_diff
