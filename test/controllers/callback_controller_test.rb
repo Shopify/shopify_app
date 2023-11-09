@@ -255,13 +255,12 @@ module ShopifyApp
       ShopifyApp.configuration.embedded_app = false
       ShopifyAppConfigurer.setup_context # to reset the context, as there's no attr_writer for embedded
       mock_oauth
-      session[:return_to] = "not-real.little-test-shoppe-of-horrs.com"
 
+      non_embedded_host = "not-real.little-test-shoppe-of-horrs.com"
+      @controller.stubs(:return_address).returns(non_embedded_host)
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      host = CGI.escape(@callback_params[:host])
-      shop = @callback_params[:shop] + ".myshopify.com"
-      assert_redirected_to "not-real.little-test-shoppe-of-horrs.com?host=#{host}&shop=#{shop}"
+      assert_redirected_to non_embedded_host
     end
 
     test "callback redirects to the return_to for embedded app when return_to is a fully-formed URL" do
