@@ -255,20 +255,41 @@ module ShopifyApp
       ShopifyApp.configuration.embedded_app = false
       ShopifyAppConfigurer.setup_context # to reset the context, as there's no attr_writer for embedded
       mock_oauth
+      session[:return_to] = "not-real.little-test-shoppe-of-horrs.com"
 
-      non_embedded_host = "not-real.little-test-shoppe-of-horrs.com"
-      @controller.stubs(:return_address).returns(non_embedded_host)
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      assert_redirected_to non_embedded_host
+      host = CGI.escape(@callback_params[:host])
+      shop = @callback_params[:shop] + ".myshopify.com"
+      assert_redirected_to "not-real.little-test-shoppe-of-horrs.com?host=#{host}&shop=#{shop}"
     end
 
-    test "#callback redirects to the embedded app url for embedded" do
+    test "callback redirects to the return_to for embedded app when return_to is a fully-formed URL" do
+      mock_oauth
+      session[:return_to] = "https://example.com/return_to?foo=bar"
+
+      get :callback, params: @callback_params # host is required for App Bridge 2.0
+
+      host = CGI.escape(@callback_params[:host])
+      shop = @callback_params[:shop] + ".myshopify.com"
+      assert_redirected_to "https://example.com/return_to?foo=bar&host=#{host}&shop=#{shop}"
+    end
+
+    test "#callback redirects to the embedded app url when app is embedded and return_to is not provided" do
       mock_oauth
 
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
       assert_redirected_to "https://#{@host}/admin/apps/key"
+    end
+
+    test "#callback redirects to the embedded app url when app is embedded and return_to is a path" do
+      mock_oauth
+      session[:return_to] = "/return_to/path"
+
+      get :callback, params: @callback_params # host is required for App Bridge 2.0
+
+      assert_redirected_to "https://#{@host}/admin/apps/key/return_to/path"
     end
 
     test "#callback performs install_webhook job after authentication" do
