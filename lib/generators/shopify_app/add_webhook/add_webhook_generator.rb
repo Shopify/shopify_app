@@ -39,9 +39,11 @@ module ShopifyApp
       end
 
       def add_webhook_job
-        @job_file_name = job_file_name + "_job"
+        @job_file_name = "#{job_file_name}_job"
         @job_class_name = @job_file_name.classify
-        template("webhook_job.rb", "app/jobs/#{ShopifyApp.configuration.webhook_jobs_namespace}/#{@job_file_name}.rb")
+        namespace = ShopifyApp.configuration.webhook_jobs_namespace
+        dir_path = namespace.present? ? "app/jobs/#{namespace}" : "app/jobs"
+        template("webhook_job.rb", "#{dir_path}/#{@job_file_name}.rb")
       end
 
       private
