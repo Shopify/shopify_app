@@ -270,9 +270,7 @@ module ShopifyApp
 
       get :callback, params: @callback_params # host is required for App Bridge 2.0
 
-      host = CGI.escape(@callback_params[:host])
-      shop = @callback_params[:shop] + ".myshopify.com"
-      assert_redirected_to "https://example.com/return_to?foo=bar&host=#{host}&shop=#{shop}"
+      assert_redirected_to "https://example.com/return_to?foo=bar"
     end
 
     test "#callback redirects to the embedded app url when app is embedded and return_to is not provided" do
