@@ -72,10 +72,10 @@ module ShopifyApp
       if ShopifyAPI::Context.embedded?
         return_to = session.delete(:return_to)
         redirect_to = if fully_formed_url?(return_to)
-            return_to
-          else
-            "#{decoded_host}#{return_to}"
-          end
+          return_to
+        else
+          "#{decoded_host}#{return_to}"
+        end
 
         redirect_to = ShopifyApp.configuration.root_url if deduced_phishing_attack?
         redirect_to(redirect_to, allow_other_host: true)
