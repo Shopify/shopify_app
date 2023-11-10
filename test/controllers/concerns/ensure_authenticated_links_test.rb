@@ -5,6 +5,7 @@ require "test_helper"
 class EnsureAuthenticatedLinksTest < ActionController::TestCase
   class TurbolinksTestController < ActionController::Base
     include ShopifyApp::EnsureAuthenticatedLinks
+    include ShopifyApp::JWTParser
 
     def root
       render(html: "<h1>Splash Page</ h1>")

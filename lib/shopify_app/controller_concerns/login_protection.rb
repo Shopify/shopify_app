@@ -18,6 +18,8 @@ module ShopifyApp
         ShopifyApp::Logger.deprecated(message, "22.0.0")
       end
 
+      include ShopifyApp::JWTParser
+
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
