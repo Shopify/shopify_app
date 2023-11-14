@@ -4,7 +4,6 @@
   "repository": "git@github.com:Shopify/shopify_app.git",
   "author": "Shopify",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "babel-loader": "^8.0.6",
     "babel-preset-shopify": "^21.0.0",
@@ -16,10 +15,10 @@
     "karma-mocha": "^2.0.1",
     "karma-mocha-clean-reporter": "^0.0.1",
     "karma-webpack": "^4.0.2",
-    "mocha": "^8.1.3",
+    "mocha": "^10.2.0",
     "sinon": "^9.0.3",
     "sinon-chai": "^3.2.0",
-    "webpack": "^4.44.1"
+    "webpack": "^5.89.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"
