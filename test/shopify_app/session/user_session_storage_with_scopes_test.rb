@@ -12,6 +12,7 @@ module ShopifyApp
     TEST_SHOPIFY_DOMAIN = "example.myshopify.com"
     TEST_SHOPIFY_USER_TOKEN = "some-user-token-42"
     TEST_MERCHANT_SCOPES = "read_orders, write_products"
+    TEST_EXPIRES_AT = Time.now
 
     test ".retrieve returns user session by id" do
       UserMockSessionStoreWithScopes.stubs(:find_by).returns(MockUserInstance.new(
@@ -19,6 +20,7 @@ module ShopifyApp
         shopify_domain: TEST_SHOPIFY_DOMAIN,
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
         scopes: TEST_MERCHANT_SCOPES,
+        expires_at: TEST_EXPIRES_AT,
       ))
 
       session = UserMockSessionStoreWithScopes.retrieve(shopify_user_id: TEST_SHOPIFY_USER_ID)
@@ -26,6 +28,7 @@ module ShopifyApp
       assert_equal TEST_SHOPIFY_DOMAIN, session.shop
       assert_equal TEST_SHOPIFY_USER_TOKEN, session.access_token
       assert_equal ShopifyAPI::Auth::AuthScopes.new(TEST_MERCHANT_SCOPES), session.scope
+      assert_equal TEST_EXPIRES_AT, session.expires
     end
 
     test ".retrieve_by_shopify_user_id returns user session by shopify_user_id" do
@@ -35,6 +38,7 @@ module ShopifyApp
         shopify_token: TEST_SHOPIFY_USER_TOKEN,
         api_version: ShopifyApp.configuration.api_version,
         scopes: TEST_MERCHANT_SCOPES,
+        expires_at: TEST_EXPIRES_AT,
       )
       UserMockSessionStoreWithScopes.stubs(:find_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID).returns(instance)
 
@@ -42,6 +46,7 @@ module ShopifyApp
         shop: instance.shopify_domain,
         access_token: instance.shopify_token,
         scope: TEST_MERCHANT_SCOPES,
+        expires: TEST_EXPIRES_AT,
       )
 
       user_id = TEST_SHOPIFY_USER_ID
@@ -49,6 +54,7 @@ module ShopifyApp
       assert_equal expected_session.shop, session.shop
       assert_equal expected_session.access_token, session.access_token
       assert_equal expected_session.scope, session.scope
+      assert_equal expected_session.expires, session.expires
     end
 
     test ".destroy_by_shopify_user_id destroys user session by shopify_user_id" do

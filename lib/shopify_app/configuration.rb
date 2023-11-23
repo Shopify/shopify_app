@@ -20,6 +20,7 @@ module ShopifyApp
     attr_accessor :api_version
 
     attr_accessor :reauth_on_access_scope_changes
+    attr_accessor :check_session_expiry_date
     attr_accessor :log_level
 
     # customise urls
