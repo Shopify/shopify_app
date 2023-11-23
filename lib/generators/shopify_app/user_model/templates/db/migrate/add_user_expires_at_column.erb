@@ -1,0 +1,5 @@
+class AddUserExpiresAtColumn < ActiveRecord::Migration[<%= rails_migration_version %>]
+  def change
+    add_column :users, :expires_at, :datetime
+  end
+end
