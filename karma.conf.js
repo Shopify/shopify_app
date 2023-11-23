@@ -26,7 +26,12 @@ module.exports = function(config) {
     preprocessors: {
       'test/javascripts/**/*test.js': ['webpack'],
     },
-    webpack: {},
+    webpack: {
+      mode: 'none',
+      output: {
+        hashFunction: 'rsa-sha512',
+      },
+    },
     reporters: karmaReporters,
     port: 9876,
     colors: true,
