@@ -1,8 +1,9 @@
 Unreleased
 ----------
 
-21.8.0 (Nov 13, 2023)
+21.8.0 (Dec 1, 2023)
 ----------
+* Bump `shopify_api` to include bugfix with mandatory webhooks + fixes for CI failures that prevented earlier release
 * Fixes bug with `WebhooksManager#recreate_webhooks!` where we failed to register topics in the registry[#1743](https://github.com/Shopify/shopify_app/pull/1704)
 * Allow embedded apps to provide a full URL to get redirected to, rather than defaulting to Shopify Admin [#1746](https://github.com/Shopify/shopify_app/pull/1746)
 
