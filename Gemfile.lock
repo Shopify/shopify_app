@@ -217,7 +217,7 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.2.2)
-    shopify_api (13.3.0)
+    shopify_api (13.3.1)
       activesupport
       concurrent-ruby
       hash_diff
