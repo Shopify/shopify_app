@@ -1,6 +1,8 @@
 Unreleased
 ----------
-* Bump `shopify_api` to 13.3.1 [1763](https://github.com/Shopify/shopify_app/pull/1763)
+
+21.8.1 (December 6, 2023)
+* Bump `shopify_api` to 13.3.1 [1763](https://github.com/Shopify/shopify-api-ruby/blob/main/CHANGELOG.md#1331)
 
 21.8.0 (Dec 1, 2023)
 ----------
