@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fix `add_webhook` generator to create the webhook jobs under the correct directory[#1748](https://github.com/Shopify/shopify_app/pull/1748)
 
 21.8.1 (December 6, 2023)
 ----------
