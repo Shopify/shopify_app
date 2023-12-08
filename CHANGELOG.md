@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fix add_webhook generator to create the webhook jobs under the correct directory[#1748](https://github.com/Shopify/shopify_app/pull/1748)
 
 21.8.1 (December 6, 2023)
 ----------
@@ -10,7 +11,6 @@ Unreleased
 * Bump `shopify_api` to include bugfix with mandatory webhooks + fixes for CI failures that prevented earlier release
 * Fixes bug with `WebhooksManager#recreate_webhooks!` where we failed to register topics in the registry[#1743](https://github.com/Shopify/shopify_app/pull/1704)
 * Allow embedded apps to provide a full URL to get redirected to, rather than defaulting to Shopify Admin [#1746](https://github.com/Shopify/shopify_app/pull/1746)
-* Fix add_webhook generator to create the webhook jobs under the correct directory[#1748](https://github.com/Shopify/shopify_app/pull/1748)
 
 21.7.0 (Oct 12, 2023)
 ----------
