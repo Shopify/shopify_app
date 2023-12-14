@@ -40,7 +40,7 @@ ShopifyApp.configure do |config|
 end
 ```
 
-If you need to read metafields, you can pass in the `metafield_namespaces` parameter in `config/webhooks`. Note if you are also using the `fields` parameter you will need to add `metafields` into that as well. 
+If you need to read metafields, you can pass in the `metafield_namespaces` parameter in `config/webhooks`. Note if you are also using the `fields` parameter you will need to add `metafields` into that as well. Shopify documentation on metafields in webhooks can be found [here](https://shopify.dev/docs/api/admin-rest/2023-10/resources/webhook#resource-object).
 
 ```ruby
 ShopifyApp.configure do |config|
