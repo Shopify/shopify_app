@@ -47,4 +47,20 @@ class EmbeddedAppTest < ActionController::TestCase
     get :index
     assert_template layout: "application"
   end
+
+  test "sets the ESDK headers when running in embedded mode" do
+    ShopifyApp.configuration.embedded_app = true
+
+    get :index
+    assert_equal @controller.response.headers["P3P"], 'CP="Not used"'
+    assert_not_includes @controller.response.headers, "X-Frame-Options"
+  end
+
+  test "does not touch the ESDK headers when running in non-embedded mode" do
+    ShopifyApp.configuration.embedded_app = false
+
+    get :index
+    assert_not_includes @controller.response.headers, "P3P"
+    assert_includes @controller.response.headers, "X-Frame-Options"
+  end
 end
