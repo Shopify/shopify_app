@@ -30,8 +30,7 @@ module ShopifyApp
         return redirect_to_login
       end
 
-      if ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expires &&
-          current_shopify_session.expires < Time.now
+      if ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
         ShopifyApp::Logger.debug("Session expired, redirecting to login")
         clear_shopify_session
         return redirect_to_login

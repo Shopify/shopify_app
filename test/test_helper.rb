@@ -58,6 +58,7 @@ class ActiveSupport::TestCase
     mock_session.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(scope))
     mock_session.stubs(:shopify_session_id).returns(1)
     mock_session.stubs(:expires).returns(nil)
+    mock_session.stubs(:expired?).returns(false)
 
     mock_session
   end
