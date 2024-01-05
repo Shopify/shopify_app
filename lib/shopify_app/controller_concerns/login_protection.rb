@@ -280,8 +280,8 @@ module ShopifyApp
 
     def requested_by_javascript?
       request.xhr? ||
-        request.content_type == "text/javascript" ||
-        request.content_type == "application/javascript"
+        request.media_type == "text/javascript" ||
+        request.media_type == "application/javascript"
     end
   end
 end
