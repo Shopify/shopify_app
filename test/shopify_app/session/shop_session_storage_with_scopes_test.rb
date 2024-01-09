@@ -46,6 +46,12 @@ module ShopifyApp
       assert_equal expected_session.scope, session.scope
     end
 
+    test ".destroy_by_shopify_domain destroys shop session records by JWT" do
+      ShopMockSessionStoreWithScopes.expects(:destroy_by).with(shopify_domain: TEST_SHOPIFY_DOMAIN)
+
+      ShopMockSessionStoreWithScopes.destroy_by_shopify_domain(TEST_SHOPIFY_DOMAIN)
+    end
+
     test ".store can store shop session records" do
       mock_shop_instance = MockShopInstance.new(id: 12345)
       mock_shop_instance.stubs(:save!).returns(true)

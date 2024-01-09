@@ -30,6 +30,10 @@ module ShopifyApp
         construct_session(user)
       end
 
+      def destroy_by_shopify_user_id(user_id)
+        destroy_by(shopify_user_id: user_id)
+      end
+
       private
 
       def construct_session(user)

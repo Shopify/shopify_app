@@ -46,6 +46,12 @@ module ShopifyApp
       assert_equal expected_session.access_token, session.access_token
     end
 
+    test ".destroy_by_shopify_user_id destroys user session by shopify_user_id" do
+      UserMockSessionStore.expects(:destroy_by).with(shopify_user_id: TEST_SHOPIFY_USER_ID)
+
+      UserMockSessionStore.destroy_by_shopify_user_id(TEST_SHOPIFY_USER_ID)
+    end
+
     test ".store can store user session record" do
       mock_user_instance = MockUserInstance.new(shopify_user_id: 100)
       mock_user_instance.stubs(:save!).returns(true)

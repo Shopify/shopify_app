@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fix session deletion for users with customized session storage[#1773](https://github.com/Shopify/shopify_app/pull/1773)
 * Fix `add_webhook` generator to create the webhook jobs under the correct directory[#1748](https://github.com/Shopify/shopify_app/pull/1748)
 * Add support for metafield_namespaces in webhook registration [#1745](https://github.com/Shopify/shopify_app/pull/1745)
 
