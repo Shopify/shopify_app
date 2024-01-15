@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (21.8.1)
+    shopify_app (21.9.0)
       activeresource
       addressable (~> 2.7)
       browser_sniffer (~> 2.0)
