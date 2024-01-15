@@ -2,6 +2,7 @@ Unreleased
 ----------
 * Fix `add_webhook` generator to create the webhook jobs under the correct directory[#1748](https://github.com/Shopify/shopify_app/pull/1748)
 * Add support for metafield_namespaces in webhook registration [#1745](https://github.com/Shopify/shopify_app/pull/1745)
+* Bumps shopify_api to latest version, adds support for 2024-01 API version [#1776](https://github.com/Shopify/shopify_app/pull/1776)
 
 21.8.1 (December 6, 2023)
 ----------
