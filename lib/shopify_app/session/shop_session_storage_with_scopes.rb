@@ -29,6 +29,10 @@ module ShopifyApp
         construct_session(shop)
       end
 
+      def destroy_by_shopify_domain(domain)
+        destroy_by(shopify_domain: domain)
+      end
+
       private
 
       def construct_session(shop)

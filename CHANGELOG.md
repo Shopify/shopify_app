@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Fix session deletion for users with customized session storage[#1773](https://github.com/Shopify/shopify_app/pull/1773)
 
 21.9.0 (January 16, 2023)
 ----------
