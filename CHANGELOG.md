@@ -1,8 +1,12 @@
 Unreleased
 ----------
 * Fix session deletion for users with customized session storage[#1773](https://github.com/Shopify/shopify_app/pull/1773)
+
+21.9.0 (January 16, 2023)
+----------
 * Fix `add_webhook` generator to create the webhook jobs under the correct directory[#1748](https://github.com/Shopify/shopify_app/pull/1748)
 * Add support for metafield_namespaces in webhook registration [#1745](https://github.com/Shopify/shopify_app/pull/1745)
+* Bumps `shopify_api` to latest version (13.4.0), adds support for 2024-01 API version [#1776](https://github.com/Shopify/shopify_app/pull/1776)
 
 21.8.1 (December 6, 2023)
 ----------
