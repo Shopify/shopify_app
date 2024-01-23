@@ -1,6 +1,7 @@
 Unreleased
 ----------
 * Fix session deletion for users with customized session storage[#1773](https://github.com/Shopify/shopify_app/pull/1773)
+* Add configuration flag `check_session_expiry_date` to trigger a re-auth when the (user) session is expired. The session expiry date must be stored and retrieved for this flag to be effective. When the `UserSessionStorageWithScopes` concern is used, a DB migration can be generated with `rails generate shopify_app:user_model --skip` and should be applied before enabling that flag[#1757](https://github.com/Shopify/shopify_app/pull/1757)
 
 21.9.0 (January 16, 2023)
 ----------

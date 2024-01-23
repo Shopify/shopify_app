@@ -35,7 +35,14 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "create User with access_scopes migration with --new-shopify-cli-app flag provided" do
+  test "create expires_at migration for User model" do
+    run_generator
+    assert_migration "db/migrate/add_user_expires_at_column.rb" do |migration|
+      assert_match "add_column :users, :expires_at, :datetime", migration
+    end
+  end
+
+  test "create User with all migrations with --new-shopify-cli-app flag provided" do
     Rails.env = "mock_environment"
 
     run_generator ["--new-shopify-cli-app"]
@@ -43,6 +50,9 @@ class UserModelGeneratorTest < Rails::Generators::TestCase
 
     assert_migration "db/migrate/add_user_access_scopes_column.rb" do |migration|
       assert_match "add_column :users, :access_scopes, :string", migration
+    end
+    assert_migration "db/migrate/add_user_expires_at_column.rb" do |migration|
+      assert_match "add_column :users, :expires_at, :datetime", migration
     end
   end
 

@@ -159,7 +159,7 @@ end
 ```
 
 ##### User Sessions - `EnsureHasSession`
-- [EnsureHasSession](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_has_session.rb) controller concern will load a user session via `current_shopify_session`. As part of loading this session, this concern will also ensure that the user session has the appropriate scopes needed for the application. If the user isn't found or has fewer permitted scopes than are required, they will be prompted to authorize the application.
+- [EnsureHasSession](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_has_session.rb) controller concern will load a user session via `current_shopify_session`. As part of loading this session, this concern will also ensure that the user session has the appropriate scopes needed for the application and that it is not expired (when `check_session_expiry_date` is enabled). If the user isn't found or has fewer permitted scopes than are required, they will be prompted to authorize the application.
 - This controller concern should be used if you don't need your app to make calls on behalf of a user. With that in mind, there are a few other embedded concerns that are mixed in to ensure that embedding, CSRF, localization, and billing allow the action for the user.
 - Example
 ```ruby
@@ -233,6 +233,9 @@ class User < ActiveRecord::Base
   end
 end
 ```
+
+## Expiry date
+When the configuration flag `check_session_expiry_date` is set to true, the user session expiry date will be checked to trigger a re-auth and get a fresh user token when it is expired. This requires the `ShopifyAPI::Auth::Session` `expires` attribute to be stored. When the `User` model includes the `UserSessionStorageWithScopes` concern, a DB migration can be generated with `rails generate shopify_app:user_model --skip` to add the `expires_at` attribute to the model.
 
 ## Migrating from shop-based to user-based token strategy
 
