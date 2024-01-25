@@ -68,13 +68,13 @@ Specify whether the app is an embedded app. Apps are embedded by default.
 
 #### `$ rails generate shopify_app:shop_model`
 
-This generator creates a `Shop` model and a migration to store shop installation records. See [*Shop-based token strategy*](/docs/shopify_app/session-repository.md#shop-based-token-storage) to learn more.
+This generator creates a `Shop` model and a migration to store shop installation records. See [*Shop-based token strategy*](/docs/shopify_app/sessions.md#shop-offline-token-storage) to learn more.
 
 ---
 
 #### `$ rails generate shopify_app:user_model`
 
-This generator creates a `User` model and a migration to store user records. See [*User-based token strategy*](/docs/shopify_app/session-repository.md#user-based-token-storage) to learn more.
+This generator creates a `User` model and a migration to store user records. See [*User-based token strategy*](/docs/shopify_app/sessions.md#user-online-token-storage) to learn more.
 
 ---
 
