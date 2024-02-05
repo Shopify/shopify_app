@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Make type param for webhooks route optional. This will fix a bug with CLI initiated webhooks.
 
 21.10.0 (January 24, 2024)
 ----------
