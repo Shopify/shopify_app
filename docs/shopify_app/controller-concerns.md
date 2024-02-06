@@ -64,5 +64,26 @@ Implements Rails' [protect_from_forgery](https://api.rubyonrails.org/classes/Act
 #### EmbeddedApp
 If your ShopifyApp configuration has the `embedded_app` config set to true, [P3P header](https://www.w3.org/P3P/) and [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) are handled for you.
 
+By default, the `EmbeddedApp` concern also sets the layout file to be `app/views/layouts/embedded_app.html.erb`.
+
+Sometimes one wants to run an embedded app in non-embedded mode. For example:
+
+- When the remote environment is a CI;
+- When the remote environment is a preview/PR app;
+- When the developer wants to run the app in a non-embedded mode for testing.
+
+To use the same application layout for every application controller, a developer can now overwrite the `#use_embedded_app_layout?` method.
+
+```ruby
+class ApplicationController
+  # Ensures every controller is using the standard app/views/layouts/application.html.erb layout.
+  #
+  # @return [true, false]
+  def use_embedded_app_layout?
+    false
+  end
+end
+```
+
 #### EnsureBilling
 If billing is enabled for the app, the active payment for the session is queried and enforced if needed. If billing is required the user will be redirected to a page requesting payment.
