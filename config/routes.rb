@@ -26,6 +26,6 @@ ShopifyApp::Engine.routes.draw do
   end
 
   namespace :webhooks do
-    post ":type" => :receive
+    post "(:type)" => :receive
   end
 end
