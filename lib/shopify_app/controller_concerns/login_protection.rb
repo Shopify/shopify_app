@@ -147,10 +147,11 @@ module ShopifyApp
     end
 
     def close_session
-      clear_shopify_session
       ShopifyApp::Logger.debug("Closing session")
-      ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
-      redirect_to(login_url_with_optional_shop)
+      clear_shopify_session
+
+      ShopifyApp::Logger.debug("Redirecting to login")
+      redirect_to_login
     end
 
     def handle_http_error(error)
