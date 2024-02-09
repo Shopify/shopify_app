@@ -1,6 +1,7 @@
 Unreleased
 ----------
 * Make type param for webhooks route optional. This will fix a bug with CLI initiated webhooks.[1786](https://github.com/Shopify/shopify_app/pull/1786)
+* Fix redirecting to login when we catch a 401 response from Shopify, so that it can also handle cases where the app is already embedded when that happens.[1787](https://github.com/Shopify/shopify_app/pull/1787)
 
 21.10.0 (January 24, 2024)
 ----------

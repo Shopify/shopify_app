@@ -409,8 +409,19 @@ class LoginProtectionControllerTest < ActionController::TestCase
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
 
       get :raise_unauthorized, params: { shop: "foobar" }
-      assert_redirected_to "/login?shop=foobar.myshopify.com"
+      assert_redirected_to(
+        "/login?return_to=%2Fraise_unauthorized%3Fshop%3Dfoobar.myshopify.com&shop=foobar.myshopify.com",
+      )
       assert_nil cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME]
+    end
+  end
+
+  test "#activate_shopify_session when rescuing from unauthorized access, breaks out of iframe in XHR requests" do
+    with_application_test_routes do
+      get :raise_unauthorized, params: { shop: "foobar" }, xhr: true
+      assert_equal 401, response.status
+      assert_match "1", response.headers["X-Shopify-API-Request-Failure-Reauthorize"]
+      assert_match "/login?shop=foobar", response.headers["X-Shopify-API-Request-Failure-Reauthorize-Url"]
     end
   end
 
