@@ -21,6 +21,8 @@ class CartsUpdateJob < ActiveJob::Base
 end
 
 module ShopifyApp
+  SHOP_DOMAIN = "shop.myshopify.io"
+
   class CallbackControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
@@ -28,12 +30,12 @@ module ShopifyApp
       ShopifyApp::SessionRepository.user_storage = nil
       ShopifyAppConfigurer.setup_context
       I18n.locale = :en
-      @stubbed_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token")
+      @stubbed_session = ShopifyAPI::Auth::Session.new(shop: SHOP_DOMAIN, access_token: "token")
       @stubbed_cookie = ShopifyAPI::Auth::Oauth::SessionCookie.new(value: "", expires: Time.now)
       @host = "little-shoppe-of-horrors.#{ShopifyApp.configuration.myshopify_domain}"
       host = Base64.strict_encode64(@host + "/admin")
       @callback_params = {
-        shop: "shop",
+        shop: SHOP_DOMAIN,
         code: "code",
         state: "state",
         timestamp: "timestamp",
@@ -47,17 +49,27 @@ module ShopifyApp
       ShopifyApp::SessionRepository.stubs(:store_session)
     end
 
+    teardown do
+      SessionRepository.shop_storage.clear
+    end
+
     test "#callback flashes error in Spanish" do
       I18n.expects(:t).with("could_not_log_in")
       get :callback,
-        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+        params: { shop: SHOP_DOMAIN, code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
     test "#callback rescued errors of ShopifyAPI::Error will not emit a deprecation notice" do
       ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(ShopifyAPI::Errors::MissingRequiredArgumentError)
       assert_not_deprecated do
-        get :callback,
-          params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+        get :callback, params: {
+          shop: SHOP_DOMAIN,
+          code: "code",
+          state: "state",
+          timestamp: "timestamp",
+          host: "host",
+          hmac: "hmac",
+        }
       end
       assert_equal flash[:error], "Could not log in to Shopify store"
     end
@@ -69,7 +81,7 @@ module ShopifyApp
 
       ShopifyApp::Logger.expects(:deprecated).never
       get :callback,
-        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+        params: { shop: SHOP_DOMAIN, code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
     test "#callback rescued non-shopify errors will be deprecated" do
@@ -86,7 +98,7 @@ module ShopifyApp
       assert_within_deprecation_schedule(version)
       ShopifyApp::Logger.expects(:deprecated).with(message, version)
       get :callback,
-        params: { shop: "shop", code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+        params: { shop: SHOP_DOMAIN, code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
     test "#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback" do
@@ -118,29 +130,18 @@ module ShopifyApp
     end
 
     test "#callback sets the shopify_user_id in the Rails session when session is online" do
-      associated_user = ShopifyAPI::Auth::AssociatedUser.new(
-        id: 42,
-        first_name: "LeeeEEeeeeee3roy",
-        last_name: "Jenkins",
-        email: "dat_email@tho.com",
-        email_verified: true,
-        locale: "en",
-        collaborator: true,
-        account_owner: true,
-      )
-      mock_session = ShopifyAPI::Auth::Session.new(
-        shop: "shop",
-        access_token: "token",
-        is_online: true,
-        associated_user: associated_user,
-      )
-      mock_oauth(session: mock_session)
+      ShopifyApp::SessionRepository.shop_storage.store(@stubbed_session)
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+
+      mock_session = online_session
+      mock_oauth(session: online_session)
+
       get :callback, params: @callback_params
-      assert_equal session[:shopify_user_id], associated_user.id
+      assert_equal session[:shopify_user_id], mock_session.associated_user.id
     end
 
     test "#callback DOES NOT set the shopify_user_id in the Rails session when session is offline" do
-      mock_session = ShopifyAPI::Auth::Session.new(shop: "shop", access_token: "token", is_online: false)
+      mock_session = ShopifyAPI::Auth::Session.new(shop: SHOP_DOMAIN, access_token: "token", is_online: false)
       mock_oauth(session: mock_session)
       get :callback, params: @callback_params
       assert_nil session[:shopify_user_id]
@@ -166,7 +167,7 @@ module ShopifyApp
         config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token")
+      ShopifyApp::WebhooksManager.expects(:queue).with(SHOP_DOMAIN, "token")
 
       mock_oauth
       get :callback, params: @callback_params
@@ -189,7 +190,7 @@ module ShopifyApp
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: "shop")
+      Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: SHOP_DOMAIN)
 
       mock_oauth
       get :callback, params: @callback_params
@@ -200,7 +201,7 @@ module ShopifyApp
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: "shop")
+      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: SHOP_DOMAIN)
 
       mock_oauth
       get :callback, params: @callback_params
@@ -222,7 +223,7 @@ module ShopifyApp
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: "shop")
+      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: SHOP_DOMAIN)
 
       mock_oauth
       get :callback, params: @callback_params
@@ -233,7 +234,7 @@ module ShopifyApp
         config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: "shop")
+      Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: SHOP_DOMAIN)
 
       mock_oauth
       get :callback, params: @callback_params
@@ -296,10 +297,27 @@ module ShopifyApp
         config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
 
-      ShopifyApp::WebhooksManager.expects(:queue).with("shop", "token")
+      ShopifyApp::WebhooksManager.expects(:queue).with(SHOP_DOMAIN, "token")
 
       get :callback, params: @callback_params
       assert_response 302
+    end
+
+    test "#callback performs install_webhook job with an offline session after an online session OAuth" do
+      ShopifyApp.configure do |config|
+        config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
+      end
+      ShopifyApp::SessionRepository.shop_storage.store(@stubbed_session)
+      ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+
+      mock_oauth(session: online_session)
+
+      ShopifyApp::WebhooksManager.expects(:queue).with(SHOP_DOMAIN, "token")
+
+      get :callback, params: @callback_params
+      assert_response 302
+    ensure
+      ShopifyApp::SessionRepository.shop_storage.clear
     end
 
     test "#callback performs install_scripttags job after authentication" do
@@ -309,7 +327,7 @@ module ShopifyApp
         config.scripttags = [{ event: "onload", src: "https://example.com/fancy.js" }]
       end
 
-      ShopifyApp::ScripttagsManager.expects(:queue).with("shop", "token", ShopifyApp.configuration.scripttags)
+      ShopifyApp::ScripttagsManager.expects(:queue).with(SHOP_DOMAIN, "token", ShopifyApp.configuration.scripttags)
 
       get :callback, params: @callback_params
       assert_response 302
@@ -322,7 +340,7 @@ module ShopifyApp
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
 
-      Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: "shop")
+      Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: SHOP_DOMAIN)
 
       get :callback, params: @callback_params
       assert_response 302
@@ -347,6 +365,25 @@ module ShopifyApp
           cookie: cookie,
           session: session,
         })
+    end
+
+    def online_session
+      associated_user = ShopifyAPI::Auth::AssociatedUser.new(
+        id: 42,
+        first_name: "LeeeEEeeeeee3roy",
+        last_name: "Jenkins",
+        email: "dat_email@tho.com",
+        email_verified: true,
+        locale: "en",
+        collaborator: true,
+        account_owner: true,
+      )
+      ShopifyAPI::Auth::Session.new(
+        shop: SHOP_DOMAIN,
+        access_token: "online-token",
+        is_online: true,
+        associated_user: associated_user,
+      )
     end
   end
 end
