@@ -316,9 +316,8 @@ module ShopifyApp
 
       get :callback, params: @callback_params
       assert_response 302
-    rescue => e
-      shop_storage.clear
-      raise e
+    ensure
+      ShopifyApp::SessionRepository.shop_storage.clear
     end
 
     test "#callback performs install_scripttags job after authentication" do

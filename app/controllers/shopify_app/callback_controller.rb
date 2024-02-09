@@ -130,11 +130,11 @@ module ShopifyApp
     end
 
     def perform_post_authenticate_jobs(session)
-      # Ensure we use the offline session to install webhooks and scripttags
-      offline_session = session.online? ? shop_session : session
+      # Ensure we use the shop session to install webhooks and scripttags
+      session_for_shop = session.online? ? shop_session : session
 
-      install_webhooks(offline_session)
-      install_scripttags(offline_session)
+      install_webhooks(session_for_shop)
+      install_scripttags(session_for_shop)
 
       perform_after_authenticate_job(session)
     end
