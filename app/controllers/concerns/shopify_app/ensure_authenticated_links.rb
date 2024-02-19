@@ -18,11 +18,15 @@ module ShopifyApp
         embedded: params[:embedded],
       )
     end
-
+    
     def splash_page_with_params(params)
-      uri = URI(root_path)
+      uri = URI(base_url)
       uri.query = params.compact.to_query
       uri.to_s
+    end
+
+    def base_url
+      ShopifyApp.configuration.root_url.presence || root_path
     end
 
     def redirect_to_splash_page
