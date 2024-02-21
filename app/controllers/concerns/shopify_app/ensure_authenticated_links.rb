@@ -18,7 +18,7 @@ module ShopifyApp
         embedded: params[:embedded],
       )
     end
-    
+
     def splash_page_with_params(params)
       uri = URI(base_url)
       uri.query = params.compact.to_query
