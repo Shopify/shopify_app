@@ -8,6 +8,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [Unreleased](#unreleased)
 
+[Upgrading to `v22.0.0`](#upgrading-to-v2020)
+
 [Upgrading to `v20.3.0`](#upgrading-to-v2030)
 
 [Upgrading to `v20.2.0`](#upgrading-to-v2020)
@@ -38,8 +40,22 @@ We also recommend the use of a staging site which matches your production enviro
 
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
 
+## Upgrading to `v22.0.0`
+#### Dropped support for Ruby 2.x
+Support for Ruby 2.x has been dropped as it is no longer supported. You'll need to upgrade to 3.x.x
+
+#### Renamed Controller Concerns
+The following controller concerns have been renamed/replaced in `v21.10.0` and have now been removed. To upgrade, please rename any usage in your apps's controllers that include them to the following:
+
+|Old Deprecated Controller Concern |Replaced By New Controller Concern|
+|---|---|
+|`Authenticated`|`EnsureHasSession`|
+|`RequireKnownShop`|`EnsureInstalled`|
+
+The new names better reflect what assurances the including the controller concern provide. The new concern provide similar if not identical functionality as the concerns they replaced.
+
 ## Upgrading to 21.3.0
-The `Itp` controller concern has been removed from `LoginProtection` which is included by the `Authenticated` controller concern.
+The `Itp` controller concern has been removed from `LoginProtection` which is included by the `Authenticated`/`EnsureHasSession` controller concern.
 If any of your controllers are dependant on methods from `Itp` then you can include `ShopifyApp::Itp` directly.
 You may notice a deprecation notice saying, `Itp will be removed in an upcoming version`.
 This is because we intend on removing `Itp` completely in `v22.0.0`, but this will work in the meantime.
