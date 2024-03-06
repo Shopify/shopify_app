@@ -8,7 +8,7 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [Unreleased](#unreleased)
 
-[Upgrading to `v22.0.0`](#upgrading-to-v2020)
+[Upgrading to `v22.0.0`](#upgrading-to-v2200)
 
 [Upgrading to `v20.3.0`](#upgrading-to-v2030)
 
