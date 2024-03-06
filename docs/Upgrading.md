@@ -54,6 +54,11 @@ The following controller concerns have been renamed/replaced in `v21.10.0` and h
 
 The new names better reflect what assurances the including the controller concern provide. The new concern provide similar if not identical functionality as the concerns they replaced.
 
+#### Remove ScripttagManager
+Script tag usage has largely been replaced with the adoption of [theme app extensions](https://shopify.dev/docs/apps/online-store/theme-app-extensions) and [thank you order status customization](https://shopify.dev/docs/apps/checkout/thank-you-order-status). The manager has been removed with this major release due to effective replacement and a goal to have parity in supported functionality across language stacks.
+
+If you find yourself still using Scipt Tags and want to continue the pattern of declarative management of script tags this gem used to use, we recommend porting the logic [the manager used in prior versions](https://github.com/Shopify/shopify_app/blob/2336fabc6d0b45a4dee3f336455dace4d2d88bc4/lib/shopify_app/managers/scripttags_manager.rb#L4) and implementing it in a [post authentication job](https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/authentication.md#run-jobs-after-the-oauth-flow). This is the recommended flow to create script tags (or any other logic) for stores that install your app.
+
 ## Upgrading to 21.3.0
 The `Itp` controller concern has been removed from `LoginProtection` which is included by the `Authenticated`/`EnsureHasSession` controller concern.
 If any of your controllers are dependant on methods from `Itp` then you can include `ShopifyApp::Itp` directly.
