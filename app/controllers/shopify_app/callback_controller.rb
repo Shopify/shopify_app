@@ -134,11 +134,10 @@ module ShopifyApp
     end
 
     def perform_post_authenticate_jobs(session)
-      # Ensure we use the shop session to install webhooks and scripttags
+      # Ensure we use the shop session to install webhooks
       session_for_shop = session.online? ? shop_session : session
 
       install_webhooks(session_for_shop)
-      install_scripttags(session_for_shop)
 
       perform_after_authenticate_job(session)
     end
@@ -147,16 +146,6 @@ module ShopifyApp
       return unless ShopifyApp.configuration.has_webhooks?
 
       WebhooksManager.queue(session.shop, session.access_token)
-    end
-
-    def install_scripttags(session)
-      return unless ShopifyApp.configuration.has_scripttags?
-
-      ScripttagsManager.queue(
-        session.shop,
-        session.access_token,
-        ShopifyApp.configuration.scripttags,
-      )
     end
 
     def perform_after_authenticate_job(session)

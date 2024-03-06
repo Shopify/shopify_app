@@ -56,11 +56,9 @@ module ShopifyApp
 
   # jobs
   require "shopify_app/jobs/webhooks_manager_job"
-  require "shopify_app/jobs/scripttags_manager_job"
 
   # managers
   require "shopify_app/managers/webhooks_manager"
-  require "shopify_app/managers/scripttags_manager"
 
   # middleware
   require "shopify_app/middleware/jwt_middleware"
