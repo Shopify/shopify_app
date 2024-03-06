@@ -320,19 +320,6 @@ module ShopifyApp
       ShopifyApp::SessionRepository.shop_storage.clear
     end
 
-    test "#callback performs install_scripttags job after authentication" do
-      mock_oauth
-
-      ShopifyApp.configure do |config|
-        config.scripttags = [{ event: "onload", src: "https://example.com/fancy.js" }]
-      end
-
-      ShopifyApp::ScripttagsManager.expects(:queue).with(SHOP_DOMAIN, "token", ShopifyApp.configuration.scripttags)
-
-      get :callback, params: @callback_params
-      assert_response 302
-    end
-
     test "#callback performs after_authenticate job after authentication" do
       mock_oauth
 
