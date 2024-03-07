@@ -145,7 +145,6 @@ class EnsureInstalledTest < ActionController::TestCase
         include ShopifyApp::LoginProtection
         include ShopifyApp::EnsureInstalled
       end
-
     end
 
     assert_raise do
