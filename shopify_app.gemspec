@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency("activeresource") # TODO: Remove this once all active resource dependencies are removed
   s.add_runtime_dependency("addressable", "~> 2.7")
-  s.add_runtime_dependency("browser_sniffer", "~> 2.0")
   s.add_runtime_dependency("jwt", ">= 2.2.3")
   s.add_runtime_dependency("rails", "> 5.2.1")
   s.add_runtime_dependency("redirect_safely", "~> 1.0")

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "browser_sniffer"
-
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
