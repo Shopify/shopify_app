@@ -90,7 +90,14 @@ module ShopifyApp
 
       assert_raise StandardError do
         get :callback,
-          params: { shop: SHOP_DOMAIN, code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+          params: {
+            shop: SHOP_DOMAIN,
+            code: "code",
+            state: "state",
+            timestamp: "timestamp",
+            host: "host",
+            hmac: "hmac",
+          }
       end
     end
 
