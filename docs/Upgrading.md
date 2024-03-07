@@ -59,6 +59,9 @@ Script tag usage has largely been replaced with the adoption of [theme app exten
 
 If you find yourself still using Scipt Tags and want to continue the pattern of declarative management of script tags this gem used to use, we recommend porting the logic [the manager used in prior versions](https://github.com/Shopify/shopify_app/blob/2336fabc6d0b45a4dee3f336455dace4d2d88bc4/lib/shopify_app/managers/scripttags_manager.rb#L4) and implementing it in a [post authentication job](https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/authentication.md#run-jobs-after-the-oauth-flow). This is the recommended flow to create script tags (or any other logic) for stores that install your app.
 
+#### No longer rescue non-shopify API errors during customized OAuth flow
+If you have customized authentication logic and are counting on the `CallbackController` to catch your error and redirect to login, you'll need to catch that error and redirect to `login_url_with_optional_shop`.
+
 ## Upgrading to 21.3.0
 The `Itp` controller concern has been removed from `LoginProtection` which is included by the `Authenticated`/`EnsureHasSession` controller concern.
 If any of your controllers are dependant on methods from `Itp` then you can include `ShopifyApp::Itp` directly.
