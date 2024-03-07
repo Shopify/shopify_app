@@ -10,8 +10,12 @@ module ShopifyApp
       begin
         api_session, cookie = validated_auth_objects
       rescue => error
-        error.class.module_parent == ShopifyAPI::Errors ? callback_rescue(error) : deprecate_callback_rescue(error)
-        return respond_with_error
+        if error.class.module_parent == ShopifyAPI::Errors
+          callback_rescue(error)
+          return respond_with_error
+        else
+          raise error
+        end
       end
 
       save_session(api_session) if api_session

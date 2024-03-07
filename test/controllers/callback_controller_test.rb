@@ -84,21 +84,21 @@ module ShopifyApp
         params: { shop: SHOP_DOMAIN, code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
     end
 
-    test "#callback rescued non-shopify errors will be deprecated" do
+    test "#callback rescued non-shopify errors are re-raised" do
       error = StandardError.new
       ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).raises(error)
 
-      message = <<~EOS
-        An error of type #{error.class} was rescued. This is not part of `ShopifyAPI::Errors`, which could indicate a
-        bug in your app, or a bug in the shopify_app gem. Future versions of the gem may re-raise this error rather
-        than rescuing it.
-      EOS
-      version = "22.0.0"
-
-      assert_within_deprecation_schedule(version)
-      ShopifyApp::Logger.expects(:deprecated).with(message, version)
-      get :callback,
-        params: { shop: SHOP_DOMAIN, code: "code", state: "state", timestamp: "timestamp", host: "host", hmac: "hmac" }
+      assert_raise StandardError do
+        get :callback,
+          params: {
+            shop: SHOP_DOMAIN,
+            code: "code",
+            state: "state",
+            timestamp: "timestamp",
+            host: "host",
+            hmac: "hmac",
+          }
+      end
     end
 
     test "#callback calls ShopifyAPI::Auth::Oauth.validate_auth_callback" do
