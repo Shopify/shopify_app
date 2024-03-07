@@ -14,7 +14,7 @@ module ShopifyApp
           We detected the use of incompatible concerns (EnsureInstalled and LoginProtection) in #{name},
           which leads to unpredictable behavior. You cannot include both concerns in the same controller.
         EOS
-        throw message
+        raise message
       end
 
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error

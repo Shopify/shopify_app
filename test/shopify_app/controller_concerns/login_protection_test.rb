@@ -558,9 +558,13 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test "detects incompatible controller concerns and raises an error" do
     assert_raise do
       Class.new(ApplicationController) do
-        include ShopifyApp::LoginProtection
         include ShopifyApp::EnsureInstalled
+        include ShopifyApp::LoginProtection
       end
+    end
+
+    Class.new(ApplicationController) do
+      include ShopifyApp::LoginProtection
     end
   end
 
