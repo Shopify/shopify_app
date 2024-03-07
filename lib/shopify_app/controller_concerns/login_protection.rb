@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
