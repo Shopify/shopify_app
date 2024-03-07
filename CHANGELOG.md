@@ -5,6 +5,9 @@ Unreleased
 * ⚠️ [Breaking] Removes deprecated `ScripttagManager`. We realize there was communication error in our logging where we logged future deprecation instead of our inteded removal. Since we have been logging that for 2 years we felt we'd move forward with the removal instead pushing this off until the next major release. [1806](https://github.com/Shopify/shopify_app/pull/1806)
 * ⚠️ [Breaking] Removes ITP controller concern and `browser_sniffer` dependency.[1810](https://github.com/Shopify/shopify_app/pull/1810)
 * ⚠️ [Breaking] Removes Marketing Extensions generator [1810](https://github.com/Shopify/shopify_app/pull/1810)
+* ⚠️ [Breaking] Thows an error if a controller includes incompatible concerns (LoginProtection/EnsureInstalled) [1809](https://github.com/Shopify/shopify_app/pull/1809)
+* ⚠️ [Breaking] No longer rescues non-shopify API errors during OAuth
+  callback [1807](https://github.com/Shopify/shopify_app/pull/1807)
 * Make type param for webhooks route optional. This will fix a bug with CLI initiated webhooks.[1786](https://github.com/Shopify/shopify_app/pull/1786)
 * Fix redirecting to login when we catch a 401 response from Shopify, so that it can also handle cases where the app is already embedded when that happens.[1787](https://github.com/Shopify/shopify_app/pull/1787)
 * Always register webhooks with offline sessions.[1788](https://github.com/Shopify/shopify_app/pull/1788)

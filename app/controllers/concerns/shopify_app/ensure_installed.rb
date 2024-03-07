@@ -9,10 +9,10 @@ module ShopifyApp
       if defined?(ShopifyApp::LoginProtection) && ancestors.include?(ShopifyApp::LoginProtection)
         message = <<~EOS
           We detected the use of incompatible concerns (EnsureInstalled and LoginProtection) in #{name},
-          which may lead to unpredictable behavior. In a future release of this library this will raise an error.
+          which leads to unpredictable behavior. You cannot include both concerns in the same controller.
         EOS
 
-        ShopifyApp::Logger.deprecated(message, "22.0.0")
+        raise message
       end
 
       before_action :check_shop_domain
