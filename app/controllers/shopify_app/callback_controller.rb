@@ -10,8 +10,12 @@ module ShopifyApp
       begin
         api_session, cookie = validated_auth_objects
       rescue => error
-        deprecate_callback_rescue(error) unless error.class.module_parent == ShopifyAPI::Errors
-        return respond_with_error
+        if error.class.module_parent == ShopifyAPI::Errors
+          callback_rescue(error)
+          return respond_with_error
+        else
+          raise error
+        end
       end
 
       save_session(api_session) if api_session
@@ -24,6 +28,10 @@ module ShopifyApp
     end
 
     private
+
+    def callback_rescue(error)
+      ShopifyApp::Logger.debug("#{error.class} was rescued and redirected to login_url_with_optional_shop")
+    end
 
     def deprecate_callback_rescue(error)
       message = <<~EOS
@@ -130,11 +138,10 @@ module ShopifyApp
     end
 
     def perform_post_authenticate_jobs(session)
-      # Ensure we use the shop session to install webhooks and scripttags
+      # Ensure we use the shop session to install webhooks
       session_for_shop = session.online? ? shop_session : session
 
       install_webhooks(session_for_shop)
-      install_scripttags(session_for_shop)
 
       perform_after_authenticate_job(session)
     end
@@ -143,16 +150,6 @@ module ShopifyApp
       return unless ShopifyApp.configuration.has_webhooks?
 
       WebhooksManager.queue(session.shop, session.access_token)
-    end
-
-    def install_scripttags(session)
-      return unless ShopifyApp.configuration.has_scripttags?
-
-      ScripttagsManager.queue(
-        session.shop,
-        session.access_token,
-        ShopifyApp.configuration.scripttags,
-      )
     end
 
     def perform_after_authenticate_job(session)

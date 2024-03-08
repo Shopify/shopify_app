@@ -5,7 +5,7 @@ module ShopifyApp
     private
 
     def args_info(job)
-      log_disabled_classes = ["ShopifyApp::ScripttagsManagerJob", "ShopifyApp::WebhooksManagerJob"]
+      log_disabled_classes = ["ShopifyApp::WebhooksManagerJob"]
       return "" if log_disabled_classes.include?(job.class.name)
 
       super
@@ -35,7 +35,6 @@ module ShopifyApp
       ActiveSupport.on_load(:active_job) do
         if ActiveJob::Base.respond_to?(:log_arguments?)
           WebhooksManagerJob.log_arguments = false
-          ScripttagsManagerJob.log_arguments = false
         elsif ActiveJob::Logging::LogSubscriber.private_method_defined?(:args_info)
           ActiveJob::Logging::LogSubscriber.prepend(RedactJobParams)
         end

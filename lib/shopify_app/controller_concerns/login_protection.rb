@@ -1,21 +1,18 @@
 # frozen_string_literal: true
 
-require "browser_sniffer"
-
 module ShopifyApp
   module LoginProtection
     extend ActiveSupport::Concern
     include ShopifyApp::SanitizedParams
 
     included do
-      if defined?(ShopifyApp::RequireKnownShop) &&
-          defined?(ShopifyApp::EnsureInstalled) &&
-          ancestors.include?(ShopifyApp::RequireKnownShop || ShopifyApp::EnsureInstalled)
+      if defined?(ShopifyApp::EnsureInstalled) &&
+          ancestors.include?(ShopifyApp::EnsureInstalled)
         message = <<~EOS
-          We detected the use of incompatible concerns (RequireKnownShop/EnsureInstalled and LoginProtection) in #{name},
-          which may lead to unpredictable behavior. In a future release of this library this will raise an error.
+          We detected the use of incompatible concerns (EnsureInstalled and LoginProtection) in #{name},
+          which leads to unpredictable behavior. You cannot include both concerns in the same controller.
         EOS
-        ShopifyApp::Logger.deprecated(message, "22.0.0")
+        raise message
       end
 
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error

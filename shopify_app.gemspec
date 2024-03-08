@@ -10,17 +10,16 @@ Gem::Specification.new do |s|
   s.author      = "Shopify"
   s.summary     = "This gem is used to get quickly started with the Shopify API"
 
-  s.required_ruby_version = ">= 2.7"
+  s.required_ruby_version = ">= 3.0"
 
   s.metadata["allowed_push_host"] = "https://rubygems.org"
 
   s.add_runtime_dependency("activeresource") # TODO: Remove this once all active resource dependencies are removed
   s.add_runtime_dependency("addressable", "~> 2.7")
-  s.add_runtime_dependency("browser_sniffer", "~> 2.0")
   s.add_runtime_dependency("jwt", ">= 2.2.3")
   s.add_runtime_dependency("rails", "> 5.2.1")
   s.add_runtime_dependency("redirect_safely", "~> 1.0")
-  s.add_runtime_dependency("shopify_api", "~> 13.4")
+  s.add_runtime_dependency("shopify_api", "~> 14")
   s.add_runtime_dependency("sprockets-rails", ">= 2.0.0")
 
   s.add_development_dependency("byebug")
