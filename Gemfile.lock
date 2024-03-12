@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (22.00.0)
+    shopify_app (22.0.1)
       activeresource
       addressable (~> 2.7)
       jwt (>= 2.2.3)
