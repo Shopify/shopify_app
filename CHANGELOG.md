@@ -1,5 +1,15 @@
 Unreleased
 ----------
+
+22.0.1 (March 12, 2024)
+----------
+* Bumps `shopify_api` to `14.0.1` [1813](https://github.com/Shopify/shopify_app/pull/1813)
+
+22.00.0 (March 5, 2024)
+----------
+
+To migrate from a previous version, please see the [v22 migration guide](docs/Upgrading.md#upgrading-to-v2200).
+
 * ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.0. Bumps `shopify_api` to 14.0 [1801](https://github.com/Shopify/shopify_app/pull/1801)
 * ⚠️ [Breaking] Removes deprecated controller concerns that were renamed in `v21.10.0`. [1805](https://github.com/Shopify/shopify_app/pull/1805)
 * ⚠️ [Breaking] Removes deprecated `ScripttagManager`. We realize there was communication error in our logging where we logged future deprecation instead of our inteded removal. Since we have been logging that for 2 years we felt we'd move forward with the removal instead pushing this off until the next major release. [1806](https://github.com/Shopify/shopify_app/pull/1806)
