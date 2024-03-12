@@ -1,5 +1,7 @@
 Unreleased
 ----------
+
+22.00.1 (March 12, 2024)
 * Bumps `shopify_api` to `14.0.1` [1813](https://github.com/Shopify/shopify_app/pull/1813)
 
 22.00.0 (March 5, 2024)
