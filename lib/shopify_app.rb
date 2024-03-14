@@ -52,6 +52,12 @@ module ShopifyApp
   require "shopify_app/controller_concerns/payload_verification"
   require "shopify_app/controller_concerns/app_proxy_verification"
   require "shopify_app/controller_concerns/webhook_verification"
+  require "shopify_app/controller_concerns/with_id_token_concern"
+
+  # Authorization strategy concerns
+  require "shopify_app/controller_concerns/authorization_strategy"
+  require "shopify_app/controller_concerns/authorization_strategies/token_exchange"
+  require "shopify_app/controller_concerns/authorization_strategies/auth_code_flow"
 
   # jobs
   require "shopify_app/jobs/webhooks_manager_job"
