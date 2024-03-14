@@ -3,7 +3,7 @@
 module ShopifyApp
   module EnsureInstalled
     extend ActiveSupport::Concern
-    include ShopifyApp::RedirectForEmbedded
+    include ShopifyApp::AuthorizationStrategy
 
     included do
       if defined?(ShopifyApp::LoginProtection) && ancestors.include?(ShopifyApp::LoginProtection)
@@ -44,24 +44,8 @@ module ShopifyApp
     def check_shop_known
       @shop = installed_shop_session
       unless @shop
-        if embedded_param?
-          redirect_for_embedded
-        else
-          redirect_to(shop_login)
-        end
+        begin_auth
       end
-    end
-
-    def shop_login
-      url = URI(ShopifyApp.configuration.login_url)
-
-      url.query = URI.encode_www_form(
-        shop: params[:shop],
-        host: params[:host],
-        return_to: request.fullpath,
-      )
-
-      url.to_s
     end
 
     def validate_non_embedded_session
@@ -71,7 +55,7 @@ module ShopifyApp
       client.get(path: "shop")
     rescue ShopifyAPI::Errors::HttpResponseError => error
       ShopifyApp::Logger.info("Shop offline session no longer valid. Redirecting to OAuth install")
-      redirect_to(shop_login) if error.code == 401
+      begin_auth if error.code == 401
       raise error if error.code != 401
     end
   end
