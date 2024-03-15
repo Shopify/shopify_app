@@ -53,7 +53,6 @@ module ShopifyApp
       @current_shopify_session ||= begin
         cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
         load_current_session(
-          auth_header: request.headers["HTTP_AUTHORIZATION"],
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: online_token_configured?,
         )
@@ -273,10 +272,10 @@ module ShopifyApp
       online_token_configured?
     end
 
-    def load_current_session(auth_header: nil, cookies: nil, is_online: false)
+    def load_current_session(cookies: nil, is_online: false)
       return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
 
-      session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(auth_header, cookies, is_online)
+      session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(session_token:, cookies:, online: is_online)
       return nil unless session_id
 
       ShopifyApp::SessionRepository.load_session(session_id)
