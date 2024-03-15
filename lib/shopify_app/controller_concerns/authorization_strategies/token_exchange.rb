@@ -2,19 +2,19 @@ module ShopifyApp
   module AuthorizationStrategies
     module TokenExchange
       extend ActiveSupport::Concern
-      include ShopifyApp::WithIdTokenConcern
+      include ShopifyApp::WithSessionTokenConcern
 
       def begin_auth
         exchange_token(
           shop: params[:shop],
-          session_token: id_token,
+          session_token: session_token,
           requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
         )
 
         if online_token_configured?
           exchange_token(
             shop: params[:shop],
-            session_token: id_token,
+            session_token: session_token,
             requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
           )
         end
@@ -33,9 +33,7 @@ module ShopifyApp
           respond_to_invalid_session_token
           return
         rescue ShopifyAPI::Errors::HttpResponseError => error
-          ShopifyApp::Logger.info(
-            "A #{error.code} error (#{error.class.to_s}) occurred during the token exchange. Response: #{error.response.body}"
-          )
+          ShopifyApp::Logger.info("A #{error.code} error (#{error.class.to_s}) occurred during the token exchange. Response: #{error.response.body}")
           raise
         rescue => error
           ShopifyApp::Logger.info("An error occurred during the token exchange: #{error.message}")

@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  module WithIdTokenConcern
+  module WithSessionTokenConcern
     extend ActiveSupport::Concern
 
-    def id_token
-      @id_token ||= id_token_header || id_token_param
+    def session_token
+      @session_token ||= id_token_header || id_token_param
     end
 
     def id_token_header
