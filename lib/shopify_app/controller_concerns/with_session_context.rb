@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  module WithSessionTokenConcern
+  module WithSessionContext
     extend ActiveSupport::Concern
 
     def session_token

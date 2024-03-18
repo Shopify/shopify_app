@@ -10,7 +10,7 @@ module ShopifyApp
       include ShopifyApp::CsrfProtection
       include ShopifyApp::EmbeddedApp
       include ShopifyApp::EnsureBilling
-      include ShopifyApp::WithSessionTokenConcern
+      include ShopifyApp::WithSessionContext
 
       before_action :login_again_if_different_user_or_shop
       around_action :activate_shopify_session

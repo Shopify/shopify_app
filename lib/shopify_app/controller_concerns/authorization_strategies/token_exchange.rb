@@ -2,7 +2,7 @@ module ShopifyApp
   module AuthorizationStrategies
     module TokenExchange
       extend ActiveSupport::Concern
-      include ShopifyApp::WithSessionTokenConcern
+      include ShopifyApp::WithSessionContext
 
       def begin_auth
         exchange_token(
