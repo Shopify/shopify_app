@@ -62,13 +62,6 @@ module ShopifyApp
       response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, "true")
     end
 
-    def jwt_expire_at
-      expire_at = request.env["jwt.expire_at"]
-      return unless expire_at
-
-      expire_at - 5.seconds # 5s gap to start fetching new token in advance
-    end
-
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
         ShopifyApp::Logger.debug("Adding top level redirection headers")
@@ -133,84 +126,6 @@ module ShopifyApp
 
     def clear_shopify_session
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = nil
-    end
-
-    def login_url_with_optional_shop(top_level: false)
-      url = ShopifyApp.configuration.login_url
-
-      query_params = login_url_params(top_level: top_level)
-
-      url = "#{url}?#{query_params.to_query}" if query_params.present?
-      url
-    end
-
-    def login_url_params(top_level:)
-      query_params = {}
-      query_params[:shop] = sanitized_params[:shop] if params[:shop].present?
-
-      return_to = RedirectSafely.make_safe(session[:return_to] || params[:return_to], nil)
-
-      if return_to.present? && return_to_param_required?
-        query_params[:return_to] = return_to
-      end
-
-      has_referer_shop_name = referer_sanitized_shop_name.present?
-
-      if has_referer_shop_name
-        query_params[:shop] ||= referer_sanitized_shop_name
-      end
-
-      if params[:host].present?
-        query_params[:host] ||= host
-      end
-
-      if params[:access_scopes].present?
-        query_params[:scope] = params[:access_scopes].join(",")
-      end
-
-      query_params[:top_level] = true if top_level
-      query_params
-    end
-
-    def return_to_param_required?
-      native_params = [:shop, :hmac, :timestamp, :locale, :protocol, :return_to]
-      request.path != "/" || sanitized_params.except(*native_params).any?
-    end
-
-    def fullpage_redirect_to(url)
-      if ShopifyApp.configuration.embedded_app?
-        raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
-
-        render(
-          "shopify_app/shared/redirect",
-          layout: false,
-          locals: { url: url, current_shopify_domain: current_shopify_domain },
-        )
-      else
-        redirect_to(url)
-      end
-    end
-
-    def return_address
-      return base_return_address if current_shopify_domain.nil?
-
-      return_address_with_params(shop: current_shopify_domain, host: host)
-    rescue ::ShopifyApp::ShopifyDomainNotFound, ::ShopifyApp::ShopifyHostNotFound
-      base_return_address
-    end
-
-    def base_return_address
-      session.delete(:return_to) || ShopifyApp.configuration.root_url
-    end
-
-    def return_address_with_params(params)
-      uri = URI(base_return_address)
-      uri.query = CGI.parse(uri.query.to_s)
-        .symbolize_keys
-        .transform_values { |v| v.one? ? v.first : v }
-        .merge(params)
-        .to_query
-      uri.to_s
     end
 
     private
