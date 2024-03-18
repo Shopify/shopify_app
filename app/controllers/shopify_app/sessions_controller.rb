@@ -2,7 +2,7 @@
 
 module ShopifyApp
   class SessionsController < ActionController::Base
-    include ShopifyApp::LoginProtection
+    include ShopifyApp::WithSessionContext
     include ShopifyApp::RedirectForEmbedded
 
     layout false, only: :new
