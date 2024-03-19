@@ -7,6 +7,8 @@ module ShopifyApp
 
     included do
       include ShopifyApp::WithSessionContext
+      include ShopifyApp::AuthorizationStrategy
+
       if defined?(ShopifyApp::EnsureInstalled) &&
           ancestors.include?(ShopifyApp::EnsureInstalled)
         message = <<~EOS
@@ -19,26 +21,8 @@ module ShopifyApp
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
-    ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
-
     def activate_shopify_session
-      if current_shopify_session.blank?
-        signal_access_token_required
-        ShopifyApp::Logger.debug("No session found, redirecting to login")
-        return redirect_to_login
-      end
-
-      if ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
-        ShopifyApp::Logger.debug("Session expired, redirecting to login")
-        clear_shopify_session
-        return redirect_to_login
-      end
-
-      if ShopifyApp.configuration.reauth_on_access_scope_changes &&
-          !ShopifyApp.configuration.user_access_scopes_strategy.covers_scopes?(current_shopify_session)
-        clear_shopify_session
-        return redirect_to_login
-      end
+      return unless authenticate_session
 
       begin
         ShopifyApp::Logger.debug("Activating Shopify session")
@@ -56,10 +40,6 @@ module ShopifyApp
       ShopifyApp::Logger.debug("Clearing session and redirecting to login")
       clear_shopify_session
       redirect_to_login
-    end
-
-    def signal_access_token_required
-      response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, "true")
     end
 
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
