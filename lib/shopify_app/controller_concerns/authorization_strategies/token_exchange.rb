@@ -17,21 +17,23 @@ module ShopifyApp
         # We need to update the middleware to also update the env['jwt.shopify_domain'] from the query params
         domain = ShopifyApp::JWT.new(session_token).shopify_domain
 
-        success = exchange_token(
+        session = exchange_token(
           shop: domain, # TODO: use jwt_shopify_domain ?
           session_token: session_token,
           requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
         )
 
-        if online_token_configured?
-          success &= exchange_token(
+        if session && online_token_configured?
+          session = exchange_token(
             shop: domain, # TODO: use jwt_shopify_domain ?
             session_token: session_token,
             requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
           )
         end
 
-        success
+        ShopifyApp::Auth::PostAuthenticateTasks.perform(session) if session
+
+        session
       end
 
       private
@@ -43,7 +45,7 @@ module ShopifyApp
       def exchange_token(shop:, session_token:, requested_token_type:)
         if session_token.blank?
           respond_to_invalid_session_token 
-          return false
+          return
         end
 
         begin
@@ -54,7 +56,7 @@ module ShopifyApp
           )
         rescue ShopifyAPI::Errors::InvalidJwtTokenError
           respond_to_invalid_session_token
-          return false
+          return
         rescue ShopifyAPI::Errors::HttpResponseError => error
           ShopifyApp::Logger.info("A #{error.code} error (#{error.class.to_s}) occurred during the token exchange. Response: #{error.response.body}")
           raise
@@ -66,14 +68,12 @@ module ShopifyApp
         if session
           begin
             ShopifyApp::SessionRepository.store_session(session)
-            # TODO
-            # perform_post_authenticate_jobs(session)
           rescue ActiveRecord::RecordNotUnique
             ShopifyApp::Logger.debug("Session not stored due to concurrent token exchange calls")
           end
         end
 
-        return session.present?
+        return session
       end
 
       def online_token_configured?

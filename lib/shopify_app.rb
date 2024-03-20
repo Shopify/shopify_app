@@ -59,6 +59,9 @@ module ShopifyApp
   require "shopify_app/controller_concerns/authorization_strategies/token_exchange"
   require "shopify_app/controller_concerns/authorization_strategies/auth_code_flow"
 
+  # Auth helpers
+  require "shopify_app/auth/post_authenticate_tasks"
+
   # jobs
   require "shopify_app/jobs/webhooks_manager_job"
 
