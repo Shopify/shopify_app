@@ -26,7 +26,7 @@ module ShopifyApp
       # TODO: Extract this into the config so that it can be overriden, similar to config.shop_session_repository
       # config.post_authenticate_tasks = Shopify::App::Auth::PostAuthenticateTasks
       # ShopifyApp::configuration.post_authenticate_tasks.perform(api_session)
-      ShopifyApp::Auth::PostAuthenticateTasks.perform(api_session)
+      ShopifyApp::configuration.post_authenticate_tasks.perform(api_session)
 
       redirect_to_app if check_billing(api_session)
     end

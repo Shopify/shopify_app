@@ -29,6 +29,9 @@ module ShopifyApp
     attr_writer :login_callback_url
     attr_accessor :embedded_redirect_url
 
+    # customize post authenticate tasks
+    attr_accessor :custom_post_authenticate_tasks
+
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
     attr_accessor :webhooks_manager_queue_name
@@ -125,6 +128,27 @@ module ShopifyApp
 
     def use_new_embedded_auth_strategy?
       wip_new_embedded_auth_strategy && embedded_app?
+    end
+
+    def post_authenticate_tasks
+      @post_authenticate_tasks || begin
+        if custom_post_authenticate_tasks
+          custom_class = custom_post_authenticate_tasks.respond_to?(:safe_constantize) ? custom_post_authenticate_tasks.safe_constantize : custom_post_authenticate_tasks
+        end
+
+        @post_authenticate_tasks = custom_class || ShopifyApp::Auth::PostAuthenticateTasks
+
+        [
+          :perform,
+        ].each do |method|
+          raise(
+            ::ShopifyApp::ConfigurationError,
+            missing_method_message("post_authenticate_tasks", method.to_s),
+          ) unless @post_authenticate_tasks.respond_to?(method)
+        end
+
+        @post_authenticate_tasks
+      end
     end
   end
 

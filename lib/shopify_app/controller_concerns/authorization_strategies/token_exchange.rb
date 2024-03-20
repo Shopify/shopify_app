@@ -31,7 +31,7 @@ module ShopifyApp
           )
         end
 
-        ShopifyApp::Auth::PostAuthenticateTasks.perform(session) if session
+        ShopifyApp::configuration.post_authenticate_tasks.perform(session) if session
 
         session
       end

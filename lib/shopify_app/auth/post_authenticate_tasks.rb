@@ -1,6 +1,6 @@
 module ShopifyApp
   module Auth
-    module PostAuthenticateTasks
+    class PostAuthenticateTasks
       class << self
         def perform(session)
           ShopifyApp::Logger.debug("Performing post authenticate tasks")
