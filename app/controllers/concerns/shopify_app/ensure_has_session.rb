@@ -6,7 +6,13 @@ module ShopifyApp
 
     included do
       include ShopifyApp::Localization
-      include ShopifyApp::LoginProtection
+
+      if ShopifyApp.configuration.use_new_embedded_auth_strategy?
+        include ShopifyApp::RetrieveSessionFromTokenExchange
+      else
+        include ShopifyApp::LoginProtection
+      end
+
       include ShopifyApp::CsrfProtection
       include ShopifyApp::EmbeddedApp
       include ShopifyApp::EnsureBilling
