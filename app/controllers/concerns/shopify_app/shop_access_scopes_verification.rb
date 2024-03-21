@@ -6,7 +6,12 @@ module ShopifyApp
     include ShopifyApp::RedirectForEmbedded
 
     included do
-      before_action :login_on_scope_changes
+      if ShopifyApp.configuration.use_new_embedded_auth_strategy?
+        include ShopifyApp::RetrieveSessionFromTokenExchange
+      else
+        include ShopifyApp::LoginProtection
+        before_action :login_on_scope_changes
+      end
     end
 
     protected

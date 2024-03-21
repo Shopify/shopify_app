@@ -19,6 +19,10 @@ module ShopifyApp
       authenticate
     end
 
+    def patch_session_token
+      render(layout: "app_bridge")
+    end
+
     def top_level_interaction
       @url = login_url_with_optional_shop(top_level: true)
       validate_shop_presence

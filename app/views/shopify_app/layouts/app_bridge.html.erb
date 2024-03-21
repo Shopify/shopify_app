@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= ShopifyApp.configuration.application_name %></title>
+    <%= yield :head %>
+    <script
+      data-api-key="<%= ShopifyApp.configuration.api_key %>"
+      src="https://cdn.shopify.com/shopifycloud/app-bridge.js">
+    </script>
+    <%= csrf_meta_tags %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
