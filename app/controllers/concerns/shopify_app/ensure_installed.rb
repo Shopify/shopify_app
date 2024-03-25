@@ -15,10 +15,11 @@ module ShopifyApp
         raise message
       end
 
-      # TODO: Add support to use new embedded auth strategy here when invalid
-      # session token can be handled by AppBridge app reload
+      before_action :check_shop_domain
+
       unless ShopifyApp.configuration.use_new_embedded_auth_strategy?
-        before_action :check_shop_domain
+        # TODO: Add support to use new embedded auth strategy here when invalid
+        # session token can be handled by AppBridge app reload
         before_action :check_shop_known
         before_action :validate_non_embedded_session
       end
