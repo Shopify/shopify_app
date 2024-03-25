@@ -254,4 +254,21 @@ class ConfigurationTest < ActiveSupport::TestCase
 
     refute ShopifyApp.configuration.use_new_embedded_auth_strategy?
   end
+
+  test "#online_token_configured? is true when user_session_repository is set" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = "ShopifyApp::InMemoryUserSessionStore"
+    end
+
+    assert ShopifyApp.configuration.online_token_configured?
+  end
+
+  test "#online_token_configured? is false when user storage is nil" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = "ShopifyApp::InMemoryUserSessionStore"
+    end
+    ShopifyApp::SessionRepository.user_storage = nil
+
+    refute ShopifyApp.configuration.online_token_configured?
+  end
 end

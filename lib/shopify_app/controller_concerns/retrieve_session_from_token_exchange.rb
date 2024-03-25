@@ -28,7 +28,7 @@ module ShopifyApp
         session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(
           request.headers["HTTP_AUTHORIZATION"],
           nil,
-          online_token_configured?,
+          ShopifyApp.configuration.online_token_configured?,
         )
         return nil unless session_id
 
@@ -57,7 +57,7 @@ module ShopifyApp
         requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
       )
 
-      if session && online_token_configured?
+      if session && ShopifyApp.configuration.online_token_configured?
         ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Online)")
         exchange_token(
           shop: domain, # TODO: use jwt_shopify_domain ?
@@ -112,10 +112,6 @@ module ShopifyApp
 
     def id_token_header
       request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/)&.[](1)
-    end
-
-    def online_token_configured?
-      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
     end
 
     def respond_to_invalid_session_token
