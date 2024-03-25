@@ -138,7 +138,7 @@ module ShopifyApp
     end
 
     def perform_post_authenticate_jobs(session)
-      ShopifyApp::Auth::PostAuthenticateTasks.perform(session)
+      ShopifyApp.configuration.post_authenticate_tasks.perform(session)
     end
   end
 end
