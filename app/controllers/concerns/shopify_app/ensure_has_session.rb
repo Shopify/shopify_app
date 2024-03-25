@@ -8,7 +8,7 @@ module ShopifyApp
       include ShopifyApp::Localization
 
       if ShopifyApp.configuration.use_new_embedded_auth_strategy?
-        include ShopifyApp::RetrieveSessionFromTokenExchange
+        include ShopifyApp::TokenExchange
         around_action :activate_shopify_session
       else
         include ShopifyApp::LoginProtection

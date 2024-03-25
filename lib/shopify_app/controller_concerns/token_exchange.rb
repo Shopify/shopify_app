@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  module RetrieveSessionFromTokenExchange
+  module TokenExchange
     extend ActiveSupport::Concern
 
     def activate_shopify_session
@@ -28,7 +28,7 @@ module ShopifyApp
         session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(
           request.headers["HTTP_AUTHORIZATION"],
           nil,
-          ShopifyApp.configuration.online_token_configured?,
+          online_token_configured?,
         )
         return nil unless session_id
 
@@ -57,7 +57,7 @@ module ShopifyApp
         requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
       )
 
-      if session && ShopifyApp.configuration.online_token_configured?
+      if session && online_token_configured?
         ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Online)")
         exchange_token(
           shop: domain, # TODO: use jwt_shopify_domain ?
@@ -86,12 +86,12 @@ module ShopifyApp
         # respond_to_invalid_session_token
         return
       rescue ShopifyAPI::Errors::HttpResponseError => error
-        ShopifyApp::Logger.info(
+        ShopifyApp::Logger.error(
           "A #{error.code} error (#{error.class}) occurred during the token exchange. Response: #{error.response.body}",
         )
         raise
       rescue => error
-        ShopifyApp::Logger.info("An error occurred during the token exchange: #{error.message}")
+        ShopifyApp::Logger.error("An error occurred during the token exchange: #{error.message}")
         raise
       end
 
@@ -132,6 +132,10 @@ module ShopifyApp
 
       # redirect_to("#{patch_session_token_url}?#{patch_session_token_params.to_query}", allow_other_host: true)
       # end
+    end
+
+    def online_token_configured?
+      ShopifyApp.configuration.online_token_configured?
     end
   end
 end
