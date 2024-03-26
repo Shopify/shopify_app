@@ -34,12 +34,23 @@ class PostAuthenticateTasksTest < ActiveSupport::TestCase
     ShopifyApp::SessionRepository.store_shop_session(@offline_session)
   end
 
-  test "#perform triggers install_webhook job after authentication" do
+  test "#perform runs WebhooksManager job if webhooks are configured" do
     ShopifyApp.configure do |config|
       config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
     end
 
     ShopifyApp::WebhooksManager.expects(:queue).with(SHOP_DOMAIN, "offline_token")
+
+    ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+  end
+
+  test "#perform doesn't run the WebhooksManager if no webhooks are configured" do
+    ShopifyApp.configure do |config|
+      config.webhooks = []
+    end
+    ShopifyApp::WebhooksManager.add_registrations
+
+    ShopifyApp::WebhooksManager.expects(:queue).never
 
     ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
   end
@@ -55,7 +66,7 @@ class PostAuthenticateTasksTest < ActiveSupport::TestCase
     ShopifyApp::SessionRepository.shop_storage.clear
   end
 
-  test "#perform triggers after_authenticate job after authentication" do
+  test "#perform calls AfterAuthenticateJob and performs inline when inline is true" do
     ShopifyApp.configure do |config|
       config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
     end
@@ -63,5 +74,55 @@ class PostAuthenticateTasksTest < ActiveSupport::TestCase
     Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: SHOP_DOMAIN)
 
     ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+  end
+
+  test "#perform calls AfterAuthenticateJob and performs asynchronous when inline isn't true" do
+    ShopifyApp.configure do |config|
+      config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
+    end
+
+    Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: SHOP_DOMAIN)
+
+    ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+  end
+
+  test "#perform doesn't call AfterAuthenticateJob if job is nil" do
+    ShopifyApp.configure do |config|
+      config.after_authenticate_job = { job: nil, inline: false }
+    end
+
+    Shopify::AfterAuthenticateJob.expects(:perform_later).never
+
+    ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+  end
+
+  test "#perform calls AfterAuthenticateJob and performs async if inline isn't present" do
+    ShopifyApp.configure do |config|
+      config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
+    end
+
+    Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: SHOP_DOMAIN)
+
+    ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+  end
+
+  test "#perform calls AfterAuthenticateJob constantizes from a string to a class" do
+    ShopifyApp.configure do |config|
+      config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }
+    end
+
+    Shopify::AfterAuthenticateJob.expects(:perform_later).with(shop_domain: SHOP_DOMAIN)
+
+    ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+  end
+
+  test "#perform calls AfterAuthenticateJob raises if the string is not a valid job class" do
+    ShopifyApp.configure do |config|
+      config.after_authenticate_job = { job: "InvalidJobClassThatDoesNotExist", inline: false }
+    end
+
+    assert_raise NameError do
+      ShopifyApp::Auth::PostAuthenticateTasks.perform(@offline_session)
+    end
   end
 end
