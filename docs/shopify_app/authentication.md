@@ -80,7 +80,7 @@ and configuring `custom_post_authenticate_tasks` in the initializer.
 ```ruby
 # my_custom_post_authenticate_task.rb
 class MyCustomPostAuthenticateTask
-  def perform(session)
+  def self.perform(session)
     # This will be triggered after OAuth callback and token exchange completion
   end
 end
