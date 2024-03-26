@@ -23,7 +23,18 @@ module ShopifyApp
 
       return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
-      perform_post_authenticate_jobs(api_session)
+      # TODO: Remove before releasing v23.0.0
+      # "perform_after_authenticate_job" and related methods (install_webhooks, perform_after_authenticate_job)
+      # will be deprecated in the next major release - 23.0.0
+      # Set `custom_post_authenticate_tasks`from configuration instead to handle special cases.
+      if ShopifyApp.configuration.custom_post_authenticate_tasks.present?
+        ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+      else
+        perform_post_authenticate_jobs(api_session)
+      end
+      ########### When deprecating, replace the above block with:
+      # ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+
       redirect_to_app if check_billing(api_session)
     end
 
@@ -138,7 +149,33 @@ module ShopifyApp
     end
 
     def perform_post_authenticate_jobs(session)
-      ShopifyApp.configuration.post_authenticate_tasks.perform(session)
+      # Ensure we use the shop session to install webhooks
+      session_for_shop = session.online? ? shop_session : session
+
+      install_webhooks(session_for_shop)
+
+      perform_after_authenticate_job(session)
+    end
+
+    def install_webhooks(session)
+      return unless ShopifyApp.configuration.has_webhooks?
+
+      WebhooksManager.queue(session.shop, session.access_token)
+    end
+
+    def perform_after_authenticate_job(session)
+      config = ShopifyApp.configuration.after_authenticate_job
+
+      return unless config && config[:job].present?
+
+      job = config[:job]
+      job = job.constantize if job.is_a?(String)
+
+      if config[:inline] == true
+        job.perform_now(shop_domain: session.shop)
+      else
+        job.perform_later(shop_domain: session.shop)
+      end
     end
   end
 end
