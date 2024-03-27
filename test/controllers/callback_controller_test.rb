@@ -377,6 +377,20 @@ module ShopifyApp
       assert_response 302
     end
 
+    test "#callback calls methods in callback controller if custom_post_authenticate_tasks is not set" do
+      mock_oauth
+
+      ShopifyApp.configure do |_config|
+        ShopifyApp.configuration.custom_post_authenticate_tasks = nil
+      end
+
+      CallbackController.any_instance.expects(:install_webhooks)
+      CallbackController.any_instance.expects(:perform_after_authenticate_job)
+
+      get :callback, params: @callback_params
+      assert_response 302
+    end
+
     private
 
     def mock_oauth(cookie: @stubbed_cookie, session: @stubbed_session)
