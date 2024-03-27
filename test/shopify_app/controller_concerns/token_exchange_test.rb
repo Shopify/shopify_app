@@ -52,7 +52,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
   test "Exchanges offline token when session doesn't exist" do
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).twice.with(
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
         @session_token_in_header,
         nil,
         false,
@@ -74,7 +74,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).twice.with(
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
         @session_token_in_header,
         nil,
         true,
@@ -102,7 +102,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.store_shop_session(@offline_session)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).with(
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
         @session_token_in_header,
         nil,
         false,
@@ -121,7 +121,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.store_user_session(@online_session, @user)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).with(
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
         @session_token_in_header,
         nil,
         true,
@@ -142,7 +142,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     @online_session.stubs(:expired?).returns(true)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).twice.with(
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
         @session_token_in_header,
         nil,
         true,
@@ -176,7 +176,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     @online_session.stubs(:expired?).returns(false)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).with(
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
         @session_token_in_header,
         nil,
         true,
