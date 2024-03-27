@@ -3,7 +3,9 @@
 module ShopifyApp
   module CsrfProtection
     extend ActiveSupport::Concern
+
     included do
+      include ShopifyApp::JWTParser
       protect_from_forgery with: :exception, unless: :valid_session_token?
     end
 

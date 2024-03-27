@@ -15,6 +15,8 @@ module ShopifyApp
         raise message
       end
 
+      include ShopifyApp::JWTParser
+
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
     end
 
