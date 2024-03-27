@@ -171,7 +171,7 @@ module ShopifyApp
     end
 
     test "#callback starts the WebhooksManager if webhooks are configured" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
@@ -183,7 +183,7 @@ module ShopifyApp
     end
 
     test "#callback doesn't run the WebhooksManager if no webhooks are configured" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.webhooks = []
       end
@@ -195,7 +195,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job and performs inline when inline is true" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
@@ -207,7 +207,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job and performs asynchronous when inline isn't true" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
       end
@@ -219,7 +219,7 @@ module ShopifyApp
     end
 
     test "#callback doesn't call #perform_after_authenticate_job if job is nil" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: nil, inline: false }
       end
@@ -231,7 +231,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job and performs async if inline isn't present" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
       end
@@ -243,7 +243,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job constantizes from a string to a class" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }
       end
@@ -255,7 +255,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job raises if the string is not a valid job class" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: "InvalidJobClassThatDoesNotExist", inline: false }
       end
@@ -306,7 +306,7 @@ module ShopifyApp
     end
 
     test "#callback performs install_webhook job after authentication" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       mock_oauth
 
       ShopifyApp.configure do |config|
@@ -320,7 +320,7 @@ module ShopifyApp
     end
 
     test "#callback performs install_webhook job with an offline session after an online session OAuth" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
@@ -338,7 +338,7 @@ module ShopifyApp
     end
 
     test "#callback performs after_authenticate job after authentication" do
-      log_deprecation
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       mock_oauth
 
       ShopifyApp.configure do |config|
@@ -415,13 +415,6 @@ module ShopifyApp
         is_online: true,
         associated_user: associated_user,
       )
-    end
-
-    def log_deprecation
-      message = <<~EOS
-        TODO: Remove this test before releasing v23.0.0 - This logic is tested in PostAuthenticateTasksTest
-      EOS
-      puts message
     end
   end
 end
