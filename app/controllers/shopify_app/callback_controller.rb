@@ -23,7 +23,7 @@ module ShopifyApp
 
       return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
-      if ShopifyAPI::VERSION < "23.0"
+      if ShopifyApp::VERSION < "23.0"
         # deprecated in 23.0
         if ShopifyApp.configuration.custom_post_authenticate_tasks.present?
           ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
