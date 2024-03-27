@@ -14,6 +14,11 @@ class TokenExchangeController < ActionController::Base
   end
 end
 
+class MockPostAuthenticateTasks
+  def self.perform(session)
+  end
+end
+
 class TokenExchangeControllerTest < ActionController::TestCase
   tests TokenExchangeController
 
@@ -48,6 +53,9 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
     @offline_session_id = "offline_#{@shop}"
     @online_session_id = "online_#{@user.id}"
+
+    ShopifyApp.configuration.check_session_expiry_date = false
+    ShopifyApp.configuration.custom_post_authenticate_tasks = MockPostAuthenticateTasks
   end
 
   test "Exchanges offline token when session doesn't exist" do
@@ -185,6 +193,38 @@ class TokenExchangeControllerTest < ActionController::TestCase
       ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).never
 
       ShopifyAPI::Context.expects(:activate_session).with(@online_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Triggers post_authenticate_tasks after token exchange is complete" do
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
+      ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).returns(@offline_session)
+      ShopifyApp.configuration.post_authenticate_tasks.expects(:perform).with(@offline_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Triggers post_authenticate_tasks after token exchange is complete for online session" do
+    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
+      ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).returns(@offline_session, @online_session)
+      ShopifyApp.configuration.post_authenticate_tasks.expects(:perform).with(@online_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Don't trigger post_authenticate_tasks if token exchange fails" do
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
+      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).returns(nil)
+      ShopifyApp.configuration.post_authenticate_tasks.expects(:perform).never
 
       get :index, params: { shop: @shop }
     end
