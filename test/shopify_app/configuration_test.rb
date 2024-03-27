@@ -282,6 +282,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     ShopifyApp::SessionRepository.user_storage = nil
 
     refute ShopifyApp.configuration.online_token_configured?
+  end
 
   test "#post_authenticate_tasks defaults to ShopifyApp::Auth::PostAuthenticateTasks" do
     assert_equal ShopifyApp::Auth::PostAuthenticateTasks, ShopifyApp.configuration.post_authenticate_tasks
