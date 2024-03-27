@@ -134,6 +134,7 @@ module ShopifyApp
 
     def online_token_configured?
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+    end
 
     def post_authenticate_tasks
       @post_authenticate_tasks || begin
