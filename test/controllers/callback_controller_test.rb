@@ -187,7 +187,6 @@ module ShopifyApp
       ShopifyApp.configure do |config|
         config.webhooks = []
       end
-      ShopifyApp::WebhooksManager.add_registrations
 
       ShopifyApp::WebhooksManager.expects(:queue).never
 

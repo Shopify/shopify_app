@@ -48,7 +48,6 @@ class PostAuthenticateTasksTest < ActiveSupport::TestCase
     ShopifyApp.configure do |config|
       config.webhooks = []
     end
-    ShopifyApp::WebhooksManager.add_registrations
 
     ShopifyApp::WebhooksManager.expects(:queue).never
 
