@@ -48,7 +48,7 @@ The following methods from `ShopifyApp::CallbackController` have been deprecated
 - `perform_post_authenticate_jobs`
 
 If you have overwritten these methods in your callback controller to modify the behavior of the inherited `CallbackController`, you will need to
-update your app to use configurable option `config.custom_post_authenticate_tasks` instead. See [post authenticate tasks](https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/authentication.md#post-authenticate-tasks)
+update your app to use configurable option `config.custom_post_authenticate_tasks` instead. See [post authenticate tasks](/docs/shopify_app/authentication.md#post-authenticate-tasks)
 for more information.
 
 ## Upgrading to `v22.0.0`
