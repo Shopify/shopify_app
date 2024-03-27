@@ -23,18 +23,16 @@ module ShopifyApp
 
       return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
-      # TODO: Remove before releasing v23.0.0
-      # "perform_after_authenticate_job" and related methods (install_webhooks, perform_after_authenticate_job)
-      # will be deprecated in the next major release - 23.0.0
-      # Set `custom_post_authenticate_tasks`from configuration instead to handle special cases.
-      if ShopifyApp.configuration.custom_post_authenticate_tasks.present?
-        ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+      if ShopifyAPI::VERSION < "23.0"
+        # deprecated in 23.0
+        if ShopifyApp.configuration.custom_post_authenticate_tasks.present?
+          ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+        else
+          perform_post_authenticate_jobs(api_session)
+        end
       else
-        perform_post_authenticate_jobs(api_session)
+        ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
       end
-      ########### When deprecating, replace the above block with:
-      # ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
-
       redirect_to_app if check_billing(api_session)
     end
 
