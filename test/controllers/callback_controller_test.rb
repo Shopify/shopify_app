@@ -54,10 +54,10 @@ module ShopifyApp
         "AppleWebKit/537.36 (KHTML, like Gecko)"\
         "Chrome/69.0.3497.100 Safari/537.36"
       ShopifyApp::SessionRepository.stubs(:store_session)
-      ShopifyApp.configuration.custom_post_authenticate_tasks = nil
     end
 
     teardown do
+      ShopifyApp.configuration.custom_post_authenticate_tasks = nil
       SessionRepository.shop_storage.clear
     end
 
