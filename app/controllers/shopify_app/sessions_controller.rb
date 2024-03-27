@@ -37,6 +37,22 @@ module ShopifyApp
     def authenticate
       return render_invalid_shop_error unless sanitized_shop_name.present?
 
+      if ShopifyApp.configuration.use_new_embedded_auth_strategy?
+        ShopifyApp::Logger.debug("Starting OAuth - Redirecting to Shopify managed install")
+        start_install
+      else
+        ShopifyApp::Logger.debug("Starting OAuth - Redirecting to begin auth")
+        start_oauth
+      end
+    end
+
+    def start_install
+      shop_name = sanitized_shop_name.split(".").first
+      install_path = "https://admin.shopify.com/store/#{shop_name}/oauth/install?client_id=#{ShopifyApp.configuration.api_key}"
+      redirect_to(install_path, allow_other_host: true)
+    end
+
+    def start_oauth
       copy_return_to_param_to_session
 
       if embedded_redirect_url?
@@ -44,16 +60,16 @@ module ShopifyApp
         if embedded_param?
           redirect_for_embedded
         else
-          start_oauth
+          redirect_to_begin_oauth
         end
       elsif top_level?
-        start_oauth
+        redirect_to_begin_oauth
       else
         redirect_auth_to_top_level
       end
     end
 
-    def start_oauth
+    def redirect_to_begin_oauth
       callback_url = ShopifyApp.configuration.login_callback_url.gsub(%r{^/}, "")
       ShopifyApp::Logger.debug("Starting OAuth with the following callback URL: #{callback_url}")
 
