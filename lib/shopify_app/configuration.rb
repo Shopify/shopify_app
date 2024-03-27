@@ -126,6 +126,10 @@ module ShopifyApp
     def use_new_embedded_auth_strategy?
       wip_new_embedded_auth_strategy && embedded_app?
     end
+
+    def online_token_configured?
+      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+    end
   end
 
   class BillingConfiguration

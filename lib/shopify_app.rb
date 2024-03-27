@@ -52,6 +52,7 @@ module ShopifyApp
   require "shopify_app/controller_concerns/payload_verification"
   require "shopify_app/controller_concerns/app_proxy_verification"
   require "shopify_app/controller_concerns/webhook_verification"
+  require "shopify_app/controller_concerns/token_exchange"
 
   # jobs
   require "shopify_app/jobs/webhooks_manager_job"
