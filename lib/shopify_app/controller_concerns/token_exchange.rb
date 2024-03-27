@@ -10,6 +10,7 @@ module ShopifyApp
       end
 
       if ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
+        @current_shopify_session = nil
         retrieve_session_from_token_exchange
       end
 

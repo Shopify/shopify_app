@@ -28,8 +28,6 @@ class TokenExchangeControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp::SessionRepository.user_storage = nil
 
-    @offline_session = ShopifyAPI::Auth::Session.new(id: "offline_session_1", shop: @shop)
-
     @user = ShopifyAPI::Auth::AssociatedUser.new(
       id: 1,
       first_name: "Hello",
@@ -46,6 +44,10 @@ class TokenExchangeControllerTest < ActionController::TestCase
       is_online: true,
       associated_user: @user,
     )
+    @offline_session = ShopifyAPI::Auth::Session.new(id: "offline_session_1", shop: @shop)
+
+    @offline_session_id = "offline_#{@shop}"
+    @online_session_id = "online_#{@user.id}"
   end
 
   test "Exchanges offline token when session doesn't exist" do
@@ -54,7 +56,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
         @session_token_in_header,
         nil,
         false,
-      ).returns(nil, "offline_#{@shop}")
+      ).returns(nil, @offline_session_id)
 
       ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
         shop: @shop,
@@ -76,7 +78,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
         @session_token_in_header,
         nil,
         true,
-      ).returns(nil, "online_#{@user.id}")
+      ).returns(nil, @online_session_id)
 
       ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
         shop: @shop,
@@ -89,6 +91,98 @@ class TokenExchangeControllerTest < ActionController::TestCase
         session_token: @session_token,
         requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
       ).returns(@online_session)
+
+      ShopifyAPI::Context.expects(:activate_session).with(@online_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Use existing shop session if it exists" do
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).with(
+        @session_token_in_header,
+        nil,
+        false,
+      ).returns(@offline_session_id)
+
+      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).never
+
+      ShopifyAPI::Context.expects(:activate_session).with(@offline_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Use existing user session if it exists" do
+    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+    ShopifyApp::SessionRepository.store_user_session(@online_session, @user)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).with(
+        @session_token_in_header,
+        nil,
+        true,
+      ).returns(@online_session_id)
+
+      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).never
+
+      ShopifyAPI::Context.expects(:activate_session).with(@online_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Exchange token again if current user session is expired" do
+    ShopifyApp.configuration.check_session_expiry_date = true
+    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+    ShopifyApp::SessionRepository.store_user_session(@online_session, @user)
+    @online_session.stubs(:expired?).returns(true)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).twice.with(
+        @session_token_in_header,
+        nil,
+        true,
+      ).returns(@online_session_id)
+
+      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
+        shop: @shop,
+        session_token: @session_token,
+        requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
+      ).returns(@offline_session)
+
+      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
+        shop: @shop,
+        session_token: @session_token,
+        requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
+      ).returns(@online_session)
+
+      ShopifyApp::SessionRepository.shop_storage.expects(:store).with(@offline_session)
+      ShopifyApp::SessionRepository.user_storage.expects(:store).with(@online_session, @user)
+
+      ShopifyAPI::Context.expects(:activate_session).with(@online_session)
+
+      get :index, params: { shop: @shop }
+    end
+  end
+
+  test "Don't exchange token if current user session is not expired" do
+    ShopifyApp.configuration.check_session_expiry_date = true
+    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+    ShopifyApp::SessionRepository.store_user_session(@online_session, @user)
+    @online_session.stubs(:expired?).returns(false)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.expects(:current_session_id).with(
+        @session_token_in_header,
+        nil,
+        true,
+      ).returns(@online_session_id)
+
+      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).never
 
       ShopifyAPI::Context.expects(:activate_session).with(@online_session)
 
