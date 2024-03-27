@@ -164,7 +164,7 @@ module ShopifyApp
     private
 
     def log_callback_controller_method_deprecation
-      return if Rails.env.test?
+      return unless Rails.env.development?
 
       # TODO: Remove this before releasing v23.0.0
       message = <<~EOS
