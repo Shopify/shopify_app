@@ -10,14 +10,24 @@ module ShopifyApp
       end
 
       if ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
-        @current_shopify_session = nil
         retrieve_session_from_token_exchange
       end
 
+      attempts = 0
       begin
         ShopifyApp::Logger.debug("Activating Shopify session")
         ShopifyAPI::Context.activate_session(current_shopify_session)
         yield
+      rescue ShopifyAPI::Errors::HttpResponseError => error
+        if error.code == 401 && attempts.zero?
+          ShopifyApp::Logger.debug("Encountered 401 error, exchanging token and retrying with new access token")
+          attempts += 1
+          retrieve_session_from_token_exchange
+          retry
+        else
+          ShopifyApp::Logger.debug("Encountered error: #{error.code} - #{error.message}, re-raising")
+          raise
+        end
       ensure
         ShopifyApp::Logger.debug("Deactivating session")
         ShopifyAPI::Context.deactivate_session
@@ -46,6 +56,7 @@ module ShopifyApp
     private
 
     def retrieve_session_from_token_exchange
+      @current_shopify_session = nil
       # TODO: Right now JWT Middleware only updates env['jwt.shopify_domain'] from request headers tokens,
       # which won't work for new installs.
       # we need to update the middleware to also update the env['jwt.shopify_domain'] from the query params

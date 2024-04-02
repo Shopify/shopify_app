@@ -4,12 +4,21 @@ require "test_helper"
 require "action_controller"
 require "action_controller/base"
 
+class ApiClass
+  def self.perform; end
+end
+
 class TokenExchangeController < ActionController::Base
   include ShopifyApp::TokenExchange
 
   around_action :activate_shopify_session
 
   def index
+    render(plain: "OK")
+  end
+
+  def make_api_call
+    ApiClass.perform
     render(plain: "OK")
   end
 end
@@ -220,14 +229,86 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
   end
 
+  test "Handles 401 error by exchanging token before retrying with new access token" do
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+    ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+
+    ApiClass.expects(:perform).times(2)
+      .raises(http_response_401_error)
+      .then.returns(true)
+
+    ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
+      shop: @shop,
+      session_token: @session_token,
+      requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
+    ).returns(@offline_session)
+
+    with_application_test_routes do
+      get :make_api_call, params: { shop: @shop }
+    end
+  end
+
+  test "Only retry once when encountering 401 error and raises the second error" do
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+    ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+    ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).returns(@offline_session)
+
+    ApiClass.expects(:perform).times(2).raises(http_response_401_error)
+
+    with_application_test_routes do
+      actual_error = assert_raises(ShopifyAPI::Errors::HttpResponseError) do
+        get :make_api_call, params: { shop: @shop }
+      end
+
+      assert_equal http_response_401_error.code, actual_error.code
+    end
+  end
+
+  test "Raises HttpResponseError without retrying if not a 401 error" do
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+    ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+    ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).returns(@offline_session)
+
+    ApiClass.expects(:perform).raises(http_response_500_error)
+
+    with_application_test_routes do
+      actual_error = assert_raises(ShopifyAPI::Errors::HttpResponseError) do
+        get :make_api_call, params: { shop: @shop }
+      end
+
+      assert_equal http_response_500_error.code, actual_error.code
+    end
+  end
+
   private
 
   def with_application_test_routes
     with_routing do |set|
       set.draw do
         get "/" => "token_exchange#index"
+        get "/make_api_call" => "token_exchange#make_api_call"
       end
       yield
     end
+  end
+
+  def http_response_401_error
+    ShopifyAPI::Errors::HttpResponseError.new(
+      response: ShopifyAPI::Clients::HttpResponse.new(
+        code: 401,
+        headers: {},
+        body: "Invalid API key or access token (unrecognized login or wrong password)",
+      ),
+    )
+  end
+
+  def http_response_500_error
+    ShopifyAPI::Errors::HttpResponseError.new(
+      response: ShopifyAPI::Clients::HttpResponse.new(
+        code: 500,
+        headers: {},
+        body: "Internal Server Error",
+      ),
+    )
   end
 end
