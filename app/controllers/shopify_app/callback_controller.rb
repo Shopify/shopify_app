@@ -23,7 +23,16 @@ module ShopifyApp
 
       return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
-      perform_post_authenticate_jobs(api_session)
+      if ShopifyApp::VERSION < "23.0"
+        # deprecated in 23.0
+        if ShopifyApp.configuration.custom_post_authenticate_tasks.present?
+          ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+        else
+          perform_post_authenticate_jobs(api_session)
+        end
+      else
+        ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+      end
       redirect_to_app if check_billing(api_session)
     end
 

@@ -40,6 +40,17 @@ We also recommend the use of a staging site which matches your production enviro
 
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
 
+## Unreleased
+#### (v23.0.0) - Deprecated methods in CallbackController
+The following methods from `ShopifyApp::CallbackController` have been deprecated in `v23.0.0`
+- `perform_after_authenticate_job`
+- `install_webhooks`
+- `perform_post_authenticate_jobs`
+
+If you have overwritten these methods in your callback controller to modify the behavior of the inherited `CallbackController`, you will need to
+update your app to use configurable option `config.custom_post_authenticate_tasks` instead. See [post authenticate tasks](/docs/shopify_app/authentication.md#post-authenticate-tasks)
+for more information.
+
 ## Upgrading to `v22.0.0`
 #### Dropped support for Ruby 2.x
 Support for Ruby 2.x has been dropped as it is no longer supported. You'll need to upgrade to 3.x.x

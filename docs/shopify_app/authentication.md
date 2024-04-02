@@ -12,7 +12,7 @@ See [*Getting started with session token authentication*](https://shopify.dev/do
 
 * [OAuth callback](#oauth-callback)
   * [Customizing callback controller](#customizing-callback-controller)
-* [Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
+* [Run jobs after the OAuth flow](#post-authenticate-tasks)
 * [Rotate API credentials](#rotate-api-credentials)
 * [Making authenticated API requests after authorization](#making-authenticated-api-requests-after-authorization)
 
@@ -26,15 +26,11 @@ The default callback controller [`ShopifyApp::CallbackController`](../../app/con
 
 1. Logging into the shop and resetting the session
 2. Storing the session to the `SessionRepository`
-3. [Installing Webhooks](/docs/shopify_app/webhooks.md)
-4. [Setting Scripttags](/docs/shopify_app/script-tags.md)
-5. [Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
-6. Redirecting to the return address
-
+3. [Post authenticate tasks](#post-authenticate-tasks)
+4. Redirecting to the return address
 
 #### Customizing callback controller
-If the app needs to do some extra work, it can define and configure the route to a custom callback controller.
-Inheriting from `ShopifyApp::CallbackController` and hook into or override any of the defined helper methods.
+If you need to define a custom callback controller to handle your app's use case, you can configure the callback route to your controller.
 
 Example:
 
@@ -42,11 +38,9 @@ Example:
 ```ruby
 # web/app/controllers/my_custom_callback_controller.rb
 
-class MyCustomCallbackController < ShopifyApp::CallbackController
-  private
-
-  def install_webhooks(session)
-    # My custom override/definition to install webhooks
+class MyCustomCallbackController
+  def callback
+    # My custom callback logic
   end
 end
 ```
@@ -69,11 +63,39 @@ Rails.application.routes.draw do
 end
 ```
 
-### Run jobs after the OAuth flow
+### Post Authenticate tasks
+After authentication is complete, a few tasks are run by default by PostAuthenticateTasks:
+1. [Installing Webhooks](/docs/shopify_app/webhooks.md)
+2. [Run configured after_authenticate_job](#after_authenticate_job)
+
+The [PostAuthenticateTasks](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/auth/post_authenticate_tasks.rb)
+class is responsible for triggering the webhooks manager for webhooks registration, and enqueue jobs from [after_authenticate_job](#after_authenticate_job).
+
+If you simply need to enqueue more jobs to run after authenticate, use [after_authenticate_job](#after_authenticate_job) to define these jobs.
+
+If your post authentication tasks is more complex and is different than just installing webhooks and enqueuing jobs,
+you can customize the post authenticate tasks by creating a new class that has a `self.perform(session)` method,
+and configuring `custom_post_authenticate_tasks` in the initializer.
+
+```ruby
+# my_custom_post_authenticate_task.rb
+class MyCustomPostAuthenticateTask
+  def self.perform(session)
+    # This will be triggered after OAuth callback and token exchange completion
+  end
+end
+
+# config/initializers/shopify_app.rb
+ShopifyApp.configure do |config|
+  config.custom_post_authenticate_tasks = "MyCustomPostAuthenticateTask"
+end
+```
+
+#### after_authenticate_job
 
 See [`ShopifyApp::AfterAuthenticateJob`](/lib/generators/shopify_app/add_after_authenticate_job/templates/after_authenticate_job.rb).
 
-If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing (note that we already provide support for automatically creating Webhooks and Scripttags). To configure the after authenticate job, update your initializer as follows:
+If your app needs to perform specific actions after the user is authenticated successfully (i.e. every time a new session is created), ShopifyApp can queue or run a job of your choosing. To configure the after authenticate job, update your initializer as follows:
 
 ```ruby
 ShopifyApp.configure do |config|

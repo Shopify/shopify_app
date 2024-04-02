@@ -29,6 +29,9 @@ module ShopifyApp
     attr_writer :login_callback_url
     attr_accessor :embedded_redirect_url
 
+    # customize post authenticate tasks
+    attr_accessor :custom_post_authenticate_tasks
+
     # customise ActiveJob queue names
     attr_accessor :scripttags_manager_queue_name
     attr_accessor :webhooks_manager_queue_name
@@ -54,6 +57,8 @@ module ShopifyApp
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
+
+      log_callback_controller_method_deprecation
     end
 
     def login_url
@@ -129,6 +134,48 @@ module ShopifyApp
 
     def online_token_configured?
       !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+    end
+
+    def post_authenticate_tasks
+      @post_authenticate_tasks || begin
+        if custom_post_authenticate_tasks
+          custom_class = if custom_post_authenticate_tasks.respond_to?(:safe_constantize)
+            custom_post_authenticate_tasks.safe_constantize
+          else
+            custom_post_authenticate_tasks
+          end
+        end
+
+        task_class = custom_class || ShopifyApp::Auth::PostAuthenticateTasks
+
+        [
+          :perform,
+        ].each do |method|
+          raise(
+            ::ShopifyApp::ConfigurationError,
+            "Missing method - '#{method}' for custom_post_authenticate_tasks",
+          ) unless task_class.respond_to?(method)
+        end
+
+        task_class
+      end
+    end
+
+    private
+
+    def log_callback_controller_method_deprecation
+      return unless Rails.env.development?
+
+      # TODO: Remove this before releasing v23.0.0
+      message = <<~EOS
+        ================================================
+        => Upcoming deprecation in v23.0:
+        * 'CallbackController::perform_after_authenticate_job' and related methods 'install_webhooks', 'perform_after_authenticate_job'
+        * will be deprecated from CallbackController in the next major release. If you need to customize
+        * post authentication tasks, see https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/authentication.md#post-authenticate-tasks
+        ================================================
+      EOS
+      puts message
     end
   end
 
