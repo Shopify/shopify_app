@@ -12,7 +12,7 @@ See [*Getting started with session token authentication*](https://shopify.dev/do
 
 * [OAuth callback](#oauth-callback)
   * [Customizing callback controller](#customizing-callback-controller)
-* [Run jobs after the OAuth flow](#run-jobs-after-the-oauth-flow)
+* [Run jobs after the OAuth flow](#post-authenticate-tasks)
 * [Rotate API credentials](#rotate-api-credentials)
 * [Making authenticated API requests after authorization](#making-authenticated-api-requests-after-authorization)
 
