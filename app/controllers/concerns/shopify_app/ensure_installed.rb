@@ -17,7 +17,11 @@ module ShopifyApp
 
       before_action :check_shop_domain
 
-      unless ShopifyApp.configuration.use_new_embedded_auth_strategy?
+      if ShopifyApp.configuration.use_new_embedded_auth_strategy?
+        include ShopifyApp::TokenExchange
+        include ShopifyApp::EmbeddedApp
+        around_action :activate_shopify_session
+      else
         # TODO: Add support to use new embedded auth strategy here when invalid
         # session token can be handled by AppBridge app reload
         before_action :check_shop_known
