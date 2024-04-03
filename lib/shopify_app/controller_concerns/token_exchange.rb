@@ -60,15 +60,14 @@ module ShopifyApp
 
       if session && online_token_configured?
         ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Online)")
-        exchange_token(
+        session = exchange_token(
           shop: domain, # TODO: use jwt_shopify_domain ?
           session_token: session_token,
           requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
         )
       end
 
-      # TODO: Refactor and add post authenticate tasks
-      # ShopifyApp.configuration.post_authenticate_tasks.perform(session) if session
+      ShopifyApp.configuration.post_authenticate_tasks.perform(session)
     end
 
     def exchange_token(shop:, session_token:, requested_token_type:)
