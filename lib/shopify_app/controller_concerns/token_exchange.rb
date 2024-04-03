@@ -67,7 +67,7 @@ module ShopifyApp
         )
       end
 
-      ShopifyApp.configuration.post_authenticate_tasks.perform(session) if session
+      ShopifyApp.configuration.post_authenticate_tasks.perform(session)
     end
 
     def exchange_token(shop:, session_token:, requested_token_type:)

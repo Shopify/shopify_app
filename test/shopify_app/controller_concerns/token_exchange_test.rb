@@ -220,16 +220,6 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
   end
 
-  test "Don't trigger post_authenticate_tasks if token exchange fails" do
-    with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
-      ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).returns(nil)
-      ShopifyApp.configuration.post_authenticate_tasks.expects(:perform).never
-
-      get :index, params: { shop: @shop }
-    end
-  end
-
   private
 
   def with_application_test_routes
