@@ -263,7 +263,7 @@ module ShopifyApp
     end
 
     def online_token_configured?
-      !ShopifyApp.configuration.user_session_repository.blank? && ShopifyApp::SessionRepository.user_storage.present?
+      ShopifyApp.configuration.online_token_configured?
     end
 
     def user_session_expected?

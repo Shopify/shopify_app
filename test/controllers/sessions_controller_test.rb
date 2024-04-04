@@ -9,12 +9,15 @@ module Shopify
 end
 
 module ShopifyApp
+  APP_API_KEY = "my_app_api_key"
   class SessionsControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
       ShopifyApp.configuration.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
+      ShopifyApp.configuration.wip_new_embedded_auth_strategy = false
+      ShopifyApp.configuration.api_key = APP_API_KEY
       ShopifyAppConfigurer.setup_context  # need to reset context after config changes
 
       I18n.locale = :en
@@ -305,43 +308,52 @@ module ShopifyApp
     end
 
     [
-      "myshop.com",
-      "myshopify.com",
-      "shopify.com",
-      "two words",
-      "store.myshopify.com.evil.com",
-      "/foo/bar",
-    ].each do |bad_url|
-      test "#create should return an error for a non-myshopify URL (#{bad_url})" do
-        post :create, params: { shop: bad_url }
+      true,
+      false,
+    ].each do |use_new_embedded_auth_strategy|
+      [
+        "myshop.com",
+        "myshopify.com",
+        "shopify.com",
+        "two words",
+        "store.myshopify.com.evil.com",
+        "/foo/bar",
+      ].each do |bad_url|
+        test "#create should return an error for a non-myshopify URL (#{bad_url}) -
+      when use new embedded auth strategy is #{use_new_embedded_auth_strategy}" do
+          ShopifyApp.configuration.stubs(:use_new_embedded_auth_strategy?).returns(use_new_embedded_auth_strategy)
+          post :create, params: { shop: bad_url }
+          assert_response :redirect
+          assert_redirected_to "/"
+          assert_equal I18n.t("invalid_shop_url"), flash[:error]
+        end
+      end
+
+      [
+        "myshop.com",
+        "myshopify.com",
+        "shopify.com",
+        "two words",
+        "store.myshopify.com.evil.com",
+        "/foo/bar",
+      ].each do |bad_url|
+        test "#create should return an error for a non-myshopify URL (#{bad_url}) with embedded param -
+      when use new embedded auth strategy is #{use_new_embedded_auth_strategy}" do
+          ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
+          post :create, params: { shop: bad_url, embedded: 1 }
+          assert_response :redirect
+          assert_redirected_to "/"
+          assert_equal I18n.t("invalid_shop_url"), flash[:error]
+        end
+      end
+
+      test "#create should return an error for a non-myshopify URL when using JWT authentication -
+      when use new embedded auth strategy is #{use_new_embedded_auth_strategy}" do
+        post :create, params: { shop: "invalid domain" }
         assert_response :redirect
         assert_redirected_to "/"
         assert_equal I18n.t("invalid_shop_url"), flash[:error]
       end
-    end
-
-    [
-      "myshop.com",
-      "myshopify.com",
-      "shopify.com",
-      "two words",
-      "store.myshopify.com.evil.com",
-      "/foo/bar",
-    ].each do |bad_url|
-      test "#create should return an error for a non-myshopify URL (#{bad_url}) with embedded param" do
-        ShopifyApp.configuration.embedded_redirect_url = "/a-redirect-page"
-        post :create, params: { shop: bad_url, embedded: 1 }
-        assert_response :redirect
-        assert_redirected_to "/"
-        assert_equal I18n.t("invalid_shop_url"), flash[:error]
-      end
-    end
-
-    test "#create should return an error for a non-myshopify URL when using JWT authentication" do
-      post :create, params: { shop: "invalid domain" }
-      assert_response :redirect
-      assert_redirected_to "/"
-      assert_equal I18n.t("invalid_shop_url"), flash[:error]
     end
 
     test "#create should render the login page if the shop param doesn't exist" do
@@ -372,6 +384,22 @@ module ShopifyApp
       get :destroy
 
       assert_equal "Cerrar sesión", flash[:notice]
+    end
+
+    [
+      "my-shop",
+      "my-shop.myshopify.com",
+      "https://my-shop.myshopify.com",
+      "http://my-shop.myshopify.com",
+      "https://admin.shopify.com/store/my-shop",
+    ].each do |good_url|
+      test "#create redirects to Shopify managed install path instead if use_new_embedded_auth_strategy is enabled - #{good_url}" do
+        ShopifyApp.configuration.wip_new_embedded_auth_strategy = true
+
+        post :create, params: { shop: good_url }
+
+        assert_redirected_to "https://admin.shopify.com/store/my-shop/oauth/install?client_id=#{APP_API_KEY}"
+      end
     end
 
     private

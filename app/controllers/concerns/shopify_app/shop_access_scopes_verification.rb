@@ -6,7 +6,11 @@ module ShopifyApp
     include ShopifyApp::RedirectForEmbedded
 
     included do
-      before_action :login_on_scope_changes
+      # Embedded auth strategy uses Shopify managed install to ensure latest access scopes,
+      # This will be handled automatically through token exchange
+      unless ShopifyApp.configuration.use_new_embedded_auth_strategy?
+        before_action :login_on_scope_changes
+      end
     end
 
     protected

@@ -2,6 +2,18 @@
 
 require "test_helper"
 
+module Shopify
+  class CustomPostAuthenticateTasks
+    def self.perform
+    end
+  end
+
+  class InvalidPostAuthenticateTasksClass
+    def self.not_perform
+    end
+  end
+end
+
 class ConfigurationTest < ActiveSupport::TestCase
   setup do
     ShopifyApp.configuration = nil
@@ -253,5 +265,54 @@ class ConfigurationTest < ActiveSupport::TestCase
     end
 
     refute ShopifyApp.configuration.use_new_embedded_auth_strategy?
+  end
+
+  test "#online_token_configured? is true when user_session_repository is set" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = "ShopifyApp::InMemoryUserSessionStore"
+    end
+
+    assert ShopifyApp.configuration.online_token_configured?
+  end
+
+  test "#online_token_configured? is false when user storage is nil" do
+    ShopifyApp.configure do |config|
+      config.user_session_repository = "ShopifyApp::InMemoryUserSessionStore"
+    end
+    ShopifyApp::SessionRepository.user_storage = nil
+
+    refute ShopifyApp.configuration.online_token_configured?
+  end
+
+  test "#post_authenticate_tasks defaults to ShopifyApp::Auth::PostAuthenticateTasks" do
+    assert_equal ShopifyApp::Auth::PostAuthenticateTasks, ShopifyApp.configuration.post_authenticate_tasks
+  end
+
+  test "#post_authenticate_tasks can be set to a custom class" do
+    ShopifyApp.configure do |config|
+      config.custom_post_authenticate_tasks = Shopify::CustomPostAuthenticateTasks
+    end
+
+    assert_equal Shopify::CustomPostAuthenticateTasks, ShopifyApp.configuration.post_authenticate_tasks
+  end
+
+  test "#post_authenticate_tasks can be set to a custom class name" do
+    ShopifyApp.configure do |config|
+      config.custom_post_authenticate_tasks = "Shopify::CustomPostAuthenticateTasks"
+    end
+
+    assert_equal Shopify::CustomPostAuthenticateTasks, ShopifyApp.configuration.post_authenticate_tasks
+  end
+
+  test "post_authenticate_tasks raises an error if the custom class does not respond to perform" do
+    ShopifyApp.configure do |config|
+      config.custom_post_authenticate_tasks = Shopify::InvalidPostAuthenticateTasksClass
+    end
+
+    error = assert_raises(ShopifyApp::ConfigurationError) do
+      ShopifyApp.configuration.post_authenticate_tasks
+    end
+
+    assert_equal "Missing method - 'perform' for custom_post_authenticate_tasks", error.message
   end
 end

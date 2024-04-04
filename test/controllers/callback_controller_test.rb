@@ -6,6 +6,13 @@ module Shopify
   class AfterAuthenticateJob < ActiveJob::Base
     def perform; end
   end
+
+  class CustomPostAuthenticateTasks
+    class << self
+      def perform(session)
+      end
+    end
+  end
 end
 
 class CartsUpdateJob < ActiveJob::Base
@@ -50,6 +57,7 @@ module ShopifyApp
     end
 
     teardown do
+      ShopifyApp.configuration.custom_post_authenticate_tasks = nil
       SessionRepository.shop_storage.clear
     end
 
@@ -163,6 +171,7 @@ module ShopifyApp
     end
 
     test "#callback starts the WebhooksManager if webhooks are configured" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
@@ -174,10 +183,10 @@ module ShopifyApp
     end
 
     test "#callback doesn't run the WebhooksManager if no webhooks are configured" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.webhooks = []
       end
-      ShopifyApp::WebhooksManager.add_registrations
 
       ShopifyApp::WebhooksManager.expects(:queue).never
 
@@ -186,6 +195,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job and performs inline when inline is true" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: true }
       end
@@ -197,6 +207,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job and performs asynchronous when inline isn't true" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob, inline: false }
       end
@@ -208,6 +219,7 @@ module ShopifyApp
     end
 
     test "#callback doesn't call #perform_after_authenticate_job if job is nil" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: nil, inline: false }
       end
@@ -219,6 +231,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job and performs async if inline isn't present" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: Shopify::AfterAuthenticateJob }
       end
@@ -230,6 +243,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job constantizes from a string to a class" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: "Shopify::AfterAuthenticateJob", inline: false }
       end
@@ -241,6 +255,7 @@ module ShopifyApp
     end
 
     test "#callback calls #perform_after_authenticate_job raises if the string is not a valid job class" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.after_authenticate_job = { job: "InvalidJobClassThatDoesNotExist", inline: false }
       end
@@ -291,6 +306,7 @@ module ShopifyApp
     end
 
     test "#callback performs install_webhook job after authentication" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       mock_oauth
 
       ShopifyApp.configure do |config|
@@ -304,6 +320,7 @@ module ShopifyApp
     end
 
     test "#callback performs install_webhook job with an offline session after an online session OAuth" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       ShopifyApp.configure do |config|
         config.webhooks = [{ topic: "carts/update", address: "example-app.com/webhooks" }]
       end
@@ -321,6 +338,7 @@ module ShopifyApp
     end
 
     test "#callback performs after_authenticate job after authentication" do
+      # Deprecated in 23.0, tests moved to PostAuthenticateTasksTest
       mock_oauth
 
       ShopifyApp.configure do |config|
@@ -328,6 +346,46 @@ module ShopifyApp
       end
 
       Shopify::AfterAuthenticateJob.expects(:perform_now).with(shop_domain: SHOP_DOMAIN)
+
+      get :callback, params: @callback_params
+      assert_response 302
+    end
+
+    test "#callback calls post_authenticate_tasks if custom_post_authenticate_tasks is set" do
+      mock_oauth
+
+      ShopifyApp.configure do |_config|
+        ShopifyApp.configuration.custom_post_authenticate_tasks = Shopify::CustomPostAuthenticateTasks
+      end
+
+      Shopify::CustomPostAuthenticateTasks.expects(:perform).with(@stubbed_session)
+
+      get :callback, params: @callback_params
+      assert_response 302
+    end
+
+    test "#callback does not call post_authenticate_tasks if custom_post_authenticate_tasks is not set" do
+      mock_oauth
+
+      ShopifyApp.configure do |_config|
+        ShopifyApp.configuration.custom_post_authenticate_tasks = nil
+      end
+
+      Shopify::CustomPostAuthenticateTasks.expects(:perform).never
+
+      get :callback, params: @callback_params
+      assert_response 302
+    end
+
+    test "#callback calls methods in callback controller if custom_post_authenticate_tasks is not set" do
+      mock_oauth
+
+      ShopifyApp.configure do |_config|
+        ShopifyApp.configuration.custom_post_authenticate_tasks = nil
+      end
+
+      CallbackController.any_instance.expects(:install_webhooks)
+      CallbackController.any_instance.expects(:perform_after_authenticate_job)
 
       get :callback, params: @callback_params
       assert_response 302
