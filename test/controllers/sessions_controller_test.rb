@@ -18,7 +18,7 @@ module ShopifyApp
       ShopifyApp::SessionRepository.user_storage = nil
       ShopifyApp.configuration.wip_new_embedded_auth_strategy = false
       ShopifyApp.configuration.api_key = APP_API_KEY
-      ShopifyAppConfigurer.setup_context  # need to reset context after config changes
+      ShopifyAppConfigurer.setup_context # need to reset context after config changes
 
       I18n.locale = :en
 
