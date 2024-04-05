@@ -30,9 +30,11 @@ module ShopifyApp
           nil,
           online_token_configured?,
         )
-        return nil unless session_id
+        return unless session_id
 
-        ShopifyApp::SessionRepository.load_session(session_id)
+        ShopifyApp::SessionRepository.load_session(session_id).tap do |session|
+          # session.session_token = id_token_header
+        end
       end
     end
 

@@ -211,5 +211,16 @@ module ShopifyApp
 
   def self.configure
     yield configuration
+
+    # TODO: where do we create the classes?
+    # Rails.application.config.after_initialize
+    #   ShopifyAPI.constants.each do |name|
+    #     constant = ShopifyAPI.const_get(name)
+    #     if constant.is_a?(Class) && constant < ShopifyAPI::Rest::Base
+    #       new_class = Class.new(constant) { extend ShopifyApp::AdminAPI::REST::RequestErrorHandling }
+    #       ShopifyApp::AdminAPI::REST.const_set(name, new_class)
+    #     end
+    #   end
+    # end
   end
 end
