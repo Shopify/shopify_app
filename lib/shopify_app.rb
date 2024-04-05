@@ -56,6 +56,7 @@ module ShopifyApp
 
   # Auth helpers
   require "shopify_app/auth/post_authenticate_tasks"
+  require "shopify_app/auth/token_exchange"
 
   # jobs
   require "shopify_app/jobs/webhooks_manager_job"
