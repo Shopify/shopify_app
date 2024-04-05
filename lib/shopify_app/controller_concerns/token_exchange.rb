@@ -49,61 +49,10 @@ module ShopifyApp
       # TODO: Right now JWT Middleware only updates env['jwt.shopify_domain'] from request headers tokens,
       # which won't work for new installs.
       # we need to update the middleware to also update the env['jwt.shopify_domain'] from the query params
-      domain = ShopifyApp::JWT.new(session_token).shopify_domain
-
-      ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Offline)")
-      session = exchange_token(
-        shop: domain, # TODO: use jwt_shopify_domain ?
-        session_token: session_token,
-        requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
-      )
-
-      if session && online_token_configured?
-        ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Online)")
-        session = exchange_token(
-          shop: domain, # TODO: use jwt_shopify_domain ?
-          session_token: session_token,
-          requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
-        )
-      end
-
-      ShopifyApp.configuration.post_authenticate_tasks.perform(session)
-    end
-
-    def exchange_token(shop:, session_token:, requested_token_type:)
-      if session_token.blank?
-        # respond_to_invalid_session_token
-        return
-      end
-
-      begin
-        session = ShopifyAPI::Auth::TokenExchange.exchange_token(
-          shop: shop,
-          session_token: session_token,
-          requested_token_type: requested_token_type,
-        )
-      rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        # respond_to_invalid_session_token
-        return
-      rescue ShopifyAPI::Errors::HttpResponseError => error
-        ShopifyApp::Logger.error(
-          "A #{error.code} error (#{error.class}) occurred during the token exchange. Response: #{error.response.body}",
-        )
-        raise
-      rescue => error
-        ShopifyApp::Logger.error("An error occurred during the token exchange: #{error.message}")
-        raise
-      end
-
-      if session
-        begin
-          ShopifyApp::SessionRepository.store_session(session)
-        rescue ActiveRecord::RecordNotUnique
-          ShopifyApp::Logger.debug("Session not stored due to concurrent token exchange calls")
-        end
-      end
-
-      session
+      ShopifyApp::Auth::TokenExchange.perform(session_token)
+      # TODO: Rescue JWT validation errors when bounce page is ready
+      # rescue ShopifyAPI::Errors::InvalidJwtTokenError
+      #   respond_to_invalid_session_token
     end
 
     def session_token
