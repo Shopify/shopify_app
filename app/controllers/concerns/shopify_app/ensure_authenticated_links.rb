@@ -38,7 +38,7 @@ module ShopifyApp
     end
 
     def missing_expected_jwt?
-      false
+        request.env["jwt.shopify_domain"].blank?
     end
   end
 end
