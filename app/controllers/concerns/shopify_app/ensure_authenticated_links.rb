@@ -12,6 +12,7 @@ module ShopifyApp
 
     def splash_page
       splash_page_with_params(
+        return_to: request.fullpath,
         shop: current_shopify_domain,
         host: params[:host],
         embedded: params[:embedded],
@@ -19,21 +20,13 @@ module ShopifyApp
     end
 
     def splash_page_with_params(params)
-      if params[:embedded].present?
-        uri = URI(base_url)
-      else
-        uri = URI(login_url)
-      end
+      uri = URI(base_url)
       uri.query = params.compact.to_query
       uri.to_s
     end
 
     def base_url
       ShopifyApp.configuration.root_url.presence || root_path
-    end
-
-    def login_url
-      ShopifyApp.configuration.root_url.presence + "/login"
     end
 
     def redirect_to_splash_page
@@ -45,7 +38,7 @@ module ShopifyApp
     end
 
     def missing_expected_jwt?
-      jwt_shopify_domain.blank?
+      false
     end
   end
 end
