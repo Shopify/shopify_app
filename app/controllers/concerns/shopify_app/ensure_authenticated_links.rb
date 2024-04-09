@@ -12,7 +12,6 @@ module ShopifyApp
 
     def splash_page
       splash_page_with_params(
-        return_to: request.fullpath,
         shop: current_shopify_domain,
         host: params[:host],
         embedded: params[:embedded],
@@ -20,7 +19,11 @@ module ShopifyApp
     end
 
     def splash_page_with_params(params)
-      uri = URI(base_url)
+      if params[:embedded].present?
+        uri = URI(base_url)
+      else
+        uri = URI(login_url)
+      end
       uri.query = params.compact.to_query
       uri.to_s
     end
