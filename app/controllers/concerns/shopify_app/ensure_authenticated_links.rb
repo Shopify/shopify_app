@@ -32,6 +32,10 @@ module ShopifyApp
       ShopifyApp.configuration.root_url.presence || root_path
     end
 
+    def login_url
+      ShopifyApp.configuration.root_url.presence + "/login" || root_path
+    end
+
     def redirect_to_splash_page
       redirect_to(splash_page)
     rescue ::ShopifyApp::ShopifyDomainNotFound => error
