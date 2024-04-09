@@ -1,7 +1,10 @@
 Unreleased
 ----------
+
+22.1.0 (April 9,2024)
+----------
 * Extracted class - `PostAuthenticateTasks` to handle post authenticate tasks. To learn more, see [post authenticate tasks](/docs/shopify_app/authentication.md#post-authenticate-tasks). [1819](https://github.com/Shopify/shopify_app/pull/1819)
-* Bumps shopify_api depedency to 14.1.0 [1826](https://github.com/Shopify/shopify_app/pull/1826)
+* Bumps shopify_api dependency to 14.1.0 [1826](https://github.com/Shopify/shopify_app/pull/1826)
 
 22.0.1 (March 12, 2024)
 ----------
