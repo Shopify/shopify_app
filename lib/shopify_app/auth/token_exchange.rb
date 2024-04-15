@@ -3,23 +3,23 @@
 module ShopifyApp
   module Auth
     class TokenExchange
-      attr_reader :session_token
+      attr_reader :id_token
 
-      def self.perform(session_token)
-        new(session_token).perform
+      def self.perform(id_token)
+        new(id_token).perform
       end
 
-      def initialize(session_token)
-        @session_token = session_token
+      def initialize(id_token)
+        @id_token = id_token
       end
 
       def perform
-        domain = ShopifyApp::JWT.new(session_token).shopify_domain
+        domain = ShopifyApp::JWT.new(id_token).shopify_domain
 
         Logger.info("Performing Token Exchange for [#{domain}] - (Offline)")
         session = exchange_token(
           shop: domain,
-          session_token: session_token,
+          id_token: id_token,
           requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
         )
 
@@ -27,7 +27,7 @@ module ShopifyApp
           Logger.info("Performing Token Exchange for [#{domain}] - (Online)")
           session = exchange_token(
             shop: domain,
-            session_token: session_token,
+            id_token: id_token,
             requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
           )
         end
@@ -39,10 +39,10 @@ module ShopifyApp
 
       private
 
-      def exchange_token(shop:, session_token:, requested_token_type:)
+      def exchange_token(shop:, id_token:, requested_token_type:)
         session = ShopifyAPI::Auth::TokenExchange.exchange_token(
           shop: shop,
-          session_token: session_token,
+          session_token: id_token,
           requested_token_type: requested_token_type,
         )
 
@@ -50,7 +50,7 @@ module ShopifyApp
 
         session
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        Logger.error("Invalid session token '#{session_token}' during token exchange")
+        Logger.error("Invalid id token '#{id_token}' during token exchange")
         raise
       rescue ShopifyAPI::Errors::HttpResponseError => error
         Logger.error(

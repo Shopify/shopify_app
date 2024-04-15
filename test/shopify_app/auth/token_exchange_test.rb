@@ -12,7 +12,7 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
 
     @shop = "my-shop.myshopify.com"
     @user_id = 1
-    @session_token = build_jwt
+    @id_token = build_jwt
 
     @offline_session = build_offline_session
     @online_session = build_online_session
@@ -23,13 +23,13 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
   test "#perform exchanges offline token then stores it when only shop session store is configured" do
     ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
       shop: @shop,
-      session_token: @session_token,
+      session_token: @id_token,
       requested_token_type: OFFLINE_ACCESS_TOKEN_TYPE,
     ).once.returns(@offline_session)
 
     assert_nil ShopifyApp::SessionRepository.load_session(@offline_session.id)
 
-    new_session = ShopifyApp::Auth::TokenExchange.perform(@session_token)
+    new_session = ShopifyApp::Auth::TokenExchange.perform(@id_token)
 
     assert_equal @offline_session, new_session
     assert_equal @offline_session, ShopifyApp::SessionRepository.load_session(@offline_session.id)
@@ -40,20 +40,20 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
 
     ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
       shop: @shop,
-      session_token: @session_token,
+      session_token: @id_token,
       requested_token_type: OFFLINE_ACCESS_TOKEN_TYPE,
     ).returns(@offline_session)
 
     ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
       shop: @shop,
-      session_token: @session_token,
+      session_token: @id_token,
       requested_token_type: ONLINE_ACCESS_TOKEN_TYPE,
     ).returns(@online_session)
 
     assert_nil ShopifyApp::SessionRepository.load_session(@offline_session.id)
     assert_nil ShopifyApp::SessionRepository.load_session(@online_session.id)
 
-    new_session = ShopifyApp::Auth::TokenExchange.perform(@session_token)
+    new_session = ShopifyApp::Auth::TokenExchange.perform(@id_token)
 
     assert_equal @online_session, new_session
     assert_equal @offline_session, ShopifyApp::SessionRepository.load_session(@offline_session.id)
@@ -64,7 +64,7 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
     ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).returns(@offline_session)
     ShopifyApp.configuration.post_authenticate_tasks.expects(:perform).with(@offline_session)
 
-    ShopifyApp::Auth::TokenExchange.perform(@session_token)
+    ShopifyApp::Auth::TokenExchange.perform(@id_token)
   end
 
   test "#perform triggers post_authenticate_tasks after token exchange is complete for online session" do
@@ -73,16 +73,16 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
     ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).returns(@offline_session, @online_session)
     ShopifyApp.configuration.post_authenticate_tasks.expects(:perform).with(@online_session)
 
-    ShopifyApp::Auth::TokenExchange.perform(@session_token)
+    ShopifyApp::Auth::TokenExchange.perform(@id_token)
   end
 
   test "#perform logs invalid JWT errors from the API and re-raises them" do
     ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
 
-    ShopifyApp::Logger.expects(:error).with(regexp_matches(/Invalid session token/))
+    ShopifyApp::Logger.expects(:error).with(regexp_matches(/Invalid id token/))
 
     assert_raises ShopifyAPI::Errors::InvalidJwtTokenError do
-      ShopifyApp::Auth::TokenExchange.perform(@session_token)
+      ShopifyApp::Auth::TokenExchange.perform(@id_token)
     end
   end
 
@@ -96,7 +96,7 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
       "during the token exchange. Response: {\"error\":\"oops\"}")
 
     assert_raises ShopifyAPI::Errors::HttpResponseError do
-      ShopifyApp::Auth::TokenExchange.perform(@session_token)
+      ShopifyApp::Auth::TokenExchange.perform(@id_token)
     end
   end
 
@@ -105,13 +105,13 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
 
     ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
       shop: @shop,
-      session_token: @session_token,
+      session_token: @id_token,
       requested_token_type: OFFLINE_ACCESS_TOKEN_TYPE,
     ).returns(@offline_session)
 
     ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
       shop: @shop,
-      session_token: @session_token,
+      session_token: @id_token,
       requested_token_type: ONLINE_ACCESS_TOKEN_TYPE,
     ).returns(@online_session)
 
@@ -120,7 +120,7 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
     ShopifyApp::Logger.stubs(:debug)
     ShopifyApp::Logger.expects(:debug).twice.with("Session not stored due to concurrent token exchange calls")
 
-    new_session = ShopifyApp::Auth::TokenExchange.perform(@session_token)
+    new_session = ShopifyApp::Auth::TokenExchange.perform(@id_token)
 
     assert_equal @online_session, new_session
   end
@@ -131,7 +131,7 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
     ShopifyApp::Logger.expects(:error).with("An error occurred during the token exchange: [RuntimeError] not today!")
 
     assert_raises "not today!" do
-      ShopifyApp::Auth::TokenExchange.perform(@session_token)
+      ShopifyApp::Auth::TokenExchange.perform(@id_token)
     end
   end
 

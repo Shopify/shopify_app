@@ -40,6 +40,9 @@ module ShopifyApp
 
   require "shopify_app/logger"
 
+  # Admin API helpers
+  require "shopify_app/admin_api/with_token_refetch"
+
   # controller concerns
   require "shopify_app/controller_concerns/csrf_protection"
   require "shopify_app/controller_concerns/localization"
