@@ -229,12 +229,12 @@ class MyController < ApplicationController
   include ShopifyApp::EnsureHasSession
 
   def index
-    client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_shopify_session)
     with_token_refetch(current_shopify_session, shopify_id_token) do
       # Unauthorized errors raised within this block will initiate token exchange.
       # `with_token_refetch` will store the new access token and use it
       # to execute this block again.
       # Any subsequent calls using the same session instance will have the new token.
+      client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_shopify_session)
       client.query(options)
     end
   rescue => error
@@ -261,12 +261,12 @@ class MyClass
   include ShopifyApp::AdminAPI::WithTokenRefetch
 
   def do_things(session, shopify_id_token)
-    client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
     with_token_refetch(session, shopify_id_token) do
       # Unauthorized errors raised within this block will initiate token exchange.
       # `with_token_refetch` will store the new access token and use it
       # to execute this block again.
       # Any subsequent calls using the same session instance will have the new token.
+      client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
       client.query(options)
     end
   rescue => error
