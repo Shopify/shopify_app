@@ -3,38 +3,37 @@
 module ShopifyApp
   module TokenExchange
     extend ActiveSupport::Concern
+    include ShopifyApp::AdminAPI::WithTokenRefetch
 
-    def activate_shopify_session
-      if current_shopify_session.blank?
-        retrieve_session_from_token_exchange
-      end
-
-      if ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
-        @current_shopify_session = nil
-        retrieve_session_from_token_exchange
-      end
+    def activate_shopify_session(&block)
+      retrieve_session_from_token_exchange if current_shopify_session.blank? || should_exchange_expired_token?
 
       begin
         ShopifyApp::Logger.debug("Activating Shopify session")
         ShopifyAPI::Context.activate_session(current_shopify_session)
-        yield
+        with_token_refetch(current_shopify_session, shopify_id_token, &block)
       ensure
         ShopifyApp::Logger.debug("Deactivating session")
         ShopifyAPI::Context.deactivate_session
       end
     end
 
-    def current_shopify_session
-      @current_shopify_session ||= begin
-        session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(
-          request.headers["HTTP_AUTHORIZATION"],
-          nil,
-          online_token_configured?,
-        )
-        return nil unless session_id
+    def should_exchange_expired_token?
+      ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
+    end
 
-        ShopifyApp::SessionRepository.load_session(session_id)
-      end
+    def current_shopify_session
+      return unless current_shopify_session_id
+
+      @current_shopify_session ||= ShopifyApp::SessionRepository.load_session(current_shopify_session_id)
+    end
+
+    def current_shopify_session_id
+      @current_shopify_session_id ||= ShopifyAPI::Utils::SessionUtils.current_session_id(
+        request.headers["HTTP_AUTHORIZATION"],
+        nil,
+        online_token_configured?,
+      )
     end
 
     def current_shopify_domain
@@ -46,75 +45,22 @@ module ShopifyApp
     private
 
     def retrieve_session_from_token_exchange
-      # TODO: Right now JWT Middleware only updates env['jwt.shopify_domain'] from request headers tokens,
-      # which won't work for new installs.
-      # we need to update the middleware to also update the env['jwt.shopify_domain'] from the query params
-      domain = ShopifyApp::JWT.new(session_token).shopify_domain
-
-      ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Offline)")
-      session = exchange_token(
-        shop: domain, # TODO: use jwt_shopify_domain ?
-        session_token: session_token,
-        requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN,
-      )
-
-      if session && online_token_configured?
-        ShopifyApp::Logger.info("Performing Token Exchange for [#{domain}] - (Online)")
-        session = exchange_token(
-          shop: domain, # TODO: use jwt_shopify_domain ?
-          session_token: session_token,
-          requested_token_type: ShopifyAPI::Auth::TokenExchange::RequestedTokenType::ONLINE_ACCESS_TOKEN,
-        )
-      end
-
-      ShopifyApp.configuration.post_authenticate_tasks.perform(session)
+      @current_shopify_session = nil
+      ShopifyApp::Auth::TokenExchange.perform(shopify_id_token)
+      # TODO: Rescue JWT validation errors when bounce page is ready
+      # rescue ShopifyAPI::Errors::InvalidJwtTokenError
+      #   respond_to_invalid_shopify_id_token
     end
 
-    def exchange_token(shop:, session_token:, requested_token_type:)
-      if session_token.blank?
-        # respond_to_invalid_session_token
-        return
-      end
-
-      begin
-        session = ShopifyAPI::Auth::TokenExchange.exchange_token(
-          shop: shop,
-          session_token: session_token,
-          requested_token_type: requested_token_type,
-        )
-      rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        # respond_to_invalid_session_token
-        return
-      rescue ShopifyAPI::Errors::HttpResponseError => error
-        ShopifyApp::Logger.error(
-          "A #{error.code} error (#{error.class}) occurred during the token exchange. Response: #{error.response.body}",
-        )
-        raise
-      rescue => error
-        ShopifyApp::Logger.error("An error occurred during the token exchange: #{error.message}")
-        raise
-      end
-
-      if session
-        begin
-          ShopifyApp::SessionRepository.store_session(session)
-        rescue ActiveRecord::RecordNotUnique
-          ShopifyApp::Logger.debug("Session not stored due to concurrent token exchange calls")
-        end
-      end
-
-      session
-    end
-
-    def session_token
-      @session_token ||= id_token_header
+    def shopify_id_token
+      @shopify_id_token ||= id_token_header
     end
 
     def id_token_header
       request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/)&.[](1)
     end
 
-    def respond_to_invalid_session_token
+    def respond_to_invalid_shopify_id_token
       # TODO: Implement this method to handle invalid session tokens
 
       # if request.xhr?
