@@ -3,6 +3,7 @@
 require "test_helper"
 require "action_controller"
 require "action_controller/base"
+require "json"
 
 class ApiClass
   def self.perform; end
@@ -14,6 +15,10 @@ class TokenExchangeController < ActionController::Base
   around_action :activate_shopify_session
 
   def index
+    render(plain: "OK")
+  end
+
+  def reloaded_path
     render(plain: "OK")
   end
 
@@ -178,6 +183,40 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
   end
 
+  [
+    ShopifyAPI::Errors::InvalidJwtTokenError,
+    ShopifyAPI::Errors::CookieNotFoundError,
+  ].each do |invalid_shopify_id_token_error|
+    test "Redirects to bounce page if Shopify ID token is invalid with #{invalid_shopify_id_token_error}" do
+      ShopifyApp.configuration.root_url = "/my-root"
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+      request.headers["HTTP_AUTHORIZATION"] = nil
+
+      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
+      expected_redirect_url = "/my-root/patch_shopify_id_token?my_param=for-keeps&shop=my-shop.myshopify.com"
+      expected_redirect_url += "&shopify-reload=%2Freloaded_path%3Fmy_param%3Dfor-keeps%26shop%3Dmy-shop.myshopify.com"
+
+      with_application_test_routes do
+        get :reloaded_path, params: params
+        assert_redirected_to expected_redirect_url
+      end
+    end
+
+    test "Responds with unauthorized if Shopify Id token is invalid with #{invalid_shopify_id_token_error} and authorization header exists" do
+      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+      request.headers["HTTP_AUTHORIZATION"] = @id_token_in_header
+      expected_response = { errors: [{ message: :unauthorized }] }
+
+      with_application_test_routes do
+        get :make_api_call, params: { shop: @shop }
+
+        assert_response :unauthorized
+        assert_equal expected_response.to_json, response.body
+        assert_equal 1, response.headers["X-Shopify-Retry-Invalid-Session-Request"]
+      end
+    end
+  end
+
   private
 
   def with_application_test_routes
@@ -185,6 +224,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       set.draw do
         get "/" => "token_exchange#index"
         get "/make_api_call" => "token_exchange#make_api_call"
+        get "/reloaded_path" => "token_exchange#reloaded_path"
       end
       yield
     end
