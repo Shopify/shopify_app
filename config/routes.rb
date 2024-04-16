@@ -8,7 +8,7 @@ ShopifyApp::Engine.routes.draw do
     get login_url => :new, :as => :login
     post login_url => :create, :as => :authenticate
     get "logout" => :destroy, :as => :logout
-    get "patch_session_token" => :patch_session_token
+    get "patch_shopify_id_token" => :patch_shopify_id_token
 
     # Kept to prevent apps relying on these routes from breaking
     if login_url.gsub(%r{^/}, "") != "login"

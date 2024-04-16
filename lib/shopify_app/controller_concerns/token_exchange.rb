@@ -75,16 +75,16 @@ module ShopifyApp
     end
 
     def redirect_to_bounce_page
-      patch_session_token_url = "#{ShopifyApp.configuration.root_url}/patch_session_token"
-      patch_session_token_params = request.query_parameters.except(:id_token)
+      patch_shopify_id_token_url = "#{ShopifyApp.configuration.root_url}/patch_shopify_id_token"
+      patch_shopify_id_token_params = request.query_parameters.except(:id_token)
 
-      bounce_url = "#{request.path}?#{patch_session_token_params.to_query}"
+      bounce_url = "#{request.path}?#{patch_shopify_id_token_params.to_query}"
 
       # App Bridge will trigger a fetch to the URL in shopify-reload, with a new session token in headers
-      patch_session_token_params["shopify-reload"] = bounce_url
+      patch_shopify_id_token_params["shopify-reload"] = bounce_url
 
       redirect_to(
-        "#{patch_session_token_url}?#{patch_session_token_params.to_query}",
+        "#{patch_shopify_id_token_url}?#{patch_shopify_id_token_params.to_query}",
         allow_other_host: true,
       )
     end

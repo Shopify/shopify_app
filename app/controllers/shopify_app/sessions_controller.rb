@@ -7,7 +7,7 @@ module ShopifyApp
 
     layout false, only: :new
 
-    after_action only: [:new, :create, :patch_session_token] do |controller|
+    after_action only: [:new, :create, :patch_shopify_id_token] do |controller|
       controller.response.headers.except!("X-Frame-Options")
     end
 
@@ -19,7 +19,7 @@ module ShopifyApp
       authenticate
     end
 
-    def patch_session_token
+    def patch_shopify_id_token
       render(layout: "shopify_app/layouts/app_bridge")
     end
 
