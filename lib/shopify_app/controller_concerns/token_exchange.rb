@@ -13,7 +13,8 @@ module ShopifyApp
     def activate_shopify_session(&block)
       begin
         retrieve_session_from_token_exchange if current_shopify_session.blank? || should_exchange_expired_token?
-      rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS
+      rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
+        ShopifyApp::Logger.debug("Responding to invalid Shopify ID token: #{e.message}")
         return respond_to_invalid_shopify_id_token
       end
 
@@ -69,12 +70,14 @@ module ShopifyApp
     def respond_to_invalid_shopify_id_token
       return redirect_to_bounce_page if request.headers["HTTP_AUTHORIZATION"].blank?
 
+      ShopifyApp::Logger.debug("Responding to invalid Shopify ID token with unauthorized response")
       response.set_header("X-Shopify-Retry-Invalid-Session-Request", 1)
       unauthorized_response = { message: :unauthorized }
       render(json: { errors: [unauthorized_response] }, status: :unauthorized)
     end
 
     def redirect_to_bounce_page
+      ShopifyApp::Logger.debug("Redirecting to bounce page for patching Shopify ID token")
       patch_shopify_id_token_url = "#{ShopifyApp.configuration.root_url}/patch_shopify_id_token"
       patch_shopify_id_token_params = request.query_parameters.except(:id_token)
 
