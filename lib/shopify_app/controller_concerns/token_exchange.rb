@@ -6,7 +6,7 @@ module ShopifyApp
     include ShopifyApp::AdminAPI::WithTokenRefetch
 
     INVALID_SHOPIFY_ID_TOKEN_ERRORS = [
-      ShopifyAPI::Errors::CookieNotFoundError,
+      ShopifyAPI::Errors::MissingJwtTokenError,
       ShopifyAPI::Errors::InvalidJwtTokenError,
     ].freeze
 
@@ -39,10 +39,9 @@ module ShopifyApp
     end
 
     def current_shopify_session_id
-      @current_shopify_session_id ||= ShopifyAPI::Utils::SessionUtils.current_session_id(
-        request.headers["HTTP_AUTHORIZATION"],
-        nil,
-        online_token_configured?,
+      @current_shopify_session_id ||= ShopifyAPI::Utils::SessionUtils.session_id_from_shopify_id_token(
+        id_token: shopify_id_token,
+        online: online_token_configured?,
       )
     end
 
