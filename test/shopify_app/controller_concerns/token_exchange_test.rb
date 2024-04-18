@@ -193,8 +193,10 @@ class TokenExchangeControllerTest < ActionController::TestCase
       request.headers["HTTP_AUTHORIZATION"] = nil
 
       params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
-      expected_redirect_url = "/my-root/patch_shopify_id_token?my_param=for-keeps&shop=my-shop.myshopify.com"
-      expected_redirect_url += "&shopify-reload=%2Freloaded_path%3Fmy_param%3Dfor-keeps%26shop%3Dmy-shop.myshopify.com"
+      reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
+      expected_redirect_url = "/my-root/patch_shopify_id_token"\
+        "?my_param=for-keeps&shop=#{@shop}"\
+        "&shopify-reload=#{reload_url}"
 
       with_application_test_routes do
         get :reloaded_path, params: params
