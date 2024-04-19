@@ -34,11 +34,14 @@ module ShopifyApp
     end
 
     def set_env_variables(token, env)
-      jwt = ShopifyApp::JWT.new(token)
+      jwt = ShopifyAPI::Auth::JwtPayload.new(token)
 
-      env["jwt.shopify_domain"] = jwt.shopify_domain
-      env["jwt.shopify_user_id"] = jwt.shopify_user_id
-      env["jwt.expire_at"] = jwt.expire_at
+      env["jwt.shopify_domain"] = jwt.shop
+      env["jwt.shopify_user_id"] = jwt.sub.to_i
+      env["jwt.expire_at"] = jwt.exp
+    rescue ShopifyAPI::Errors::InvalidJwtTokenError
+      # ShopifyApp::JWT did not raise any exceptions, ensuring behaviour does not change
+      nil
     end
   end
 end
