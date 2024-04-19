@@ -13,6 +13,7 @@ module ShopifyApp
     ]
 
     def initialize(token)
+      warn_deprecation
       @token = token
       set_payload
     end
@@ -59,6 +60,14 @@ module ShopifyApp
         "'dest' claim host does not match 'iss' claim host" unless dest_host == iss_host
 
       payload
+    end
+
+    def warn_deprecation
+      message = <<~EOS
+        "ShopifyApp::JWT will be deprecated, use ShopifyAPI::Auth::JwtPayload to parse JWT token instead."
+      EOS
+
+      ShopifyApp::Logger.deprecated(message, "23.0.0")
     end
   end
 end

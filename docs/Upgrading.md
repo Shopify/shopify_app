@@ -51,6 +51,10 @@ If you have overwritten these methods in your callback controller to modify the 
 update your app to use configurable option `config.custom_post_authenticate_tasks` instead. See [post authenticate tasks](/docs/shopify_app/authentication.md#post-authenticate-tasks)
 for more information.
 
+#### (v23.0.0) - Deprecated "ShopifyApp::JWT" class
+The `ShopifyApp::JWT` class has been deprecated in `v23.0.0`. Use [ShopifyAPI::Auth::JwtPayload](https://github.com/Shopify/shopify-api-ruby/blob/main/lib/shopify_api/auth/jwt_payload.rb)
+class from the `shopify_api` gem instead.
+
 ## Upgrading to `v22.0.0`
 #### Dropped support for Ruby 2.x
 Support for Ruby 2.x has been dropped as it is no longer supported. You'll need to upgrade to 3.x.x
