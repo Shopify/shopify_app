@@ -11,21 +11,17 @@ module ShopifyApp
     ].freeze
 
     def activate_shopify_session(&block)
-      begin
-        retrieve_session_from_token_exchange if current_shopify_session.blank? || should_exchange_expired_token?
-      rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
-        ShopifyApp::Logger.debug("Responding to invalid Shopify ID token: #{e.message}")
-        return respond_to_invalid_shopify_id_token
-      end
+      retrieve_session_from_token_exchange if current_shopify_session.blank? || should_exchange_expired_token?
 
-      begin
-        ShopifyApp::Logger.debug("Activating Shopify session")
-        ShopifyAPI::Context.activate_session(current_shopify_session)
-        with_token_refetch(current_shopify_session, shopify_id_token, &block)
-      ensure
-        ShopifyApp::Logger.debug("Deactivating session")
-        ShopifyAPI::Context.deactivate_session
-      end
+      ShopifyApp::Logger.debug("Activating Shopify session")
+      ShopifyAPI::Context.activate_session(current_shopify_session)
+      with_token_refetch(current_shopify_session, shopify_id_token, &block)
+    rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
+      ShopifyApp::Logger.debug("Responding to invalid Shopify ID token: #{e.message}")
+      respond_to_invalid_shopify_id_token unless performed?
+    ensure
+      ShopifyApp::Logger.debug("Deactivating session")
+      ShopifyAPI::Context.deactivate_session
     end
 
     def should_exchange_expired_token?
