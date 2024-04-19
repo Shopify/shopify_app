@@ -35,7 +35,20 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     @jwt_payload = ShopifyAPI::Auth::JwtPayload.new(@jwt_token)
   end
 
-  test "does not change env if no authorization header" do
+  test "does not parse JWT unless it's an embedded app" do
+    ShopifyApp.configuration.stubs(:embedded_app?).returns(false)
+
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = @auth_header
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).never
+
+    _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
+
+    assert_equal "", body
+  end
+
+  test "does not change env if no authorization header or id_token param" do
     env = Rack::MockRequest.env_for
 
     ShopifyAPI::Auth::JwtPayload.expects(:new).never
@@ -56,16 +69,24 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     assert_nil env["jwt.shopify_domain"]
   end
 
-  test "sets env values if JWT parses successfully" do
+  test "accepts JWT from URL id_token param and sets env" do
+    env = Rack::MockRequest.env_for("https://example.com/?shop=#{@shop}&id_token=#{@jwt_token}")
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
+
+    app.call(env)
+
+    assert_envs_are_set(env)
+  end
+
+  test "accepts JWT from authorization header and sets env" do
     env = Rack::MockRequest.env_for
     env["HTTP_AUTHORIZATION"] = @auth_header
     ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
 
     app.call(env)
 
-    assert_equal @shop, env["jwt.shopify_domain"]
-    assert_equal @user_id, env["jwt.shopify_user_id"]
-    assert_equal @expire_at, env["jwt.expire_at"]
+    assert_envs_are_set(env)
   end
 
   test "sets the jwt values before calling the next middleware" do
@@ -74,7 +95,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
 
-    assert_equal "test-shop.myshopify.io", body
+    assert_equal @shop, body
   end
 
   test "does not set env or raise exception if JWT parsing fails" do
@@ -85,9 +106,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     assert_nothing_raised { app.call(env) }
 
-    assert_nil env["jwt.shopify_domain"]
-    assert_nil env["jwt.shopify_user_id"]
-    assert_nil env["jwt.expire_at"]
+    assert_envs_are_nil(env)
   end
 
   test "calls the next middleware even if JWT parsing fails" do
@@ -99,5 +118,19 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
 
     assert_equal "", body
+  end
+
+  private
+
+  def assert_envs_are_set(env)
+    assert_equal @shop, env["jwt.shopify_domain"]
+    assert_equal @user_id, env["jwt.shopify_user_id"]
+    assert_equal @expire_at, env["jwt.expire_at"]
+  end
+
+  def assert_envs_are_nil(env)
+    assert_nil env["jwt.shopify_domain"]
+    assert_nil env["jwt.shopify_user_id"]
+    assert_nil env["jwt.expire_at"]
   end
 end

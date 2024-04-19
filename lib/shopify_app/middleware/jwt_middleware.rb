@@ -3,15 +3,16 @@
 module ShopifyApp
   class JWTMiddleware
     TOKEN_REGEX = /^Bearer\s+(.*?)$/
+    ID_TOKEN_QUERY_PARAM = "id_token"
 
     def initialize(app)
       @app = app
     end
 
     def call(env)
-      return call_next(env) unless authorization_header(env)
+      return call_next(env) unless ShopifyApp.configuration.embedded_app?
 
-      token = extract_token(env)
+      token = token_from_query_string(env) || token_from_authorization_header(env)
       return call_next(env) unless token
 
       set_env_variables(token, env)
@@ -24,13 +25,16 @@ module ShopifyApp
       @app.call(env)
     end
 
-    def authorization_header(env)
-      env["HTTP_AUTHORIZATION"]
+    def token_from_authorization_header(env)
+      auth_header = env["HTTP_AUTHORIZATION"]
+      return unless auth_header
+
+      match = auth_header.match(TOKEN_REGEX)
+      match && match[1]
     end
 
-    def extract_token(env)
-      match = authorization_header(env).match(TOKEN_REGEX)
-      match && match[1]
+    def token_from_query_string(env)
+      Rack::Utils.parse_nested_query(env["QUERY_STRING"])[ID_TOKEN_QUERY_PARAM]
     end
 
     def set_env_variables(token, env)
