@@ -17,8 +17,13 @@ class ShopifyAppConfigurer
       config.embedded_redirect_url = nil
 
       config.shop_session_repository = ShopifyApp::InMemorySessionStore
+      config.user_session_repository = nil
       config.after_authenticate_job = false
       config.reauth_on_access_scope_changes = true
+      config.root_url = "/"
+      config.wip_new_embedded_auth_strategy = false
+      config.check_session_expiry_date = false
+      config.custom_post_authenticate_tasks = nil
     end
 
     setup_context

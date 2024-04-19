@@ -25,6 +25,10 @@ class SessionsRoutesTest < ActionController::TestCase
     assert_routing "/logout", { controller: "shopify_app/sessions", action: "destroy" }
   end
 
+  test "patch_shopify_id_token routes to sessions#patch_shopify_id_token" do
+    assert_routing "/patch_shopify_id_token", { controller: "shopify_app/sessions", action: "patch_shopify_id_token" }
+  end
+
   test "login route doesn't change with custom root URL because it is in an engine" do
     ShopifyApp.configuration.root_url = "/new-root"
     Rails.application.reload_routes!

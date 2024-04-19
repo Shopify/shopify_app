@@ -402,6 +402,11 @@ module ShopifyApp
       end
     end
 
+    test "#patch_shopify_id_token renders the app bridge layout" do
+      get :patch_shopify_id_token, params: { shop: "my-shop" }
+      assert_template "shopify_app/layouts/app_bridge"
+    end
+
     private
 
     def assert_redirected_to_top_level(shop_domain, expected_url = nil)
