@@ -56,6 +56,7 @@ module ShopifyApp
   require "shopify_app/controller_concerns/app_proxy_verification"
   require "shopify_app/controller_concerns/webhook_verification"
   require "shopify_app/controller_concerns/token_exchange"
+  require "shopify_app/controller_concerns/with_shopify_id_token"
 
   # Auth helpers
   require "shopify_app/auth/post_authenticate_tasks"
