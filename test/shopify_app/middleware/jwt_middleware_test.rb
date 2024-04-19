@@ -126,6 +126,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     assert_equal @shop, env["jwt.shopify_domain"]
     assert_equal @user_id, env["jwt.shopify_user_id"]
     assert_equal @expire_at, env["jwt.expire_at"]
+    assert_equal @jwt_token, env["jwt.token"]
   end
 
   def assert_envs_are_nil(env)

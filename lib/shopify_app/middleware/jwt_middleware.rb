@@ -40,6 +40,7 @@ module ShopifyApp
     def set_env_variables(token, env)
       jwt = ShopifyAPI::Auth::JwtPayload.new(token)
 
+      env["jwt.token"] = token
       env["jwt.shopify_domain"] = jwt.shop
       env["jwt.shopify_user_id"] = jwt.sub.to_i
       env["jwt.expire_at"] = jwt.exp
