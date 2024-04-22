@@ -2,7 +2,7 @@
 
 module ShopifyApp
   class JWTMiddleware
-    TOKEN_REGEX = /^Bearer\s+(.*?)$/
+    TOKEN_REGEX = /^Bearer (.+)$/
     ID_TOKEN_QUERY_PARAM = "id_token"
 
     def initialize(app)
