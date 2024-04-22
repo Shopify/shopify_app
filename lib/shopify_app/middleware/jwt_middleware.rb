@@ -12,7 +12,7 @@ module ShopifyApp
     def call(env)
       return call_next(env) unless ShopifyApp.configuration.embedded_app?
 
-      token = token_from_query_string(env) || token_from_authorization_header(env)
+      token = token_from_authorization_header(env) || token_from_query_string(env)
       return call_next(env) unless token
 
       set_env_variables(token, env)
@@ -26,11 +26,7 @@ module ShopifyApp
     end
 
     def token_from_authorization_header(env)
-      auth_header = env["HTTP_AUTHORIZATION"]
-      return unless auth_header
-
-      match = auth_header.match(TOKEN_REGEX)
-      match && match[1]
+      env["HTTP_AUTHORIZATION"]&.match(TOKEN_REGEX)&.[](1)
     end
 
     def token_from_query_string(env)
@@ -41,9 +37,9 @@ module ShopifyApp
       jwt = ShopifyAPI::Auth::JwtPayload.new(token)
 
       env["jwt.token"] = token
-      env["jwt.shopify_domain"] = jwt.shop
-      env["jwt.shopify_user_id"] = jwt.sub.to_i
-      env["jwt.expire_at"] = jwt.exp
+      env["jwt.shopify_domain"] = jwt.shopify_domain
+      env["jwt.shopify_user_id"] = jwt.shopify_user_id
+      env["jwt.expire_at"] = jwt.expire_at
     rescue ShopifyAPI::Errors::InvalidJwtTokenError
       # ShopifyApp::JWT did not raise any exceptions, ensuring behaviour does not change
       nil

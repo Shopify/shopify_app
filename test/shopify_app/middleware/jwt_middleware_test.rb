@@ -55,7 +55,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     app.call(env)
 
-    assert_nil env["jwt.shopify_domain"]
+    assert_envs_are_nil(env)
   end
 
   test "does not change env if no bearer token" do
@@ -66,7 +66,7 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
 
     app.call(env)
 
-    assert_nil env["jwt.shopify_domain"]
+    assert_envs_are_nil(env)
   end
 
   test "accepts JWT from URL id_token param and sets env" do
@@ -82,6 +82,17 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
   test "accepts JWT from authorization header and sets env" do
     env = Rack::MockRequest.env_for
     env["HTTP_AUTHORIZATION"] = @auth_header
+    ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
+
+    app.call(env)
+
+    assert_envs_are_set(env)
+  end
+
+  test "accepts JWT from authorization header in priority than JWT from URL param" do
+    env = Rack::MockRequest.env_for("https://example.com/?shop=#{@shop}&id_token=should-not-be-used")
+    env["HTTP_AUTHORIZATION"] = @auth_header
+
     ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
 
     app.call(env)
