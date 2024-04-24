@@ -27,11 +27,15 @@ module ShopifyApp
 
       unless has_payment
         if request.xhr?
-          add_top_level_redirection_headers(url: confirmation_url, ignore_response_code: true)
           ShopifyApp::Logger.debug("Responding with 401 unauthorized")
+          RedirectForEmbedded.add_app_bridge_redirect_url_header(confirmation_url, response)
           head(:unauthorized)
         elsif ShopifyApp.configuration.embedded_app?
-          fullpage_redirect_to(confirmation_url)
+          render(
+            "shopify_app/shared/redirect",
+            layout: false,
+            locals: { url: confirmation_url, current_shopify_domain: session&.shop },
+          )
         else
           redirect_to(confirmation_url, allow_other_host: true)
         end

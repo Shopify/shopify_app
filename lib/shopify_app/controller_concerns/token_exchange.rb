@@ -4,6 +4,7 @@ module ShopifyApp
   module TokenExchange
     extend ActiveSupport::Concern
     include ShopifyApp::AdminAPI::WithTokenRefetch
+    include ShopifyApp::SanitizedParams
 
     included do
       include ShopifyApp::WithShopifyIdToken
@@ -46,9 +47,7 @@ module ShopifyApp
     end
 
     def current_shopify_domain
-      return if params[:shop].blank?
-
-      ShopifyApp::Utils.sanitize_shop_domain(params[:shop])
+      sanitized_shop_name || current_shopify_session&.shop
     end
 
     private
@@ -69,7 +68,8 @@ module ShopifyApp
 
     def redirect_to_bounce_page
       ShopifyApp::Logger.debug("Redirecting to bounce page for patching Shopify ID token")
-      patch_shopify_id_token_url = "#{ShopifyApp.configuration.root_url}/patch_shopify_id_token"
+      patch_shopify_id_token_url =
+        "#{ShopifyAPI::Context.host}#{ShopifyApp.configuration.root_url}/patch_shopify_id_token"
       patch_shopify_id_token_params = request.query_parameters.except(:id_token)
 
       bounce_url = "#{request.path}?#{patch_shopify_id_token_params.to_query}"
@@ -85,6 +85,16 @@ module ShopifyApp
 
     def online_token_configured?
       ShopifyApp.configuration.online_token_configured?
+    end
+
+    def fullpage_redirect_to(url)
+      raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+
+      render(
+        "shopify_app/shared/redirect",
+        layout: false,
+        locals: { url: url, current_shopify_domain: current_shopify_domain },
+      )
     end
   end
 end

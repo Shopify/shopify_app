@@ -210,7 +210,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
       params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
       reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
-      expected_redirect_url = "/my-root/patch_shopify_id_token"\
+      expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
         "?my_param=for-keeps&shop=#{@shop}"\
         "&shopify-reload=#{reload_url}"
 
@@ -242,7 +242,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
       params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
       reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
-      expected_redirect_url = "/my-root/patch_shopify_id_token"\
+      expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
         "?my_param=for-keeps&shop=#{@shop}"\
         "&shopify-reload=#{reload_url}"
 
@@ -277,7 +277,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
       params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
       reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
-      expected_redirect_url = "/my-root/patch_shopify_id_token"\
+      expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
         "?my_param=for-keeps&shop=#{@shop}"\
         "&shopify-reload=#{reload_url}"
 
