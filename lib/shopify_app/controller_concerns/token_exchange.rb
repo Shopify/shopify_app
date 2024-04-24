@@ -5,8 +5,12 @@ module ShopifyApp
     extend ActiveSupport::Concern
     include ShopifyApp::AdminAPI::WithTokenRefetch
 
+    included do
+      include ShopifyApp::WithShopifyIdToken
+    end
+
     INVALID_SHOPIFY_ID_TOKEN_ERRORS = [
-      ShopifyAPI::Errors::CookieNotFoundError,
+      ShopifyAPI::Errors::MissingJwtTokenError,
       ShopifyAPI::Errors::InvalidJwtTokenError,
     ].freeze
 
@@ -35,10 +39,9 @@ module ShopifyApp
     end
 
     def current_shopify_session_id
-      @current_shopify_session_id ||= ShopifyAPI::Utils::SessionUtils.current_session_id(
-        request.headers["HTTP_AUTHORIZATION"],
-        nil,
-        online_token_configured?,
+      @current_shopify_session_id ||= ShopifyAPI::Utils::SessionUtils.session_id_from_shopify_id_token(
+        id_token: shopify_id_token,
+        online: online_token_configured?,
       )
     end
 
@@ -53,14 +56,6 @@ module ShopifyApp
     def retrieve_session_from_token_exchange
       @current_shopify_session = nil
       ShopifyApp::Auth::TokenExchange.perform(shopify_id_token)
-    end
-
-    def shopify_id_token
-      @shopify_id_token ||= id_token_header
-    end
-
-    def id_token_header
-      request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/)&.[](1)
     end
 
     def respond_to_invalid_shopify_id_token

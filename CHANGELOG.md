@@ -1,5 +1,13 @@
 Unreleased
 ----------
+* Bumps `shopify_api` to `14.3.0` [1832](https://github.com/Shopify/shopify_app/pull/1832)
+* Support `id_token` from URL param [1832](https://github.com/Shopify/shopify_app/pull/1832)
+  * Extracted controller concern `WithShopifyIdToken`
+      * This concern provides a method `shopify_id_token` to retrieve the Shopify Id token from either the authorization header or the URL param `id_token`.
+  * `ShopifyApp::JWTMiddleware` supports retrieving session token from URL param `id_token`
+  * `ShopifyApp::JWTMiddleware` returns early if the app is not embedded to avoid unnecessary JWT verification
+  * `LoginProtection` now uses `WithShopifyIdToken` concern to retrieve the Shopify Id token, thus accepting the session token from the URL param `id_token`
+* Marking `ShopifyApp::JWT` to be deprecated in version 23.0.0 [1832](https://github.com/Shopify/shopify_app/pull/1832), use `ShopifyAPI::Auth::JwtPayload` instead.
 
 22.1.0 (April 9,2024)
 ----------

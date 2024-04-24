@@ -14,7 +14,7 @@ module ShopifyApp
       end
 
       def perform
-        domain = ShopifyApp::JWT.new(id_token).shopify_domain
+        domain = ShopifyAPI::Auth::JwtPayload.new(id_token).shopify_domain
 
         Logger.info("Performing Token Exchange for [#{domain}] - (Offline)")
         session = exchange_token(

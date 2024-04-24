@@ -43,8 +43,6 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
   setup do
     @shop = "my-shop.myshopify.com"
-    ShopifyApp::JWT.any_instance.stubs(:shopify_domain).returns(@shop)
-
     @id_token = "this-is-an-id-token"
     @id_token_in_header = "Bearer #{@id_token}"
     request.headers["HTTP_AUTHORIZATION"] = @id_token_in_header
@@ -79,10 +77,9 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
   test "Exchanges token when session doesn't exist" do
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
-        @id_token_in_header,
-        nil,
-        false,
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
       ).returns(nil, @offline_session_id)
 
       ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token) do
@@ -95,14 +92,31 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
   end
 
+  test "Exchanges token with id_token from URL param when auth header doesn't exist" do
+    request.headers["HTTP_AUTHORIZATION"] = nil
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(nil, @offline_session_id)
+
+      ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token) do
+        ShopifyApp::SessionRepository.store_session(@offline_session)
+      end
+
+      ShopifyAPI::Context.expects(:activate_session).with(@offline_session)
+
+      get :index, params: { shop: @shop, id_token: @id_token }
+    end
+  end
+
   test "Use existing shop session if it exists" do
     ShopifyApp::SessionRepository.store_shop_session(@offline_session)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
-        @id_token_in_header,
-        nil,
-        false,
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
       ).returns(@offline_session_id)
 
       ShopifyApp::Auth::TokenExchange.expects(:perform).never
@@ -118,10 +132,9 @@ class TokenExchangeControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.store_user_session(@online_session, @user)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
-        @id_token_in_header,
-        nil,
-        true,
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: true,
       ).returns(@online_session_id)
 
       ShopifyApp::Auth::TokenExchange.expects(:perform).never
@@ -138,10 +151,9 @@ class TokenExchangeControllerTest < ActionController::TestCase
     @online_session.stubs(:expired?).returns(true)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
-        @id_token_in_header,
-        nil,
-        true,
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: true,
       ).returns(@online_session_id)
 
       ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token) do
@@ -162,10 +174,9 @@ class TokenExchangeControllerTest < ActionController::TestCase
     @online_session.stubs(:expired?).returns(true)
 
     with_application_test_routes do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).with(
-        @id_token_in_header,
-        nil,
-        true,
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: true,
       ).returns(@online_session_id)
 
       ShopifyApp::Auth::TokenExchange.expects(:perform).never
@@ -178,7 +189,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
   test "Wraps action in with_token_refetch" do
     ShopifyApp::SessionRepository.store_shop_session(@offline_session)
-    ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+    ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(@offline_session_id)
 
     ApiClass.expects(:perform)
     @controller.expects(:with_token_refetch).yields
@@ -190,11 +201,11 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
   [
     ShopifyAPI::Errors::InvalidJwtTokenError,
-    ShopifyAPI::Errors::CookieNotFoundError,
+    ShopifyAPI::Errors::MissingJwtTokenError,
   ].each do |invalid_shopify_id_token_error|
     test "Redirects to bounce page if Shopify ID token is invalid with #{invalid_shopify_id_token_error}" do
       ShopifyApp.configuration.root_url = "/my-root"
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).raises(invalid_shopify_id_token_error)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
       params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
@@ -210,7 +221,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
 
     test "Responds with unauthorized if Shopify Id token is invalid with #{invalid_shopify_id_token_error} and authorization header exists" do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).raises(invalid_shopify_id_token_error)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
       request.headers["HTTP_AUTHORIZATION"] = @id_token_in_header
       expected_response = { errors: [{ message: :unauthorized }] }
 
@@ -225,7 +236,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
     test "Redirects to bounce page from Token Exchange if Shopify ID token is invalid with #{invalid_shopify_id_token_error}" do
       ShopifyApp.configuration.root_url = "/my-root"
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil, @offline_session_id)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(nil, @offline_session_id)
       ShopifyApp::Auth::TokenExchange.expects(:perform).raises(invalid_shopify_id_token_error)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
@@ -242,7 +253,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
 
     test "Responds with unauthorized from Token Exchange if Shopify Id token is invalid with #{invalid_shopify_id_token_error} and authorization header exists" do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil, @offline_session_id)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(nil, @offline_session_id)
       ShopifyApp::Auth::TokenExchange.expects(:perform).raises(invalid_shopify_id_token_error)
 
       expected_response = { errors: [{ message: :unauthorized }] }
@@ -258,7 +269,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
     test "Redirects to bounce page from with_token_refetch if Shopify ID token is invalid with #{invalid_shopify_id_token_error}" do
       ShopifyApp.configuration.root_url = "/my-root"
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(@offline_session_id)
       ShopifyApp::Auth::TokenExchange.stubs(:perform)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
@@ -277,7 +288,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
 
     test "Responds with unauthorized from with_token_refetch if Shopify Id token is invalid with #{invalid_shopify_id_token_error} and authorization header exists" do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(@offline_session_id)
       ShopifyApp::Auth::TokenExchange.stubs(:perform)
       expected_response = { errors: [{ message: :unauthorized }] }
 
@@ -293,7 +304,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
 
     test "Does not redirect to bounce page if redirect/response has been performed already - #{invalid_shopify_id_token_error}" do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(@offline_session_id)
       ShopifyApp::Auth::TokenExchange.stubs(:perform)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
@@ -307,7 +318,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
 
     test "Does not respond 401 if redirect/response has been performed already - #{invalid_shopify_id_token_error}" do
-      ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(@offline_session_id)
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(@offline_session_id)
       ShopifyApp::Auth::TokenExchange.stubs(:perform)
 
       @controller.expects(:with_token_refetch).raises(invalid_shopify_id_token_error)
