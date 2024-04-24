@@ -53,7 +53,9 @@ for more information.
 
 #### (v23.0.0) - Deprecated "ShopifyApp::JWT" class
 The `ShopifyApp::JWT` class has been deprecated in `v23.0.0`. Use [ShopifyAPI::Auth::JwtPayload](https://github.com/Shopify/shopify-api-ruby/blob/main/lib/shopify_api/auth/jwt_payload.rb)
-class from the `shopify_api` gem instead.
+class from the `shopify_api` gem instead. A search and replace should be enough for this migration.
+  - `ShopifyAPI::Auth::JwtPayload` is a superset of the `ShopifyApp::JWT` class, and contains methods that were available in `ShopifyApp::JWT`. 
+  - `ShopifyAPI::Auth::JwtPayload` raises `ShopifyAPI::Errors::InvalidJwtTokenError` if the token is invalid.
 
 ## Upgrading to `v22.0.0`
 #### Dropped support for Ruby 2.x
