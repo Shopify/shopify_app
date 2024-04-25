@@ -58,12 +58,18 @@ module ShopifyApp
     end
 
     def respond_to_invalid_shopify_id_token
-      return redirect_to_bounce_page if request.headers["HTTP_AUTHORIZATION"].blank?
-
-      ShopifyApp::Logger.debug("Responding to invalid Shopify ID token with unauthorized response")
-      response.set_header("X-Shopify-Retry-Invalid-Session-Request", 1)
-      unauthorized_response = { message: :unauthorized }
-      render(json: { errors: [unauthorized_response] }, status: :unauthorized)
+      if request.headers["HTTP_AUTHORIZATION"].blank?
+        if missing_embedded_param?
+          redirect_to_embed_app
+        else
+          redirect_to_bounce_page
+        end
+      else
+        ShopifyApp::Logger.debug("Responding to invalid Shopify ID token with unauthorized response")
+        response.set_header("X-Shopify-Retry-Invalid-Session-Request", 1)
+        unauthorized_response = { message: :unauthorized }
+        render(json: { errors: [unauthorized_response] }, status: :unauthorized)
+      end
     end
 
     def redirect_to_bounce_page
@@ -83,12 +89,30 @@ module ShopifyApp
       )
     end
 
+    def missing_embedded_param?
+      !params[:embedded].present? || params[:embedded] != "1"
+    end
+
+    def redirect_to_embed_app
+      ShopifyApp::Logger.debug("Redirecting to embed app")
+
+      host = if params[:host]
+        params[:host]
+      elsif params[:shop]
+        Base64.encode64("#{sanitized_shop_name}/admin")
+      else
+        raise ShopifyApp::ShopifyDomainNotFound, "Host or shop param is missing"
+      end
+
+      redirect_to(ShopifyAPI::Auth.embedded_app_url(host), allow_other_host: true)
+    end
+
     def online_token_configured?
       ShopifyApp.configuration.online_token_configured?
     end
 
     def fullpage_redirect_to(url)
-      raise ::ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
+      raise ShopifyApp::ShopifyDomainNotFound if current_shopify_domain.nil?
 
       render(
         "shopify_app/shared/redirect",

@@ -208,15 +208,56 @@ class TokenExchangeControllerTest < ActionController::TestCase
       ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
-      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
-      reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
+      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token", embedded: "1" }
+      reload_url = CGI.escape("/reloaded_path?embedded=1&my_param=for-keeps&shop=#{@shop}")
       expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
-        "?my_param=for-keeps&shop=#{@shop}"\
+        "?embedded=1&my_param=for-keeps&shop=#{@shop}"\
         "&shopify-reload=#{reload_url}"
 
       with_application_test_routes do
         get :reloaded_path, params: params
         assert_redirected_to expected_redirect_url
+      end
+    end
+
+    test "Redirects to embed app if Shopify ID token is invalid with #{invalid_shopify_id_token_error} and embedded param is missing" do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
+      request.headers["HTTP_AUTHORIZATION"] = nil
+
+      host = Base64.encode64("#{@shop}/admin")
+      params = { shop: @shop, host: host }
+
+      expected_redirect_url = "https://my-shop.myshopify.com/admin/apps/key"
+
+      with_application_test_routes do
+        get :index, params: params
+        assert_redirected_to expected_redirect_url
+      end
+    end
+
+    test "Redirects to embed app if Shopify ID token is invalid with #{invalid_shopify_id_token_error} and embedded and host params are missing" do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
+      request.headers["HTTP_AUTHORIZATION"] = nil
+
+      params = { shop: @shop }
+
+      expected_redirect_url = "https://my-shop.myshopify.com/admin/apps/key"
+
+      with_application_test_routes do
+        get :index, params: params
+        assert_redirected_to expected_redirect_url
+      end
+    end
+
+    test "Raise domain not found error when trying to embed app with missing shop and host params - #{invalid_shopify_id_token_error}" do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
+      request.headers["HTTP_AUTHORIZATION"] = nil
+
+      with_application_test_routes do
+        error = assert_raises(ShopifyApp::ShopifyDomainNotFound) do
+          get :index
+        end
+        assert_equal "Host or shop param is missing", error.message
       end
     end
 
@@ -240,10 +281,10 @@ class TokenExchangeControllerTest < ActionController::TestCase
       ShopifyApp::Auth::TokenExchange.expects(:perform).raises(invalid_shopify_id_token_error)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
-      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
-      reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
+      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token", embedded: "1" }
+      reload_url = CGI.escape("/reloaded_path?embedded=1&my_param=for-keeps&shop=#{@shop}")
       expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
-        "?my_param=for-keeps&shop=#{@shop}"\
+        "?embedded=1&my_param=for-keeps&shop=#{@shop}"\
         "&shopify-reload=#{reload_url}"
 
       with_application_test_routes do
@@ -275,10 +316,10 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
       @controller.expects(:with_token_refetch).raises(invalid_shopify_id_token_error)
 
-      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token" }
-      reload_url = CGI.escape("/reloaded_path?my_param=for-keeps&shop=#{@shop}")
+      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token", embedded: "1" }
+      reload_url = CGI.escape("/reloaded_path?embedded=1&my_param=for-keeps&shop=#{@shop}")
       expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
-        "?my_param=for-keeps&shop=#{@shop}"\
+        "?embedded=1&my_param=for-keeps&shop=#{@shop}"\
         "&shopify-reload=#{reload_url}"
 
       with_application_test_routes do
