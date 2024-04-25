@@ -27,15 +27,11 @@ module ShopifyApp
 
       unless has_payment
         if request.xhr?
-          ShopifyApp::Logger.debug("Responding with 401 unauthorized")
           RedirectForEmbedded.add_app_bridge_redirect_url_header(confirmation_url, response)
+          ShopifyApp::Logger.debug("Responding with 401 unauthorized")
           head(:unauthorized)
         elsif ShopifyApp.configuration.embedded_app?
-          render(
-            "shopify_app/shared/redirect",
-            layout: false,
-            locals: { url: confirmation_url, current_shopify_domain: session&.shop },
-          )
+          fullpage_redirect_to(confirmation_url)
         else
           redirect_to(confirmation_url, allow_other_host: true)
         end
@@ -49,8 +45,16 @@ module ShopifyApp
     end
 
     def handle_billing_error(error)
-      logger.info("#{error.message}: #{error.errors}")
-      redirect_to_login
+      ShopifyApp::Logger.warn("Encountered billing error - #{error.message}: #{error.errors}\n" \
+        "Redirecting to login page")
+
+      login_url = ShopifyApp.configuration.login_url
+      if request.xhr?
+        RedirectForEmbedded.add_app_bridge_redirect_url_header(login_url, response)
+        head(:unauthorized)
+      else
+        fullpage_redirect_to(login_url)
+      end
     end
 
     def has_active_payment?(session)

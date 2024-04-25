@@ -240,6 +240,40 @@ class EnsureBillingTest < ActionController::TestCase
     refute response.headers["X-Shopify-API-Request-Failure-Reauthorize-Url"].present?
   end
 
+  test "Add app bridge redirect headers when handling billing error for XHR requests" do
+    ShopifyApp.configuration.billing = ShopifyApp::BillingConfiguration.new(
+      charge_name: TEST_CHARGE_NAME,
+      amount: 5,
+      interval: ShopifyApp::BillingConfiguration::INTERVAL_ONE_TIME,
+    )
+    @controller.stubs(:run_query).raises(ShopifyApp::BillingError.new("Billing error", { errors: "not good" }))
+
+    ShopifyApp::Logger.expects(:warn).with("Encountered billing error - Billing error: {:errors=>\"not good\"}"\
+      "\nRedirecting to login page")
+
+    get :index, xhr: true
+
+    assert_response :unauthorized
+    assert_match "1", response.headers["X-Shopify-API-Request-Failure-Reauthorize"]
+    assert_match(ShopifyApp.configuration.login_url, response.headers["X-Shopify-API-Request-Failure-Reauthorize-Url"])
+  end
+
+  test "Redirect to login when handling billing errors" do
+    ShopifyApp.configuration.billing = ShopifyApp::BillingConfiguration.new(
+      charge_name: TEST_CHARGE_NAME,
+      amount: 5,
+      interval: ShopifyApp::BillingConfiguration::INTERVAL_ONE_TIME,
+    )
+
+    @controller.stubs(:run_query).raises(ShopifyApp::BillingError.new("Billing error", { errors: "not good" }))
+
+    @controller.expects(:fullpage_redirect_to).with(ShopifyApp.configuration.login_url)
+    ShopifyApp::Logger.expects(:warn).with("Encountered billing error - Billing error: {:errors=>\"not good\"}"\
+      "\nRedirecting to login page")
+
+    get :index
+  end
+
   private
 
   def assert_client_side_redirection(url)
