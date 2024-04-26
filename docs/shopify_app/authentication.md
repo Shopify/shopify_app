@@ -10,13 +10,58 @@ See [*Getting started with session token authentication*](https://shopify.dev/do
 
 #### Table of contents
 
-* [OAuth callback](#oauth-callback)
-  * [Customizing callback controller](#customizing-callback-controller)
+* [Supported types of OAuth Flow](#supported-types-of-oauth)
+  * [Token Exchange](#token-exchange)
+  * [Authorization Code Grant Flow](#authorization-code-grant-flow)
+    * [OAuth callback](#oauth-callback)
+      * [Customizing callback controller](#customizing-callback-controller)
+    * [Detecting scope changes](#detecting-scope-changes)
 * [Run jobs after the OAuth flow](#post-authenticate-tasks)
 * [Rotate API credentials](#rotate-api-credentials)
 * [Making authenticated API requests after authorization](#making-authenticated-api-requests-after-authorization)
 
-## OAuth callback
+## Supported types of OAuth
+> [!TIP]
+> If you are building an embedded app, we **strongly** recommend using [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+with [token exchange](#token-exchange) instead of the authorization code grant flow.
+
+1. [Token Exchange](#token-exchange)
+    - Recommended and is only available for embedded apps
+    - Doesn't require redirects, which makes authorization faster and prevents flickering when loading the app
+    - Access scope changes are handled by Shopify when you use [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+2. [Authorization Code Grant Flow](#authorization-code-grant-flow)
+    - Suitable for non-embedded apps
+    - Installations, and access scope changes are managed by the app
+
+## Token Exchange
+
+OAuth process by exchanging the current user's [session token (shopify id token)](https://shopify.dev/docs/apps/auth/session-tokens) for an
+[access token](https://shopify.dev/docs/apps/auth/access-token-types/online.md) to make
+authenticated Shopify API queries.
+
+This can replace authorization code grant flow completely if you also take advantage of [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
+
+Learn more about:
+- [How token exchange works](https://shopify.dev/docs/apps/auth/get-access-tokens/token-exchange)
+- [Using Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+- [Configuring access scopes through the Shopify CLI](https://shopify.dev/docs/apps/tools/cli/configuration)
+
+#### Detecting scope changes
+
+##### Shopify managed installation
+If your access scopes are [configured through the Shopify CLI](https://shopify.dev/docs/apps/tools/cli/configuration), scope changes will be handled by Shopify automatically.
+Learn more about [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
+Using token exchange will ensure that the access token retrieved will always have the latest access scopes granted by the user.
+
+## Authorization Code Grant Flow
+> [!NOTE]
+> If you are building an embedded app, we **strongly** recommend using [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+with [token exchange](#token-exchange) instead of the authorization code grant flow.
+
+
+ZL-TODL: Authorization code flow is the legacy OAuth flow that requires the app to redirect the user to Shopify to install/authorize the app to access the shop's data. 
+
+### OAuth callback
 
 >️ **Note:** In Shopify App version 8.4.0, we have extracted the callback logic in its own controller. If you are upgrading from a version older than 8.4.0 the callback action and related helper methods were defined in `ShopifyApp::SessionsController` ==> you will have to extend `ShopifyApp::CallbackController` instead and port your logic to the new controller.
 
@@ -63,7 +108,7 @@ Rails.application.routes.draw do
 end
 ```
 
-### Post Authenticate tasks
+## Post Authenticate tasks
 After authentication is complete, a few tasks are run by default by PostAuthenticateTasks:
 1. [Installing Webhooks](/docs/shopify_app/webhooks.md)
 2. [Run configured after_authenticate_job](#after_authenticate_job)
