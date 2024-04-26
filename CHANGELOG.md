@@ -8,6 +8,7 @@ Unreleased
   * `ShopifyApp::JWTMiddleware` returns early if the app is not embedded to avoid unnecessary JWT verification
   * `LoginProtection` now uses `WithShopifyIdToken` concern to retrieve the Shopify Id token, thus accepting the session token from the URL param `id_token`
 * Marking `ShopifyApp::JWT` to be deprecated in version 23.0.0 [1832](https://github.com/Shopify/shopify_app/pull/1832), use `ShopifyAPI::Auth::JwtPayload` instead.
+* Fix infinite redirect loop caused by handling errors from Billing API [1833](https://github.com/Shopify/shopify_app/pull/1833)
 
 22.1.0 (April 9,2024)
 ----------
