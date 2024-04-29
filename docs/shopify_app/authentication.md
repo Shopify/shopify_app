@@ -47,6 +47,11 @@ Learn more about:
 - [Using Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
 - [Configuring access scopes through the Shopify CLI](https://shopify.dev/docs/apps/tools/cli/configuration)
 
+#### Handling invalid access tokens
+If the access token used to make an API call is invalid, the token exchange strategy will handle the error and try to retrieve a new access token before retrying 
+the same operation. 
+See ["Re-fetching an access token when API returns Unauthorized"](/docs/shopify_app/sessions.md#re-fetching-an-access-token-when-api-returns-unauthorized) section for more information.
+
 #### Detecting scope changes
 
 ##### Shopify managed installation
