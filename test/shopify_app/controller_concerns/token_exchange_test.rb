@@ -350,7 +350,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       request.headers["HTTP_AUTHORIZATION"] = nil
 
       @controller.expects(:with_token_refetch).raises(invalid_shopify_id_token_error)
-      @controller.stubs(:performed?).returns(true)
+      @controller.stubs(:performed?).returns(false, true)
 
       with_application_test_routes do
         get :ensure_render, params: { shop: @shop }
@@ -363,7 +363,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       ShopifyApp::Auth::TokenExchange.stubs(:perform)
 
       @controller.expects(:with_token_refetch).raises(invalid_shopify_id_token_error)
-      @controller.stubs(:performed?).returns(true)
+      @controller.stubs(:performed?).returns(false, true)
 
       with_application_test_routes do
         get :ensure_render, params: { shop: @shop }
