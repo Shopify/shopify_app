@@ -120,6 +120,38 @@ class WithShopifyIdTokenTest < ActionController::TestCase
     end
   end
 
+  test "#jwt_shopify_domain returns jwt.shopify_domain from request env" do
+    expected_domain = "hello-world.myshopify.com"
+    with_application_test_routes do
+      request.env["jwt.shopify_domain"] = expected_domain
+      get :index
+
+      assert_equal expected_domain, @controller.jwt_shopify_domain
+    end
+  end
+
+  test "#jwt_shopify_user_id returns jwt.shopify_user_id from request env" do
+    expected_user_id = 123
+    with_application_test_routes do
+      request.env["jwt.shopify_user_id"] = expected_user_id
+      get :index
+
+      assert_equal expected_user_id, @controller.jwt_shopify_user_id
+    end
+  end
+
+  test "#jwt_expire_at returns jwt.expire_at - 5 seconds from request env" do
+    freeze_time do
+      expected_expire_at = Time.now.to_i
+      with_application_test_routes do
+        request.env["jwt.expire_at"] = expected_expire_at
+        get :index
+
+        assert_equal expected_expire_at - 5.seconds, @controller.jwt_expire_at
+      end
+    end
+  end
+
   def with_application_test_routes
     with_routing do |set|
       set.draw do

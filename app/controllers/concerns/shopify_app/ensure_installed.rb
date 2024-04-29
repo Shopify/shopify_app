@@ -19,7 +19,6 @@ module ShopifyApp
 
       if ShopifyApp.configuration.use_new_embedded_auth_strategy?
         include ShopifyApp::TokenExchange
-        include ShopifyApp::EmbeddedApp
         around_action :activate_shopify_session
       else
         before_action :check_shop_known

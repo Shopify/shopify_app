@@ -79,13 +79,6 @@ module ShopifyApp
       response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, "true")
     end
 
-    def jwt_expire_at
-      expire_at = request.env["jwt.expire_at"]
-      return unless expire_at
-
-      expire_at - 5.seconds # 5s gap to start fetching new token in advance
-    end
-
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
         ShopifyApp::Logger.debug("Adding top level redirection headers")
@@ -104,20 +97,11 @@ module ShopifyApp
         url ||= login_url_with_optional_shop
 
         ShopifyApp::Logger.debug("Setting Reauthorize-Url to #{url}")
-        response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
-        response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
+        RedirectForEmbedded.add_app_bridge_redirect_url_header(url, response)
       end
     end
 
     protected
-
-    def jwt_shopify_domain
-      request.env["jwt.shopify_domain"]
-    end
-
-    def jwt_shopify_user_id
-      request.env["jwt.shopify_user_id"]
-    end
 
     def host
       params[:host]

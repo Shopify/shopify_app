@@ -8,6 +8,21 @@ module ShopifyApp
       @shopify_id_token ||= id_token_from_request_env || id_token_from_authorization_header || id_token_from_url_param
     end
 
+    def jwt_shopify_domain
+      request.env["jwt.shopify_domain"]
+    end
+
+    def jwt_shopify_user_id
+      request.env["jwt.shopify_user_id"]
+    end
+
+    def jwt_expire_at
+      expire_at = request.env["jwt.expire_at"]
+      return unless expire_at
+
+      expire_at - 5.seconds # 5s gap to start fetching new token in advance
+    end
+
     private
 
     def id_token_from_request_env

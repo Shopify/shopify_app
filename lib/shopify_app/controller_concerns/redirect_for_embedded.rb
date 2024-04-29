@@ -4,6 +4,11 @@ module ShopifyApp
   module RedirectForEmbedded
     include ShopifyApp::SanitizedParams
 
+    def self.add_app_bridge_redirect_url_header(url, response)
+      response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
+      response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
+    end
+
     private
 
     def embedded_redirect_url?
