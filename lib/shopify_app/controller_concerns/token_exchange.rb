@@ -60,7 +60,7 @@ module ShopifyApp
     def respond_to_invalid_shopify_id_token
       if request.headers["HTTP_AUTHORIZATION"].blank?
         if missing_embedded_param?
-          redirect_to_embed_app
+          redirect_to_embed_app_in_admin
         else
           redirect_to_bounce_page
         end
@@ -91,20 +91,6 @@ module ShopifyApp
 
     def missing_embedded_param?
       !params[:embedded].present? || params[:embedded] != "1"
-    end
-
-    def redirect_to_embed_app
-      ShopifyApp::Logger.debug("Redirecting to embed app")
-
-      host = if params[:host]
-        params[:host]
-      elsif params[:shop]
-        Base64.encode64("#{sanitized_shop_name}/admin")
-      else
-        raise ShopifyApp::ShopifyDomainNotFound, "Host or shop param is missing"
-      end
-
-      redirect_to(ShopifyAPI::Auth.embedded_app_url(host), allow_other_host: true)
     end
 
     def online_token_configured?
