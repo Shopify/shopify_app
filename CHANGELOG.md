@@ -1,5 +1,17 @@
 Unreleased
 ----------
+* Add new zero redirect authorization strategy - `Token Exchange`.
+  - This strategy replaces the existing OAuth flow for embedded apps and remove the redirects that were previously necessary to complete OAuth.
+  See ["New embedded app authorization strategy"](/README.md/#new-embedded-app-authorization-strategy) for how to enable this feature.
+  - Related PRs: [#1817](https://github.com/Shopify/shopify_app/pull/1817),
+  [#1818](https://github.com/Shopify/shopify_app/pull/1818),
+  [#1819](https://github.com/Shopify/shopify_app/pull/1819),
+  [#1821](https://github.com/Shopify/shopify_app/pull/1821),
+  [#1822](https://github.com/Shopify/shopify_app/pull/1822),
+  [#1823](https://github.com/Shopify/shopify_app/pull/1823),
+  [#1832](https://github.com/Shopify/shopify_app/pull/1832),
+  [#1833](https://github.com/Shopify/shopify_app/pull/1833),
+  [#1834](https://github.com/Shopify/shopify_app/pull/1834)
 * Bumps `shopify_api` to `14.3.0` [1832](https://github.com/Shopify/shopify_app/pull/1832)
 * Support `id_token` from URL param [1832](https://github.com/Shopify/shopify_app/pull/1832)
   * Extracted controller concern `WithShopifyIdToken`
