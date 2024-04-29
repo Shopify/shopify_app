@@ -141,12 +141,14 @@ class WithShopifyIdTokenTest < ActionController::TestCase
   end
 
   test "#jwt_expire_at returns jwt.expire_at - 5 seconds from request env" do
-    expected_expire_at = Time.now.to_i
-    with_application_test_routes do
-      request.env["jwt.expire_at"] = expected_expire_at
-      get :index
+    freeze_time do
+      expected_expire_at = Time.now.to_i
+      with_application_test_routes do
+        request.env["jwt.expire_at"] = expected_expire_at
+        get :index
 
-      assert_equal expected_expire_at - 5.seconds, @controller.jwt_expire_at
+        assert_equal expected_expire_at - 5.seconds, @controller.jwt_expire_at
+      end
     end
   end
 
