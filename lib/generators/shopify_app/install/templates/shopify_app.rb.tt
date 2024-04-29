@@ -4,6 +4,8 @@ ShopifyApp.configure do |config|
   config.scope = "<%= @scope %>" # Consult this page for more scope options:
                                   # https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes
   config.embedded_app = <%= embedded_app? %>
+  config.unstable_new_embedded_auth_strategy = <%= embedded_app? %>
+
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'Shop'
