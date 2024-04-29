@@ -5,6 +5,7 @@ module ShopifyApp
     extend ActiveSupport::Concern
     include ShopifyApp::AdminAPI::WithTokenRefetch
     include ShopifyApp::SanitizedParams
+    include ShopifyApp::EmbeddedApp
 
     included do
       include ShopifyApp::WithShopifyIdToken
