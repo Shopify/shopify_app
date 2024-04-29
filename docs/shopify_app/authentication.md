@@ -15,7 +15,7 @@ See [*Getting started with session token authentication*](https://shopify.dev/do
   * [Authorization Code Grant Flow](#authorization-code-grant-flow)
     * [OAuth callback](#oauth-callback)
       * [Customizing callback controller](#customizing-callback-controller)
-    * [Detecting scope changes](#detecting-scope-changes)
+    * [Detecting scope changes](#detecting-scope-changes-1)
 * [Run jobs after the OAuth flow](#post-authenticate-tasks)
 * [Rotate API credentials](#rotate-api-credentials)
 * [Making authenticated API requests after authorization](#making-authenticated-api-requests-after-authorization)
@@ -37,9 +37,10 @@ with [token exchange](#token-exchange) instead of the authorization code grant f
 
 OAuth process by exchanging the current user's [session token (shopify id token)](https://shopify.dev/docs/apps/auth/session-tokens) for an
 [access token](https://shopify.dev/docs/apps/auth/access-token-types/online.md) to make
-authenticated Shopify API queries.
+authenticated Shopify API queries. This can replace authorization code grant flow completely if you also take advantage of [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
 
-This can replace authorization code grant flow completely if you also take advantage of [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
+To enable token exchange authorization strategy, you can follow the steps in ["New embedded app authorization strategy"](/README.md#new-embedded-app-authorization-strategy).
+Upon completion of the token exchange to get the access token, [post authenticated tasks](#post-authenticate-tasks) will be run.
 
 Learn more about:
 - [How token exchange works](https://shopify.dev/docs/apps/auth/get-access-tokens/token-exchange)
@@ -59,13 +60,23 @@ Using token exchange will ensure that the access token retrieved will always hav
 with [token exchange](#token-exchange) instead of the authorization code grant flow.
 
 
-ZL-TODL: Authorization code flow is the legacy OAuth flow that requires the app to redirect the user to Shopify to install/authorize the app to access the shop's data. 
+Authorization code grant flow is the previous OAuth flow that requires the app to redirect the user to Shopify to install/authorize the app to access the shop's data. It is still required for apps that are not embedded.
+
+To perform [authorization code grant flow](https://shopify.dev/docs/apps/auth/get-access-tokens/authorization-code-grant), you app will need to handle
+[being OAuth](#begin-oauth) and [OAuth callback](#oauth-callback) routes.
+
+### Begin OAuth
+ShopifyApp automatically redirects the user to Shopify to complete OAuth to install the app when the `ShopifyApp.configuration.login_url` is reached.
+Behind the scenes the ShopifyApp gem start the process by calling `ShopifyAPI::Auth::Oauth.begin_auth` to build the 
+redirect URL with necessary parameters like the OAuth callback URL, scopes requested, type of access token (offline or online) requested, etc.
+Then redirect the merchant to Shopify, to ask for permission to install the app. (See [ShopifyApp::SessionsController.redirect_to_begin_oauth](https://github.com/Shopify/shopify_app/blob/main/app/controllers/shopify_app/sessions_controller.rb#L76-L96))
 
 ### OAuth callback
 
 >️ **Note:** In Shopify App version 8.4.0, we have extracted the callback logic in its own controller. If you are upgrading from a version older than 8.4.0 the callback action and related helper methods were defined in `ShopifyApp::SessionsController` ==> you will have to extend `ShopifyApp::CallbackController` instead and port your logic to the new controller.
 
-Upon completing the OAuth flow, Shopify calls the app at `ShopifyApp.configuration.login_callback_url`.
+Shopify will redirect the merchant back to your app's callback URL once they approve the app installation.
+Upon completing the OAuth flow, Shopify calls the app at `ShopifyApp.configuration.login_callback_url`. (This was provided to Shopify in the OAuth begin URL parameters)
 
 The default callback controller [`ShopifyApp::CallbackController`](../../app/controllers/shopify_app/callback_controller.rb) provides the following behaviour:
 
@@ -107,6 +118,13 @@ Rails.application.routes.draw do
   # other routes
 end
 ```
+
+### Detecting scope changes
+When the OAuth process is completed, the created session has a `scope` field which holds all of the access scopes that were requested from the merchant at the time.
+
+When an app's access scopes change, it needs to request merchants to go through OAuth again to renew its permissions.
+
+See [Handling changes in access scopes](/docs/shopify_app/handling-access-scopes-changes.md).
 
 ## Post Authenticate tasks
 After authentication is complete, a few tasks are run by default by PostAuthenticateTasks:
