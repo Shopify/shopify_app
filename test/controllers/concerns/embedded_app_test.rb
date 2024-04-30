@@ -86,11 +86,25 @@ class EmbeddedAppTest < ActionController::TestCase
     assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}"
   end
 
-  test "raises an exception when neither the host nor shop param is present" do
+  test "Redirect to login URL when host nor shop param is present" do
     ShopifyApp.configuration.embedded_app = true
 
-    assert_raises ShopifyApp::ShopifyDomainNotFound do
-      get :redirect_to_embed
-    end
+    get :redirect_to_embed
+    assert_redirected_to ShopifyApp.configuration.login_url
+  end
+
+  test "Redirect to root URL when decoded host is not a shopify domain" do
+    shop = "my-shop.fakeshopify.com"
+    host = Base64.encode64("#{shop}/admin")
+
+    get :redirect_to_embed, params: { host: host }
+    assert_redirected_to ShopifyApp.configuration.root_url
+  end
+
+  test "Redirect to root URL when shop is not a shopify domain" do
+    shop = "my-shop.fakeshopify.com"
+
+    get :redirect_to_embed, params: { shop: shop }
+    assert_redirected_to ShopifyApp.configuration.root_url
   end
 end
