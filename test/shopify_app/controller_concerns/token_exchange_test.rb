@@ -249,15 +249,13 @@ class TokenExchangeControllerTest < ActionController::TestCase
       end
     end
 
-    test "Raise domain not found error when trying to embed app with missing shop and host params - #{invalid_shopify_id_token_error}" do
+    test "Redirects to login when trying to embed app with missing shop and host params - #{invalid_shopify_id_token_error}" do
       ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).raises(invalid_shopify_id_token_error)
       request.headers["HTTP_AUTHORIZATION"] = nil
 
       with_application_test_routes do
-        error = assert_raises(ShopifyApp::ShopifyDomainNotFound) do
-          get :index
-        end
-        assert_equal "Host or shop param is missing", error.message
+        get :index
+        assert_redirected_to ShopifyApp.configuration.login_url
       end
     end
 

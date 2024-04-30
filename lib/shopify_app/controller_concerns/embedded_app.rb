@@ -22,10 +22,12 @@ module ShopifyApp
       elsif params[:shop]
         Base64.encode64("#{sanitized_shop_name}/admin")
       else
-        raise ShopifyApp::ShopifyDomainNotFound, "Host or shop param is missing"
+        return redirect_to(ShopifyApp.configuration.login_url)
       end
 
-      redirect_to(ShopifyAPI::Auth.embedded_app_url(host), allow_other_host: true)
+      redirect_path = ShopifyAPI::Auth.embedded_app_url(host)
+      redirect_path = ShopifyApp.configuration.root_url if deduced_phishing_attack?(redirect_path)
+      redirect_to(redirect_path, allow_other_host: true)
     end
 
     def use_embedded_app_layout?
@@ -41,6 +43,16 @@ module ShopifyApp
     def set_esdk_headers
       response.set_header("P3P", 'CP="Not used"')
       response.headers.except!("X-Frame-Options")
+    end
+
+    def deduced_phishing_attack?(decoded_host)
+      sanitized_host = ShopifyApp::Utils.sanitize_shop_domain(decoded_host)
+      if sanitized_host.nil?
+        message = "Host param for redirect to embed app in admin is not from a trusted domain, " \
+          "redirecting to root as this is likely a phishing attack."
+        ShopifyApp::Logger.info(message)
+      end
+      sanitized_host.nil?
     end
   end
 end
