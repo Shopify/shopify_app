@@ -28,15 +28,13 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
 
 ## Sessions
 #### Types of access tokens (sessions)
-- **Shop** ([offline access](https://shopify.dev/docs/apps/auth/oauth/access-modes#offline-access))
+- **Shop** ([offline access](https://shopify.dev/docs/apps/auth/access-token-types/offline))
   - Access token is linked to the store
   - Meant for long-term access to a store, where no user interaction is involved
   - Ideal for background jobs or maintenance work
-- **User** ([online access](https://shopify.dev/docs/apps/auth/oauth/access-modes#online-access))
+- **User** ([online access](https://shopify.dev/docs/apps/auth/access-token-types/online))
   - Access token is linked to an individual user on a store
   - Meant to be used when a user is interacting with your app through the web
-
-⚠️  [Read more about Online vs. Offline access here](https://shopify.dev/apps/auth/oauth/access-modes).
 
 #### Access token storage (session)
 ##### Shop (offline) token storage
@@ -73,6 +71,8 @@ config.user_session_repository = 'User'
 ```
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
+
+You should also enable the [check for session expiry](#expiry-date) so that a new access token can be fetched before being used for an API operation.
 
 ##### In-memory Session Storage for testing
 The `ShopifyApp` gem includes methods for in-memory storage for both shop and user sessions. In-memory storage is intended to be used in a testing environment, please use a persistent storage for your application.

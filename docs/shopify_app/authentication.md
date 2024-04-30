@@ -65,16 +65,18 @@ Using token exchange will ensure that the access token retrieved will always hav
 with [token exchange](#token-exchange) instead of the authorization code grant flow.
 
 
-Authorization code grant flow is the previous OAuth flow that requires the app to redirect the user to Shopify to install/authorize the app to access the shop's data. It is still required for apps that are not embedded.
+Authorization code grant flow is the previous OAuth flow that requires the app to redirect the user 
+to Shopify for installation/authorization of the app to access the shop's data. It is still required for apps that are not embedded.
 
 To perform [authorization code grant flow](https://shopify.dev/docs/apps/auth/get-access-tokens/authorization-code-grant), you app will need to handle
-[being OAuth](#begin-oauth) and [OAuth callback](#oauth-callback) routes.
+[begin OAuth](#begin-oauth) and [OAuth callback](#oauth-callback) routes.
 
 ### Begin OAuth
 ShopifyApp automatically redirects the user to Shopify to complete OAuth to install the app when the `ShopifyApp.configuration.login_url` is reached.
-Behind the scenes the ShopifyApp gem start the process by calling `ShopifyAPI::Auth::Oauth.begin_auth` to build the 
+Behind the scenes the ShopifyApp gem starts the process by calling `ShopifyAPI::Auth::Oauth.begin_auth` to build the 
 redirect URL with necessary parameters like the OAuth callback URL, scopes requested, type of access token (offline or online) requested, etc.
-Then redirect the merchant to Shopify, to ask for permission to install the app. (See [ShopifyApp::SessionsController.redirect_to_begin_oauth](https://github.com/Shopify/shopify_app/blob/main/app/controllers/shopify_app/sessions_controller.rb#L76-L96))
+The ShopifyApp gem then redirect the merchant to Shopify, to ask for permission to install the app. (See [ShopifyApp::SessionsController.redirect_to_begin_oauth](https://github.com/Shopify/shopify_app/blob/main/app/controllers/shopify_app/sessions_controller.rb#L76-L96)
+for detailed implementation)
 
 ### OAuth callback
 
