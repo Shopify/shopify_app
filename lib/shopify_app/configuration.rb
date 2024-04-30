@@ -49,7 +49,7 @@ module ShopifyApp
     attr_accessor :billing
 
     # Enables new authorization flow using token exchange
-    attr_accessor :unstable_new_embedded_auth_strategy
+    attr_accessor :new_embedded_auth_strategy
 
     def initialize
       @root_url = "/"
@@ -129,7 +129,7 @@ module ShopifyApp
     end
 
     def use_new_embedded_auth_strategy?
-      unstable_new_embedded_auth_strategy && embedded_app?
+      new_embedded_auth_strategy && embedded_app?
     end
 
     def online_token_configured?

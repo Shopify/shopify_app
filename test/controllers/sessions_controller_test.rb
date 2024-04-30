@@ -16,7 +16,7 @@ module ShopifyApp
       ShopifyApp.configuration.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
-      ShopifyApp.configuration.unstable_new_embedded_auth_strategy = false
+      ShopifyApp.configuration.new_embedded_auth_strategy = false
       ShopifyApp.configuration.api_key = APP_API_KEY
       ShopifyAppConfigurer.setup_context # need to reset context after config changes
 
@@ -394,7 +394,7 @@ module ShopifyApp
       "https://admin.shopify.com/store/my-shop",
     ].each do |good_url|
       test "#create redirects to Shopify managed install path instead if use_new_embedded_auth_strategy is enabled - #{good_url}" do
-        ShopifyApp.configuration.unstable_new_embedded_auth_strategy = true
+        ShopifyApp.configuration.new_embedded_auth_strategy = true
 
         post :create, params: { shop: good_url }
 

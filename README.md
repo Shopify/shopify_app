@@ -155,7 +155,7 @@ authenticated API access.
 ShopifyApp.configure do |config|
   #.....
   config.embedded_app = true
-  config.unstable_new_embedded_auth_strategy = true
+  config.new_embedded_auth_strategy = true
 
   # If your app is configured to use online sessions, you can enable session expiry date check so a new access token
   # is fetched automatically when the session expires.

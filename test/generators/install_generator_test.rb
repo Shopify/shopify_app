@@ -24,7 +24,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
-      assert_match "config.unstable_new_embedded_auth_strategy = true", shopify_app
+      assert_match "config.new_embedded_auth_strategy = true", shopify_app
       assert_match "config.api_version = \"#{ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION}\"", shopify_app
       assert_match "config.after_authenticate_job = false", shopify_app
 
@@ -66,7 +66,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
-      assert_match "config.unstable_new_embedded_auth_strategy = true", shopify_app
+      assert_match "config.new_embedded_auth_strategy = true", shopify_app
       assert_match 'config.api_version = "unstable"', shopify_app
       assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
@@ -80,7 +80,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match "config.secret = ENV.fetch('SHOPIFY_API_SECRET', '')", shopify_app
       assert_match 'config.scope = "read_orders write_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
-      assert_match "config.unstable_new_embedded_auth_strategy = true", shopify_app
+      assert_match "config.new_embedded_auth_strategy = true", shopify_app
       assert_match "config.shop_session_repository = 'Shop'", shopify_app
     end
   end
@@ -89,7 +89,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator ["--embedded", "false"]
     assert_file "config/initializers/shopify_app.rb" do |shopify_app|
       assert_match "config.embedded_app = false", shopify_app
-      assert_match "config.unstable_new_embedded_auth_strategy = false", shopify_app
+      assert_match "config.new_embedded_auth_strategy = false", shopify_app
     end
   end
 
