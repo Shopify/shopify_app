@@ -11,7 +11,8 @@ Unreleased
   [#1823](https://github.com/Shopify/shopify_app/pull/1823),
   [#1832](https://github.com/Shopify/shopify_app/pull/1832),
   [#1833](https://github.com/Shopify/shopify_app/pull/1833),
-  [#1834](https://github.com/Shopify/shopify_app/pull/1834)
+  [#1834](https://github.com/Shopify/shopify_app/pull/1834),
+  [#1836](https://github.com/Shopify/shopify_app/pull/1836),
 * Bumps `shopify_api` to `14.3.0` [1832](https://github.com/Shopify/shopify_app/pull/1832)
 * Support `id_token` from URL param [1832](https://github.com/Shopify/shopify_app/pull/1832)
   * Extracted controller concern `WithShopifyIdToken`
