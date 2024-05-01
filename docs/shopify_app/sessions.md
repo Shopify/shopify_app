@@ -223,12 +223,14 @@ end
 ```
 
 If the error is being rescued in the action, it's still possible to make use of `with_token_refetch` provided by `EnsureHasSession` so that a new access token is fetched and the code is executed again with it. This will also update the session parameter with the new attributes.
+This block should be used to wrap the code that makes API queries, so your business logic won't be retried.
 
 ```ruby
 class MyController < ApplicationController
   include ShopifyApp::EnsureHasSession
 
   def index
+    # Your app's business logic
     with_token_refetch(current_shopify_session, shopify_id_token) do
       # Unauthorized errors raised within this block will initiate token exchange.
       # `with_token_refetch` will store the new access token and use it
@@ -237,6 +239,7 @@ class MyController < ApplicationController
       client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_shopify_session)
       client.query(options)
     end
+    # Your app's business logic continues
   rescue => error
     # app's specific error handling
   end
@@ -331,6 +334,8 @@ When the configuration flag `check_session_expiry_date` is set to true, the user
 ## Migrating from shop-based to user-based token strategy
 
 1. Run the `user_model` generator as [mentioned above](#user-online-token-storage).
+  - The generator will ask whether you want to migrate the User model to include `access_scopes` and `expires_at` columns. `expires_at` field is useful for detecting when the user session has expired and trigger a re-auth before an operation. It can reduce
+   API failures for invalid access tokens. Configure the [expiry date check](#expiry-date) to complete this feature.
 2. Ensure that both your `Shop` model and `User` model includes the [necessary concerns](#available-activesupportconcerns-that-contains-implementation-of-the-above-methods)
 3. Update the configuration file to use the new session storage.
 

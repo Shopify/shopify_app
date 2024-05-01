@@ -37,7 +37,7 @@ with [token exchange](#token-exchange) instead of the authorization code grant f
 
 OAuth process by exchanging the current user's [session token (shopify id token)](https://shopify.dev/docs/apps/auth/session-tokens) for an
 [access token](https://shopify.dev/docs/apps/auth/access-token-types/online.md) to make
-authenticated Shopify API queries. This can replace authorization code grant flow completely if you also take advantage of [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
+authenticated Shopify API queries. This will replace authorization code grant flow completely when your app is configured with [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
 
 To enable token exchange authorization strategy, you can follow the steps in ["New embedded app authorization strategy"](/README.md#new-embedded-app-authorization-strategy).
 Upon completion of the token exchange to get the access token, [post authenticated tasks](#post-authenticate-tasks) will be run.
@@ -60,12 +60,7 @@ Learn more about [Shopify managed installation](https://shopify.dev/docs/apps/au
 Using token exchange will ensure that the access token retrieved will always have the latest access scopes granted by the user.
 
 ## Authorization Code Grant Flow
-> [!NOTE]
-> If you are building an embedded app, we **strongly** recommend using [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
-with [token exchange](#token-exchange) instead of the authorization code grant flow.
-
-
-Authorization code grant flow is the previous OAuth flow that requires the app to redirect the user 
+Authorization code grant flow is the OAuth flow that requires the app to redirect the user 
 to Shopify for installation/authorization of the app to access the shop's data. It is still required for apps that are not embedded.
 
 To perform [authorization code grant flow](https://shopify.dev/docs/apps/auth/get-access-tokens/authorization-code-grant), you app will need to handle
@@ -79,8 +74,6 @@ The ShopifyApp gem then redirect the merchant to Shopify, to ask for permission 
 for detailed implementation)
 
 ### OAuth callback
-
->️ **Note:** In Shopify App version 8.4.0, we have extracted the callback logic in its own controller. If you are upgrading from a version older than 8.4.0 the callback action and related helper methods were defined in `ShopifyApp::SessionsController` ==> you will have to extend `ShopifyApp::CallbackController` instead and port your logic to the new controller.
 
 Shopify will redirect the merchant back to your app's callback URL once they approve the app installation.
 Upon completing the OAuth flow, Shopify calls the app at `ShopifyApp.configuration.login_callback_url`. (This was provided to Shopify in the OAuth begin URL parameters)

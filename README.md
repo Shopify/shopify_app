@@ -129,7 +129,7 @@ These routes are configurable. See the more detailed [*Engine*](/docs/shopify_ap
 
 To learn more about how this gem authenticates with Shopify, see [*Authentication*](/docs/shopify_app/authentication.md).
 
-### New embedded app authorization strategy
+### New embedded app authorization strategy (Token Exchange)
 
 > [!TIP]
 > If you are building an embedded app, we **strongly** recommend using [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
@@ -166,12 +166,6 @@ end
 
 ```
 3. Enjoy a smoother and faster app installation process.
-
-###### Learn more about:
-
-- [How token exchange works](https://shopify.dev/docs/apps/auth/get-access-tokens/token-exchange)
-- [Using Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
-- [Configuring access scopes through the Shopify CLI](https://shopify.dev/docs/apps/tools/cli/configuration)
 
 ### API Versioning
 
