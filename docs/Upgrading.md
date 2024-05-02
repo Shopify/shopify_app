@@ -8,6 +8,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [Unreleased](#unreleased)
 
+[Upgrading to `v22.2.0`](#upgrading-to-v2220)
+
 [Upgrading to `v22.0.0`](#upgrading-to-v2200)
 
 [Upgrading to `v20.3.0`](#upgrading-to-v2030)
@@ -56,6 +58,12 @@ The `ShopifyApp::JWT` class has been deprecated in `v23.0.0`. Use [ShopifyAPI::A
 class from the `shopify_api` gem instead. A search and replace should be enough for this migration.
   - `ShopifyAPI::Auth::JwtPayload` is a superset of the `ShopifyApp::JWT` class, and contains methods that were available in `ShopifyApp::JWT`. 
   - `ShopifyAPI::Auth::JwtPayload` raises `ShopifyAPI::Errors::InvalidJwtTokenError` if the token is invalid.
+
+## Upgrading to `v22.2.0`
+#### Added new feature for zero redirect embedded app authorization flow - Token Exchange
+A new embedded app authorization strategy has been introduced in `v22.2.0` that eliminates the redirects that were previously necessary for OAuth. 
+It can replace the existing installation and authorization code grant flow.
+See [new embedded app authorization strategy](./README.md#new-embedded-app-authorization-strategy) for more information.
 
 ## Upgrading to `v22.0.0`
 #### Dropped support for Ruby 2.x

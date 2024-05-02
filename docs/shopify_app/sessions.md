@@ -3,12 +3,11 @@
 Sessions are used to make contextual API calls for either a shop (offline session) or a user (online session). This gem has ownership of session persistence.
 
 #### Table of contents
-
 - [Sessions](#sessions)
       - [Table of contents](#table-of-contents)
   - [Sessions](#sessions-1)
-      - [Types of session tokens](#types-of-session-tokens)
-      - [Session token storage](#session-token-storage)
+      - [Types of access tokens (sessions)](#types-of-access-tokens-sessions)
+      - [Access token storage (session)](#access-token-storage-session)
         - [Shop (offline) token storage](#shop-offline-token-storage)
         - [User (online) token storage](#user-online-token-storage)
         - [In-memory Session Storage for testing](#in-memory-session-storage-for-testing)
@@ -20,6 +19,7 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
         - [**Shop Sessions - `EnsureInstalled`**](#shop-sessions---ensureinstalled)
         - [User Sessions - `EnsureHasSession`](#user-sessions---ensurehassession)
       - [Getting sessions from a Shop or User model record - 'with\_shopify\_session'](#getting-sessions-from-a-shop-or-user-model-record---with_shopify_session)
+      - [Re-fetching an access token when API returns Unauthorized](#re-fetching-an-access-token-when-api-returns-unauthorized)
   - [Access scopes](#access-scopes)
     - [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyappshopsessionstoragewithscopes)
     - [`ShopifyApp::UserSessionStorageWithScopes`](#shopifyappusersessionstoragewithscopes)
@@ -27,18 +27,16 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
   - [Migrating from `ShopifyApi::Auth::SessionStorage` to `ShopifyApp::SessionStorage`](#migrating-from-shopifyapiauthsessionstorage-to-shopifyappsessionstorage)
 
 ## Sessions
-#### Types of session tokens
-- **Shop** ([offline access](https://shopify.dev/docs/apps/auth/oauth/access-modes#offline-access))
+#### Types of access tokens (sessions)
+- **Shop** ([offline access](https://shopify.dev/docs/apps/auth/access-token-types/offline))
   - Access token is linked to the store
   - Meant for long-term access to a store, where no user interaction is involved
   - Ideal for background jobs or maintenance work
-- **User** ([online access](https://shopify.dev/docs/apps/auth/oauth/access-modes#online-access))
+- **User** ([online access](https://shopify.dev/docs/apps/auth/access-token-types/online))
   - Access token is linked to an individual user on a store
   - Meant to be used when a user is interacting with your app through the web
 
-⚠️  [Read more about Online vs. Offline access here](https://shopify.dev/apps/auth/oauth/access-modes).
-
-#### Session token storage
+#### Access token storage (session)
 ##### Shop (offline) token storage
 ⚠️ All apps must have a shop session storage, if you started from the [Ruby App Template](https://github.com/Shopify/shopify-app-template-ruby), it's already configured to have a Shop model by default.
 
@@ -50,7 +48,7 @@ If you don't already have a repository to store the access tokens:
 rails generate shopify_app:shop_model
 ```
 
-2. Configure `config/initializers/shopify_app.rb` to enable shop session token persistance:
+2. Configure `config/initializers/shopify_app.rb` to enable shop access token persistance:
 
 ```ruby
 config.shop_session_repository = 'Shop'
@@ -66,13 +64,15 @@ If your app has user interactions and would like to control permission based on 
 rails generate shopify_app:user_model
 ```
 
-2. Configure `config/initializers/shopify_app.rb` to enable user session token persistance:
+2. Configure `config/initializers/shopify_app.rb` to enable user access token persistance:
 
 ```ruby
 config.user_session_repository = 'User'
 ```
 
 The current Shopify user will be stored in the rails session at `session[:shopify_user]`
+
+You should also enable the [check for session expiry](#expiry-date) so that a new access token can be fetched before being used for an API operation.
 
 ##### In-memory Session Storage for testing
 The `ShopifyApp` gem includes methods for in-memory storage for both shop and user sessions. In-memory storage is intended to be used in a testing environment, please use a persistent storage for your application.
@@ -152,7 +152,7 @@ class MyController < ApplicationController
 
     client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_session)
     client.query(
-    #...
+      # ...
     )
   end
 end
@@ -171,7 +171,7 @@ class MyController < ApplicationController
 
     client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_session)
     client.query(
-    #...
+      # ...
     )
   end
 end
@@ -200,6 +200,100 @@ user = User.find_by(shopify_user_id: "my_user_id")
 user.with_shopify_session do
   ShopifyAPI::Product.find(id: product_id)
   # This will call the Shopify API with my_user_id's access token
+end
+```
+
+#### Re-fetching an access token when API returns Unauthorized
+
+When using `ShopifyApp::EnsureHasSession` and the `new_embedded_auth_strategy` configuration, any **unhandled** Unauthorized `ShopifyAPI::Errors::HttpResponseError` will cause the app to perform token exchange to fetch a new access token from Shopify and the action to be executed again. This will update and store the new access token to the current session instance.
+
+```ruby
+class MyController < ApplicationController
+  include ShopifyApp::EnsureHasSession
+
+  def index
+    client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_shopify_session)
+
+    # If this call raises an Unauthorized error from Shopify, EnsureHasSession
+    # will execute the action again after performing token exchange.
+    # It will store and use the newly retrieved access token for this and any subsequent calls.
+    client.query(options)
+  end
+end
+```
+
+If the error is being rescued in the action, it's still possible to make use of `with_token_refetch` provided by `EnsureHasSession` so that a new access token is fetched and the code is executed again with it. This will also update the session parameter with the new attributes.
+This block should be used to wrap the code that makes API queries, so your business logic won't be retried.
+
+```ruby
+class MyController < ApplicationController
+  include ShopifyApp::EnsureHasSession
+
+  def index
+    # Your app's business logic
+    with_token_refetch(current_shopify_session, shopify_id_token) do
+      # Unauthorized errors raised within this block will initiate token exchange.
+      # `with_token_refetch` will store the new access token and use it
+      # to execute this block again.
+      # Any subsequent calls using the same session instance will have the new token.
+      client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_shopify_session)
+      client.query(options)
+    end
+    # Your app's business logic continues
+  rescue => error
+    # app's specific error handling
+  end
+end
+```
+
+It's also possible to use `with_token_refetch` on classes other than the controller by including the `ShopifyApp::AdminAPI::WithTokenRefetch` module and passing in the session along with the current request's `shopify_id_token`, which is provided by `ShopifyApp::EnsureHasSession`. This will also update the session parameter with the new attributes.
+
+```ruby
+# my_controller.rb
+class MyController < ApplicationController
+  include ShopifyApp::EnsureHasSession
+
+  def index
+    # shopify_id_token is a method provided by EnsureHasSession
+    MyClass.new.do_things(current_shopify_session, shopify_id_token)
+  end
+end
+
+# my_class.rb
+class MyClass
+  include ShopifyApp::AdminAPI::WithTokenRefetch
+
+  def do_things(session, shopify_id_token)
+    with_token_refetch(session, shopify_id_token) do
+      # Unauthorized errors raised within this block will initiate token exchange.
+      # `with_token_refetch` will store the new access token and use it
+      # to execute this block again.
+      # Any subsequent calls using the same session instance will have the new token.
+      client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
+      client.query(options)
+    end
+  rescue => error
+    # app's specific error handling
+  end
+end
+```
+
+If the retried block raises an `Unauthorized` error again, `with_token_refetch` will delete the current `session` from the database and raise the error again.
+
+```ruby
+class MyController < ApplicationController
+  include ShopifyApp::EnsureHasSession
+
+  def index
+    client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_shopify_session)
+    with_token_refetch(current_shopify_session, shopify_id_token) do
+      # When this call raises Unauthorized a second time during retry,
+      # the `session` will be deleted from the database and the error raised
+      client.query(options)
+    end
+  rescue => error
+    # The Unauthorized error will reach this rescue
+  end
 end
 ```
 
@@ -240,6 +334,8 @@ When the configuration flag `check_session_expiry_date` is set to true, the user
 ## Migrating from shop-based to user-based token strategy
 
 1. Run the `user_model` generator as [mentioned above](#user-online-token-storage).
+  - The generator will ask whether you want to migrate the User model to include `access_scopes` and `expires_at` columns. `expires_at` field is useful for detecting when the user session has expired and trigger a re-auth before an operation. It can reduce
+   API failures for invalid access tokens. Configure the [expiry date check](#expiry-date) to complete this feature.
 2. Ensure that both your `Shop` model and `User` model includes the [necessary concerns](#available-activesupportconcerns-that-contains-implementation-of-the-above-methods)
 3. Update the configuration file to use the new session storage.
 
@@ -255,5 +351,5 @@ config.user_session_repository = {YOUR_USER_MODEL_CLASS}
 - Sessions storage are now handled with [ShopifyApp::SessionRepository](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/session_repository.rb)
 - To migrate and specify your shop or user session storage method:
   1. Remove `session_storage` configuration from `config/initializers/shopify_app.rb`
-  2. Follow ["Session Token Storage" instructions](#session-token-storage) to specify the storage repository for shop and user sessions.
+  2. Follow ["Access Token Storage" instructions](#access-token-storage-session) to specify the storage repository for shop and user sessions.
      - [Customizing session storage](#customizing-session-storage-with-shopifyappsessionrepository)
