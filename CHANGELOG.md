@@ -1,5 +1,8 @@
 Unreleased
 ----------
+
+22.2.0 (May 2,2024)
+----------
 * Add new zero redirect authorization strategy - `Token Exchange`.
   - This strategy replaces the existing OAuth flow for embedded apps and remove the redirects that were previously necessary to complete OAuth.
   See ["New embedded app authorization strategy"](/README.md/#new-embedded-app-authorization-strategy) for how to enable this feature.
