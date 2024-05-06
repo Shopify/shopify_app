@@ -55,7 +55,7 @@ class ShopifyApp::AdminAPI::WithTokenRefetchTest < ActiveSupport::TestCase
     assert_equal @new_session.expires, @session.expires
   end
 
-  test "#with_token_refetch deletes existing token and re-raises when 401 persists" do
+  test "#with_token_refetch re-raises when 401 persists" do
     response = ShopifyAPI::Clients::HttpResponse.new(code: 401, body: "401 message", headers: {})
     api_error = ShopifyAPI::Errors::HttpResponseError.new(response: response)
 
@@ -67,8 +67,7 @@ class ShopifyApp::AdminAPI::WithTokenRefetchTest < ActiveSupport::TestCase
       "and retrying with new session")
 
     ShopifyApp::Logger.expects(:debug).with("Shopify API returned a 401 Unauthorized error that was not corrected " \
-      "with token exchange, deleting current session and re-raising")
-    ShopifyApp::SessionRepository.expects(:delete_session).with("session-id")
+      "with token exchange, re-raising error")
 
     reraised_error = assert_raises ShopifyAPI::Errors::HttpResponseError do
       with_token_refetch(@session, @id_token) do

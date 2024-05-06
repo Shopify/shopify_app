@@ -11,8 +11,7 @@ module ShopifyApp
           ShopifyApp::Logger.debug("Encountered error: #{error.code} - #{error.response.inspect}, re-raising")
         elsif retrying
           ShopifyApp::Logger.debug("Shopify API returned a 401 Unauthorized error that was not corrected " \
-            "with token exchange, deleting current session and re-raising")
-          ShopifyApp::SessionRepository.delete_session(session.id)
+            "with token exchange, re-raising error")
         else
           retrying = true
           ShopifyApp::Logger.debug("Shopify API returned a 401 Unauthorized error, exchanging token and " \
