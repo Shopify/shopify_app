@@ -1,5 +1,7 @@
 Unreleased
 ----------
+
+22.2.1 (May 6,2024)
 * Patch - Don't delete session on 401 errors during retry in `with_token_refetch` [#1844](https://github.com/Shopify/shopify_app/pull/1844)
 
 22.2.0 (May 2,2024)
