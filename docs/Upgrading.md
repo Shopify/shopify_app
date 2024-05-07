@@ -63,7 +63,7 @@ class from the `shopify_api` gem instead. A search and replace should be enough 
 #### Added new feature for zero redirect embedded app authorization flow - Token Exchange
 A new embedded app authorization strategy has been introduced in `v22.2.0` that eliminates the redirects that were previously necessary for OAuth. 
 It can replace the existing installation and authorization code grant flow.
-See [new embedded app authorization strategy](./README.md#new-embedded-app-authorization-strategy) for more information.
+See [new embedded app authorization strategy](/README.md#new-embedded-app-authorization-strategy) for more information.
 
 ## Upgrading to `v22.0.0`
 #### Dropped support for Ruby 2.x
