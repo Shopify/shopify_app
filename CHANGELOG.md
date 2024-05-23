@@ -8,7 +8,7 @@ Unreleased
 ----------
 * Add new zero redirect authorization strategy - `Token Exchange`.
   - This strategy replaces the existing OAuth flow for embedded apps and remove the redirects that were previously necessary to complete OAuth.
-  See ["New embedded app authorization strategy"](/README.md/#new-embedded-app-authorization-strategy) for how to enable this feature.
+  See ["New embedded app authorization strategy (Token Exchange)"](/README.md/#new-embedded-app-authorization-strategy-token-exchange) for how to enable this feature.
   - Related PRs: [#1817](https://github.com/Shopify/shopify_app/pull/1817),
   [#1818](https://github.com/Shopify/shopify_app/pull/1818),
   [#1819](https://github.com/Shopify/shopify_app/pull/1819),
