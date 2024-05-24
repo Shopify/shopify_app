@@ -1,5 +1,6 @@
 Unreleased
 ----------
+[1852](https://github.com/Shopify/shopify_app/pull/1852) - Handle scenario when invalid URI is passed to `sanitize_shop_domain `
 
 22.2.1 (May 6,2024)
 * Patch - Don't delete session on 401 errors during retry in `with_token_refetch` [#1844](https://github.com/Shopify/shopify_app/pull/1844)
