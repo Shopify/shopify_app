@@ -1,5 +1,6 @@
 Unreleased
 ----------
+[1852](https://github.com/Shopify/shopify_app/pull/1852) - Handle scenario when invalid URI is passed to `sanitize_shop_domain `
 
 22.1.0 (April 9,2024)
 ----------
