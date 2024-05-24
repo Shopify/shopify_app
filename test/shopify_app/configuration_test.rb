@@ -241,27 +241,27 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "Invalid user access scopes strategy - expected a string", error.message
   end
 
-  test "#use_new_embedded_auth_strategy? is true when wip_new_embedded_auth_strategy is on for embedded apps" do
+  test "#use_new_embedded_auth_strategy? is true when new_embedded_auth_strategy is on for embedded apps" do
     ShopifyApp.configure do |config|
       config.embedded_app = true
-      config.wip_new_embedded_auth_strategy = true
+      config.new_embedded_auth_strategy = true
     end
 
     assert ShopifyApp.configuration.use_new_embedded_auth_strategy?
   end
 
-  test "#use_new_embedded_auth_strategy? is false for non-embedded apps even if wip_new_embedded_auth_strategy is configured" do
+  test "#use_new_embedded_auth_strategy? is false for non-embedded apps even if new_embedded_auth_strategy is configured" do
     ShopifyApp.configure do |config|
       config.embedded_app = false
-      config.wip_new_embedded_auth_strategy = true
+      config.new_embedded_auth_strategy = true
     end
 
     refute ShopifyApp.configuration.use_new_embedded_auth_strategy?
   end
 
-  test "#use_new_embedded_auth_strategy? is false when wip_new_embedded_auth_strategy is off" do
+  test "#use_new_embedded_auth_strategy? is false when new_embedded_auth_strategy is off" do
     ShopifyApp.configure do |config|
-      config.wip_new_embedded_auth_strategy = false
+      config.new_embedded_auth_strategy = false
     end
 
     refute ShopifyApp.configuration.use_new_embedded_auth_strategy?

@@ -24,6 +24,10 @@ class EmbeddedAppTest < ActionController::TestCase
     include ShopifyApp::EmbeddedApp
 
     def index; end
+
+    def redirect_to_embed
+      redirect_to_embed_app_in_admin
+    end
   end
 
   tests EmbeddedAppTestController
@@ -31,6 +35,7 @@ class EmbeddedAppTest < ActionController::TestCase
   setup do
     Rails.application.routes.draw do
       get "/embedded_app", to: "embedded_app_test/embedded_app_test#index"
+      get "/redirect_to_embed", to: "embedded_app_test/embedded_app_test#redirect_to_embed"
     end
   end
 
@@ -62,5 +67,44 @@ class EmbeddedAppTest < ActionController::TestCase
     get :index
     assert_not_includes @controller.response.headers, "P3P"
     assert_includes @controller.response.headers, "X-Frame-Options"
+  end
+
+  test "#redirect_to_embed_app_in_admin redirects to the embed app in the admin when the host param is present" do
+    ShopifyApp.configuration.embedded_app = true
+
+    shop = "my-shop.myshopify.com"
+    host = Base64.encode64("#{shop}/admin")
+    get :redirect_to_embed, params: { host: host }
+    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}"
+  end
+
+  test "#redirect_to_embed_app_in_admin redirects to the embed app in the admin when the shop param is present" do
+    ShopifyApp.configuration.embedded_app = true
+
+    shop = "my-shop.myshopify.com"
+    get :redirect_to_embed, params: { shop: shop }
+    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}"
+  end
+
+  test "Redirect to login URL when host nor shop param is present" do
+    ShopifyApp.configuration.embedded_app = true
+
+    get :redirect_to_embed
+    assert_redirected_to ShopifyApp.configuration.login_url
+  end
+
+  test "Redirect to root URL when decoded host is not a shopify domain" do
+    shop = "my-shop.fakeshopify.com"
+    host = Base64.encode64("#{shop}/admin")
+
+    get :redirect_to_embed, params: { host: host }
+    assert_redirected_to ShopifyApp.configuration.root_url
+  end
+
+  test "Redirect to root URL when shop is not a shopify domain" do
+    shop = "my-shop.fakeshopify.com"
+
+    get :redirect_to_embed, params: { shop: shop }
+    assert_redirected_to ShopifyApp.configuration.root_url
   end
 end

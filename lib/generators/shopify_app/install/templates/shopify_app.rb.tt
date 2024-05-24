@@ -4,6 +4,8 @@ ShopifyApp.configure do |config|
   config.scope = "<%= @scope %>" # Consult this page for more scope options:
                                   # https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes
   config.embedded_app = <%= embedded_app? %>
+  config.new_embedded_auth_strategy = <%= embedded_app? %>
+
   config.after_authenticate_job = false
   config.api_version = "<%= @api_version %>"
   config.shop_session_repository = 'Shop'
@@ -30,8 +32,8 @@ ShopifyApp.configure do |config|
   #   amount: 5,
   #   interval: ShopifyApp::BillingConfiguration::INTERVAL_EVERY_30_DAYS,
   #   currency_code: "USD", # Only supports USD for now
-  #   trial_days: 0
-  #   test: ENV.fetch('SHOPIFY_TEST_CHARGES', !Rails.env.production?)
+  #   trial_days: 0,
+  #   test: !ENV['SHOPIFY_TEST_CHARGES'].nil? ? ["true", "1"].include?(ENV['SHOPIFY_TEST_CHARGES']) : !Rails.env.production?
   # )
 
   if defined? Rails::Server

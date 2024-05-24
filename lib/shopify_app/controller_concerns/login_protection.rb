@@ -16,6 +16,7 @@ module ShopifyApp
       end
 
       rescue_from ShopifyAPI::Errors::HttpResponseError, with: :handle_http_error
+      include ShopifyApp::WithShopifyIdToken
     end
 
     ACCESS_TOKEN_REQUIRED_HEADER = "X-Shopify-API-Request-Failure-Unauthorized"
@@ -53,7 +54,7 @@ module ShopifyApp
       @current_shopify_session ||= begin
         cookie_name = ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME
         load_current_session(
-          auth_header: request.headers["HTTP_AUTHORIZATION"],
+          shopify_id_token: shopify_id_token,
           cookies: { cookie_name => cookies.encrypted[cookie_name] },
           is_online: online_token_configured?,
         )
@@ -78,13 +79,6 @@ module ShopifyApp
       response.set_header(ACCESS_TOKEN_REQUIRED_HEADER, "true")
     end
 
-    def jwt_expire_at
-      expire_at = request.env["jwt.expire_at"]
-      return unless expire_at
-
-      expire_at - 5.seconds # 5s gap to start fetching new token in advance
-    end
-
     def add_top_level_redirection_headers(url: nil, ignore_response_code: false)
       if request.xhr? && (ignore_response_code || response.code.to_i == 401)
         ShopifyApp::Logger.debug("Adding top level redirection headers")
@@ -94,8 +88,8 @@ module ShopifyApp
           params[:shop] = if current_shopify_session
             current_shopify_session.shop
 
-          elsif (matches = request.headers["HTTP_AUTHORIZATION"]&.match(/^Bearer (.+)$/))
-            jwt_payload = ShopifyAPI::Auth::JwtPayload.new(T.must(matches[1]))
+          elsif shopify_id_token
+            jwt_payload = ShopifyAPI::Auth::JwtPayload.new(shopify_id_token)
             jwt_payload.shop
           end
         end
@@ -103,20 +97,11 @@ module ShopifyApp
         url ||= login_url_with_optional_shop
 
         ShopifyApp::Logger.debug("Setting Reauthorize-Url to #{url}")
-        response.set_header("X-Shopify-API-Request-Failure-Reauthorize", "1")
-        response.set_header("X-Shopify-API-Request-Failure-Reauthorize-Url", url)
+        RedirectForEmbedded.add_app_bridge_redirect_url_header(url, response)
       end
     end
 
     protected
-
-    def jwt_shopify_domain
-      request.env["jwt.shopify_domain"]
-    end
-
-    def jwt_shopify_user_id
-      request.env["jwt.shopify_user_id"]
-    end
 
     def host
       params[:host]
@@ -273,10 +258,10 @@ module ShopifyApp
       online_token_configured?
     end
 
-    def load_current_session(auth_header: nil, cookies: nil, is_online: false)
+    def load_current_session(shopify_id_token: nil, cookies: nil, is_online: false)
       return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
 
-      session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(auth_header, cookies, is_online)
+      session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(shopify_id_token, cookies, is_online)
       return nil unless session_id
 
       ShopifyApp::SessionRepository.load_session(session_id)

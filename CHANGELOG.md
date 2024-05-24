@@ -2,6 +2,34 @@ Unreleased
 ----------
 [1852](https://github.com/Shopify/shopify_app/pull/1852) - Handle scenario when invalid URI is passed to `sanitize_shop_domain `
 
+22.2.1 (May 6,2024)
+* Patch - Don't delete session on 401 errors during retry in `with_token_refetch` [#1844](https://github.com/Shopify/shopify_app/pull/1844)
+
+22.2.0 (May 2,2024)
+----------
+* Add new zero redirect authorization strategy - `Token Exchange`.
+  - This strategy replaces the existing OAuth flow for embedded apps and remove the redirects that were previously necessary to complete OAuth.
+  See ["New embedded app authorization strategy (Token Exchange)"](/README.md/#new-embedded-app-authorization-strategy-token-exchange) for how to enable this feature.
+  - Related PRs: [#1817](https://github.com/Shopify/shopify_app/pull/1817),
+  [#1818](https://github.com/Shopify/shopify_app/pull/1818),
+  [#1819](https://github.com/Shopify/shopify_app/pull/1819),
+  [#1821](https://github.com/Shopify/shopify_app/pull/1821),
+  [#1822](https://github.com/Shopify/shopify_app/pull/1822),
+  [#1823](https://github.com/Shopify/shopify_app/pull/1823),
+  [#1832](https://github.com/Shopify/shopify_app/pull/1832),
+  [#1833](https://github.com/Shopify/shopify_app/pull/1833),
+  [#1834](https://github.com/Shopify/shopify_app/pull/1834),
+  [#1836](https://github.com/Shopify/shopify_app/pull/1836),
+* Bumps `shopify_api` to `14.3.0` [1832](https://github.com/Shopify/shopify_app/pull/1832)
+* Support `id_token` from URL param [1832](https://github.com/Shopify/shopify_app/pull/1832)
+  * Extracted controller concern `WithShopifyIdToken`
+      * This concern provides a method `shopify_id_token` to retrieve the Shopify Id token from either the authorization header or the URL param `id_token`.
+  * `ShopifyApp::JWTMiddleware` supports retrieving session token from URL param `id_token`
+  * `ShopifyApp::JWTMiddleware` returns early if the app is not embedded to avoid unnecessary JWT verification
+  * `LoginProtection` now uses `WithShopifyIdToken` concern to retrieve the Shopify Id token, thus accepting the session token from the URL param `id_token`
+* Marking `ShopifyApp::JWT` to be deprecated in version 23.0.0 [1832](https://github.com/Shopify/shopify_app/pull/1832), use `ShopifyAPI::Auth::JwtPayload` instead.
+* Fix infinite redirect loop caused by handling errors from Billing API [1833](https://github.com/Shopify/shopify_app/pull/1833)
+
 22.1.0 (April 9,2024)
 ----------
 * Extracted class - `PostAuthenticateTasks` to handle post authenticate tasks. To learn more, see [post authenticate tasks](/docs/shopify_app/authentication.md#post-authenticate-tasks). [1819](https://github.com/Shopify/shopify_app/pull/1819)

@@ -13,75 +13,136 @@ class ShopifyApp::JWTMiddlewareTest < ActiveSupport::TestCase
     Rack::Lint.new(ShopifyApp::JWTMiddleware.new(simple_app))
   end
 
-  test "does not change env if no authorization header" do
-    env = Rack::MockRequest.env_for("https://example.com")
+  def setup
+    @user_id = 12345678
+    @shop = "test-shop.myshopify.io"
+    @expire_at = (Time.now + 10).to_i
 
-    app.call(env)
+    payload = {
+      iss: "https://#{@shop}/admin",
+      dest: "https://#{@shop}",
+      aud: ShopifyAPI::Context.api_key,
+      sub: @user_id.to_s,
+      exp: @expire_at,
+      nbf: 1234,
+      iat: 1234,
+      jti: "4321",
+      sid: "abc123",
+    }
 
-    assert_nil env["jwt.shopify_domain"]
+    @jwt_token = JWT.encode(payload, ShopifyAPI::Context.api_secret_key, "HS256")
+    @auth_header = "Bearer #{@jwt_token}"
+    @jwt_payload = ShopifyAPI::Auth::JwtPayload.new(@jwt_token)
   end
 
-  test "does not change env if no bearer token" do
-    env = Rack::MockRequest.env_for("https://example.com")
-    env["HTTP_AUTHORIZATION"] = "something"
+  test "does not parse JWT unless it's an embedded app" do
+    ShopifyApp.configuration.stubs(:embedded_app?).returns(false)
 
-    app.call(env)
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = @auth_header
 
-    assert_nil env["jwt.shopify_domain"]
-  end
-
-  test "does not add the shop to the env if nil shop value" do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new(nil, 1, nil)
-    ShopifyApp::JWT.stubs(:new).with("abc").returns(jwt_mock)
-
-    env = Rack::MockRequest.env_for("https://example.com")
-    env["HTTP_AUTHORIZATION"] = "Bearer abc"
-
-    app.call(env)
-
-    assert_nil env["jwt.shopify_domain"]
-    assert_equal 1, env["jwt.shopify_user_id"]
-    assert_nil env["jwt.expire_at"]
-  end
-
-  test "does not add the user to the env if nil user value" do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new("example.myshopify.com", nil, nil)
-    ShopifyApp::JWT.stubs(:new).with("abc").returns(jwt_mock)
-
-    env = Rack::MockRequest.env_for("https://example.com")
-    env["HTTP_AUTHORIZATION"] = "Bearer abc"
-
-    app.call(env)
-
-    assert_equal "example.myshopify.com", env["jwt.shopify_domain"]
-    assert_nil env["jwt.shopify_user_id"]
-    assert_nil env["jwt.expire_at"]
-  end
-
-  test "sets shopify_domain, shopify_user_id and expire_at if non-nil values" do
-    expire_at = 2.hours.from_now.to_i
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new("example.myshopify.com", 1, expire_at)
-    ShopifyApp::JWT.stubs(:new).with("abc").returns(jwt_mock)
-
-    env = Rack::MockRequest.env_for("https://example.com")
-    env["HTTP_AUTHORIZATION"] = "Bearer abc"
-
-    app.call(env)
-
-    assert_equal "example.myshopify.com", env["jwt.shopify_domain"]
-    assert_equal 1, env["jwt.shopify_user_id"]
-    assert_equal expire_at, env["jwt.expire_at"]
-  end
-
-  test "sets the jwt values before calling the next middleware" do
-    jwt_mock = Struct.new(:shopify_domain, :shopify_user_id, :expire_at).new("example.myshopify.com", 1, nil)
-    ShopifyApp::JWT.stubs(:new).with("abc").returns(jwt_mock)
-
-    env = Rack::MockRequest.env_for("https://example.com")
-    env["HTTP_AUTHORIZATION"] = "Bearer abc"
+    ShopifyAPI::Auth::JwtPayload.expects(:new).never
 
     _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
 
-    assert_equal "example.myshopify.com", body
+    assert_equal "", body
+  end
+
+  test "does not change env if no authorization header or id_token param" do
+    env = Rack::MockRequest.env_for
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).never
+
+    app.call(env)
+
+    assert_envs_are_nil(env)
+  end
+
+  test "does not change env if no bearer token" do
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = "something"
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).never
+
+    app.call(env)
+
+    assert_envs_are_nil(env)
+  end
+
+  test "accepts JWT from URL id_token param and sets env" do
+    env = Rack::MockRequest.env_for("https://example.com/?shop=#{@shop}&id_token=#{@jwt_token}")
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
+
+    app.call(env)
+
+    assert_envs_are_set(env)
+  end
+
+  test "accepts JWT from authorization header and sets env" do
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = @auth_header
+    ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
+
+    app.call(env)
+
+    assert_envs_are_set(env)
+  end
+
+  test "accepts JWT from authorization header in priority than JWT from URL param" do
+    env = Rack::MockRequest.env_for("https://example.com/?shop=#{@shop}&id_token=should-not-be-used")
+    env["HTTP_AUTHORIZATION"] = @auth_header
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).with(@jwt_token).returns(@jwt_payload)
+
+    app.call(env)
+
+    assert_envs_are_set(env)
+  end
+
+  test "sets the jwt values before calling the next middleware" do
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = @auth_header
+
+    _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
+
+    assert_equal @shop, body
+  end
+
+  test "does not set env or raise exception if JWT parsing fails" do
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = @auth_header
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+
+    assert_nothing_raised { app.call(env) }
+
+    assert_envs_are_nil(env)
+  end
+
+  test "calls the next middleware even if JWT parsing fails" do
+    env = Rack::MockRequest.env_for
+    env["HTTP_AUTHORIZATION"] = @auth_header
+
+    ShopifyAPI::Auth::JwtPayload.expects(:new).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+
+    _, _, body = ShopifyApp::JWTMiddleware.new(simple_app).call(env)
+
+    assert_equal "", body
+  end
+
+  private
+
+  def assert_envs_are_set(env)
+    assert_equal @shop, env["jwt.shopify_domain"]
+    assert_equal @user_id, env["jwt.shopify_user_id"]
+    assert_equal @expire_at, env["jwt.expire_at"]
+    assert_equal @jwt_token, env["jwt.token"]
+  end
+
+  def assert_envs_are_nil(env)
+    assert_nil env["jwt.shopify_domain"]
+    assert_nil env["jwt.shopify_user_id"]
+    assert_nil env["jwt.expire_at"]
   end
 end

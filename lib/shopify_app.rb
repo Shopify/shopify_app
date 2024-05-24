@@ -40,6 +40,9 @@ module ShopifyApp
 
   require "shopify_app/logger"
 
+  # Admin API helpers
+  require "shopify_app/admin_api/with_token_refetch"
+
   # controller concerns
   require "shopify_app/controller_concerns/csrf_protection"
   require "shopify_app/controller_concerns/localization"
@@ -53,9 +56,11 @@ module ShopifyApp
   require "shopify_app/controller_concerns/app_proxy_verification"
   require "shopify_app/controller_concerns/webhook_verification"
   require "shopify_app/controller_concerns/token_exchange"
+  require "shopify_app/controller_concerns/with_shopify_id_token"
 
   # Auth helpers
   require "shopify_app/auth/post_authenticate_tasks"
+  require "shopify_app/auth/token_exchange"
 
   # jobs
   require "shopify_app/jobs/webhooks_manager_job"

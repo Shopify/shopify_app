@@ -16,6 +16,16 @@ module ShopifyApp
       ShopifyApp.configuration.myshopify_domain = "myshopify.io"
     end
 
+    test "warn deprecation" do
+      deprecation_message = <<~EOS
+        "ShopifyApp::JWT will be deprecated, use ShopifyAPI::Auth::JwtPayload to parse JWT token instead."
+      EOS
+
+      ShopifyApp::Logger.expects(:deprecated).with(deprecation_message, "23.0.0")
+
+      JWT.new("")
+    end
+
     test "#shopify_domain, #shopify_user_id and #expire_at are returned from jwt payload" do
       p = payload
       jwt = JWT.new(token(p))

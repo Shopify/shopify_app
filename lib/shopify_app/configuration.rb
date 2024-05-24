@@ -48,8 +48,8 @@ module ShopifyApp
     # takes a ShopifyApp::BillingConfiguration object
     attr_accessor :billing
 
-    # Work in Progress: enables token exchange authentication flow
-    attr_accessor :wip_new_embedded_auth_strategy
+    # Enables new authorization flow using token exchange
+    attr_accessor :new_embedded_auth_strategy
 
     def initialize
       @root_url = "/"
@@ -129,7 +129,7 @@ module ShopifyApp
     end
 
     def use_new_embedded_auth_strategy?
-      wip_new_embedded_auth_strategy && embedded_app?
+      new_embedded_auth_strategy && embedded_app?
     end
 
     def online_token_configured?

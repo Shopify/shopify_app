@@ -51,7 +51,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
     ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
 
-    @token = "Bearer Grylls da token"
+    @token = "Grylls da token"
+    @token_in_auth_header = "Bearer #{@token}"
+
     @session = ShopifyAPI::Auth::Session.new(id: "1", shop: @shop)
     ShopifyApp::SessionRepository.store_shop_session(@session)
 
@@ -93,7 +95,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     )
 
     with_application_test_routes do
-      request.headers["HTTP_AUTHORIZATION"] = @token
+      request.headers["HTTP_AUTHORIZATION"] = @token_in_auth_header
 
       ::ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
         .with(
@@ -123,7 +125,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     )
 
     with_application_test_routes do
-      request.headers["HTTP_AUTHORIZATION"] = @token
+      request.headers["HTTP_AUTHORIZATION"] = @token_in_auth_header
 
       ::ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
         .with(
@@ -148,7 +150,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test "#current_shopify_session loads online session if user session expected" do
     with_application_test_routes do
-      request.headers["HTTP_AUTHORIZATION"] = @token
+      request.headers["HTTP_AUTHORIZATION"] = @token_in_auth_header
 
       ::ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
         .with(
@@ -165,7 +167,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
   test "#current_shopify_session loads offline session if user session unexpected" do
     ShopifyApp::SessionRepository.user_storage = nil
 
-    request.headers["HTTP_AUTHORIZATION"] = @token
+    request.headers["HTTP_AUTHORIZATION"] = @token_in_auth_header
 
     ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
       .with(
@@ -177,6 +179,25 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
     with_application_test_routes do
       get :index
+    end
+  end
+
+  test "#current_shopify_session loads session from URL param id_token" do
+    ShopifyApp::SessionRepository.user_storage = nil
+
+    request.headers["HTTP_AUTHORIZATION"] = nil
+
+    ShopifyAPI::Utils::SessionUtils.expects(:current_session_id)
+      .with(
+        @token,
+        { ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME => nil },
+        false,
+      )
+      .returns(@session.id)
+    ShopifyAPI::Context.expects(:activate_session)
+
+    with_application_test_routes do
+      get :index, params: { id_token: @token }
     end
   end
 
@@ -274,7 +295,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
       ShopifyAPI::Context.stubs(:scope).returns(ShopifyAPI::Auth::AuthScopes.new(["scope1"]))
 
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
-      request.headers["HTTP_AUTHORIZATION"] = @token
+      request.headers["HTTP_AUTHORIZATION"] = @token_in_auth_header
 
       ShopifyApp::SessionRepository.expects(:load_session).returns(
         ShopifyAPI::Auth::Session.new(shop: "some-shop", scope: ["scope1", "scope2"]),

@@ -129,6 +129,44 @@ These routes are configurable. See the more detailed [*Engine*](/docs/shopify_ap
 
 To learn more about how this gem authenticates with Shopify, see [*Authentication*](/docs/shopify_app/authentication.md).
 
+### New embedded app authorization strategy (Token Exchange)
+
+> [!TIP]
+> If you are building an embedded app, we **strongly** recommend using [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+> with [token exchange](https://shopify.dev/docs/apps/auth/get-access-tokens/token-exchange) instead of the legacy authorization code grant flow.
+
+We've introduced a new installation and authorization strategy for **embedded apps** that
+eliminates the redirects that were previously necessary.
+It replaces the existing [installation and authorization code grant flow](https://shopify.dev/docs/apps/auth/get-access-tokens/authorization-code-grant).
+
+This is achieved by using [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+to handle automatic app installations and scope updates, while utilizing
+[token exchange](https://shopify.dev/docs/apps/auth/get-access-tokens/token-exchange) to retrieve an access token for
+authenticated API access.
+
+##### Enabling this new strategy in your app
+
+1. Enable [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
+    by configuring your scopes [through the Shopify CLI](https://shopify.dev/docs/apps/tools/cli/configuration).
+2. Enable the new auth strategy in your app's ShopifyApp configuration file.
+
+```ruby
+# config/initializers/shopify_app.rb
+ShopifyApp.configure do |config|
+  #.....
+  config.embedded_app = true
+  config.new_embedded_auth_strategy = true
+
+  # If your app is configured to use online sessions, you can enable session expiry date check so a new access token
+  # is fetched automatically when the session expires.
+  # See expiry date check docs: https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/sessions.md#expiry-date
+  config.check_session_expiry_date = true
+  ...
+end
+
+```
+3. Enjoy a smoother and faster app installation process.
+
 ### API Versioning
 
 [Shopify's API is versioned](https://shopify.dev/concepts/about-apis/versioning). With Shopify App `v1.11.0`, the included Shopify API gem allows developers to specify and update the Shopify API version they want their app or service to use. The Shopify API gem also surfaces warnings to Rails apps about [deprecated endpoints, GraphQL fields and more](https://shopify.dev/concepts/about-apis/versioning#deprecation-practices).

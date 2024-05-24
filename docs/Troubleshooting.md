@@ -92,29 +92,6 @@ Edit `config/initializer/shopify_app.rb` and ensure the following configurations
 + config.shop_session_repository = 'Shop'
 ```
 
-#### Inspect server logs
-
-If you have checked the configurations above, and the app is still using cookies, then it is possible that the `shopify_app` gem defaulted to relying on cookies. This would happen when your browser allows third-party cookies and a session token was not successfully found as part of your request.
-
-In this case, check the server logs to see if the session token was invalid:
-
-```los
-[ShopifyApp::JWT] Failed to validate JWT: [JWT::<Error>] <Failure message>
-```
-
-*Example*
-
-```
-[ShopifyApp::JWT] Failed to validate JWT: [JWT::ImmatureSignature] Signature nbf has not been reached
-```
-
-**Note:** In a local development environment, you may want to temporarily update your `Gemfile` to point to a local instance of the `shopify_app` library instad of an installed gem. This will enable you to use a debugging tool like `byebug` to debug the library.
-
-```diff
-- gem 'shopify_app', '~> 14.2'
-+ gem 'shopify_app', path: '/path/to/shopify_app'
-```
-
 ### My app can't make requests to the Shopify API
 
 > **Note:** Session tokens cannot be used to make authenticated requests to the Shopify API. Learn more about authenticating your backend requests to Shopify APIs at [Shopify API authentication](https://shopify.dev/concepts/about-apis/authentication).
