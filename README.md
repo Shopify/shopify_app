@@ -148,6 +148,10 @@ authenticated API access.
 
 1. Enable [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation)
     by configuring your scopes [through the Shopify CLI](https://shopify.dev/docs/apps/tools/cli/configuration).
+> [!NOTE]
+> Ensure you don't have `use_legacy_install_flow = true` in your `shopify.app.toml` configuration file. If `use_legacy_install_flow` is true, Shopify will not manage the installation process for your app.
+> You should remove the `use_legacy_install_flow` line from your `shopify.app.toml` configuration file or set it to `false`.
+
 2. Enable the new auth strategy in your app's ShopifyApp configuration file.
 
 ```ruby
