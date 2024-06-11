@@ -46,7 +46,19 @@ class CsrfProtectionTest < ActionDispatch::IntegrationTest
   end
 
   test "it does not raise if a valid session token was provided" do
-    post "/csrf_protection_test", env: { "jwt.shopify_domain": "exampleshop.myshopify.com" }
+    jwt_payload = {
+      iss: "iss",
+      dest: "https://test-shop.myshopify.com",
+      aud: ShopifyAPI::Context.api_key,
+      sub: "1",
+      exp: (Time.now + 10).to_i,
+      nbf: 1234,
+      iat: 1234,
+      jti: "4321",
+      sid: "abc123",
+    }
+    jwt_token = JWT.encode(jwt_payload, ShopifyAPI::Context.api_secret_key, "HS256")
+    post "/csrf_protection_test", headers: { HTTP_AUTHORIZATION: "Bearer #{jwt_token}" }
 
     assert_response :ok
   end

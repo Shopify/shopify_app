@@ -16,28 +16,21 @@ class WithShopifyIdTokenTest < ActionController::TestCase
   def setup
     @id_token = "this-is-the-shopify-id-token"
     @auth_header = "Bearer #{@id_token}"
+    @jwt_payload = {
+      iss: "iss",
+      dest: "https://test-shop.myshopify.com",
+      aud: ShopifyAPI::Context.api_key,
+      sub: "1",
+      exp: (Time.now + 10).to_i,
+      nbf: 1234,
+      iat: 1234,
+      jti: "4321",
+      sid: "abc123",
+    }
   end
 
   test "#shopify_id_token returns nil if id_token can't be found anywhere" do
     with_application_test_routes do
-      get :index
-
-      assert_nil @controller.shopify_id_token
-    end
-  end
-
-  test "#shopify_id_token returns id token from request env" do
-    with_application_test_routes do
-      request.env["jwt.token"] = @id_token
-      get :index
-
-      assert_equal @id_token, @controller.shopify_id_token
-    end
-  end
-
-  test "#shopify_id_token returns nil if request env is set to nil" do
-    with_application_test_routes do
-      request.env["jwt.token"] = nil
       get :index
 
       assert_nil @controller.shopify_id_token
@@ -79,19 +72,8 @@ class WithShopifyIdTokenTest < ActionController::TestCase
     end
   end
 
-  test "#shopify_id_token returns id token from request env first" do
+  test "#shopify_id_token returns id token from authorization header first" do
     with_application_test_routes do
-      request.env["jwt.token"] = "OK"
-      request.headers["HTTP_AUTHORIZATION"] = "Bearer this-should-not-be-returned"
-      get :index, params: { id_token: "this-should-also-not-be-returned" }
-
-      assert_equal "OK", @controller.shopify_id_token
-    end
-  end
-
-  test "#shopify_id_token returns id token from authorization header only if request env is nil" do
-    with_application_test_routes do
-      request.env["jwt.token"] = nil
       request.headers["HTTP_AUTHORIZATION"] = "Bearer OK"
       get :index, params: { id_token: "this-should-not-be-returned" }
 
@@ -99,9 +81,8 @@ class WithShopifyIdTokenTest < ActionController::TestCase
     end
   end
 
-  test "#shopify_id_token returns id token from URL params only if request env and authorization header are nil" do
+  test "#shopify_id_token returns id token from URL params only if authorization header is nil" do
     with_application_test_routes do
-      request.env["jwt.token"] = nil
       request.headers["HTTP_AUTHORIZATION"] = nil
       get :index, params: { id_token: "OK" }
 
@@ -111,40 +92,40 @@ class WithShopifyIdTokenTest < ActionController::TestCase
 
   test "#shopify_id_token is memoized" do
     with_application_test_routes do
-      request.env["jwt.token"] = "OK"
+      request.headers["HTTP_AUTHORIZATION"] = "Bearer OK"
       first = @controller.shopify_id_token
-      request.env["jwt.token"] = "NOT-OK"
+      request.headers["HTTP_AUTHORIZATION"] = "NOT-OK"
       second = @controller.shopify_id_token
 
       assert_equal first, second, "OK"
     end
   end
 
-  test "#jwt_shopify_domain returns jwt.shopify_domain from request env" do
-    expected_domain = "hello-world.myshopify.com"
+  test "#jwt_shopify_domain returns dest from token payload" do
+    expected_domain = "test-shop.myshopify.com"
     with_application_test_routes do
-      request.env["jwt.shopify_domain"] = expected_domain
+      request.headers["HTTP_AUTHORIZATION"] = "Bearer #{jwt_token}"
       get :index
 
       assert_equal expected_domain, @controller.jwt_shopify_domain
     end
   end
 
-  test "#jwt_shopify_user_id returns jwt.shopify_user_id from request env" do
-    expected_user_id = 123
+  test "#jwt_shopify_user_id returns sub from token payload" do
+    expected_user_id = 1
     with_application_test_routes do
-      request.env["jwt.shopify_user_id"] = expected_user_id
+      request.headers["HTTP_AUTHORIZATION"] = "Bearer #{jwt_token}"
       get :index
 
       assert_equal expected_user_id, @controller.jwt_shopify_user_id
     end
   end
 
-  test "#jwt_expire_at returns jwt.expire_at - 5 seconds from request env" do
+  test "#jwt_expire_at returns exp - 5 seconds from token payload" do
     freeze_time do
-      expected_expire_at = Time.now.to_i
+      expected_expire_at = (Time.now + 10).to_i
       with_application_test_routes do
-        request.env["jwt.expire_at"] = expected_expire_at
+        request.headers["HTTP_AUTHORIZATION"] = "Bearer #{jwt_token}"
         get :index
 
         assert_equal expected_expire_at - 5.seconds, @controller.jwt_expire_at
@@ -159,5 +140,9 @@ class WithShopifyIdTokenTest < ActionController::TestCase
       end
       yield
     end
+  end
+
+  def jwt_token
+    JWT.encode(@jwt_payload, ShopifyAPI::Context.api_secret_key, "HS256")
   end
 end

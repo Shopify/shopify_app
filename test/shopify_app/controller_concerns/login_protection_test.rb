@@ -567,9 +567,21 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   test "#jwt_expire_at returns jwt expire at with 5s gap" do
     expire_at = 2.hours.from_now.to_i
+    jwt_payload = {
+      iss: "iss",
+      dest: "https://test-shop.myshopify.com",
+      aud: ShopifyAPI::Context.api_key,
+      sub: "1",
+      exp: expire_at,
+      nbf: 1234,
+      iat: 1234,
+      jti: "4321",
+      sid: "abc123",
+    }
+    jwt_token = JWT.encode(jwt_payload, ShopifyAPI::Context.api_secret_key, "HS256")
 
     with_application_test_routes do
-      request.env["jwt.expire_at"] = expire_at
+      request.headers["HTTP_AUTHORIZATION"] = "Bearer #{jwt_token}"
       get :index
 
       assert_equal expire_at - 5.seconds, @controller.jwt_expire_at
