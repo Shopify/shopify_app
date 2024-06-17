@@ -27,10 +27,6 @@ module ShopifyApp
       ]
     end
 
-    initializer "shopify_app.middleware" do |app|
-      app.config.middleware.insert_after(::Rack::Runtime, ShopifyApp::JWTMiddleware)
-    end
-
     initializer "shopify_app.redact_job_params" do
       ActiveSupport.on_load(:active_job) do
         if ActiveJob::Base.respond_to?(:log_arguments?)

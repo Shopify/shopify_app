@@ -43,6 +43,7 @@ We also recommend the use of a staging site which matches your production enviro
 If you do run into issues, we recommend looking at our [debugging tips.](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#debugging-tips)
 
 ## Unreleased
+
 #### (v23.0.0) - Deprecated methods in CallbackController
 The following methods from `ShopifyApp::CallbackController` have been deprecated in `v23.0.0`
 - `perform_after_authenticate_job`
@@ -53,15 +54,28 @@ If you have overwritten these methods in your callback controller to modify the 
 update your app to use configurable option `config.custom_post_authenticate_tasks` instead. See [post authenticate tasks](/docs/shopify_app/authentication.md#post-authenticate-tasks)
 for more information.
 
+#### (v23.0.0) - Removed `ShopifyApp::JWTMiddleware`
+The `ShopifyApp::JWTMiddleware` middleware has been removed in `v23.0.0`. This middleware was used to populate the following environment variables from the JWT session token:
+- `request.env["jwt.token"]`
+- `request.env["jwt.shopify_domain"]`
+- `request.env["jwt.shopify_user_id"]`
+- `request.env["jwt.expire_at"]`
+
+If you are using any of these variables in your app, you'll need to replace them. You can instead include the `ShopifyApp::WithShopifyIdToken` concern, which does the same JWT parsing as the middleware, and exposes the same values in the following helper methods:
+- `shopify_id_token`
+- `jwt_shopify_domain`
+- `jwt_shopify_user_id`
+- `jwt_expire_at`
+
 #### (v23.0.0) - Deprecated "ShopifyApp::JWT" class
 The `ShopifyApp::JWT` class has been deprecated in `v23.0.0`. Use [ShopifyAPI::Auth::JwtPayload](https://github.com/Shopify/shopify-api-ruby/blob/main/lib/shopify_api/auth/jwt_payload.rb)
 class from the `shopify_api` gem instead. A search and replace should be enough for this migration.
-  - `ShopifyAPI::Auth::JwtPayload` is a superset of the `ShopifyApp::JWT` class, and contains methods that were available in `ShopifyApp::JWT`. 
+  - `ShopifyAPI::Auth::JwtPayload` is a superset of the `ShopifyApp::JWT` class, and contains methods that were available in `ShopifyApp::JWT`.
   - `ShopifyAPI::Auth::JwtPayload` raises `ShopifyAPI::Errors::InvalidJwtTokenError` if the token is invalid.
 
 ## Upgrading to `v22.2.0`
 #### Added new feature for zero redirect embedded app authorization flow - Token Exchange
-A new embedded app authorization strategy has been introduced in `v22.2.0` that eliminates the redirects that were previously necessary for OAuth. 
+A new embedded app authorization strategy has been introduced in `v22.2.0` that eliminates the redirects that were previously necessary for OAuth.
 It can replace the existing installation and authorization code grant flow.
 See [new embedded app authorization strategy](/README.md#new-embedded-app-authorization-strategy-token-exchange) for more information.
 
