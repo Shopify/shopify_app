@@ -5,23 +5,31 @@ module ShopifyApp
     extend ActiveSupport::Concern
 
     def shopify_id_token
-      @shopify_id_token ||= id_token_from_authorization_header || id_token_from_url_param
+      return @shopify_id_token if defined?(@shopify_id_token)
+
+      @shopify_id_token = id_token_from_authorization_header || id_token_from_url_param
     end
 
     def jwt_payload
-      @jwt_payload ||= shopify_id_token.present? ? ShopifyAPI::Auth::JwtPayload.new(shopify_id_token) : nil
+      return @jwt_payload if defined?(@jwt_payload)
+
+      @jwt_payload = shopify_id_token.present? ? ShopifyAPI::Auth::JwtPayload.new(shopify_id_token) : nil
     end
 
     def jwt_shopify_domain
-      @jwt_shopify_domain ||= jwt_payload.present? ? ShopifyApp::Utils.sanitize_shop_domain(jwt_payload.dest) : nil
+      return @jwt_shopify_domain if defined?(@jwt_shopify_domain)
+
+      @jwt_shopify_domain = if jwt_payload.present?
+        ShopifyApp::Utils.sanitize_shop_domain(jwt_payload.shopify_domain)
+      end
     end
 
     def jwt_shopify_user_id
-      jwt_payload&.sub&.to_i
+      jwt_payload&.shopify_user_id
     end
 
     def jwt_expire_at
-      expire_at = jwt_payload&.exp&.to_i
+      expire_at = jwt_payload&.expire_at
       return unless expire_at
 
       expire_at - 5.seconds # 5s gap to start fetching new token in advance
