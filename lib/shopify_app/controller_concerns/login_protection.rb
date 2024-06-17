@@ -122,10 +122,17 @@ module ShopifyApp
           query = Rack::Utils.parse_nested_query(referer.query)
           query = query.merge(sanitized_params).to_query
         end
-        session[:return_to] = query.blank? ? path.to_s : "#{path}?#{query}"
+        session[:return_to] = return_to_url(path, query)
         ShopifyApp::Logger.debug("Redirecting to #{login_url_with_optional_shop}")
         redirect_to(login_url_with_optional_shop)
       end
+    end
+
+    # Apps which use cookies for session storage, and thus have a 4kB session data
+    # limit, may choose to override this method to prevent excessively-long `query`
+    # strings from causing a CookieOverflow error.
+    def return_to_url(path, query)
+      query.blank? ? path.to_s : "#{path}?#{query}"
     end
 
     def close_session
