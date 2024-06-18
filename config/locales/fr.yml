@@ -3,21 +3,3 @@ fr:
   logged_out: Vous êtes déconnecté(e)
   could_not_log_in: Impossible de se connecter à la boutique Shopify
   invalid_shop_url: Url invalide
-  enable_cookies_heading: Activer les cookies de %{app}
-  enable_cookies_body: Vous devez manuellement activer les cookies dans ce navigateur
-    pour utiliser %{app} dans Shopify.
-  enable_cookies_footer: Les cookies permettent à l'application de vous authentifier
-    en stockant temporairement vos préférences et informations personnelles. Celles-ci
-    expirent après 30 jours.
-  enable_cookies_action: Activer les cookies
-  top_level_interaction_heading: Votre navigateur doit s'authentifier %{app}
-  top_level_interaction_body: Votre navigateur nécessite des applications telles que
-    %{app} pour vous demander l'accès aux cookies avant que Shopify ne puisse l'ouvrir
-    pour vous.
-  top_level_interaction_action: Continuer
-  request_storage_access_heading: "%{app} a besoin d'accéder aux cookies"
-  request_storage_access_body: Cela permet à l'application de vous authentifier en
-    stockant temporairement vos informations personnelles. Cliquez pour continuer
-    et autorisez les cookies à utiliser l'application.
-  request_storage_access_footer: Les cookies expirent après 30 jours.
-  request_storage_access_action: Continuer
