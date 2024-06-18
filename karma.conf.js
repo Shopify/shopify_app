@@ -16,9 +16,6 @@ module.exports = function(config) {
     exclude: [
       // Exclude JS files that create 'DOMContentLoaded' event listeners
       'app/assets/javascripts/**/redirect.js',
-      'app/assets/javascripts/**/storage_access_redirect.js',
-      'app/assets/javascripts/**/top_level_interaction.js',
-      'app/assets/javascripts/**/partition_cookies.js',
     ],
     mochaReporter: {
       output: 'autowatch',
