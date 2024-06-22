@@ -23,8 +23,7 @@ module ShopifyApp
       ShopifyAPI::Context.activate_session(current_shopify_session)
       with_token_refetch(current_shopify_session, shopify_id_token, &block)
     rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
-      ShopifyApp::Logger.debug("Responding to invalid Shopify ID token: #{e.message}")
-      respond_to_invalid_shopify_id_token unless performed?
+      respond_to_invalid_shopify_id_token(e)
     ensure
       ShopifyApp::Logger.debug("Deactivating session")
       ShopifyAPI::Context.deactivate_session
@@ -49,6 +48,8 @@ module ShopifyApp
 
     def current_shopify_domain
       sanitized_shop_name || current_shopify_session&.shop
+    rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
+      respond_to_invalid_shopify_id_token(e)
     end
 
     private
@@ -58,7 +59,10 @@ module ShopifyApp
       ShopifyApp::Auth::TokenExchange.perform(shopify_id_token)
     end
 
-    def respond_to_invalid_shopify_id_token
+    def respond_to_invalid_shopify_id_token(error)
+      ShopifyApp::Logger.debug("Responding to invalid Shopify ID token: #{error.message}")
+      return if performed?
+
       if request.headers["HTTP_AUTHORIZATION"].blank?
         if missing_embedded_param?
           redirect_to_embed_app_in_admin
