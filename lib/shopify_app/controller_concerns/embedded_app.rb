@@ -25,7 +25,11 @@ module ShopifyApp
         return redirect_to(ShopifyApp.configuration.login_url)
       end
 
-      redirect_path = ShopifyAPI::Auth.embedded_app_url(host)
+      original_path = request.path
+      original_params = request.query_parameters.except(:host, :shop, :id_token)
+      original_path += "?#{original_params.to_query}" if original_params.present?
+
+      redirect_path = ShopifyAPI::Auth.embedded_app_url(host) + original_path.to_s
       redirect_path = ShopifyApp.configuration.root_url if deduced_phishing_attack?(redirect_path)
       redirect_to(redirect_path, allow_other_host: true)
     end

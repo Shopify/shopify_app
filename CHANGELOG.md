@@ -2,6 +2,7 @@ Unreleased
 ----------
 - ⚠️ [Breaking] Removes `ShopifyApp::JWTMiddleware`. Any existing app code relying on decoded JWT contents set from `request.env` should instead include the `WithShopifyIdToken` concern and call its respective methods. [#1861](https://github.com/Shopify/shopify_app/pull/1861)
 - Handle scenario when invalid URI is passed to `sanitize_shop_domain` [#1852](https://github.com/Shopify/shopify_app/pull/1852)
+- Keep original path and params when redirecting deep links to embed [#1869](https://github.com/Shopify/shopify_app/pull/1869)
 
 22.2.1 (May 6,2024)
 ----------
