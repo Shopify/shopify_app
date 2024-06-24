@@ -11,6 +11,7 @@ suite('redirect', () => {
     contentContainer.dataset['target'] = JSON.stringify({url});
     document.body.appendChild(contentContainer);
 
+    window['shopify'] = {};
     redirectHelperSandbox.stub(window, 'appBridgeRedirect').callsFake(() => {});
   });
 
