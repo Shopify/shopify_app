@@ -10,9 +10,7 @@
 
     var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
 
-    var appBridgeUtils = window['app-bridge']['utilities'];
-
-    if (appBridgeUtils.isShopifyEmbedded()) {
+    if (window['shopify']) {
       window.appBridgeRedirect(targetInfo.url);
     } else {
       window.top.location.href = targetInfo.url;
