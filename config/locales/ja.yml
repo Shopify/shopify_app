@@ -3,15 +3,3 @@ ja:
   logged_out: ログアウトに成功しました
   could_not_log_in: Shopifyストアにログインできませんでした
   invalid_shop_url: ショップのドメインが無効です
-  enable_cookies_heading: "%{app}からのCookieを有効にする"
-  enable_cookies_body: Shopifyで%{app}を使用できるようにするためには、このブラウザのCookieを手動で有効にする必要があります。
-  enable_cookies_footer: Cookieを使用すると、各種設定や個人情報を一時的に保存することで、アプリ認証を受けることができます。30日後に有効期限が切れます。
-  enable_cookies_action: Cookieを有効にする
-  top_level_interaction_heading: お使いのブラウザを更新する必要があります%{app}
-  top_level_interaction_body: Shopifyがアプリを開けるように、ブラウザはCookieにアクセスするための%{app}のようなアプリが必要です。
-  top_level_interaction_action: 続ける
-  request_storage_access_heading: "%{app}はCookieへのアクセス許可が必要です"
-  request_storage_access_body: Cookieを使用すると、個人情報を一時的に保存することで、アプリ認証を受けることができます。[続ける]
-    をクリックすると、アプリはCookieを利用します。
-  request_storage_access_footer: Cookieは30日後に有効期限が切れます。
-  request_storage_access_action: 続ける

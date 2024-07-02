@@ -3,21 +3,3 @@ cs:
   logged_out: Odhlášení proběhlo úspěšně
   could_not_log_in: Nelze se přihlásit do obchodu Shopify
   invalid_shop_url: Neplatná doména obchodu
-  enable_cookies_heading: Zapnout soubory cookie z aplikace %{app}
-  enable_cookies_body: Pokud chcete v Shopify používat aplikaci %{app}, musíte soubory
-    cookie v tomto prohlížeči povolit ručně.
-  enable_cookies_footer: Soubory cookie umožňují, aby vás aplikace ověřila pomocí
-    dočasného uchování preferencí a osobních údajů. Jejich platnost vyprší po 30 dnech.
-  enable_cookies_action: Povolit soubory cookie
-  top_level_interaction_heading: Váš prohlížeč potřebuje ověřit aplikaci %{app}
-  top_level_interaction_body: Váš prohlížeč vyžaduje, aby si od vás aplikace, jako
-    je %{app}, nejdřív vyžádaly přístup k souborům cookie, než je pro vás Shopify
-    otevře.
-  top_level_interaction_action: Pokračovat
-  request_storage_access_heading: Aplikace %{app} potřebuje získat přístup k souborům
-    cookie
-  request_storage_access_body: Tato aplikace vám umožní ověření prostřednictvím dočasného
-    uchování vašich osobních údajů. Pokud chcete používat tuto aplikaci, klikněte
-    na tlačítko Pokračovat a povolte soubory cookie.
-  request_storage_access_footer: Platnost souborů cookie vyprší po 30 dnech.
-  request_storage_access_action: Pokračovat

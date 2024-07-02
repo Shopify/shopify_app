@@ -3,19 +3,3 @@ pl:
   logged_out: Pomyślne wylogowanie
   could_not_log_in: Nie można zalogować się do sklepu Shopify
   invalid_shop_url: Nieprawidłowa domena sklepu
-  enable_cookies_heading: Włącz korzystanie z plików cookie z %{app}
-  enable_cookies_body: Aby móc korzystać z %{app} w Shopify, musisz ręcznie włączyć
-    korzystanie z plików cookie w tej przeglądarce.
-  enable_cookies_footer: Pliki cookie umożliwiają uwierzytelnianie aplikacji przez
-    tymczasowe przechowywanie preferencji i danych osobowych. Wygasają one po 30 dniach.
-  enable_cookies_action: Włącz korzystanie z plików cookie
-  top_level_interaction_heading: Twoja przeglądarka wymaga uwierzytelnienia %{app}
-  top_level_interaction_body: Twoja przeglądarka wymaga takich aplikacji jak %{app},
-    aby poprosić o dostęp do plików cookie, zanim Shopify będzie mógł ją otworzyć.
-  top_level_interaction_action: Kontynuuj
-  request_storage_access_heading: "%{app} potrzebuje dostępu do plików cookie"
-  request_storage_access_body: Dzięki temu aplikacja może Cię uwierzytelniać, tymczasowo,
-    przechowując Twoje dane osobowe. Kliknij przycisk Kontynuuj i zezwalaj na pliki
-    cookie, aby korzystać z aplikacji.
-  request_storage_access_footer: Pliki cookie wygasają po 30 dniach.
-  request_storage_access_action: Kontynuuj

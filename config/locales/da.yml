@@ -3,18 +3,3 @@ da:
   logged_out: Logget ud
   could_not_log_in: Kunne ikke logge ind på Shopify-butik
   invalid_shop_url: Ugyldig butiksdomæne
-  enable_cookies_heading: Aktivér cookies fra %{app}
-  enable_cookies_body: Du skal manuelt aktivere cookies i denne browser for at kunne
-    bruge %{app} i Shopify.
-  enable_cookies_footer: Cookies lader appen godkende dig ved at gemme dine præferencer
-    og personlige oplysninger midlertidigt. De udløber efter 30 dage.
-  enable_cookies_action: Aktivér cookies
-  top_level_interaction_heading: Din browser skal godkende %{app}
-  top_level_interaction_body: Din browser kræver, at apps som f.eks. %{app} spørger
-    dig om adgang til cookies, inden Shopify kan åbne den for dig.
-  top_level_interaction_action: Fortsæt
-  request_storage_access_heading: "%{app} skal have adgang til cookies"
-  request_storage_access_body: Det lader appen godkende dig ved at gemme dine personlige
-    oplysninger midlertidigt. Klik på forsæt, og tillad cookies for at bruge appen.
-  request_storage_access_footer: Cookies udløber efter 30 dage.
-  request_storage_access_action: Fortsæt
