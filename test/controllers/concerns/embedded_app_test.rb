@@ -90,7 +90,8 @@ class EmbeddedAppTest < ActionController::TestCase
     ShopifyApp.configuration.embedded_app = true
 
     shop = "my-shop.myshopify.com"
-    get :redirect_to_embed, params: { shop: shop, foo: "bar" }
+    host = Base64.encode64("#{shop}/admin")
+    get :redirect_to_embed, params: { shop: shop, foo: "bar", host: host, id_token: "id_token" }
     assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}/redirect_to_embed?foo=bar"
   end
 
