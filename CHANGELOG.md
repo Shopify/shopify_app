@@ -4,6 +4,7 @@ Unreleased
 - Handle scenario when invalid URI is passed to `sanitize_shop_domain` [#1852](https://github.com/Shopify/shopify_app/pull/1852)
 - Remove references to old JS files during asset precompile [#1865](https://github.com/Shopify/shopify_app/pull/1865)
 - Remove old translation keys for `enable_cookies_*`, `top_level_interaction_*` and `request_storage_access_*` [#1865](https://github.com/Shopify/shopify_app/pull/1865)
+- Add invalid id token handling for `current_shopify_domain` method [#1868](https://github.com/Shopify/shopify_app/pull/1868)
 
 22.2.1 (May 6,2024)
 ----------
