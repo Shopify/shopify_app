@@ -227,7 +227,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       host = Base64.encode64("#{@shop}/admin")
       params = { shop: @shop, host: host }
 
-      expected_redirect_url = "https://my-shop.myshopify.com/admin/apps/key"
+      expected_redirect_url = "https://my-shop.myshopify.com/admin/apps/key/"
 
       with_application_test_routes do
         get :index, params: params
@@ -241,7 +241,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
       params = { shop: @shop }
 
-      expected_redirect_url = "https://my-shop.myshopify.com/admin/apps/key"
+      expected_redirect_url = "https://my-shop.myshopify.com/admin/apps/key/"
 
       with_application_test_routes do
         get :index, params: params
