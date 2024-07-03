@@ -3,20 +3,3 @@ vi:
   logged_out: Đã đăng xuất thành công
   could_not_log_in: Không thể đăng nhập vào cửa hàng trên Shopify
   invalid_shop_url: Miền cửa hàng không hợp lệ
-  enable_cookies_heading: Bật cookie từ %{app}
-  enable_cookies_body: Bạn phải bật cookie trong trình duyệt này theo cách thủ công
-    để sử dụng %{app} trong Shopify.
-  enable_cookies_footer: Cookie cho phép ứng dụng xác thực bạn bằng cách tạm thời
-    lưu trữ tùy chọn và thông tin cá nhân của bạn. Những thông tin này sẽ hết hạn
-    sau 30 ngày.
-  enable_cookies_action: Bật cookie
-  top_level_interaction_heading: Trình duyệt của bạn cần xác thực %{app}
-  top_level_interaction_body: Trình duyệt của bạn cần các ứng dụng như %{app} để yêu
-    cầu quyền truy cập vào cookie thì Shopify mới có thể mở giúp bạn.
-  top_level_interaction_action: Tiếp tục
-  request_storage_access_heading: "%{app} cần quyền truy cập cookie"
-  request_storage_access_body: Nhờ vậy, ứng dụng có thể xác thực bạn bằng cách tạm
-    thời lưu trữ thông tin cá nhân của bạn. Nhấp vào tiếp tục và cho phép cookie sử
-    dụng ứng dụng.
-  request_storage_access_footer: Cookie sẽ hết hạn sau 30 ngày.
-  request_storage_access_action: Tiếp tục

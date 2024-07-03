@@ -75,7 +75,7 @@ class EmbeddedAppTest < ActionController::TestCase
     shop = "my-shop.myshopify.com"
     host = Base64.encode64("#{shop}/admin")
     get :redirect_to_embed, params: { host: host }
-    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}"
+    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}/redirect_to_embed"
   end
 
   test "#redirect_to_embed_app_in_admin redirects to the embed app in the admin when the shop param is present" do
@@ -83,7 +83,16 @@ class EmbeddedAppTest < ActionController::TestCase
 
     shop = "my-shop.myshopify.com"
     get :redirect_to_embed, params: { shop: shop }
-    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}"
+    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}/redirect_to_embed"
+  end
+
+  test "#redirect_to_embed_app_in_admin keeps original path and params when redirecting to the embed app" do
+    ShopifyApp.configuration.embedded_app = true
+
+    shop = "my-shop.myshopify.com"
+    host = Base64.encode64("#{shop}/admin")
+    get :redirect_to_embed, params: { shop: shop, foo: "bar", host: host, id_token: "id_token" }
+    assert_redirected_to "https://#{shop}/admin/apps/#{ShopifyApp.configuration.api_key}/redirect_to_embed?foo=bar"
   end
 
   test "Redirect to login URL when host nor shop param is present" do
