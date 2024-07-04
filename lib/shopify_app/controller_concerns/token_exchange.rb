@@ -64,10 +64,10 @@ module ShopifyApp
       return if performed?
 
       if request.headers["HTTP_AUTHORIZATION"].blank?
-        if missing_embedded_param?
-          redirect_to_embed_app_in_admin
-        else
+        if embedded?
           redirect_to_bounce_page
+        else
+          redirect_to_embed_app_in_admin
         end
       else
         ShopifyApp::Logger.debug("Responding to invalid Shopify ID token with unauthorized response")
@@ -94,8 +94,8 @@ module ShopifyApp
       )
     end
 
-    def missing_embedded_param?
-      !params[:embedded].present? || params[:embedded] != "1"
+    def embedded?
+      params[:embedded] == "1" || request.env["HTTP_SEC_FETCH_DEST"] == "iframe"
     end
 
     def online_token_configured?

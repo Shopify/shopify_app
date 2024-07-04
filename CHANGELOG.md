@@ -6,6 +6,7 @@ Unreleased
 - Remove old translation keys for `enable_cookies_*`, `top_level_interaction_*` and `request_storage_access_*` [#1865](https://github.com/Shopify/shopify_app/pull/1865)
 - Add invalid id token handling for `current_shopify_domain` method [#1868](https://github.com/Shopify/shopify_app/pull/1868)
 - Keep original path and params when redirecting deep links to embed [#1869](https://github.com/Shopify/shopify_app/pull/1869)
+- Improve embedded requests detection with `Sec-Fetch-Dest` header [#1873](https://github.com/Shopify/shopify_app/pull/1873)
 
 22.2.1 (May 6,2024)
 ----------
