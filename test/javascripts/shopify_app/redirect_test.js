@@ -1,6 +1,8 @@
-suite('redirect', () => {
-  const redirectHelperSandbox = sinon.createSandbox();
+const { assert } = require("chai");
 
+suite('redirect', () => {
+  const sandbox = sinon.createSandbox();
+  const open = sinon.spy();
   let contentContainer;
   let url = '/settings';
 
@@ -10,18 +12,19 @@ suite('redirect', () => {
     contentContainer.setAttribute('id', 'redirection-target');
     contentContainer.dataset['target'] = JSON.stringify({url});
     document.body.appendChild(contentContainer);
-
-    window['shopify'] = {};
-    redirectHelperSandbox.stub(window, 'appBridgeRedirect').callsFake(() => {});
+    sandbox.stub(window, 'open').callsFake(open);
   });
 
   teardown(() => {
-    redirectHelperSandbox.restore();
+    sandbox.restore();
     document.body.removeChild(contentContainer);
   });
 
-  test('calls appBridgeRedirect', () => {
+  test('opens redirect url', () => {
     require('../../../app/assets/javascripts/shopify_app/redirect');
-    sinon.assert.calledWith(window.appBridgeRedirect, url);
+
+    assert(open.calledOnce);
+    assert.match(open.lastCall.args[0], new RegExp(`${url}$`));
+    assert.equal(open.lastCall.args[1], '_top');
   });
 });

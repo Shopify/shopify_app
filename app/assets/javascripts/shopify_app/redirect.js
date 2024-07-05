@@ -1,5 +1,3 @@
-//= require ./app_bridge_redirect.js
-
 (function () {
   function redirect() {
     var redirectTargetElement = document.getElementById("redirection-target");
@@ -9,12 +7,10 @@
     }
 
     var targetInfo = JSON.parse(redirectTargetElement.dataset.target);
+    var normalizedLink = document.createElement('a');
+    normalizedLink.href = targetInfo.url;
 
-    if (window['shopify']) {
-      window.appBridgeRedirect(targetInfo.url);
-    } else {
-      window.top.location.href = targetInfo.url;
-    }
+    open(normalizedLink.href, '_top');
   }
 
   document.addEventListener("DOMContentLoaded", redirect);
