@@ -52,7 +52,8 @@ module ShopifyApp
 
     def start_install
       shop_name = sanitized_shop_name.split(".").first
-      install_path = "https://admin.shopify.com/store/#{shop_name}/oauth/install?client_id=#{ShopifyApp.configuration.api_key}"
+      unified_admin_path = ShopifyApp::Utils.unified_admin_path(shop_name)
+      install_path = "#{unified_admin_path}/oauth/install?client_id=#{ShopifyApp.configuration.api_key}"
       redirect_to(install_path, allow_other_host: true)
     end
 

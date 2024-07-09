@@ -74,4 +74,16 @@ class UtilsTest < ActiveSupport::TestCase
       assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
     end
   end
+
+  test "#unified_admin_path returns the path to shop" do
+    expected = "https://admin.shopify.com/store/my-shop"
+    assert_equal expected, ShopifyApp::Utils.unified_admin_path("my-shop")
+  end
+
+  test "#unified_admin_path returns the path to shop with spin env" do
+    ENV["SPIN_FQDN"] = "my.spin.dev"
+    expected = "https://admin.web.my.spin.dev/store/my-shop"
+    assert_equal expected, ShopifyApp::Utils.unified_admin_path("my-shop")
+    ENV["SPIN_FQDN"] = nil
+  end
 end
