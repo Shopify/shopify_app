@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base target="_top">
   <title>Redirecting…</title>
+
+  <meta name="shopify-api-key" content="<%= ShopifyApp.configuration.api_key %>">
+  <%= javascript_include_tag "https://cdn.shopify.com/shopifycloud/app-bridge.js" %>
+
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>
-<body data-api-key="<%= ShopifyApp.configuration.api_key %>" data-shop-origin="<%= current_shopify_domain %>" data-host="<%= params[:host] %>" >
+<body>
   <%=
   content_tag(:div, nil,
     id: 'redirection-target',
