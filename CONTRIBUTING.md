@@ -89,8 +89,3 @@ To run tests, you'll need to make sure that your development environment is setu
 * To run all tests: `bundle exec rake test`
 * To run a specific test file: `bundle exec rake test TEST=test/controllers/callback_controller_test.rb`
 * To run a single test: `bundle exec rake test TEST=test/controllers/callback_controller_test.rb:50` where `50` is the line number on or inside the test case.
-
-### App Bridge client
-
-This gem ships with a UMD version of the App Bridge client. It lives inside the assets folder: `app/assets/javascripts/shopify_app/`. To update the client, simply download the UMD build from [unpkg.com](https://unpkg.com/@shopify/app-bridge) and save it into the folder.
-Please follow the convention of including the client version number in the filename. Finally, change the reference to the new App Bridge client inside `app/assets/javascripts/shopify_app/app_bridge_redirect.js`.

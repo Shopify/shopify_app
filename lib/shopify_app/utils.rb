@@ -39,6 +39,15 @@ module ShopifyApp
         url.to_s
       end
 
+      def unified_admin_path(shop)
+        spin_env = ENV.fetch("SPIN_FQDN", nil)
+        if spin_env
+          "https://admin.web.#{spin_env}/store/#{shop}"
+        else
+          "https://admin.shopify.com/store/#{shop}"
+        end
+      end
+
       private
 
       def myshopify_domain
