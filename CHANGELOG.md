@@ -8,6 +8,7 @@ Unreleased
 - Keep original path and params when redirecting deep links to embed [#1869](https://github.com/Shopify/shopify_app/pull/1869)
 - Fix managed install path for SPIN environments [#1877](https://github.com/Shopify/shopify_app/pull/1877)
 - Migrate fullpage redirect to App Bridge CDN [#1870](https://github.com/Shopify/shopify_app/pull/1870)
+- Improve embedded requests detection with `Sec-Fetch-Dest` header [#1873](https://github.com/Shopify/shopify_app/pull/1873)
 
 22.2.1 (May 6,2024)
 ----------
