@@ -19,10 +19,22 @@ class LocalizationTest < ActionController::TestCase
     I18n.available_locales = [:en, :de, :es, :ja, :fr]
   end
 
-  test "falls back to I18n.default if locale param is not present" do
+  test "falls back to locale stored in session if locale param is not present" do
     I18n.default_locale = :ja
 
     with_test_routes do
+      @request.session[:locale] = :de
+
+      get :index
+      assert_equal :de, response.body.to_sym
+    end
+  end
+
+  test "falls back to I18n.default if locale param is not present and session not populated" do
+    I18n.default_locale = :ja
+
+    with_test_routes do
+      @request.session[:locale] = nil
       get :index
       assert_equal :ja, response.body.to_sym
     end

@@ -11,7 +11,7 @@ module ShopifyApp
     private
 
     def set_locale(&action)
-      locale = params[:locale] || I18n.default_locale
+      locale = params[:locale] || session[:locale] || I18n.default_locale
 
       # Fallback to the 2 letter language code if the requested locale unavailable
       unless I18n.available_locales.include?(locale.to_sym)

@@ -9,6 +9,7 @@ Unreleased
 - Fix managed install path for SPIN environments [#1877](https://github.com/Shopify/shopify_app/pull/1877)
 - Migrate fullpage redirect to App Bridge CDN [#1870](https://github.com/Shopify/shopify_app/pull/1870)
 - Improve embedded requests detection with `Sec-Fetch-Dest` header [#1873](https://github.com/Shopify/shopify_app/pull/1873)
+- Fix bug where locale is not read from session if locale param is not present in app request [#1878](https://github.com/Shopify/shopify_app/pull/1878)
 
 22.2.1 (May 6,2024)
 ----------
