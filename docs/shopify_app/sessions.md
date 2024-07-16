@@ -59,7 +59,10 @@ If your app has user interactions and would like to control permission based on 
 
 [Shop (offline) tokens must still be maintained](#shop-offline-token-storage).
 
-1. Run the following generator to create a user model to store the individual based access tokens
+1. Run the following generator to create a user model to store the individual based access tokens.
+
+⚠️ If you started from the [Ruby App Template](https://github.com/Shopify/shopify-app-template-ruby), you don't need to run the generator as it's already included in the template. You can skip this step.
+
 ```sh
 rails generate shopify_app:user_model
 ```
