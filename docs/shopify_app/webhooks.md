@@ -2,8 +2,21 @@
 
 #### Table of contents
 
+[Webhooks subscription in the app config](#subscribing-to-webhooks-in-the-app-configuration-file)
 [Manage webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
 [Mandatory Privacy Webhooks](#mandatory-privacy-webhooks)
+
+## Subscribing to webhooks in the app configuration file
+You can now specify the webhooks you want to subscribe to in the `shopify.app.toml` file. Mandatory privacy webhooks and other webhooks can be specified in the `webhooks` section of the configuration file. Learn more about the different way to subscribe to webhooks in the [documentation](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+
+### Consuming webhooks events
+To consume webhooks events where the subscription is done in the `shopify.app.toml` file you can scaffold the necessary files by running the following generator.
+
+```bash
+rails g shopify_app:add_declarative_webhook --topic carts/update --path webhooks/carts_update
+```
+
+This will add a new controller, job, and route to your application. The controller will verify the webhook and queue the job to process the webhook. The job will be responsible for processing the webhook data.
 
 ## Manage webhooks using `ShopifyApp::WebhooksManager`
 

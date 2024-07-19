@@ -10,6 +10,7 @@ Unreleased
 - Migrate fullpage redirect to App Bridge CDN [#1870](https://github.com/Shopify/shopify_app/pull/1870)
 - Improve embedded requests detection with `Sec-Fetch-Dest` header [#1873](https://github.com/Shopify/shopify_app/pull/1873)
 - Fix bug where locale is not read from session if locale param is not present in app request [#1878](https://github.com/Shopify/shopify_app/pull/1878)
+- Add new generators for webhook subscriptions defined in the `shopify.app.toml` file [1882](https://github.com/Shopify/shopify_app/pull/1882)
 
 22.2.1 (May 6,2024)
 ----------
