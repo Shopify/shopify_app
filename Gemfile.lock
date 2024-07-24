@@ -4,6 +4,7 @@ PATH
     shopify_app (22.2.1)
       activeresource
       addressable (~> 2.7)
+      jwt (>= 2.2.3)
       rails (> 5.2.1)
       redirect_safely (~> 1.0)
       shopify_api (>= 14.3.0, < 15.0)
@@ -269,7 +270,6 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  jwt (>= 2.2.3)
   minitest
   mocha
   pry

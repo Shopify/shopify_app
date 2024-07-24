@@ -58,7 +58,7 @@ module ShopifyApp
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
 
-      log_callback_controller_method_deprecation
+      log_v23_deprecations
     end
 
     def login_url
@@ -163,16 +163,18 @@ module ShopifyApp
 
     private
 
-    def log_callback_controller_method_deprecation
+    def log_v23_deprecations
       return unless Rails.env.development?
 
       # TODO: Remove this before releasing v23.0.0
       message = <<~EOS
         ================================================
-        => Upcoming deprecation in v23.0:
+        => Upcoming changes in v23.0:
         * 'CallbackController::perform_after_authenticate_job' and related methods 'install_webhooks', 'perform_after_authenticate_job'
-        * will be deprecated from CallbackController in the next major release. If you need to customize
+        * are deprecated and  will be removed from CallbackController in the next major release. If you need to customize
         * post authentication tasks, see https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/authentication.md#post-authenticate-tasks
+
+        * ShopifyApp::JWTMiddleware will be removed, use ShopifyApp::WithShopifyIdToken instead.
         ================================================
       EOS
       puts message
