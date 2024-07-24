@@ -169,9 +169,9 @@ module ShopifyApp
       # TODO: Remove this before releasing v23.0.0
       message = <<~EOS
         ================================================
-        => Upcoming deprecations in v23.0:
+        => Upcoming changes in v23.0:
         * 'CallbackController::perform_after_authenticate_job' and related methods 'install_webhooks', 'perform_after_authenticate_job'
-        * will be removed from CallbackController in the next major release. If you need to customize
+        * are deprecated and  will be removed from CallbackController in the next major release. If you need to customize
         * post authentication tasks, see https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/authentication.md#post-authenticate-tasks
 
         * ShopifyApp::JWTMiddleware will be removed, use ShopifyApp::WithShopifyIdToken instead.
