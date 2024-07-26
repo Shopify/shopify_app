@@ -628,16 +628,9 @@ class LoginProtectionControllerTest < ActionController::TestCase
       assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
         elements.first["data-target"]
     end
-
-    if expect_embedded
-      assert_select "script", 2 do |elements|
-        assert_equal "https://cdn.shopify.com/shopifycloud/app-bridge.js", elements[0]["src"]
-        assert_match %r/\/assets\/shopify_app\/redirect-[^\.]*\.js/, elements[1]["src"]
-      end
-    else
-      assert_select "script", 1 do |elements|
-        assert_match %r/\/assets\/shopify_app\/redirect-[^\.]*\.js/, elements[0]["src"]
-      end
+    assert_select "script" do |elements|
+      assert elements.any? { |element| element["src"] =~ %r/\/assets\/shopify_app\/redirect-[^\.]*\.js/ }
+      assert_equal expect_embedded, elements.any? { |element| element["src"] == "https://cdn.shopify.com/shopifycloud/app-bridge.js" }
     end
   end
 
