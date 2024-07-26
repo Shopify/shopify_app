@@ -204,7 +204,7 @@ module ShopifyApp
         render(
           "shopify_app/shared/redirect",
           layout: false,
-          locals: { url: url, current_shopify_domain: current_shopify_domain },
+          locals: { url: url, current_shopify_domain: current_shopify_domain, is_iframe: embedded? },
         )
       else
         redirect_to(url)
