@@ -6,8 +6,13 @@
   <base target="_top">
   <title>Redirecting…</title>
 
+  <%
+    is_iframe = local_assigns.key?(:is_iframe) ? is_iframe : true
+    if is_iframe
+  %>
   <meta name="shopify-api-key" content="<%= ShopifyApp.configuration.api_key %>">
   <%= javascript_include_tag "https://cdn.shopify.com/shopifycloud/app-bridge.js" %>
+  <% end %>
 
   <%= javascript_include_tag('shopify_app/redirect', crossorigin: 'anonymous', integrity: true) %>
 </head>

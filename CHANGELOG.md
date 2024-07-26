@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+- Handle edge case where we attempted to redirect to login when already at the top level [#1887](https://github.com/Shopify/shopify_app/pull/1887)
+
 22.3.0 (July 24, 2024)
 ----------
 - Deprecate `ShopifyApp::JWTMiddleware`. And remove internal usage.  Any existing app code relying on decoded JWT contents set from `request.env` should instead include the `WithShopifyIdToken` concern and call its respective methods. [#1861](https://github.com/Shopify/shopify_app/pull/1861) [Migration Guide](/docs/Upgrading.md#v2300---removed-shopifyappjwtmiddleware)

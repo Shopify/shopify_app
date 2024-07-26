@@ -94,10 +94,6 @@ module ShopifyApp
       )
     end
 
-    def embedded?
-      params[:embedded] == "1" || request.env["HTTP_SEC_FETCH_DEST"] == "iframe"
-    end
-
     def online_token_configured?
       ShopifyApp.configuration.online_token_configured?
     end
@@ -108,7 +104,7 @@ module ShopifyApp
       render(
         "shopify_app/shared/redirect",
         layout: false,
-        locals: { url: url, current_shopify_domain: current_shopify_domain },
+        locals: { url: url, current_shopify_domain: current_shopify_domain, is_iframe: embedded? },
       )
     end
   end
