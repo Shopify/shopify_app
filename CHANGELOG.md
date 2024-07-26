@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+22.3.1 (July 26, 2024)
+----------
 - Handle edge case where we attempted to redirect to login when already at the top level [#1887](https://github.com/Shopify/shopify_app/pull/1887)
 
 22.3.0 (July 24, 2024)
