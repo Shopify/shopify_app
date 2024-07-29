@@ -39,6 +39,9 @@ module ShopifyApp
     # configure myshopify domain for local shopify development
     attr_accessor :myshopify_domain
 
+    # configure the unified admin domain for local shopify development
+    attr_accessor :unified_admin_domain
+
     # ability to have webpacker installed but not used in this gem and the generators
     attr_accessor :disable_webpacker
 
@@ -54,6 +57,7 @@ module ShopifyApp
     def initialize
       @root_url = "/"
       @myshopify_domain = "myshopify.com"
+      @unified_admin_domain = "shopify.com"
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
