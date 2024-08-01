@@ -1,6 +1,15 @@
 Unreleased
 ----------
-- ⚠️ [Breaking] Removes `ShopifyApp::JWTMiddleware`. Any existing app code relying on decoded JWT contents set from `request.env` should instead include the `WithShopifyIdToken` concern and call its respective methods. [#1861](https://github.com/Shopify/shopify_app/pull/1861)
+* Add the `unified_admin_domain` configuration option for the unified admin domain.
+- Add new generators for webhook subscriptions defined in the `shopify.app.toml` file [1882](https://github.com/Shopify/shopify_app/pull/1882)
+
+22.3.1 (July 26, 2024)
+----------
+- Handle edge case where we attempted to redirect to login when already at the top level [#1887](https://github.com/Shopify/shopify_app/pull/1887)
+
+22.3.0 (July 24, 2024)
+----------
+- Deprecate `ShopifyApp::JWTMiddleware`. And remove internal usage.  Any existing app code relying on decoded JWT contents set from `request.env` should instead include the `WithShopifyIdToken` concern and call its respective methods. [#1861](https://github.com/Shopify/shopify_app/pull/1861) [Migration Guide](/docs/Upgrading.md#v2300---removed-shopifyappjwtmiddleware)
 - Handle scenario when invalid URI is passed to `sanitize_shop_domain` [#1852](https://github.com/Shopify/shopify_app/pull/1852)
 - Remove references to old JS files during asset precompile [#1865](https://github.com/Shopify/shopify_app/pull/1865)
 - Remove old translation keys for `enable_cookies_*`, `top_level_interaction_*` and `request_storage_access_*` [#1865](https://github.com/Shopify/shopify_app/pull/1865)
@@ -10,7 +19,6 @@ Unreleased
 - Migrate fullpage redirect to App Bridge CDN [#1870](https://github.com/Shopify/shopify_app/pull/1870)
 - Improve embedded requests detection with `Sec-Fetch-Dest` header [#1873](https://github.com/Shopify/shopify_app/pull/1873)
 - Fix bug where locale is not read from session if locale param is not present in app request [#1878](https://github.com/Shopify/shopify_app/pull/1878)
-- Add new generators for webhook subscriptions defined in the `shopify.app.toml` file [1882](https://github.com/Shopify/shopify_app/pull/1882)
 
 22.2.1 (May 6,2024)
 ----------

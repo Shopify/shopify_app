@@ -65,6 +65,18 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "myshopify.io", ShopifyApp.configuration.myshopify_domain
   end
 
+  test "defaults to unified_admin_domain" do
+    assert_equal "shopify.com", ShopifyApp.configuration.unified_admin_domain
+  end
+
+  test "can set unified_admin_domain" do
+    ShopifyApp.configure do |config|
+      config.unified_admin_domain = "myshopify.io"
+    end
+
+    assert_equal "myshopify.io", ShopifyApp.configuration.unified_admin_domain
+  end
+
   test "can configure webhooks for creation" do
     webhook = { topic: "carts/update", address: "example-app.com/webhooks", format: "json" }
 

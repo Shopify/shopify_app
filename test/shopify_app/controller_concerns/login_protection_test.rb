@@ -509,7 +509,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
     with_application_test_routes do
       example_shop = "shop.myshopify.com"
       get :redirect, params: { shop: example_shop }
-      assert_fullpage_redirected(example_shop, response)
+      assert_fullpage_redirected(example_shop, false)
     end
   end
 
@@ -519,7 +519,24 @@ class LoginProtectionControllerTest < ActionController::TestCase
       ShopifyApp::SessionRepository.expects(:load_session)
         .returns(ShopifyAPI::Auth::Session.new(shop: example_shop))
       get :redirect
-      assert_fullpage_redirected(example_shop, response)
+      assert_fullpage_redirected(example_shop, false)
+    end
+  end
+
+  test "#fullpage_redirect_to loads app bridge when embedded param is set" do
+    with_application_test_routes do
+      example_shop = "shop.myshopify.com"
+      get :redirect, params: { shop: example_shop, embedded: "1" }
+      assert_fullpage_redirected(example_shop, true)
+    end
+  end
+
+  test "#fullpage_redirect_to loads app bridge when Sec-Fetch-Dest header is present" do
+    with_application_test_routes do
+      example_shop = "shop.myshopify.com"
+      request.headers.merge!({ "Sec-Fetch-Dest" => "iframe" })
+      get :redirect, params: { shop: example_shop }
+      assert_fullpage_redirected(example_shop, true)
     end
   end
 
@@ -603,13 +620,17 @@ class LoginProtectionControllerTest < ActionController::TestCase
 
   private
 
-  def assert_fullpage_redirected(shop_domain, _response)
+  def assert_fullpage_redirected(shop_domain, expect_embedded)
     example_url = "https://example.com"
 
     assert_template("shared/redirect")
     assert_select "[id=redirection-target]", 1 do |elements|
       assert_equal "{\"myshopifyUrl\":\"https://#{shop_domain}\",\"url\":\"#{example_url}\"}",
         elements.first["data-target"]
+    end
+    assert_select "script" do |elements|
+      assert elements.any? { |element| element["src"] =~ %r/\/assets\/shopify_app\/redirect-[^\.]*\.js/ }
+      assert_equal expect_embedded, elements.any? { |element| element["src"] == "https://cdn.shopify.com/shopifycloud/app-bridge.js" }
     end
   end
 

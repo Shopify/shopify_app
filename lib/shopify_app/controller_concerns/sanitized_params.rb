@@ -33,5 +33,9 @@ module ShopifyApp
         end
       end
     end
+
+    def embedded?
+      params[:embedded] == "1" || request.env["HTTP_SEC_FETCH_DEST"] == "iframe"
+    end
   end
 end
