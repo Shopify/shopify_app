@@ -44,7 +44,7 @@ module ShopifyApp
         if spin_env
           "https://admin.web.#{spin_env}/store/#{shop}"
         else
-          "https://admin.shopify.com/store/#{shop}"
+          "https://admin.#{unified_admin_domain}/store/#{shop}"
         end
       end
 
@@ -52,6 +52,10 @@ module ShopifyApp
 
       def myshopify_domain
         ShopifyApp.configuration.myshopify_domain
+      end
+
+      def unified_admin_domain
+        ShopifyApp.configuration.unified_admin_domain
       end
 
       def trusted_domains

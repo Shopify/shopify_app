@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* Add the `unified_admin_domain` configuration option for the unified admin domain.
 
 22.3.1 (July 26, 2024)
 ----------
