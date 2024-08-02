@@ -34,8 +34,15 @@ HOST='https://some-random-words.trycloudflare.com/'
 
 ## Use Shopify App Bridge to embed your app in the Shopify Admin
 
-A basic example of using [*Shopify App Bridge*](https://shopify.dev/tools/app-bridge) is included in the install generator. An instance Shopify App Bridge is automatically initialized in [shopify_app.js](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/shopify_app.js). 
+A basic example of using [*Shopify App Bridge*](https://shopify.dev/tools/app-bridge) is included in the install generator. An instance Shopify App Bridge is automatically initialized in [shopify_app.js](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/shopify_app.js).
 
-The [flash_messages.js](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/flash_messages.js) file converts Rails [flash messages](https://api.rubyonrails.org/classes/ActionDispatch/Flash.html) to App Bridge Toast actions automatically. By default, this library is included via [unpkg in the embedded_app layout](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/embedded_app.html.erb#L27). 
+If you are using the `shopify_app` gem **without** the [frontend react template](https://github.com/Shopify/shopify-frontend-template-react), the [flash_messages.js](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/flash_messages.js) file converts Rails [flash messages](https://api.rubyonrails.org/classes/ActionDispatch/Flash.html) to App Bridge Toast actions automatically. If your app is embedded and you want to display flash messages you will need to update the session storage to allow for 3rd party cookies. So that the flash messages can be save in the session cookie.
+
+```ruby
+#session_store.rb
+Rails.application.config.session_store(:cookie_store, key: '_example_session', expire_after: 14.days, secure: true, same_site: 'None')
+```
+
+By default, this library is included via [unpkg in the embedded_app layout](https://github.com/Shopify/shopify_app/blob/master/lib/generators/shopify_app/install/templates/embedded_app.html.erb#L27).
 
 For more advanced uses it is recommended to [install App Bridge via npm or yarn](https://help.shopify.com/en/api/embedded-apps/app-bridge/getting-started#set-up-shopify-app-bridge-in-your-app).
