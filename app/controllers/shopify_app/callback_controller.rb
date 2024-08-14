@@ -18,7 +18,9 @@ module ShopifyApp
         end
       end
 
-      save_session(api_session) if api_session
+      puts "RESPONSE #{api_session}"
+
+      save_session(api_session.merge({refresh_token: "cool-refresh"})) if api_session
       update_rails_cookie(api_session, cookie)
 
       return respond_with_user_token_flow if start_user_token_flow?(api_session)

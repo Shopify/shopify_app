@@ -40,6 +40,17 @@ module ShopifyApp
         end
       end
 
+      def create_shop_with_expiry
+        migration_template(
+          "db/migrate/add_shop_expires_at_column.erb",
+          "db/migrate/add_shop_expires_at_column.rb",
+        )
+        migration_template(
+          "db/migrate/add_shop_refresh_token_column.erb",
+          "db/migrate/add_shop_refresh_token_column.rb",
+        )
+      end
+
       def update_shopify_app_initializer
         gsub_file("config/initializers/shopify_app.rb", "ShopifyApp::InMemoryShopSessionStore", "Shop")
       end

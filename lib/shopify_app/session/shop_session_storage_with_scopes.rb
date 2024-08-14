@@ -14,6 +14,7 @@ module ShopifyApp
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
         shop.shopify_token = auth_session.access_token
         shop.access_scopes = auth_session.scope.to_s
+        shop.refresh_token = auth_session.refresh_token
 
         shop.save!
         shop.id
@@ -56,6 +57,44 @@ module ShopifyApp
       super
     rescue NotImplementedError, NoMethodError
       raise NotImplementedError, "#access_scopes= must be defined to hook into stored access scopes"
+    end
+
+    def expires_at=(expires_at)
+      super
+    rescue NotImplementedError, NoMethodError
+      if ShopifyApp.configuration.handle_offline_token_expiry
+        raise NotImplementedError,
+          "#expires_at= must be defined to handle offline token expiry"
+      end
+    end
+
+    def expires_at
+      super
+    rescue NotImplementedError, NoMethodError
+      if ShopifyApp.configuration.handle_offline_token_expiry
+        raise NotImplementedError, "#expires_at must be defined to handle offline token expiry"
+      end
+
+      nil
+    end
+
+    def refresh_token=(refresh_token)
+      super
+    rescue NotImplementedError, NoMethodError
+      if ShopifyApp.configuration.handle_offline_token_expiry
+        raise NotImplementedError,
+          "#refresh_token= must be defined to handle offline token expiry"
+      end
+    end
+
+    def refresh_token
+      super
+    rescue NotImplementedError, NoMethodError
+      if ShopifyApp.configuration.handle_offline_token_expiry
+        raise NotImplementedError, "#refresh_token must be defined to handle offline token expiry"
+      end
+
+      nil
     end
   end
 end

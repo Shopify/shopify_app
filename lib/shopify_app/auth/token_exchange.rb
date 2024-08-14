@@ -46,6 +46,7 @@ module ShopifyApp
           requested_token_type: requested_token_type,
         )
 
+        puts "RESPONSE #{session.inspect}"
         SessionRepository.store_session(session)
 
         session

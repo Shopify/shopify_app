@@ -54,6 +54,8 @@ module ShopifyApp
     # Enables new authorization flow using token exchange
     attr_accessor :new_embedded_auth_strategy
 
+    attr_accessor :handle_offline_token_expiry
+
     def initialize
       @root_url = "/"
       @myshopify_domain = "myshopify.com"

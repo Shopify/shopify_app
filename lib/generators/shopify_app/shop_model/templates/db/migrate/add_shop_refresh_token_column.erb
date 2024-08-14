@@ -1,0 +1,5 @@
+class AddShopRefreshTokenColumn < ActiveRecord::Migration[<%= rails_migration_version %>]
+  def change
+    add_column :shops, :refresh_token, :string
+  end
+end
