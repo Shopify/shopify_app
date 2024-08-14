@@ -196,7 +196,7 @@ GEM
     redirect_safely (1.0.0)
       activemodel
     regexp_parser (2.9.0)
-    rexml (3.3.2)
+    rexml (3.3.3)
       strscan
     rubocop (1.62.1)
       json (~> 2.3)
