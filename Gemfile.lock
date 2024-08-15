@@ -1,4 +1,19 @@
 PATH
+  remote: ../shopify-api-ruby
+  specs:
+    shopify_api (14.4.0)
+      activesupport
+      concurrent-ruby
+      hash_diff
+      httparty
+      jwt
+      oj
+      openssl
+      securerandom
+      sorbet-runtime
+      zeitwerk (~> 2.5)
+
+PATH
   remote: .
   specs:
     shopify_app (22.3.1)
@@ -220,17 +235,6 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.2.2)
-    shopify_api (14.3.0)
-      activesupport
-      concurrent-ruby
-      hash_diff
-      httparty
-      jwt
-      oj
-      openssl
-      securerandom
-      sorbet-runtime
-      zeitwerk (~> 2.5)
     sorbet-runtime (0.5.10835)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
@@ -281,6 +285,7 @@ DEPENDENCIES
   rb-readline
   rubocop-shopify
   ruby-lsp
+  shopify_api!
   shopify_app!
   sqlite3 (~> 1.4)
   webmock

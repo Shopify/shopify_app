@@ -14,7 +14,7 @@ module ShopifyApp
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
         shop.shopify_token = auth_session.access_token
         shop.access_scopes = auth_session.scope.to_s
-        shop.expires_at = auth_session.expires_at
+        shop.expires_at = auth_session.expires
         shop.refresh_token = auth_session.refresh_token
 
         shop.save!
@@ -44,6 +44,8 @@ module ShopifyApp
           shop: shop.shopify_domain,
           access_token: shop.shopify_token,
           scope: shop.access_scopes,
+          expires: shop.expires_at,
+          refresh_token: shop.refresh_token,
         )
       end
     end

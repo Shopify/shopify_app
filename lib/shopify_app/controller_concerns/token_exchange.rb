@@ -30,6 +30,7 @@ module ShopifyApp
     end
 
     def should_exchange_expired_token?
+      puts "EXPIRED? #{current_shopify_session.inspect}"
       ShopifyApp.configuration.check_session_expiry_date && current_shopify_session.expired?
     end
 

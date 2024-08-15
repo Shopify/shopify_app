@@ -7,6 +7,7 @@ gemspec
 
 gem "rails-controller-testing", group: :test
 gem "rails", "< 7" # temporary: https://github.com/Shopify/shopify_app/pull/1561
+gem "shopify_api", path: "../shopify-api-ruby"
 
 group :rubocop do
   gem "rubocop-shopify", require: false
