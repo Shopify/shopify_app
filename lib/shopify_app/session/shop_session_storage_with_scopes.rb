@@ -14,6 +14,7 @@ module ShopifyApp
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
         shop.shopify_token = auth_session.access_token
         shop.access_scopes = auth_session.scope.to_s
+        shop.expires_at = auth_session.expires_at
         shop.refresh_token = auth_session.refresh_token
 
         shop.save!
@@ -44,6 +45,24 @@ module ShopifyApp
           access_token: shop.shopify_token,
           scope: shop.access_scopes,
         )
+      end
+    end
+
+    def with_shopify_session(&block)
+      current_offline_session = ShopifyAPI::Auth::Session.temp(shop: shopify_domain, access_token: shopify_token)
+      
+      if current_offline_session.almost_expired?
+        new_offline_session = ShopifyAPI::Auth::RefreshToken.refresh(shop: shopify_domain, refresh_token: refresh_token)
+        self.shopify_token = new_offline_session.access_token
+        self.access_scopes = new_offline_session.scope.to_s
+        self.expires_at = new_offline_session.expires_at
+        self.refresh_token = new_offline_session.refresh_token
+
+        save!
+      end
+      
+      ShopifyAPI::Auth::Session.temp(shop: shopify_domain, access_token: shopify_token) do |session|
+        block.call(session)
       end
     end
 
