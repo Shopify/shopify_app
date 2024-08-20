@@ -63,6 +63,11 @@ module ShopifyApp
       ShopifyApp::Logger.debug("Responding to invalid Shopify ID token: #{error.message}")
       return if performed?
 
+      if defined?(ShopifySecurityBase::CurrentTenant)
+        ShopifyApp::Logger.debug("ShopifySecurityBase::CurrentTenant detected, setting current tenant to NilTenant")
+        ShopifySecurityBase::CurrentTenant.tenant = ShopifySecurityBase::NilTenant.new
+      end
+
       if request.headers["HTTP_AUTHORIZATION"].blank?
         if embedded?
           redirect_to_bounce_page

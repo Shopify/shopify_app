@@ -108,6 +108,11 @@ module ShopifyApp
     end
 
     def redirect_to_login
+      if defined?(ShopifySecurityBase::CurrentTenant)
+        ShopifyApp::Logger.debug("ShopifySecurityBase::CurrentTenant detected, setting current tenant to NilTenant")
+        ShopifySecurityBase::CurrentTenant.tenant = ShopifySecurityBase::NilTenant.new
+      end
+
       if requested_by_javascript?
         add_top_level_redirection_headers(ignore_response_code: true)
         ShopifyApp::Logger.debug("Login redirect request is a XHR")

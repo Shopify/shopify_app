@@ -618,6 +618,35 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test "#redirect_to_login sets current tenant to nil before redirecting when ShopifySecurityBase::CurrentTenant is defined" do
+    ::ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
+    ShopifyApp::Logger.stubs(:debug)
+
+    with_shopify_security_base_current_tenant do |current_tenant_class, nil_tenant|
+      with_application_test_routes do
+        current_tenant_class.expects(:tenant=).with(nil_tenant)
+        ShopifyApp::Logger.expects(:debug)
+          .with("ShopifySecurityBase::CurrentTenant detected, setting current tenant to NilTenant")
+
+        get :index, params: { shop: "foobar" }
+        assert_redirected_to "/login?shop=foobar.myshopify.com"
+      end
+    end
+  end
+
+  test "#redirect_to_login ignores ShopifySecurityBase::CurrentTenant when not defined" do
+    ::ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
+    ShopifyApp::Logger.stubs(:debug)
+
+    with_application_test_routes do
+      ShopifyApp::Logger.expects(:debug)
+        .with("ShopifySecurityBase::CurrentTenant detected, setting current tenant to NilTenant").never
+
+      get :index, params: { shop: "foobar" }
+      assert_redirected_to "/login?shop=foobar.myshopify.com"
+    end
+  end
+
   private
 
   def assert_fullpage_redirected(shop_domain, expect_embedded)
@@ -655,5 +684,23 @@ class LoginProtectionControllerTest < ActionController::TestCase
     yield
   ensure
     ShopifyApp.configure { |config| config.login_url = original_url }
+  end
+
+  def with_shopify_security_base_current_tenant
+    shopify_security_base_module = Module.new
+    ShopifyApp::LoginProtection.const_set("ShopifySecurityBase", shopify_security_base_module)
+    current_tenant_class = stub(:current_tenant_class, "tenant=": nil)
+    shopify_security_base_module.const_set("CurrentTenant", current_tenant_class)
+    nil_tenant_class = stub(:nil_tenant_class)
+    shopify_security_base_module.const_set("NilTenant", nil_tenant_class)
+
+    nil_tenant = stub(:nil_tenant)
+    nil_tenant_class.stubs(:new).returns(nil_tenant)
+
+    yield(current_tenant_class, nil_tenant)
+  ensure
+    if ShopifyApp::LoginProtection.const_defined?("ShopifySecurityBase")
+      ShopifyApp::LoginProtection.send(:remove_const, "ShopifySecurityBase")
+    end
   end
 end

@@ -370,6 +370,41 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
   end
 
+  test "sets current tenant to nil before redirecting when ShopifySecurityBase::CurrentTenant is defined" do
+    ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token)
+      .raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+    request.headers["HTTP_AUTHORIZATION"] = nil
+
+    ShopifyApp::Logger.stubs(:debug)
+
+    with_shopify_security_base_current_tenant do |current_tenant_class, nil_tenant|
+      with_application_test_routes do
+        current_tenant_class.expects(:tenant=).with(nil_tenant)
+        ShopifyApp::Logger.expects(:debug)
+          .with("ShopifySecurityBase::CurrentTenant detected, setting current tenant to NilTenant")
+
+        get :index, params: { shop: @shop, host: Base64.encode64("#{@shop}/admin") }
+        assert_response :redirect
+      end
+    end
+  end
+
+  test "ignores ShopifySecurityBase::CurrentTenant when not defined when redirecting" do
+    ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token)
+      .raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+    request.headers["HTTP_AUTHORIZATION"] = nil
+
+    ShopifyApp::Logger.stubs(:debug)
+
+    with_application_test_routes do
+      ShopifyApp::Logger.expects(:debug)
+        .with("ShopifySecurityBase::CurrentTenant detected, setting current tenant to NilTenant").never
+
+      get :index, params: { shop: @shop, host: Base64.encode64("#{@shop}/admin") }
+      assert_response :redirect
+    end
+  end
+
   private
 
   def with_application_test_routes
@@ -381,6 +416,24 @@ class TokenExchangeControllerTest < ActionController::TestCase
         get "/ensure_render" => "token_exchange#ensure_render"
       end
       yield
+    end
+  end
+
+  def with_shopify_security_base_current_tenant
+    shopify_security_base_module = Module.new
+    ShopifyApp::TokenExchange.const_set("ShopifySecurityBase", shopify_security_base_module)
+    current_tenant_class = stub(:current_tenant_class, "tenant=": nil)
+    shopify_security_base_module.const_set("CurrentTenant", current_tenant_class)
+    nil_tenant_class = stub(:nil_tenant_class)
+    shopify_security_base_module.const_set("NilTenant", nil_tenant_class)
+
+    nil_tenant = stub(:nil_tenant)
+    nil_tenant_class.stubs(:new).returns(nil_tenant)
+
+    yield(current_tenant_class, nil_tenant)
+  ensure
+    if ShopifyApp::TokenExchange.const_defined?("ShopifySecurityBase")
+      ShopifyApp::TokenExchange.send(:remove_const, "ShopifySecurityBase")
     end
   end
 end
