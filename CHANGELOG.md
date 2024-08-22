@@ -1,6 +1,9 @@
 Unreleased
 ----------
-* Add the `unified_admin_domain` configuration option for the unified admin domain.
+
+22.4.0 (August 22, 2024)
+----------
+- Add the `unified_admin_domain` configuration option for the unified admin domain.
 - Add new generators for webhook subscriptions defined in the `shopify.app.toml` file [1882](https://github.com/Shopify/shopify_app/pull/1882)
 - Fix test stubbing for Token Exchange auth [1897](https://github.com/Shopify/shopify_app/pull/1897)
 
