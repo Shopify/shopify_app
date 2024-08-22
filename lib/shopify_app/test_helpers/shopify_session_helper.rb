@@ -7,6 +7,7 @@ module ShopifyApp
         ShopifyAPI::Auth::Session.new(id: session_id, shop: shop_domain).tap do |session|
           ShopifyApp::SessionRepository.stubs(:load_session).returns(session)
           ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(session.id)
+          ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).returns(session.id)
           ShopifyAPI::Context.activate_session(session)
         end
       end
