@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  VERSION = "22.3.1"
+  VERSION = "22.4.0"
 end
