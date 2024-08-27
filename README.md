@@ -169,10 +169,11 @@ ShopifyApp.configure do |config|
 end
 
 ```
-3. Handle special callback logic. If your app has overridden the OAuth CallbackController to run special tasks post authorization, 
+3. Handle special callback logic. If your app has overridden the OAuth CallbackController to run special tasks post authorization,
 you'll need to create and configure a custom PostAuthenticateTasks class to run these tasks after the token exchange. The original
 OAuth CallbackController will not be triggered anymore. See [Post Authenticate Tasks documentation](/docs/shopify_app/authentication.md#post-authenticate-tasks) for more information.
-4. Enjoy a smoother and faster app installation process.
+4. Make sure your `embedded_app` layout is correct. If your app has any Controllers which include `ShopifyApp::EnsureInstalled`, they will now also include `ShopifyApp::EmbeddedApp` concern. See [this concern's documentation](/docs/shopify_app/controller-concerns.md#embeddedapp) for more information.
+5. Enjoy a smoother and faster app installation process.
 
 ### API Versioning
 
