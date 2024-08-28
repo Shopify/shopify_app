@@ -195,6 +195,17 @@ config.secret = Rails.application.secrets.shopify_secret
 config.old_secret = Rails.application.secrets.old_shopify_secret
 ```
 
+Also make sure the old secret is specified when setting up `ShopifyAPI::Context` as well:
+
+```ruby
+ShopifyAPI::Context.setup(
+  api_key: ShopifyApp.configuration.api_key,
+  api_secret_key: ShopifyApp.configuration.secret,
+  # ...
+  old_api_secret_key: ShopifyApp.configuration.old_secret,
+)
+```
+
 We've provided a generator which creates the job and an example rake task:
 
 ```sh
