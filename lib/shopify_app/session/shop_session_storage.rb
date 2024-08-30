@@ -11,9 +11,9 @@ module ShopifyApp
 
     class_methods do
       def store(auth_session, *_args)
-        shop = find_or_initialize_by(shopify_domain: auth_session.shop)
-        shop.shopify_token = auth_session.access_token
-        shop.save!
+        shop = create_or_find_by(shopify_domain: auth_session.shop) do |s|
+          s.shopify_token = auth_session.access_token
+        end
         shop.id
       end
 
