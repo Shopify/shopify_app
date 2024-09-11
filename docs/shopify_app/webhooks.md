@@ -2,15 +2,17 @@
 
 #### Table of contents
 
-[Webhooks subscription in the app config](#subscribing-to-webhooks-in-the-app-configuration-file)
-[Manage webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
+[App-specific webhooks in shopify.app.toml](#subscribing-to-webhooks-in-the-app-configuration-file)
+[Manage shop-specific webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
 [Mandatory Privacy Webhooks](#mandatory-privacy-webhooks)
 
-## Subscribing to webhooks in the app configuration file
-You can now specify the webhooks you want to subscribe to in the `shopify.app.toml` file. Mandatory privacy webhooks and other webhooks can be specified in the `webhooks` section of the configuration file. Learn more about the different way to subscribe to webhooks in the [documentation](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+## App-specific webhooks in shopify.app.toml 
+You can specify app-specific webhooks to subscribe to in the `shopify.app.toml` file. These subscriptions are automatically kept up to date by Shopify so unless your app requires different webhook topics on different shops, you should use app-specific webhooks defined in `shopify.app.toml`. 
 
-### Consuming webhooks events
-To consume webhooks events where the subscription is done in the `shopify.app.toml` file you can scaffold the necessary files by running the following generator.
+Learn more about the different way to subscribe to webhooks in the [documentation](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+
+### Consuming app-specific webhooks events
+To consume app-specific webhooks events wfrom the `shopify.app.toml` file you can scaffold the necessary files by running the following generator.
 
 ```bash
 rails g shopify_app:add_declarative_webhook --topic carts/update --path webhooks/carts_update
@@ -18,10 +20,10 @@ rails g shopify_app:add_declarative_webhook --topic carts/update --path webhooks
 
 This will add a new controller, job, and route to your application. The controller will verify the webhook and queue the job to process the webhook. The job will be responsible for processing the webhook data.
 
-## Manage webhooks using `ShopifyApp::WebhooksManager`
+## Manage shop-specific webhooks using `ShopifyApp::WebhooksManager`
 
-See [`ShopifyApp::WebhooksManager`](/lib/shopify_app/managers/webhooks_manager.rb)
-ShopifyApp can manage your app's webhooks for you if you set which webhooks you require in the initializer:
+See [`ShopifyApp::WebhooksManager`](/lib/shopify_app/managers/webhooks_manager.rb).
+ShopifyApp can manage your app's shop-specific webhooks for you if you set which webhooks you require in the initializer:
 
 ```ruby
 ShopifyApp.configure do |config|
@@ -30,6 +32,8 @@ ShopifyApp.configure do |config|
   ]
 end
 ```
+
+This method should only be used if you have a good reason not to use app-specific webhooks (such as requiring different topics for different shops).
 
 When the [OAuth callback](/docs/shopify_app/authentication.md#oauth-callback) or token exchange is completed successfully, ShopifyApp will queue a background job which will ensure all the specified webhooks exist for that shop. Because this runs on every OAuth callback, it means your app will always have the webhooks it needs even if the user uninstalls and re-installs the app.
 
