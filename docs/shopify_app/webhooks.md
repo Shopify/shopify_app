@@ -2,14 +2,12 @@
 
 #### Table of contents
 
-[App-specific webhooks in shopify.app.toml](#subscribing-to-webhooks-in-the-app-configuration-file)
+[App-specific webhooks in shopify.app.toml (recommended)](#subscribing-to-webhooks-in-the-app-configuration-file)
 [Manage shop-specific webhooks using `ShopifyApp::WebhooksManager`](#manage-webhooks-using-shopifyappwebhooksmanager)
 [Mandatory Privacy Webhooks](#mandatory-privacy-webhooks)
 
-## App-specific webhooks in shopify.app.toml 
-You can specify app-specific webhooks to subscribe to in the `shopify.app.toml` file. These subscriptions are automatically kept up to date by Shopify so unless your app requires different webhook topics on different shops, you should use app-specific webhooks defined in `shopify.app.toml`. 
-
-Learn more about the different ways to subscribe to webhooks in the [documentation](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+## App-specific webhooks in shopify.app.toml (recommended)
+You can specify app-specific webhooks to subscribe to in the `shopify.app.toml` file. These subscriptions are easier to manage because they are kept up to date by Shopify. In many cases they will be sufficient. Please read [app-specific vs shop-specific subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe#app-specific-vs-shop-specific-subscriptions) to understand when you might need shop-specific webhooks.
 
 ### Consuming app-specific webhooks events
 To consume app-specific webhooks events from the `shopify.app.toml` file, you can scaffold the necessary files by running the following generator.
