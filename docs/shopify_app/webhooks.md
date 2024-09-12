@@ -10,7 +10,7 @@
 You can specify app-specific webhooks to subscribe to in the `shopify.app.toml` file. These subscriptions are easier to manage because they are kept up to date by Shopify. In many cases they will be sufficient. Please read [app-specific vs shop-specific subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe#app-specific-vs-shop-specific-subscriptions) to understand when you might need shop-specific webhooks.
 
 ### Consuming app-specific webhooks events
-To consume app-specific webhooks events from the `shopify.app.toml` file you can scaffold the necessary files by running the following generator.
+To consume app-specific webhooks events from the `shopify.app.toml` file, you can scaffold the necessary files by running the following generator.
 
 ```bash
 rails g shopify_app:add_declarative_webhook --topic carts/update --path webhooks/carts_update
