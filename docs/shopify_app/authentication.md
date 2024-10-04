@@ -63,6 +63,24 @@ Using token exchange will ensure that the access token retrieved will always hav
 Authorization code grant flow is the OAuth flow that requires the app to redirect the user 
 to Shopify for installation/authorization of the app to access the shop's data. It is still required for apps that are not embedded.
 
+If your app is not using Shopify managed installation with declared scopes in your `.toml` file, you can change the requested access scopes during OAuth flow 
+by adding the `scope` to your configurations - `ShopifyApp.configuration` & `ShopifyAPI::Context.setup`.
+
+
+```ruby
+ShopifyApp.configure do |config|
+  ...
+  config.scope = "read_discounts,write_products"
+  ...
+end
+
+ShopifyAPI::Context.setup(
+  ...
+  scope: ShopifyApp.configuration.scope,
+  ...
+)
+```
+
 To perform [authorization code grant flow](https://shopify.dev/docs/apps/auth/get-access-tokens/authorization-code-grant), you app will need to handle
 [begin OAuth](#begin-oauth) and [OAuth callback](#oauth-callback) routes.
 
