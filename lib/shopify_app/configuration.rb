@@ -61,6 +61,7 @@ module ShopifyApp
       @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
+      @scope = []
 
       log_v23_deprecations
     end
