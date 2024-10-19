@@ -62,7 +62,7 @@ module ShopifyApp
         ShopifyApp::Logger.warn("No cookies have been found - cookie name: #{cookie_name}")
         nil
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        ShopifyApp::Logger.warn("Invalid JWT token for current Shopify session")
+        ShopifyApp::Logger.warn("Invalid JWT token for current Shopify session: #{$!.message}")
         nil
       end
     end
