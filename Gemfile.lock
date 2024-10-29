@@ -196,8 +196,7 @@ GEM
     redirect_safely (1.0.0)
       activemodel
     regexp_parser (2.9.0)
-    rexml (3.3.6)
-      strscan
+    rexml (3.3.9)
     rubocop (1.62.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -242,7 +241,6 @@ GEM
     sqlite3 (1.7.3-arm64-darwin)
     sqlite3 (1.7.3-x86_64-darwin)
     sqlite3 (1.7.3-x86_64-linux)
-    strscan (3.1.0)
     syntax_tree (6.1.1)
       prettier_print (>= 1.2.0)
     thor (1.2.2)
