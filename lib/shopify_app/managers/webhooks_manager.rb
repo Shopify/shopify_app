@@ -52,6 +52,7 @@ module ShopifyApp
             path: webhook_path,
             handler: delivery_method == :http ? webhook_job_klass(webhook_path) : nil,
             fields: attributes[:fields],
+            filter: attributes[:filter],
             metafield_namespaces: attributes[:metafield_namespaces],
           )
         end

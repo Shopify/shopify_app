@@ -62,8 +62,22 @@ ShopifyApp.configure do |config|
   config.webhooks = [
     {
       topic: 'orders/create',
-      path: 'api/webhooks/order_create',
+      path: 'api/webhooks/orders_create',
       metafield_namespaces: ['app-namespace'],
+    },
+  ]
+end
+```
+
+If you need to filter by webhook fields, you can register a webhook with a `filter` parameter. The documentation for Webhook filters can be found [here](https://shopify.dev/docs/apps/build/webhooks/customize/filters).
+
+```ruby
+ShopifyApp.configure do |config|
+  config.webhooks = [
+    {
+      topic: 'products/update',
+      path: 'api/webhooks/products_update',
+      filter: "variants.price:>=10.00",
     },
   ]
 end
