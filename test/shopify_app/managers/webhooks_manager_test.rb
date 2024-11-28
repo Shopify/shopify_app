@@ -23,6 +23,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       handler: OrdersUpdatedJob,
       fields: nil,
       metafield_namespaces: nil,
+      filter: nil,
     }
 
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(**expected_hash).once
@@ -42,6 +43,7 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       handler: OrdersUpdatedJob,
       fields: nil,
       metafield_namespaces: nil,
+      filter: nil,
     }
 
     ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(**expected_hash).once
@@ -50,6 +52,31 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
         {
           topic: "orders/updated",
           address: "https://some.domain.over.the.rainbow.com/webhooks/orders_updated",
+        },
+      ]
+    end
+
+    ShopifyApp::WebhooksManager.add_registrations
+  end
+
+  test "#add_registrations includes filters" do
+    expected_hash = {
+      topic: "orders/updated",
+      delivery_method: :http,
+      path: "/webhooks/orders_updated",
+      handler: OrdersUpdatedJob,
+      fields: nil,
+      metafield_namespaces: nil,
+      filter: "id:*",
+    }
+
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(**expected_hash).once
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        {
+          topic: "orders/updated",
+          address: "https://some.domain.over.the.rainbow.com/webhooks/orders_updated",
+          filter: "id:*",
         },
       ]
     end
