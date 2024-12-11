@@ -1,6 +1,10 @@
 Unreleased
 ----------
 
+22.5.1 (December 11, 2024)
+----------
+- Fix Rails [CVE-2024-54133](https://github.com/rails/rails/commit/3da2479cfe1e00177114b17e496213c40d286b3a) [1929](https://github.com/Shopify/shopify_app/pull/1929)
+
 22.5.0 (November 28, 2024)
 ----------
 - Add support for filters in webhook registration [1923](https://github.com/Shopify/shopify_app/pull/1923)
