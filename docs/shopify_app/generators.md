@@ -46,7 +46,7 @@ The name of your app. The flag can be supplied with or without double-quotes.
 
 ###### `--scope`
 
-The [OAuth access scope(s)](https://shopify.dev/docs/admin-api/access-scopes) required by your app. Delimit multiple access scopes using a comma-space. The flag can be supplied with or without double-quotes.
+The [OAuth access scope(s)](https://shopify.dev/docs/api/usage/access-scopes) required by your app. Delimit multiple access scopes using a comma-space. The flag can be supplied with or without double-quotes.
 
 *Example:* `--scope read_products, write_orders`
 
