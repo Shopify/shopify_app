@@ -1,0 +1,370 @@
+# frozen_string_literal: true
+
+module ShopifyApp
+  class ScriptTagsManager
+    def self.queue(shop_domain, shop_token, script_tags)
+      ShopifyApp::ScriptTagsManagerJob.perform_later(
+        shop_domain: shop_domain,
+        shop_token: shop_token,
+        # Procs cannot be serialized so we interpolate now, if necessary
+        script_tags: build_src(script_tags, shop_domain),
+      )
+    end
+
+    def self.build_src(script_tags, domain)
+      script_tags.map do |tag|
+        next tag unless tag[:src].respond_to?(:call)
+
+        tag = tag.dup
+        tag[:src] = tag[:src].call(domain)
+        tag
+      end
+    end
+
+    attr_reader :required_script_tags, :shop_domain
+
+    def initialize(script_tags, shop_domain)
+      @required_script_tags = script_tags
+      @shop_domain = shop_domain
+      @session = nil
+    end
+
+    def recreate_script_tags!(session:)
+      destroy_script_tags(session: session)
+      create_script_tags(session: session)
+    end
+
+    def create_script_tags(session:)
+      @session = session
+      return unless required_script_tags.present?
+
+      # Check if any scripttag has template_types defined
+      template_types_to_check = required_script_tags.flat_map { |tag| tag[:template_types] }.compact.uniq
+
+      # If template types are specified, check if the theme supports app blocks for those templates
+      if template_types_to_check.any?
+        # First fetch the active theme
+        active_theme = fetch_active_theme
+
+        # If we failed to fetch the active theme, don't proceed with script tag creation
+        unless active_theme
+          ShopifyApp::Logger.info("Failed to fetch active theme. Skipping script tag creation.")
+          return
+        end
+
+        # Check if the theme supports app blocks for the specified templates
+        if template_types_to_check.all? do |template_type|
+             template_supports_app_blocks?(active_theme["id"], template_type)
+           end
+          ShopifyApp::Logger.info(
+            "Theme supports app blocks for templates: #{template_types_to_check.join(", ")}. " \
+              "Skipping script tag creation.",
+          )
+          return
+        end
+      end
+
+      expanded_script_tags.each do |script_tag|
+        create_script_tag(script_tag) unless script_tag_exists?(script_tag[:src])
+      end
+    end
+
+    def destroy_script_tags(session:)
+      @session = session
+      script_tags = expanded_script_tags
+      fetch_all_script_tags.each do |tag|
+        delete_script_tag(tag) if required_script_tag?(script_tags, tag)
+      end
+
+      @current_script_tags = nil
+    end
+
+    private
+
+    def theme_supports_app_blocks?(template_types)
+      # Get the active theme
+      active_theme = fetch_active_theme
+      return false unless active_theme
+
+      # Check each template type for app block support
+      template_types.all? do |template_type|
+        template_supports_app_blocks?(active_theme["id"], template_type)
+      end
+    rescue => e
+      ShopifyApp::Logger.warn("Unable to check theme app block support: #{e.message}.")
+      false
+    end
+
+    def fetch_active_theme
+      client = graphql_client
+
+      query = <<~QUERY
+        {
+          themes(first: 1, roles: [MAIN]) {
+            nodes {
+              id
+              name
+            }
+          }
+        }
+      QUERY
+
+      begin
+        response = client.query(query: query)
+
+        # Check for errors in the response
+        if response.body["errors"].present?
+          error_message = response.body["errors"].map { |e| e["message"] }.join(", ")
+          raise "GraphQL error: #{error_message}"
+        end
+
+        # Check if the response has the expected structure
+        unless response.body["data"] && response.body["data"]["themes"] && response.body["data"]["themes"]["nodes"]
+          raise "Invalid response structure"
+        end
+
+        themes = response.body["data"]["themes"]["nodes"]
+        return nil if themes.empty?
+
+        themes.first
+      rescue => e
+        ShopifyApp::Logger.warn("Failed to fetch active theme: #{e.message}")
+        nil
+      end
+    end
+
+    def template_supports_app_blocks?(theme_id, template_type)
+      client = graphql_client
+
+      # First, check if the JSON template exists
+      files_query = <<~QUERY
+        query getFiles($themeId: ID!, $filenames: [String!]!) {
+          theme(id: $themeId) {
+            files(filenames: $filenames) {
+              nodes {
+                filename
+                body {
+                  ... on OnlineStoreThemeFileBodyText {
+                    content
+                  }
+                }
+              }
+            }
+          }
+        }
+      QUERY
+
+      filename = "templates/#{template_type}.json"
+      files_variables = {
+        themeId: theme_id,
+        filenames: [filename],
+      }
+
+      begin
+        files_response = client.query(query: files_query, variables: files_variables)
+
+        # Check for errors in the response
+        if files_response.body["errors"].present?
+          error_message = files_response.body["errors"].map { |e| e["message"] }.join(", ")
+          raise "GraphQL error: #{error_message}"
+        end
+
+        template_files = files_response.body["data"]["theme"]["files"]["nodes"]
+
+        # If the JSON template doesn't exist, return false
+        return false if template_files.empty?
+
+        # Parse the JSON template to find the main section
+        template_content = template_files.first["body"]["content"]
+        template_data = JSON.parse(template_content)
+
+        main_section = nil
+        template_data["sections"].each do |id, section|
+          if id == "main" || section["type"].to_s.start_with?("main-")
+            main_section = "sections/#{section["type"]}.liquid"
+            break
+          end
+        end
+
+        return false unless main_section
+
+        # Now check if the main section supports app blocks
+        section_query = <<~QUERY
+          query getFiles($themeId: ID!, $filenames: [String!]!) {
+            theme(id: $themeId) {
+              files(filenames: $filenames) {
+                nodes {
+                  filename
+                  body {
+                    ... on OnlineStoreThemeFileBodyText {
+                      content
+                    }
+                  }
+                }
+              }
+            }
+          }
+        QUERY
+
+        section_variables = {
+          themeId: theme_id,
+          filenames: [main_section],
+        }
+
+        section_response = client.query(query: section_query, variables: section_variables)
+
+        # Check for errors in the section response
+        if section_response.body["errors"].present?
+          error_message = section_response.body["errors"].map { |e| e["message"] }.join(", ")
+          raise "GraphQL error: #{error_message}"
+        end
+
+        section_files = section_response.body["data"]["theme"]["files"]["nodes"]
+
+        return false if section_files.empty?
+
+        section_content = section_files.first["body"]["content"]
+
+        # Extract schema from the section content
+        schema_match = section_content.match(/\{\%\s+schema\s+\%\}([\s\S]*?)\{\%\s+endschema\s+\%\}/m)
+        return false unless schema_match
+
+        schema = JSON.parse(schema_match[1])
+
+        # Check if the schema has blocks that support app blocks
+        schema["blocks"]&.any? { |block| block["type"] == "@app" } || false
+      rescue => e
+        ShopifyApp::Logger.error("Error checking template support: #{e.message}")
+        false
+      end
+    end
+
+    def expanded_script_tags
+      self.class.build_src(required_script_tags, shop_domain)
+    end
+
+    def required_script_tag?(script_tags, tag)
+      script_tags.map { |w| w[:src] }.include?(tag["src"])
+    end
+
+    def create_script_tag(attributes)
+      client = graphql_client
+
+      variables = {
+        input: {
+          src: attributes[:src],
+          displayScope: "ONLINE_STORE",
+          cache: attributes[:cache] || false,
+        },
+      }
+
+      query = <<~QUERY
+        mutation ScriptTagCreate($input: ScriptTagInput!) {
+          scriptTagCreate(input: $input) {
+            scriptTag {
+              id
+              src
+              displayScope
+              cache
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      QUERY
+
+      begin
+        response = client.query(query: query, variables: variables)
+
+        if response.body["data"]["scriptTagCreate"]["userErrors"].any?
+          errors = response.body["data"]["scriptTagCreate"]["userErrors"]
+          error_messages = errors.map { |e| "#{e["field"]}: #{e["message"]}" }.join(", ")
+          raise ::ShopifyApp::CreationFailed, "ScriptTag creation failed: #{error_messages}"
+        end
+
+        response.body["data"]["scriptTagCreate"]["scriptTag"]
+      rescue ShopifyAPI::Errors::HttpResponseError => e
+        raise ::ShopifyApp::CreationFailed, e.message
+      end
+    end
+
+    def delete_script_tag(tag)
+      client = graphql_client
+
+      query = <<~QUERY
+        mutation scriptTagDelete($id: ID!) {
+          scriptTagDelete(id: $id) {
+            deletedScriptTagId
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      QUERY
+
+      variables = { id: tag["id"] }
+
+      begin
+        client.query(query: query, variables: variables)
+      rescue ShopifyAPI::Errors::HttpResponseError => e
+        ShopifyApp::Logger.error("Failed to delete script tag: #{e.message}")
+      end
+    end
+
+    def script_tag_exists?(src)
+      current_script_tags[src]
+    end
+
+    def current_script_tags
+      @current_script_tags ||= fetch_all_script_tags.index_by { |tag| tag["src"] }
+    end
+
+    def fetch_all_script_tags
+      client = graphql_client
+
+      query = <<~QUERY
+        {
+          scriptTags(first: 250) {
+            edges {
+              node {
+                id
+                src
+                displayScope
+                cache
+              }
+            }
+          }
+        }
+      QUERY
+
+      begin
+        response = client.query(query: query)
+
+        # Check for errors in the response
+        if response.body["errors"].present?
+          ShopifyApp::Logger.warn("GraphQL error fetching script tags: #{response.body["errors"].map do |e|
+                                                                           e["message"]
+                                                                         end.join(", ")}")
+          return []
+        end
+
+        # Handle nil data or missing structure
+        return [] unless response.body["data"] &&
+          response.body["data"]["scriptTags"] &&
+          response.body["data"]["scriptTags"]["edges"]
+
+        response.body["data"]["scriptTags"]["edges"].map { |edge| edge["node"] }
+      rescue => e
+        ShopifyApp::Logger.warn("Error fetching script tags: #{e.message}")
+        []
+      end
+    end
+
+    def graphql_client
+      ShopifyAPI::Clients::Graphql::Admin.new(session: @session)
+    end
+  end
+end
