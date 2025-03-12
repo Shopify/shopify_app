@@ -488,6 +488,87 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
     manager.create_script_tags(session: @session)
   end
 
+  test "#fetch_active_theme raises InvalidGraphqlRequestError when GraphQL errors are present" do
+    manager = ShopifyApp::ScriptTagsManager.new(@script_tags, "example-app.com")
+    manager.stubs(:graphql_client).returns(@mock_client)
+
+    # Mock GraphQL error response
+    error_response = mock
+    error_response.stubs(:body).returns({
+      "errors" => [
+        {
+          "message" => "GraphQL error message",
+          "locations" => [{ "line" => 2, "column" => 11 }],
+          "path" => ["themes"],
+        },
+      ],
+      "data" => nil,
+    })
+
+    # Set up the response for the GraphQL client
+    @mock_client.expects(:query).returns(error_response).once
+
+    # Stub the rescue block to verify the error is raised before it's caught
+    ShopifyApp::Logger.expects(:warn).with("Failed to fetch active theme: GraphQL error message")
+
+    # The method will return nil due to the rescue block
+    assert_nil manager.send(:fetch_active_theme)
+  end
+
+  test "#fetch_json_templates raises InvalidGraphqlRequestError when GraphQL errors are present" do
+    manager = ShopifyApp::ScriptTagsManager.new(@script_tags, "example-app.com")
+    manager.stubs(:graphql_client).returns(@mock_client)
+
+    # Mock GraphQL error response
+    error_response = mock
+    error_response.stubs(:body).returns({
+      "errors" => [
+        {
+          "message" => "GraphQL error message",
+          "locations" => [{ "line" => 2, "column" => 11 }],
+          "path" => ["theme", "files"],
+        },
+      ],
+      "data" => nil,
+    })
+
+    # Set up the response for the GraphQL client
+    @mock_client.expects(:query).returns(error_response).once
+
+    # This method doesn't have a rescue block, so we can test for the exception directly
+    assert_raises(ShopifyAPI::Errors::InvalidGraphqlRequestError) do
+      manager.send(:fetch_json_templates, @mock_client, "theme_id", ["templates/product.json"])
+    end
+  end
+
+  test "#all_sections_support_app_blocks? raises InvalidGraphqlRequestError when GraphQL errors are present" do
+    manager = ShopifyApp::ScriptTagsManager.new(@script_tags, "example-app.com")
+    manager.stubs(:graphql_client).returns(@mock_client)
+
+    # Mock GraphQL error response
+    error_response = mock
+    error_response.stubs(:body).returns({
+      "errors" => [
+        {
+          "message" => "GraphQL error message",
+          "locations" => [{ "line" => 2, "column" => 11 }],
+          "path" => ["theme", "files"],
+        },
+      ],
+      "data" => nil,
+    })
+
+    # Set up the response for the GraphQL client
+    @mock_client.expects(:query).returns(error_response).once
+
+    # Stub the rescue block to verify the error is raised before it's caught
+    ShopifyApp::Logger.expects(:error).with("Error checking section support: GraphQL error message")
+
+    # The method will return false due to the rescue block
+    assert_equal false,
+      manager.send(:all_sections_support_app_blocks?, @mock_client, "theme_id", ["sections/main-product.liquid"])
+  end
+
   private
 
   def mock_empty_script_tags_response
