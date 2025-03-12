@@ -219,9 +219,9 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
       },
     })
 
-    # Mock product template response
-    product_template_response = mock
-    product_template_response.stubs(:body).returns({
+    # Mock all templates response (product, collection, index)
+    all_templates_response = mock
+    all_templates_response.stubs(:body).returns({
       "data" => {
         "theme" => {
           "files" => {
@@ -232,38 +232,12 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
                   "content" => '{"sections":{"main":{"type":"main-product","settings":{}}}}',
                 },
               },
-            ],
-          },
-        },
-      },
-    })
-
-    # Mock collection template response
-    collection_template_response = mock
-    collection_template_response.stubs(:body).returns({
-      "data" => {
-        "theme" => {
-          "files" => {
-            "nodes" => [
               {
                 "filename" => "templates/collection.json",
                 "body" => {
                   "content" => '{"sections":{"main":{"type":"main-collection","settings":{}}}}',
                 },
               },
-            ],
-          },
-        },
-      },
-    })
-
-    # Mock index template response
-    index_template_response = mock
-    index_template_response.stubs(:body).returns({
-      "data" => {
-        "theme" => {
-          "files" => {
-            "nodes" => [
               {
                 "filename" => "templates/index.json",
                 "body" => {
@@ -276,9 +250,9 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
       },
     })
 
-    # Mock product section response with app block support
-    product_section_response = mock
-    product_section_response.stubs(:body).returns({
+    # Mock all sections response with app block support
+    all_sections_response = mock
+    all_sections_response.stubs(:body).returns({
       "data" => {
         "theme" => {
           "files" => {
@@ -289,38 +263,12 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
                   "content" => '{% schema %} { "blocks": [ { "type": "@app" } ] } {% endschema %}',
                 },
               },
-            ],
-          },
-        },
-      },
-    })
-
-    # Mock collection section response with app block support
-    collection_section_response = mock
-    collection_section_response.stubs(:body).returns({
-      "data" => {
-        "theme" => {
-          "files" => {
-            "nodes" => [
               {
                 "filename" => "sections/main-collection.liquid",
                 "body" => {
                   "content" => '{% schema %} { "blocks": [ { "type": "@app" } ] } {% endschema %}',
                 },
               },
-            ],
-          },
-        },
-      },
-    })
-
-    # Mock index section response with app block support
-    index_section_response = mock
-    index_section_response.stubs(:body).returns({
-      "data" => {
-        "theme" => {
-          "files" => {
-            "nodes" => [
               {
                 "filename" => "sections/main-index.liquid",
                 "body" => {
@@ -334,13 +282,10 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
     })
 
     # Set up the sequence of responses for the GraphQL client
+    # Now we only need 3 responses: theme, all templates, all sections
     @mock_client.stubs(:query).returns(theme_response).then
-      .returns(product_template_response).then
-      .returns(product_section_response).then
-      .returns(collection_template_response).then
-      .returns(collection_section_response).then
-      .returns(index_template_response).then
-      .returns(index_section_response)
+      .returns(all_templates_response).then
+      .returns(all_sections_response)
 
     # No scripttag creation should be attempted
     @mock_client.expects(:query).with(has_entry(variables: has_key(:input))).never
@@ -368,9 +313,9 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
       },
     })
 
-    # Mock product template response
-    product_template_response = mock
-    product_template_response.stubs(:body).returns({
+    # Mock all templates response (product, collection)
+    all_templates_response = mock
+    all_templates_response.stubs(:body).returns({
       "data" => {
         "theme" => {
           "files" => {
@@ -381,15 +326,27 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
                   "content" => '{"sections":{"main":{"type":"main-product","settings":{}}}}',
                 },
               },
+              {
+                "filename" => "templates/collection.json",
+                "body" => {
+                  "content" => '{"sections":{"main":{"type":"main-collection","settings":{}}}}',
+                },
+              },
+              {
+                "filename" => "templates/index.json",
+                "body" => {
+                  "content" => '{"sections":{"main":{"type":"main-index","settings":{}}}}',
+                },
+              },
             ],
           },
         },
       },
     })
 
-    # Mock product section response with app block support
-    product_section_response = mock
-    product_section_response.stubs(:body).returns({
+    # Mock all sections response with one section NOT supporting app blocks
+    all_sections_response = mock
+    all_sections_response.stubs(:body).returns({
       "data" => {
         "theme" => {
           "files" => {
@@ -400,42 +357,16 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
                   "content" => '{% schema %} { "blocks": [ { "type": "@app" } ] } {% endschema %}',
                 },
               },
-            ],
-          },
-        },
-      },
-    })
-
-    # Mock collection template response
-    collection_template_response = mock
-    collection_template_response.stubs(:body).returns({
-      "data" => {
-        "theme" => {
-          "files" => {
-            "nodes" => [
-              {
-                "filename" => "templates/collection.json",
-                "body" => {
-                  "content" => '{"sections":{"main":{"type":"main-collection","settings":{}}}}',
-                },
-              },
-            ],
-          },
-        },
-      },
-    })
-
-    # Mock collection section response WITHOUT app block support
-    collection_section_response = mock
-    collection_section_response.stubs(:body).returns({
-      "data" => {
-        "theme" => {
-          "files" => {
-            "nodes" => [
               {
                 "filename" => "sections/main-collection.liquid",
                 "body" => {
                   "content" => '{% schema %} { "blocks": [ { "type": "text" } ] } {% endschema %}',
+                },
+              },
+              {
+                "filename" => "sections/main-index.liquid",
+                "body" => {
+                  "content" => '{% schema %} { "blocks": [ { "type": "@app" } ] } {% endschema %}',
                 },
               },
             ],
@@ -455,14 +386,10 @@ class ShopifyApp::ScriptTagsManagerTest < ActiveSupport::TestCase
     })
 
     # Set up the sequence of responses for the GraphQL client
-    # The code will stop checking templates once it finds one that doesn't support app blocks
-    # So we only need to set up expectations for the queries that will actually be made
     @mock_client.stubs(:query)
       .returns(theme_response)
-      .then.returns(product_template_response)
-      .then.returns(product_section_response)
-      .then.returns(collection_template_response)
-      .then.returns(collection_section_response)
+      .then.returns(all_templates_response)
+      .then.returns(all_sections_response)
       .then.returns(empty_script_tags_response)
 
     # Expect script tag creation calls

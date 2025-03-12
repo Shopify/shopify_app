@@ -52,10 +52,8 @@ module ShopifyApp
           return
         end
 
-        # Check if the theme supports app blocks for the specified templates
-        if template_types_to_check.all? do |template_type|
-             template_supports_app_blocks?(active_theme["id"], template_type)
-           end
+        # Check if all templates support app blocks
+        if all_templates_support_app_blocks?(active_theme["id"], template_types_to_check)
           ShopifyApp::Logger.info(
             "Theme supports app blocks for templates: #{template_types_to_check.join(", ")}. " \
               "Skipping script tag creation.",
@@ -178,6 +176,106 @@ module ShopifyApp
       nil
     end
 
+    # New method to check all templates at once
+    def all_templates_support_app_blocks?(theme_id, template_types)
+      client = graphql_client
+
+      # First, fetch all JSON templates at once
+      template_filenames = template_types.map { |type| "templates/#{type}.json" }
+      json_templates = fetch_json_templates(client, theme_id, template_filenames)
+
+      # If any template is missing, return false
+      return false if json_templates.length != template_types.length
+
+      # Extract main sections from all templates
+      main_sections = extract_main_sections(json_templates)
+
+      # If any template doesn't have a main section, return false
+      return false if main_sections.length != template_types.length
+
+      # Check if all main sections support app blocks
+      all_sections_support_app_blocks?(client, theme_id, main_sections)
+    rescue => e
+      ShopifyApp::Logger.error("Error checking template support: #{e.message}")
+      false
+    end
+
+    def fetch_json_templates(client, theme_id, template_filenames)
+      files_variables = {
+        themeId: theme_id,
+        filenames: template_filenames,
+      }
+
+      files_response = client.query(query: FILES_QUERY, variables: files_variables)
+
+      # Check for errors in the response
+      if files_response.body["errors"].present?
+        error_message = files_response.body["errors"].map { |e| e["message"] }.join(", ")
+        raise "GraphQL error: #{error_message}"
+      end
+
+      files_response.body["data"]["theme"]["files"]["nodes"]
+    end
+
+    def extract_main_sections(json_templates)
+      main_sections = []
+
+      json_templates.each do |template|
+        template_content = template["body"]["content"]
+        template_data = JSON.parse(template_content)
+
+        main_section = nil
+        template_data["sections"].each do |id, section|
+          if id == "main" || section["type"].to_s.start_with?("main-")
+            main_section = "sections/#{section["type"]}.liquid"
+            break
+          end
+        end
+
+        main_sections << main_section if main_section
+      rescue => e
+        ShopifyApp::Logger.error("Error extracting main section: #{e.message}")
+      end
+
+      main_sections
+    end
+
+    def all_sections_support_app_blocks?(client, theme_id, section_filenames)
+      return false if section_filenames.empty?
+
+      section_variables = {
+        themeId: theme_id,
+        filenames: section_filenames,
+      }
+
+      section_response = client.query(query: FILES_QUERY, variables: section_variables)
+
+      # Check for errors in the section response
+      if section_response.body["errors"].present?
+        error_message = section_response.body["errors"].map { |e| e["message"] }.join(", ")
+        raise "GraphQL error: #{error_message}"
+      end
+
+      section_files = section_response.body["data"]["theme"]["files"]["nodes"]
+
+      # If we didn't get all the sections we asked for, return false
+      return false if section_files.length != section_filenames.length
+
+      # Check if all sections support app blocks
+      section_files.all? do |file|
+        section_content = file["body"]["content"]
+        schema_match = section_content.match(/\{\%\s+schema\s+\%\}([\s\S]*?)\{\%\s+endschema\s+\%\}/m)
+        next false unless schema_match
+
+        schema = JSON.parse(schema_match[1])
+        schema["blocks"]&.any? { |block| block["type"] == "@app" } || false
+      end
+    rescue => e
+      ShopifyApp::Logger.error("Error checking section support: #{e.message}")
+      false
+    end
+
+    # Keep these methods for backward compatibility
     def template_supports_app_blocks?(theme_id, template_type)
       client = graphql_client
 
@@ -281,13 +379,25 @@ module ShopifyApp
 
       response = client.query(query: SCRIPT_TAG_CREATE_MUTATION, variables: variables)
 
-      if response.body["data"]["scriptTagCreate"]["userErrors"].any?
+      # Add proper nil checks for the response structure
+      if response.body["data"] &&
+          response.body["data"]["scriptTagCreate"] &&
+          response.body["data"]["scriptTagCreate"]["userErrors"] &&
+          response.body["data"]["scriptTagCreate"]["userErrors"].any?
         errors = response.body["data"]["scriptTagCreate"]["userErrors"]
         error_messages = errors.map { |e| "#{e["field"]}: #{e["message"]}" }.join(", ")
         raise ::ShopifyApp::CreationFailed, "ScriptTag creation failed: #{error_messages}"
       end
 
-      response.body["data"]["scriptTagCreate"]["scriptTag"]
+      # Safely access the script tag data
+      if response.body["data"] &&
+          response.body["data"]["scriptTagCreate"] &&
+          response.body["data"]["scriptTagCreate"]["scriptTag"]
+        response.body["data"]["scriptTagCreate"]["scriptTag"]
+      else
+        ShopifyApp::Logger.warn("Script tag creation response missing expected data structure")
+        nil
+      end
     rescue ShopifyAPI::Errors::HttpResponseError => e
       raise ::ShopifyApp::CreationFailed, e.message
     end
