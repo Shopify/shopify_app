@@ -215,7 +215,7 @@ module ShopifyApp
 
         main_sections << main_section if main_section
       rescue => e
-        ShopifyApp::Logger.error("Error extracting main section: #{e.message}")
+        ShopifyApp::Logger.error("Error extracting main section from template #{template["filename"]}: #{e.message}")
       end
 
       main_sections
@@ -275,6 +275,11 @@ module ShopifyApp
 
       response = client.query(query: SCRIPT_TAG_CREATE_MUTATION, variables: variables)
 
+      if response.body["errors"].present?
+        error_messages = response.body["errors"].map { |e| e["message"] }.join(", ")
+        raise ::ShopifyApp::CreationFailed, "ScriptTag creation failed: #{error_messages}"
+      end
+
       if response.body["data"]["scriptTagCreate"]["userErrors"].any?
         errors = response.body["data"]["scriptTagCreate"]["userErrors"]
         error_messages = errors.map { |e| "#{e["field"]}: #{e["message"]}" }.join(", ")
@@ -291,7 +296,22 @@ module ShopifyApp
 
       variables = { id: tag["id"] }
 
-      client.query(query: SCRIPT_TAG_DELETE_MUTATION, variables: variables)
+      response = client.query(query: SCRIPT_TAG_DELETE_MUTATION, variables: variables)
+
+      if response.body["errors"].present?
+        error_messages = response.body["errors"].map { |e| e["message"] }.join(", ")
+        ShopifyApp::Logger.error("Failed to delete script tag: #{error_messages}")
+        return
+      end
+
+      if response.body["data"]["scriptTagDelete"]["userErrors"].any?
+        errors = response.body["data"]["scriptTagDelete"]["userErrors"]
+        error_messages = errors.map { |e| "#{e["field"]}: #{e["message"]}" }.join(", ")
+        ShopifyApp::Logger.error("Failed to delete script tag: #{error_messages}")
+        return
+      end
+
+      response.body["data"]["scriptTagDelete"]["deletedScriptTagId"]
     rescue ShopifyAPI::Errors::HttpResponseError => e
       ShopifyApp::Logger.error("Failed to delete script tag: #{e.message}")
     end
