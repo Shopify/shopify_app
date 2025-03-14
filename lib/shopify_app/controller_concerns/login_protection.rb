@@ -269,7 +269,7 @@ module ShopifyApp
       return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
 
       session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(shopify_id_token, cookies, is_online)
-      return nil unless session_id
+      return unless session_id
 
       ShopifyApp::SessionRepository.load_session(session_id)
     end

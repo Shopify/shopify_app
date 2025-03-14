@@ -106,7 +106,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     ShopifyApp.configuration = nil
 
     assert_equal :"custom-queue-name", ShopifyApp.configuration.webhooks_manager_queue_name
-    assert_equal :"custom-queue-name", ShopifyApp.configuration.scripttags_manager_queue_name
+    assert_equal :"custom-queue-name", ShopifyApp.configuration.script_tags_manager_queue_name
   end
 
   test "webhooks_manager_queue_name and scripttags_manager_queue_name are nil if not configured and ActiveJob queue_name is nil (activeJob overrides a nil queue_name to default)" do
@@ -114,18 +114,18 @@ class ConfigurationTest < ActiveSupport::TestCase
     ShopifyApp.configuration = nil
 
     assert_equal :default, ShopifyApp.configuration.webhooks_manager_queue_name
-    assert_equal :default, ShopifyApp.configuration.scripttags_manager_queue_name
+    assert_equal :default, ShopifyApp.configuration.script_tags_manager_queue_name
   end
 
   test "can override queue names" do
     Rails.application.config.active_job.queue_name = :"custom-queue-name"
     ShopifyApp.configure do |config|
       config.webhooks_manager_queue_name = :"my-custom-worker-1"
-      config.scripttags_manager_queue_name = :"my-custom-worker-2"
+      config.script_tags_manager_queue_name = :"my-custom-worker-2"
     end
 
     assert_equal :"my-custom-worker-1", ShopifyApp.configuration.webhooks_manager_queue_name
-    assert_equal :"my-custom-worker-2", ShopifyApp.configuration.scripttags_manager_queue_name
+    assert_equal :"my-custom-worker-2", ShopifyApp.configuration.script_tags_manager_queue_name
   end
 
   test "webhook_jobs_namespace handles default" do

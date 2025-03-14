@@ -15,7 +15,7 @@ module ShopifyApp
     attr_accessor :embedded_app
     alias_method  :embedded_app?, :embedded_app
     attr_accessor :webhooks
-    attr_accessor :scripttags
+    attr_accessor :script_tags
     attr_accessor :after_authenticate_job
     attr_accessor :api_version
 
@@ -33,7 +33,7 @@ module ShopifyApp
     attr_accessor :custom_post_authenticate_tasks
 
     # customise ActiveJob queue names
-    attr_accessor :scripttags_manager_queue_name
+    attr_accessor :script_tags_manager_queue_name
     attr_accessor :webhooks_manager_queue_name
 
     # configure myshopify domain for local shopify development
@@ -58,7 +58,7 @@ module ShopifyApp
       @root_url = "/"
       @myshopify_domain = "myshopify.com"
       @unified_admin_domain = "shopify.com"
-      @scripttags_manager_queue_name = Rails.application.config.active_job.queue_name
+      @script_tags_manager_queue_name = Rails.application.config.active_job.queue_name
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
       @scope = []
@@ -115,8 +115,8 @@ module ShopifyApp
       webhooks.present?
     end
 
-    def has_scripttags?
-      scripttags.present?
+    def has_script_tags?
+      script_tags.present?
     end
 
     def requires_billing?

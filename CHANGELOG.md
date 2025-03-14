@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 
 22.5.2 (March 14, 2025)
 ----------
