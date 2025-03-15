@@ -85,13 +85,7 @@ module ShopifyApp
         # Make sure the shop is set in the redirection URL
         unless params[:shop]
           ShopifyApp::Logger.debug("Setting current shop session")
-          params[:shop] = if current_shopify_session
-            current_shopify_session.shop
-
-          elsif shopify_id_token
-            jwt_payload = ShopifyAPI::Auth::JwtPayload.new(shopify_id_token)
-            jwt_payload.shop
-          end
+          params[:shop] = current_shopify_session&.shop || parse_shop_from_jwt
         end
 
         url ||= login_url_with_optional_shop
@@ -278,6 +272,16 @@ module ShopifyApp
       request.xhr? ||
         request.media_type == "text/javascript" ||
         request.media_type == "application/javascript"
+    end
+
+    def parse_shop_from_jwt
+      return nil unless shopify_id_token
+
+      jwt_payload = ShopifyAPI::Auth::JwtPayload.new(shopify_id_token)
+      jwt_payload.shop
+    rescue ShopifyAPI::Errors::InvalidJwtTokenError
+      ShopifyApp::Logger.warn("Invalid JWT token for current Shopify session")
+      nil
     end
   end
 end
