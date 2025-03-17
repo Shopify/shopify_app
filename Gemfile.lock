@@ -122,7 +122,7 @@ GEM
     mocha (2.0.2)
       ruby2_keywords (>= 0.0.5)
     multi_xml (0.6.0)
-    net-imap (0.4.17)
+    net-imap (0.4.19)
       date
       net-protocol
     net-pop (0.1.2)
