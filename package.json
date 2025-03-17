@@ -8,7 +8,7 @@
     "babel-loader": "^8.0.6",
     "babel-preset-shopify": "^21.0.0",
     "chai": "^4.1.2",
-    "karma": "^6.4.2",
+    "karma": "^6.4.4",
     "karma-chai-sinon": "^0.1.5",
     "karma-chrome-launcher": "^3.1.0",
     "karma-cli": "^2.0.0",
@@ -19,6 +19,11 @@
     "sinon": "^9.0.3",
     "sinon-chai": "^3.2.0",
     "webpack": "^5.94.0"
+  },
+  "resolutions": {
+    "karma": "^6.4.4",
+    "socket.io-adapter": "~2.5.5",
+    "terser-webpack-plugin": "5.3.11"
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"
