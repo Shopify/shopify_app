@@ -34,6 +34,16 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
+  [
+    "https://my-shop.my.shop.dev",
+    "http://my-shop.my.shop.dev",
+    "my-shop.my.shop.dev",
+  ].each do |good_url|
+    test "sanitize_shop_domain replaces development storefront domain for (#{good_url}) with internal domain" do
+      assert_equal "my-shop.dev-api.shop.dev", ShopifyApp::Utils.sanitize_shop_domain(good_url)
+    end
+  end
+
   test "sanitize_shop_domain URL shopify spin.dev custom myshopify_domain" do
     myshop_domain = "http://shopify.foobar-part-onboard-0d6x.asdf-rygus.us.spin.dev"
     ShopifyApp.configuration.stubs(:myshopify_domain).returns(myshop_domain)
