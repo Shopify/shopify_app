@@ -1,5 +1,6 @@
 Unreleased
 ----------
+* ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)
 
 22.5.2 (March 14, 2025)
 ----------
