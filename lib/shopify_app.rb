@@ -69,14 +69,11 @@ module ShopifyApp
   # managers
   require "shopify_app/managers/webhooks_manager"
   require "shopify_app/managers/script_tags_manager"
-  # middleware
-  require "shopify_app/middleware/jwt_middleware"
 
   # session
   require "shopify_app/session/in_memory_session_store"
   require "shopify_app/session/in_memory_shop_session_store"
   require "shopify_app/session/in_memory_user_session_store"
-  require "shopify_app/session/jwt"
   require "shopify_app/session/null_user_session_store"
   require "shopify_app/session/session_repository"
   require "shopify_app/session/session_storage"
