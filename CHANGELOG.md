@@ -2,6 +2,13 @@ Unreleased
 ----------
 - Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 
+22.5.2 (March 14, 2025)
+----------
+- Add support for a new trusted Shopify domain [#1949](https://github.com/Shopify/shopify_app/pull/1949)
+- Fix broken links to OAuth access scopes documentation [#1944](https://github.com/Shopify/shopify_app/pull/1944)
+- Remove console deprecation warnings from boot [#1924](https://github.com/Shopify/shopify_app/pull/1924)
+- Removes extraneous tag in "Install app" form [#1927](https://github.com/Shopify/shopify_app/pull/1927)
+
 22.5.1 (December 11, 2024)
 ----------
 - Fix Rails [CVE-2024-54133](https://github.com/rails/rails/commit/3da2479cfe1e00177114b17e496213c40d286b3a) [1929](https://github.com/Shopify/shopify_app/pull/1929)

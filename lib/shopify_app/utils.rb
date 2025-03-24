@@ -8,6 +8,7 @@ module ShopifyApp
         "myshopify.io",
         "myshopify.com",
         "spin.dev",
+        "shop.dev",
       ].freeze
 
       def sanitize_shop_domain(shop_domain)
