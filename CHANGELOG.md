@@ -1,5 +1,8 @@
 Unreleased
 ----------
+22.5.3 (March 24, 2025)
+----------
+- Fix bug app installation is not redirected to the right domain [#1960](https://github.com/Shopify/shopify_app/pull/1960)
 
 22.5.2 (March 14, 2025)
 ----------
