@@ -21,7 +21,11 @@ module ShopifyApp
 
           return myshopify_domain_from_unified_admin(uri) if unified_admin?(uri) && from_trusted_domain
           return nil if no_shop_name_in_subdomain || uri.host&.empty?
-          return uri.host if from_trusted_domain
+
+          next unless from_trusted_domain
+          return dev_api_domain(uri.host) if storefront_domain?(uri)
+
+          return uri.host
         end
         nil
       end
@@ -63,6 +67,14 @@ module ShopifyApp
         trusted_domains = TRUSTED_SHOPIFY_DOMAINS.dup
         trusted_domains.append(myshopify_domain).uniq! if myshopify_domain
         trusted_domains
+      end
+
+      def storefront_domain?(uri)
+        uri.host.include?(".my.shop.dev")
+      end
+
+      def dev_api_domain(host)
+        host.gsub(".my.shop.dev", ".dev-api.shop.dev")
       end
 
       def uri_from_shop_domain(shop_domain)

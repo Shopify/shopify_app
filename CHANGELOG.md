@@ -1,5 +1,8 @@
 Unreleased
 ----------
+22.5.3 (March 24, 2025)
+----------
+- Fix bug app installation is not redirected to the right domain [#1960](https://github.com/Shopify/shopify_app/pull/1960)
 
 - ⚠️ [Breaking] Removed deprecated `CallbackController` methods. `perform_after_authenticate_job`, `install_webhooks`, and `perform_post_authenticate_jobs` have been removed. [#1961](https://github.com/Shopify/shopify_app/pull/1961)
 - ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)
