@@ -23,16 +23,8 @@ module ShopifyApp
 
       return respond_with_user_token_flow if start_user_token_flow?(api_session)
 
-      if ShopifyApp::VERSION < "23.0"
-        # deprecated in 23.0
-        if ShopifyApp.configuration.custom_post_authenticate_tasks.present?
-          ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
-        else
-          perform_post_authenticate_jobs(api_session)
-        end
-      else
-        ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
-      end
+      ShopifyApp.configuration.post_authenticate_tasks.perform(api_session)
+
       redirect_to_app if check_billing(api_session)
     end
 
@@ -144,36 +136,6 @@ module ShopifyApp
 
     def user_access_scopes_strategy
       ShopifyApp.configuration.user_access_scopes_strategy
-    end
-
-    def perform_post_authenticate_jobs(session)
-      # Ensure we use the shop session to install webhooks
-      session_for_shop = session.online? ? shop_session : session
-
-      install_webhooks(session_for_shop)
-
-      perform_after_authenticate_job(session)
-    end
-
-    def install_webhooks(session)
-      return unless ShopifyApp.configuration.has_webhooks?
-
-      WebhooksManager.queue(session.shop, session.access_token)
-    end
-
-    def perform_after_authenticate_job(session)
-      config = ShopifyApp.configuration.after_authenticate_job
-
-      return unless config && config[:job].present?
-
-      job = config[:job]
-      job = job.constantize if job.is_a?(String)
-
-      if config[:inline] == true
-        job.perform_now(shop_domain: session.shop)
-      else
-        job.perform_later(shop_domain: session.shop)
-      end
     end
   end
 end
