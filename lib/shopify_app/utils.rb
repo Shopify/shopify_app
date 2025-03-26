@@ -8,11 +8,12 @@ module ShopifyApp
         "myshopify.io",
         "myshopify.com",
         "spin.dev",
+        "shop.dev",
       ].freeze
 
       def sanitize_shop_domain(shop_domain)
         uri = uri_from_shop_domain(shop_domain)
-        return nil if uri.nil? || uri.host.nil?
+        return if uri.nil? || uri.host.nil?
 
         trusted_domains.each do |trusted_domain|
           no_shop_name_in_subdomain = uri.host == trusted_domain

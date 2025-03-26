@@ -1,6 +1,6 @@
 {
   "name": "shopify_app",
-  "version": "22.5.0",
+  "version": "22.5.2",
   "repository": "git@github.com:Shopify/shopify_app.git",
   "author": "Shopify",
   "license": "MIT",
@@ -8,17 +8,22 @@
     "babel-loader": "^8.0.6",
     "babel-preset-shopify": "^21.0.0",
     "chai": "^4.1.2",
-    "karma": "^6.4.2",
+    "karma": "^6.4.4",
     "karma-chai-sinon": "^0.1.5",
     "karma-chrome-launcher": "^3.1.0",
     "karma-cli": "^2.0.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-clean-reporter": "^0.0.1",
     "karma-webpack": "^5.0.0",
-    "mocha": "^10.2.0",
+    "mocha": "^10.6.0",
     "sinon": "^9.0.3",
     "sinon-chai": "^3.2.0",
     "webpack": "^5.94.0"
+  },
+  "resolutions": {
+    "karma": "^6.4.4",
+    "socket.io-adapter": "~2.5.5",
+    "terser-webpack-plugin": "5.3.11"
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers ChromeHeadless --single-run"
