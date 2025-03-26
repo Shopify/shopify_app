@@ -56,7 +56,9 @@ module ShopifyApp
 
     def retrieve_session_from_token_exchange
       @current_shopify_session = nil
-      ShopifyApp::Auth::TokenExchange.perform(shopify_id_token)
+      session = ShopifyApp::Auth::TokenExchange.perform(shopify_id_token)
+      ShopifyApp::Logger.debug("Retrieved session: #{session.inspect}")
+      @current_shopify_session = session
     end
 
     def respond_to_invalid_shopify_id_token(error)
