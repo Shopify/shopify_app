@@ -446,6 +446,16 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test "#activate_shopify_session when rescuing from invalid JWT token, breaks out of iframe in XHR requests" do
+    ShopifyAPI::Utils::SessionUtils.stubs(:current_session_id).returns(nil)
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer token"
+    with_application_test_routes do
+      get :index, xhr: true
+
+      assert_equal "/login", response.headers["X-Shopify-API-Request-Failure-Reauthorize-Url"]
+    end
+  end
+
   test "#activate_shopify_session when rescuing from non 401 errors, does not close session" do
     with_application_test_routes do
       cookies.encrypted[ShopifyAPI::Auth::Oauth::SessionCookie::SESSION_COOKIE_NAME] = "cookie"
