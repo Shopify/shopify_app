@@ -1,8 +1,11 @@
 Unreleased
 ----------
+
+23.0.0 (March 27, 2025)
 - ⚠️ [Breaking] Removes `ShopifyApp::JWTMiddleware` and `ShopifyApp::JWT` See [Upgrading](/docs/Upgrading.md) for more migration. [1960](https://github.com/Shopify/shopify_app/pull/1960)
 - ⚠️ [Breaking] Removed deprecated `CallbackController` methods. `perform_after_authenticate_job`, `install_webhooks`, and `perform_post_authenticate_jobs` have been removed. [#1961](https://github.com/Shopify/shopify_app/pull/1961)
 - ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)
+- Drops runtime dependencies for `activeresource` and `sprockets-rails` [#1943](https://github.com/Shopify/shopify_app/pull/1943/files)
 - Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 
