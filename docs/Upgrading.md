@@ -8,6 +8,8 @@ This file documents important changes needed to upgrade your app's Shopify App v
 
 [Unreleased](#unreleased)
 
+[Upgrading to `v23.0.0](#upgrading-to-v2300)
+
 [Upgrading to `v22.2.0`](#upgrading-to-v2220)
 
 [Upgrading to `v22.0.0`](#upgrading-to-v2200)
@@ -44,6 +46,8 @@ If you do run into issues, we recommend looking at our [debugging tips.](https:/
 
 ## Unreleased
 
+## Upgrading to `v.23.0.0`
+
 #### (v23.0.0) Drops support for Ruby 3.0
 The minimum ruby version is now 3.1
 
@@ -75,6 +79,9 @@ The `ShopifyApp::JWT` class has been deprecated in `v23.0.0`. Use [ShopifyAPI::A
 class from the `shopify_api` gem instead. A search and replace should be enough for this migration.
   - `ShopifyAPI::Auth::JwtPayload` is a superset of the `ShopifyApp::JWT` class, and contains methods that were available in `ShopifyApp::JWT`.
   - `ShopifyAPI::Auth::JwtPayload` raises `ShopifyAPI::Errors::InvalidJwtTokenError` if the token is invalid.
+
+#### (v23.0.0) - Removed runtime dependencies `activeresource` and `sprockets-rails`
+The dependencies are no longer required by this package. If your application requires these dependencies add to to your application
 
 ## Upgrading to `v22.2.0`
 #### Added new feature for zero redirect embedded app authorization flow - Token Exchange
