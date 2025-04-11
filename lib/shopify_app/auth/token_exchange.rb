@@ -60,6 +60,13 @@ module ShopifyApp
       rescue ActiveRecord::RecordNotUnique
         Logger.debug("Session not stored due to concurrent token exchange calls")
         session
+      rescue ActiveRecord::RecordInvalid => e
+        if e.message.include?("has already been taken")
+          Logger.debug("Session not stored due to concurrent token exchange calls")
+          session
+        else
+          raise
+        end
       rescue => error
         Logger.error("An error occurred during the token exchange: [#{error.class}] #{error.message}")
         raise
