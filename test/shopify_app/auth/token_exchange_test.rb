@@ -125,6 +125,34 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
     assert_equal @online_session, new_session
   end
 
+  test "#perform ignores ActiveRecord::RecordInvalid with 'has already been taken' message and returns the new token" do
+    ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
+
+    ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
+      shop: @shop,
+      session_token: @id_token,
+      requested_token_type: OFFLINE_ACCESS_TOKEN_TYPE,
+    ).returns(@offline_session)
+
+    ShopifyAPI::Auth::TokenExchange.expects(:exchange_token).with(
+      shop: @shop,
+      session_token: @id_token,
+      requested_token_type: ONLINE_ACCESS_TOKEN_TYPE,
+    ).returns(@online_session)
+
+    record_invalid = ActiveRecord::RecordInvalid.new
+    record_invalid.stubs(:message).returns("Validation failed: Shopify domain has already been taken")
+
+    ShopifyApp::SessionRepository.stubs(:store_session).raises(record_invalid)
+
+    ShopifyApp::Logger.stubs(:debug)
+    ShopifyApp::Logger.expects(:debug).twice.with("Session not stored due to concurrent token exchange calls")
+
+    new_session = ShopifyApp::Auth::TokenExchange.perform(@id_token)
+
+    assert_equal @online_session, new_session
+  end
+
   test "#perform logs unexpected errors coming from Shopify API and re-raises them" do
     ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).raises("not today!")
 
