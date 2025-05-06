@@ -17,7 +17,7 @@ module ShopifyApp
     ].freeze
 
     def activate_shopify_session(&block)
-      retrieve_session_from_token_exchange if current_shopify_session.blank? || should_exchange_expired_token?
+      retrieve_session_from_token_exchange if should_exchange_token?
 
       ShopifyApp::Logger.debug("Activating Shopify session")
       ShopifyAPI::Context.activate_session(current_shopify_session)
@@ -27,6 +27,10 @@ module ShopifyApp
     ensure
       ShopifyApp::Logger.debug("Deactivating session")
       ShopifyAPI::Context.deactivate_session
+    end
+
+    def should_exchange_token?
+      current_shopify_session.blank? || should_exchange_expired_token? || params[:id_token].present?
     end
 
     def should_exchange_expired_token?

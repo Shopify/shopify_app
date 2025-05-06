@@ -167,6 +167,25 @@ class TokenExchangeControllerTest < ActionController::TestCase
     end
   end
 
+  test "Exchange token again if id_token is present" do
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(@offline_session_id)
+
+      ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token) do
+        ShopifyApp::SessionRepository.store_session(@offline_session)
+      end
+
+      ShopifyAPI::Context.expects(:activate_session).with(@offline_session)
+
+      get :index, params: { shop: @shop, id_token: @id_token }
+    end
+  end
+
   test "Don't exchange token if check_session_expiry_date config is false" do
     ShopifyApp.configuration.check_session_expiry_date = false
     ShopifyApp::SessionRepository.user_storage = ShopifyApp::InMemoryUserSessionStore
