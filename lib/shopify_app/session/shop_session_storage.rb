@@ -14,7 +14,6 @@ module ShopifyApp
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
         shop.shopify_token = auth_session.access_token
         shop.save!
-        shop.id
       end
 
       def retrieve(id)
@@ -36,11 +35,20 @@ module ShopifyApp
       def construct_session(shop)
         return unless shop
 
-        ShopifyAPI::Auth::Session.new(
+        ShopifyApp::Auth::Session.new(
           shop: shop.shopify_domain,
           access_token: shop.shopify_token,
+          scope: shop.scope,
         )
       end
+    end
+
+    def save_session_to_repository
+      if ShopifyApp.configuration.shop_session_repository.blank? || ShopifyApp::SessionRepository.shop_storage.blank?
+        return
+      end
+
+      ShopifyApp::SessionRepository.store_shop_session(session)
     end
   end
 end

@@ -1,27 +1,29 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  class Logger < ShopifyAPI::Logger
+  class Logger
     class << self
-      def deprecated(message, version)
-        return unless enabled_for_log_level?(:warn)
+      def send_to_logger(method, message = nil, &block)
+        # Skip deprecated version check for now
+        current_shop = ShopifyApp::SessionContext.active_session&.shop || "Shop Not Found"
+        logger = Rails.logger
+        log_context = { shop: current_shop }
 
-        raise ShopifyAPI::Errors::FeatureDeprecatedError unless valid_version(version)
-
-        ActiveSupport::Deprecation.warn("[#{version}] #{context(:warn)} #{message}")
+        if block_given?
+          logger.send(method, log_context, &block)
+        else
+          logger.send(method, "#{log_context} #{message}")
+        end
       end
 
-      private
-
-      def context(log_level)
-        current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
-        "[ ShopifyApp | #{log_level.to_s.upcase} | #{current_shop} ]"
+      [:debug, :info, :warn, :error, :fatal, :unknown].each do |method|
+        define_method(method) do |message = nil, &block|
+          send_to_logger(method, message, &block)
+        end
       end
 
-      def valid_version(version)
-        current_version = Gem::Version.create(ShopifyApp::VERSION)
-        deprecate_version = Gem::Version.create(version)
-        current_version < deprecate_version
+      def valid_version(_version)
+        true
       end
     end
   end

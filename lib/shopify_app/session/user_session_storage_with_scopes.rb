@@ -6,19 +6,17 @@ module ShopifyApp
     include ::ShopifyApp::SessionStorage
 
     included do
-      validates :shopify_domain, presence: true
+      validates :shopify_user_id, presence: true, uniqueness: true
     end
 
-    class_methods do
+    module ClassMethods
       def store(auth_session, user)
-        user = find_or_initialize_by(shopify_user_id: user.id)
-        user.shopify_token = auth_session.access_token
-        user.shopify_domain = auth_session.shop
-        user.access_scopes = auth_session.scope.to_s
-        user.expires_at = auth_session.expires
-
-        user.save!
-        user.id
+        user_to_store = find_or_initialize_by(shopify_user_id: user.id)
+        user_to_store.shopify_token = auth_session.access_token
+        user_to_store.shopify_domain = auth_session.shop
+        user_to_store.access_scopes = auth_session.scope.to_s if auth_session.scope
+        user_to_store.expires_at = auth_session.expires if auth_session.expires
+        user_to_store.save!
       end
 
       def retrieve(id)
@@ -40,57 +38,59 @@ module ShopifyApp
       def construct_session(user)
         return unless user
 
-        associated_user = ShopifyAPI::Auth::AssociatedUser.new(
-          id: user.shopify_user_id,
-          first_name: "",
-          last_name: "",
-          email: "",
-          email_verified: false,
-          account_owner: false,
-          locale: "",
-          collaborator: false,
-        )
-
-        ShopifyAPI::Auth::Session.new(
+        ShopifyApp::Auth::Session.new(
           shop: user.shopify_domain,
           access_token: user.shopify_token,
           scope: user.access_scopes,
-          associated_user_scope: user.access_scopes,
-          associated_user: associated_user,
           expires: user.expires_at,
+          associated_user: ShopifyApp::Auth::AssociatedUser.new(
+            id: user.shopify_user_id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            email_verified: user.email_verified,
+            account_owner: user.account_owner,
+            locale: user.locale,
+            collaborator: user.collaborator,
+          ),
         )
       end
+    end
+
+    def save_session_to_repository
+      if ShopifyApp.configuration.user_session_repository.blank? || ShopifyApp::SessionRepository.user_storage.blank?
+        return
+      end
+
+      ShopifyApp::SessionRepository.store_user_session(session, associated_user)
     end
 
     def access_scopes=(scopes)
       super(scopes)
-    rescue NotImplementedError, NoMethodError
-      raise NotImplementedError, "#access_scopes= must be defined to handle storing access scopes: #{scopes}"
+      save_session_to_repository
+    rescue ActiveRecord::RecordNotUnique
+      logger.debug("Could not save session due to concurrent session update")
     end
 
-    def access_scopes
-      super
-    rescue NotImplementedError, NoMethodError
-      raise NotImplementedError, "#access_scopes= must be defined to hook into stored access scopes"
-    end
-
-    def expires_at=(expires_at)
-      super
-    rescue NotImplementedError, NoMethodError
-      if ShopifyApp.configuration.check_session_expiry_date
-        raise NotImplementedError,
-          "#expires_at= must be defined to handle storing the session expiry date"
-      end
+    def update_access_scopes!(scopes)
+      self.access_scopes = scopes
+      save!
     end
 
     def expires_at
-      super
-    rescue NotImplementedError, NoMethodError
-      if ShopifyApp.configuration.check_session_expiry_date
-        raise NotImplementedError, "#expires_at must be defined to check the session expiry date"
-      end
+      return unless has_attribute?(:expires_at)
 
-      nil
+      super
+    end
+
+    def expires_at=(expires_at)
+      return unless has_attribute?(:expires_at)
+
+      super(expires_at)
+    end
+
+    def session_expired?
+      expires_at.present? && expires_at < Time.now
     end
   end
 end

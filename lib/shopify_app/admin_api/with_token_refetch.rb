@@ -6,9 +6,9 @@ module ShopifyApp
       def with_token_refetch(session, shopify_id_token)
         retrying = false if retrying.nil?
         yield
-      rescue ShopifyAPI::Errors::HttpResponseError => error
-        if error.code != 401
-          ShopifyApp::Logger.debug("Encountered error: #{error.code} - #{error.response.inspect}, re-raising")
+      rescue ShopifyApp::Errors::HttpResponseError => error
+        if error.response[:status] != 401
+          ShopifyApp::Logger.debug("Encountered error: #{error.response[:status]} - #{error.response.inspect}, re-raising")
         elsif retrying
           ShopifyApp::Logger.debug("Shopify API returned a 401 Unauthorized error that was not corrected " \
             "with token exchange, re-raising error")
@@ -16,7 +16,7 @@ module ShopifyApp
           retrying = true
           ShopifyApp::Logger.debug("Shopify API returned a 401 Unauthorized error, exchanging token and " \
             "retrying with new session")
-          new_session = ShopifyApp::Auth::TokenExchange.perform(shopify_id_token)
+          new_session = ShopifyApp::Auth::TokenExchange.perform(id_token: shopify_id_token)
           session.copy_attributes_from(new_session)
           retry
         end

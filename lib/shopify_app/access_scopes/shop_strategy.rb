@@ -9,6 +9,11 @@ module ShopifyApp
           configuration_access_scopes != shop_access_scopes
         end
 
+        def covers_scopes?(shop_domain)
+          shop_access_scopes = shop_access_scopes(shop_domain)
+          shop_access_scopes.covers?(configuration_access_scopes)
+        end
+
         private
 
         def shop_access_scopes(shop_domain)
@@ -16,7 +21,7 @@ module ShopifyApp
         end
 
         def configuration_access_scopes
-          ShopifyAPI::Auth::AuthScopes.new(ShopifyApp.configuration.shop_access_scopes)
+          ShopifyApp::Auth::AuthScopes.new(ShopifyApp.configuration.shop_access_scopes)
         end
       end
     end

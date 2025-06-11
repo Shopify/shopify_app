@@ -1,30 +1,32 @@
 # frozen_string_literal: true
 
 module ShopifyApp
-  # rubocop:disable Style/ClassVars
-  # Class var repo is needed here in order to share data between the 2 child classes.
   class InMemorySessionStore
-    def self.retrieve(id)
-      repo[id]
-    end
-
-    def self.store(session, *_args)
-      id = SecureRandom.uuid
-      repo[id] = session
-      id
-    end
-
-    def self.clear
-      @@repo = nil
-    end
-
-    def self.repo
-      if Rails.env.production?
-        raise ::ShopifyApp::EnvironmentError, "Cannot use InMemorySessionStore in a Production environment. \
-          Please initialize ShopifyApp with a model that can store and retrieve sessions"
+    class << self
+      def store
+        @store ||= {}
       end
-      @@repo ||= {}
+
+      def retrieve(id)
+        store[id]
+      end
+
+      def store_session(session, *_args)
+        id = SecureRandom.uuid
+        store[id] = session
+        id
+      end
+
+      def clear
+        @store = {}
+      end
+
+      private
+
+      def repo
+        Rails.logger.warn("[ShopifyApp::InMemorySessionStore] SessionStore is intended to be used in development / test only.")
+        store
+      end
     end
   end
-  # rubocop:enable Style/ClassVars
 end

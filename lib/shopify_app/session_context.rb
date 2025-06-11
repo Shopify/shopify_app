@@ -2,26 +2,30 @@
 
 module ShopifyApp
   # Manages the current session context, replacing ShopifyAPI::Context
-  module SessionContext
+  class SessionContext
+    thread_mattr_accessor :active_session
+
     class << self
       attr_reader :active_session
 
       def activate_session(session)
-        @active_session = session
-        @activation_time = Time.now
+        self.active_session = session
       end
 
       def deactivate_session
-        @active_session = nil
-        @activation_time = nil
+        self.active_session = nil
       end
 
       def with_session(session)
-        previous_session = @active_session
+        original_session = active_session
         activate_session(session)
         yield
       ensure
-        @active_session = previous_session
+        activate_session(original_session)
+      end
+
+      def clear
+        deactivate_session
       end
 
       def host
@@ -43,6 +47,33 @@ module ShopifyApp
       def embedded?
         ShopifyApp.configuration.embedded_app
       end
+    end
+
+    attr_reader :shop_session, :user_session
+
+    def initialize(shop_session: nil, user_session: nil)
+      @shop_session = shop_session
+      @user_session = user_session
+    end
+
+    def admin_session
+      user_session || shop_session
+    end
+
+    def online_session
+      user_session
+    end
+
+    def offline_session
+      shop_session
+    end
+
+    def has_online_session?
+      !user_session.nil?
+    end
+
+    def has_offline_session?
+      !shop_session.nil?
     end
   end
 end

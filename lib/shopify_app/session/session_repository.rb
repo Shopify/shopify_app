@@ -51,7 +51,7 @@ module ShopifyApp
         load_user_storage
       end
 
-      # ShopifyAPI::Auth::SessionStorage override
+      # Session storage interface implementation
       def store_session(session)
         if session.online?
           user = session.associated_user
@@ -63,7 +63,7 @@ module ShopifyApp
         end
       end
 
-      # ShopifyAPI::Auth::SessionStorage override
+      # Session storage interface implementation
       def load_session(id)
         match = id.match(/^offline_(.*)/)
         if match
@@ -77,7 +77,7 @@ module ShopifyApp
         end
       end
 
-      # ShopifyAPI::Auth::SessionStorage override
+      # Session storage interface implementation
       def delete_session(id)
         match = id.match(/^offline_(.*)/)
 

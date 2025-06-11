@@ -13,10 +13,8 @@ module ShopifyApp
       def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
         shop.shopify_token = auth_session.access_token
-        shop.access_scopes = auth_session.scope.to_s
-
+        shop.scope = auth_session.scope.to_s if auth_session.scope
         shop.save!
-        shop.id
       end
 
       def retrieve(id)
@@ -38,24 +36,32 @@ module ShopifyApp
       def construct_session(shop)
         return unless shop
 
-        ShopifyAPI::Auth::Session.new(
+        ShopifyApp::Auth::Session.new(
           shop: shop.shopify_domain,
           access_token: shop.shopify_token,
-          scope: shop.access_scopes,
+          scope: shop.scope,
         )
       end
     end
 
-    def access_scopes=(scopes)
-      super(scopes)
-    rescue NotImplementedError, NoMethodError
-      raise NotImplementedError, "#access_scopes= must be defined to handle storing access scopes: #{scopes}"
+    def save_session_to_repository
+      if ShopifyApp.configuration.shop_session_repository.blank? || ShopifyApp::SessionRepository.shop_storage.blank?
+        return
+      end
+
+      ShopifyApp::SessionRepository.store_shop_session(session)
     end
 
-    def access_scopes
-      super
-    rescue NotImplementedError, NoMethodError
-      raise NotImplementedError, "#access_scopes= must be defined to hook into stored access scopes"
+    def access_scopes=(scopes)
+      super(scopes)
+      save_session_to_repository
+    rescue ActiveRecord::RecordNotUnique
+      logger.debug("Could not save session due to concurrent session update")
+    end
+
+    def update_access_scopes!(scopes)
+      self.access_scopes = scopes
+      save!
     end
   end
 end

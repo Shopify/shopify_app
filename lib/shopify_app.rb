@@ -3,7 +3,6 @@
 require "shopify_app/version"
 
 # deps
-require "shopify_api"
 require "redirect_safely"
 require "addressable"
 require "shopify_app_ai"
@@ -36,14 +35,19 @@ module ShopifyApp
   # utils
   require "shopify_app/utils"
 
-  # Custom modules that replace ShopifyAPI functionality
-  require "shopify_app/session_context"
-  require "shopify_app/session_utils"
-
   # errors
   require "shopify_app/errors"
 
   require "shopify_app/logger"
+
+  # Auth models (must be loaded before session modules)
+  require "shopify_app/auth/auth_scopes"
+  require "shopify_app/auth/associated_user"
+  require "shopify_app/auth/session"
+
+  # Session management
+  require "shopify_app/session_context"
+  require "shopify_app/session_utils"
 
   # Admin API helpers
   require "shopify_app/admin_api/with_token_refetch"

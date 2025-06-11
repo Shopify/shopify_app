@@ -29,7 +29,7 @@ module ShopifyApp
         request_hash = build_exchange_request
         config = build_auth_config
 
-        auth_result = ::ShopifyApp::AuthAdminEmbedded.authenticate(request_hash, config)
+        auth_result = ::ShopifyAppAi.auth_admin_embedded(request_hash, config)
 
         case auth_result["action"]
         when "proceed_or_exchange"
@@ -128,24 +128,17 @@ module ShopifyApp
       def build_session_from_response(response_data, jwt_payload, online:)
         shop = jwt_payload["dest"]&.gsub(%r{^https://}, "")
 
-        session_id = ShopifyApp::SessionUtils.session_id_from_jwt_payload(
-          payload: jwt_payload,
-          online: online,
-        )
-
-        # Build a proper ShopifyAPI::Session object
-        session = ShopifyAPI::Auth::Session.new(
-          id: session_id,
+        # Use the new Session.from_access_token_response method
+        session = ShopifyApp::Auth::Session.from_access_token_response(
           shop: shop,
-          access_token: response_data["access_token"],
-          scope: response_data["scope"],
-          expires: response_data["expires_in"] ? Time.now + response_data["expires_in"].to_i : nil,
-          is_online: online,
+          access_token_response: response_data.merge(
+            "online_token" => online,
+            "associated_user" => online ? {
+              "id" => jwt_payload["sub"],
+              "account_owner" => jwt_payload["account_owner"] || false,
+            } : nil,
+          ),
         )
-
-        if online && jwt_payload["sub"]
-          session.shopify_user_id = jwt_payload["sub"]
-        end
 
         session
       end
