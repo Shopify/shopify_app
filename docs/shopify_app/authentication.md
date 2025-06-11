@@ -39,7 +39,7 @@ OAuth process by exchanging the current user's [session token (shopify id token)
 [access token](https://shopify.dev/docs/apps/auth/access-token-types/online.md) to make
 authenticated Shopify API queries. This will replace authorization code grant flow completely when your app is configured with [Shopify managed installation](https://shopify.dev/docs/apps/auth/installation#shopify-managed-installation).
 
-To enable token exchange authorization strategy, you can follow the steps in ["New embedded app authorization strategy"](/README.md#new-embedded-app-authorization-strategy).
+To enable token exchange authorization strategy, you can follow the steps in ["New embedded app authorization strategy"](/README.md#new-embedded-app-authorization-strategy-token-exchange).
 Upon completion of the token exchange to get the access token, [post authenticated tasks](#post-authenticate-tasks) will be run.
 
 Learn more about:

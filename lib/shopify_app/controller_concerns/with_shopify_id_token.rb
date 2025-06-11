@@ -13,25 +13,33 @@ module ShopifyApp
     def jwt_payload
       return @jwt_payload if defined?(@jwt_payload)
 
-      @jwt_payload = shopify_id_token.present? ? ShopifyAPI::Auth::JwtPayload.new(shopify_id_token) : nil
+      @jwt_payload = if shopify_id_token.present?
+        # Use the gem's Utils to validate and decode the token
+        ::ShopifyApp::Utils.validate_jwt_token(
+          shopify_id_token,
+          ShopifyApp.configuration.secret,
+          clock_tolerance: 10,
+        )
+      end
     end
 
     def jwt_shopify_domain
       return @jwt_shopify_domain if defined?(@jwt_shopify_domain)
 
       @jwt_shopify_domain = if jwt_payload.present?
-        ShopifyApp::Utils.sanitize_shop_domain(jwt_payload.shopify_domain)
+        shop = jwt_payload["dest"]&.gsub(%r{^https://}, "")
+        ::ShopifyApp::Utils.sanitize_shop_domain(shop)
       end
     end
 
     def jwt_shopify_user_id
-      jwt_payload&.shopify_user_id
+      jwt_payload&.dig("sub")
     end
 
     def jwt_expire_at
-      expire_at = jwt_payload&.expire_at
-      return unless expire_at
+      return unless jwt_payload&.dig("exp")
 
+      expire_at = Time.at(jwt_payload["exp"])
       expire_at - 5.seconds # 5s gap to start fetching new token in advance
     end
 

@@ -6,6 +6,7 @@ require "shopify_app/version"
 require "shopify_api"
 require "redirect_safely"
 require "addressable"
+require "shopify_app_ai"
 
 module ShopifyApp
   def self.rails6?
@@ -34,6 +35,10 @@ module ShopifyApp
 
   # utils
   require "shopify_app/utils"
+
+  # Custom modules that replace ShopifyAPI functionality
+  require "shopify_app/session_context"
+  require "shopify_app/session_utils"
 
   # errors
   require "shopify_app/errors"
