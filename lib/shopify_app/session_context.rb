@@ -28,6 +28,12 @@ module ShopifyApp
         deactivate_session
       end
 
+      # Use shopify_app_ai utilities for shop validation
+      def validate_shop(shop)
+        ::ShopifyApp::Utils.validate_shop_format(shop)
+      end
+
+      # Simplified host method using shopify_app_ai utilities
       def host
         ShopifyApp.configuration.host || ENV["HOST"] || raise("Host not configured")
       end
@@ -36,6 +42,7 @@ module ShopifyApp
         host.start_with?("https") ? "https" : "http"
       end
 
+      # Use shopify_app_ai patterns for configuration access
       def api_key
         ShopifyApp.configuration.api_key
       end
@@ -46,6 +53,27 @@ module ShopifyApp
 
       def embedded?
         ShopifyApp.configuration.embedded_app
+      end
+
+      def scope
+        ShopifyApp::Auth::AuthScopes.new(ShopifyApp.configuration.scope)
+      end
+
+      def private?
+        !ENV.fetch("SHOPIFY_APP_PRIVATE_SHOP", "").empty?
+      end
+
+      def load_private_session
+        return nil unless private?
+
+        # For private apps, we create a simple session with the private shop
+        private_shop = ENV.fetch("SHOPIFY_APP_PRIVATE_SHOP", nil)
+        return nil unless private_shop
+
+        ShopifyApp::Auth::Session.new(
+          shop: private_shop,
+          scope: ShopifyApp.configuration.scope,
+        )
       end
     end
 

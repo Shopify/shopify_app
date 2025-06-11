@@ -78,7 +78,7 @@ module ShopifyApp
     end
 
     def redirect_to_app
-      if ShopifyAPI::Context.embedded?
+      if ShopifyApp.configuration.embedded_app?
         return_to = session.delete(:return_to)
         redirect_to = if fully_formed_url?(return_to)
           return_to

@@ -42,11 +42,11 @@ module ShopifyApp
 
       begin
         ShopifyApp::Logger.debug("Activating Shopify session")
-        ShopifyAPI::Context.activate_session(current_shopify_session)
+        ::ShopifyApp::SessionContext.activate_session(current_shopify_session)
         yield
       ensure
         ShopifyApp::Logger.debug("Deactivating session")
-        ShopifyAPI::Context.deactivate_session
+        ::ShopifyApp::SessionContext.deactivate_session
       end
     end
 
@@ -260,7 +260,7 @@ module ShopifyApp
     end
 
     def load_current_session(shopify_id_token: nil, cookies: nil, is_online: false)
-      return ShopifyAPI::Context.load_private_session if ShopifyAPI::Context.private?
+      return ShopifyApp::SessionContext.load_private_session if ShopifyApp::SessionContext.private?
 
       session_id = ShopifyAPI::Utils::SessionUtils.current_session_id(shopify_id_token, cookies, is_online)
       return unless session_id

@@ -54,6 +54,13 @@ module ShopifyApp
     # Enables new authorization flow using token exchange
     attr_accessor :new_embedded_auth_strategy
 
+    # Host configuration for the app
+    attr_accessor :host
+
+    # Paths for new auth flow
+    attr_accessor :patch_session_token_path
+    attr_accessor :exit_iframe_path
+
     def initialize
       @root_url = "/"
       @myshopify_domain = "myshopify.com"
@@ -62,6 +69,9 @@ module ShopifyApp
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
       @scope = []
+      @patch_session_token_path = "/patchSessionToken"
+      @exit_iframe_path = "/exitIFrame"
+      @host = ENV["HOST"]
     end
 
     def login_url
@@ -197,5 +207,24 @@ module ShopifyApp
 
   def self.configure
     yield configuration
+  end
+
+  # Converts configuration to hash format expected by shopify_app_ai
+  def self.to_shopify_app_ai_config
+    {
+      client_id: configuration.api_key,
+      client_secret: configuration.secret,
+      app_origin: configuration.host || ENV["HOST"],
+      login_path: configuration.login_url,
+      patch_session_token_path: configuration.patch_session_token_path,
+      exit_iframe_path: configuration.exit_iframe_path,
+      embedded_app: configuration.embedded_app,
+      scopes: configuration.scope,
+    }
+  end
+
+  # Get the host configuration value
+  def self.host
+    configuration.host || ENV["HOST"] || raise("Host not configured")
   end
 end

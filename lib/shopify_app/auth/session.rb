@@ -49,9 +49,9 @@ module ShopifyApp
           is_online = access_token_response["online_token"]
 
           if is_online
-            associated_user = AssociatedUser.new(access_token_response["associated_user"])
+            associated_user = access_token_response["associated_user"]
             associated_user_scope = access_token_response["associated_user_scope"]
-            id = "#{shop}_#{associated_user.id}"
+            id = "#{shop}_#{associated_user["id"]}"
           else
             id = "offline_#{shop}"
           end
@@ -74,21 +74,23 @@ module ShopifyApp
         end
 
         def from_jwt_payload(shop:, payload:, access_token: nil, is_online: false)
+          # Use shopify_app_ai's shop validation
+          validated_shop = ::ShopifyApp::Utils.sanitize_shop_domain(shop)
           user_id = payload["sub"]
           
           if is_online && user_id
-            associated_user = AssociatedUser.new(
+            associated_user = {
               "id" => user_id.to_i,
               "account_owner" => payload["account_owner"] || false
-            )
-            id = "#{shop}_#{user_id}"
+            }
+            id = "#{validated_shop}_#{user_id}"
           else
-            id = "offline_#{shop}"
+            id = "offline_#{validated_shop}"
           end
 
           new(
             id: id,
-            shop: shop,
+            shop: validated_shop,
             access_token: access_token,
             scope: payload["scope"] || [],
             is_online: is_online,
@@ -109,12 +111,9 @@ module ShopifyApp
               associated_user_scope: session_data.associated_user_scope&.scopes || [],
               expires: session_data.expires ? Time.parse(session_data.expires) : nil,
               is_online: session_data.online,
-              shopify_session_id: session_data.shopify_session_id
+              shopify_session_id: session_data.shopify_session_id,
+              associated_user: session_data.associated_user&.to_h
             )
-
-            if session_data.associated_user
-              session.associated_user = AssociatedUser.new(session_data.associated_user.to_h)
-            end
 
             return session
           end

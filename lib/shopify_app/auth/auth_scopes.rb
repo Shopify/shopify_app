@@ -6,16 +6,7 @@ module ShopifyApp
       attr_reader :scopes
 
       def initialize(scopes)
-        @scopes = case scopes
-          when String
-            scopes.split(/\s*,\s*/).map(&:strip).reject(&:empty?)
-          when Array
-            scopes.map(&:to_s).map(&:strip).reject(&:empty?)
-          when AuthScopes
-            scopes.scopes.dup
-          else
-            []
-        end.uniq
+        @scopes = parse_scopes(scopes).uniq
       end
 
       def to_s
@@ -26,64 +17,29 @@ module ShopifyApp
         @scopes.dup
       end
 
-      def ==(other)
-        case other
-        when AuthScopes
-          @scopes.sort == other.scopes.sort
-        when String, Array
-          self == self.class.new(other)
-        else
-          false
-        end
-      end
-
-      alias_method :eql?, :==
-
-      def hash
-        @scopes.sort.hash
-      end
-
-      def <=>(other)
-        return nil unless other.is_a?(AuthScopes)
-        @scopes.sort <=> other.scopes.sort
-      end
-
       def covers?(other)
-        other_scopes = case other
-          when AuthScopes
-            other.scopes
-          when String, Array
-            self.class.new(other).scopes
-          else
-            return false
-        end
-        
+        other_scopes = self.class.new(other).scopes
         (other_scopes - @scopes).empty?
       end
 
-      def empty?
-        @scopes.empty?
+      def ==(other)
+        self.class.new(other).scopes.sort == @scopes.sort
       end
 
-      def include?(scope)
-        @scopes.include?(scope.to_s)
-      end
+      private
 
-      def +(other)
-        self.class.new(@scopes + self.class.new(other).scopes)
-      end
-
-      def -(other)
-        self.class.new(@scopes - self.class.new(other).scopes)
-      end
-
-      def as_json(*args)
-        { "scopes" => @scopes }
-      end
-
-      def to_json(*args)
-        as_json.to_json(*args)
+      def parse_scopes(scopes)
+        case scopes
+        when String
+          scopes.split(/\s*,\s*/).map(&:strip).reject(&:empty?)
+        when Array
+          scopes.map(&:to_s).map(&:strip).reject(&:empty?)
+        when AuthScopes
+          scopes.scopes.dup
+        else
+          []
+        end
       end
     end
   end
-end 
+end

@@ -36,13 +36,13 @@ module ShopifyApp
       def construct_session(user)
         return unless user
 
-        associated_user = ShopifyApp::Auth::AssociatedUser.new(
-          id: user.shopify_user_id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          email_verified: user.email_verified,
-        )
+        associated_user = {
+          "id" => user.shopify_user_id,
+          "first_name" => user.first_name,
+          "last_name" => user.last_name,
+          "email" => user.email,
+          "email_verified" => user.email_verified,
+        }
 
         ShopifyApp::Auth::Session.new(
           shop: user.shopify_domain,

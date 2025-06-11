@@ -8,6 +8,19 @@ require "addressable"
 require "shopify_app_ai"
 
 module ShopifyApp
+  # Import auth modules from shopify_app_ai
+  AuthAdminEmbedded = ::ShopifyApp::AuthAdminEmbedded
+  AuthAdminUnembedded = ::ShopifyApp::AuthAdminUnembedded
+  AuthWebhook = ::ShopifyApp::AuthWebhook
+  AuthPos = ::ShopifyApp::AuthPos
+  AuthPublicCheckout = ::ShopifyApp::AuthPublicCheckout
+  AuthPublicCustomerAccount = ::ShopifyApp::AuthPublicCustomerAccount
+  AuthFulfillmentService = ::ShopifyApp::AuthFulfillmentService
+  UtilsAdminRedirect = ::ShopifyApp::UtilsAdminRedirect
+
+  # Import Utils module from shopify_app_ai
+  Utils = ::ShopifyApp::Utils
+
   def self.rails6?
     Rails::VERSION::MAJOR >= 6
   end
@@ -32,9 +45,6 @@ module ShopifyApp
   # engine
   require "shopify_app/engine"
 
-  # utils
-  require "shopify_app/utils"
-
   # errors
   require "shopify_app/errors"
 
@@ -42,7 +52,6 @@ module ShopifyApp
 
   # Auth models (must be loaded before session modules)
   require "shopify_app/auth/auth_scopes"
-  require "shopify_app/auth/associated_user"
   require "shopify_app/auth/session"
 
   # Session management
@@ -95,4 +104,37 @@ module ShopifyApp
   require "shopify_app/access_scopes/shop_strategy"
   require "shopify_app/access_scopes/user_strategy"
   require "shopify_app/access_scopes/noop_strategy"
+
+  # Delegate auth methods to shopify_app_ai
+  def self.auth_admin_embedded(request_hash, config)
+    ::ShopifyApp::AuthAdminEmbedded.call(request_hash, config)
+  end
+
+  def self.auth_admin_unembedded(request_hash, config)
+    ::ShopifyApp::AuthAdminUnembedded.call(request_hash, config)
+  end
+
+  def self.auth_webhook(request_hash, config)
+    ::ShopifyApp::AuthWebhook.call(request_hash, config)
+  end
+
+  def self.auth_pos(request_hash, config)
+    ::ShopifyApp::AuthPos.call(request_hash, config)
+  end
+
+  def self.auth_public_checkout(request_hash, config)
+    ::ShopifyApp::AuthPublicCheckout.call(request_hash, config)
+  end
+
+  def self.auth_public_customer_account(request_hash, config)
+    ::ShopifyApp::AuthPublicCustomerAccount.call(request_hash, config)
+  end
+
+  def self.auth_fulfillment_service(request_hash, config)
+    ::ShopifyApp::AuthFulfillmentService.call(request_hash, config)
+  end
+
+  def self.utils_admin_redirect(request_hash, config)
+    ::ShopifyApp::UtilsAdminRedirect.call(request_hash, config)
+  end
 end

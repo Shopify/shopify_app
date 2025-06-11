@@ -33,7 +33,7 @@ module ShopifyApp
 
     def redirect_uri_for_embedded
       redirect_query_params = {}
-      redirect_uri = "#{ShopifyAPI::Context.host}#{ShopifyApp.configuration.login_url}"
+      redirect_uri = "#{ShopifyApp::SessionContext.host}#{ShopifyApp.configuration.login_url}"
       redirect_query_params[:shop] = sanitized_shop_name
       redirect_query_params[:shop] ||= referer_sanitized_shop_name if referer_sanitized_shop_name.present?
       redirect_query_params[:host] ||= params[:host] if params[:host].present?
@@ -43,6 +43,21 @@ module ShopifyApp
       query_params[:redirectUri] = redirect_uri
 
       "#{ShopifyApp.configuration.embedded_redirect_url}?#{query_params.to_query}"
+    end
+
+    def build_redirect_url(shop: current_shopify_domain, embedded:, host: params[:host])
+      params = {
+        shop: shop,
+        host: host,
+      }
+      if embedded
+        params[:embedded] = embedded
+      end
+
+      redirect_uri = "#{ShopifyApp::SessionContext.host}#{ShopifyApp.configuration.login_url}"
+      redirect_uri = ShopifyApp::Utils.append_query(redirect_uri, params)
+
+      redirect_uri
     end
   end
 end

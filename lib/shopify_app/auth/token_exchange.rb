@@ -29,7 +29,7 @@ module ShopifyApp
         request_hash = build_exchange_request
         config = build_auth_config
 
-        auth_result = ::ShopifyAppAi.auth_admin_embedded(request_hash, config)
+        auth_result = ::ShopifyApp.auth_admin_embedded(request_hash, config)
 
         case auth_result["action"]
         when "proceed_or_exchange"

@@ -30,15 +30,16 @@ class ShopifyAppConfigurer
   end
 
   def self.setup_context
-    ShopifyAPI::Context.setup(
-      api_key: ShopifyApp.configuration.api_key,
-      api_secret_key: ShopifyApp.configuration.secret,
-      api_version: ShopifyApp.configuration.api_version,
-      host_name: "test.host",
-      scope: ShopifyApp.configuration.scope,
-      is_private: false,
-      is_embedded: ShopifyApp.configuration.embedded_app,
-      log_level: :off,
-    )
+    # ShopifyAPI context is now handled by ShopifyApp::SessionContext
+    # No need to call ShopifyAPI::Context.setup anymore
+  end
+end
+
+Rails.application.config.after_initialize do
+  if ShopifyApp.configuration.api_key.present? && ShopifyApp.configuration.secret.present?
+    # ShopifyAPI context is now handled by ShopifyApp::SessionContext
+    # No need to call ShopifyAPI::Context.setup anymore
+
+    ShopifyApp::WebhooksManager.add_registrations
   end
 end

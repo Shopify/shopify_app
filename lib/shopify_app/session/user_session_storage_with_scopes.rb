@@ -43,16 +43,16 @@ module ShopifyApp
           access_token: user.shopify_token,
           scope: user.access_scopes,
           expires: user.expires_at,
-          associated_user: ShopifyApp::Auth::AssociatedUser.new(
-            id: user.shopify_user_id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            email_verified: user.email_verified,
-            account_owner: user.account_owner,
-            locale: user.locale,
-            collaborator: user.collaborator,
-          ),
+          associated_user: {
+            "id" => user.shopify_user_id,
+            "first_name" => user.first_name,
+            "last_name" => user.last_name,
+            "email" => user.email,
+            "email_verified" => user.email_verified,
+            "account_owner" => user.account_owner,
+            "locale" => user.locale,
+            "collaborator" => user.collaborator,
+          },
         )
       end
     end
