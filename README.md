@@ -31,6 +31,12 @@ This gem requires that you have the following credentials:
 
 ## Usage
 
+> [!NOTE]
+> This package works best with the Shopify CLI. Learn more at https://shopify.dev/docs/apps/build/cli-for-apps
+> 
+> To get started with a Rails app already connected to the Shopify CLI, run `shopify app init --template=ruby` for a complete setup app. (Recommended)
+> Follow the instructions below to use this gem with a new or existing Rails app.
+
 1. To get started, create a new Rails app:
 
 ``` sh
@@ -43,44 +49,120 @@ rails new my_shopify_app
 bundle add shopify_app
 ```
 
-3. You will need to provide several environment variables to the app.
-There are a variety of way of doing this, but for a development environment we recommended the [`dotenv-rails`](https://github.com/bkeepers/dotenv) gem.
-Create a `.env` file in the root of your Rails app to specify the full host and Shopify API credentials:
+3. Connect the Shopify CLI to your app:
 
-```sh
-HOST=http://localhost:3000
-SHOPIFY_API_KEY=<Your Shopify API key>
-SHOPIFY_API_SECRET=<Your Shopify API secret>
+### Setting up Shopify CLI
+
+For a more detailed guide on how to set up Shopify CLI, see the [Shopify CLI documentation](https://shopify.dev/docs/apps/build/cli-for-apps/app-structure).
+
+To use your Rails app with Shopify CLI, you'll need to create the required configuration files and set up your project structure:
+
+1. Create a `package.json` file in your app's root directory:
+
+```json
+{
+  "name": "my-shopify-app",
+  "version": "1.0.0",
+  "description": "Shopify app built with Rails",
+  "scripts": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+```
+This is required for the Shopify CLI to work. It will be used if you add extension like Checkout UI [extensions](https://shopify.dev/docs/api/checkout-extensions) to your app.
+
+2. Create a `shopify.app.toml` configuration file in your app's root:
+
+```toml
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = ""
+name = "My Shopify App"
+handle = "my-shopify-app"
+application_url = "https://localhost:3000"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://localhost:3000/api/auth",
+  "https://localhost:3000/api/auth/callback",
+  "https://localhost:3000/auth/callback",
+  "https://localhost:3000/auth/shopify/callback"
+]
+
+[webhooks]
+api_version = "2024-10"
+
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+uri = "/api/webhooks"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "YOUR-DEV-STORE.myshopify.com"
 ```
 
-4. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
+3. Create a `shopify.web.toml` file to configure how Shopify CLI runs your Rails app:
+
+```toml
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+[commands]
+dev = "bin/rails server -b 0.0.0.0 -e development"
+build = "RAILS_ENV=production bin/rails assets:precompile"
+```
+
+4. (Optional) Update your Rails development configuration to allow Shopify's tunnel hosts. In `config/environments/development.rb`, add:
+
+```ruby
+Rails.application.configure do
+  # Allow ngrok tunnels for secure Shopify OAuth redirects
+  config.hosts = (config.hosts rescue []) << /[-\w]+\.ngrok\.io/
+  # Allow Cloudflare tunnels for secure Shopify OAuth redirects
+  config.hosts = (config.hosts rescue []) << /[-\w]+\.trycloudflare\.com/
+  
+  # Or to allow all hosts in development (less secure):
+  # config.hosts.clear
+  
+  # ... rest of your configuration
+end
+```
+With the Shopify CLI you can use [localhost development](https://shopify.dev/docs/apps/build/cli-for-apps/development) to run your app.
+
+5. Generate your API credentials
+```
+shopify app config link
+> create a new app
+```
+
+6. Run the default Shopify App generator to create an app that can be embedded in the Shopify Admin:
 
 ```sh
 rails generate shopify_app
 ```
 
-5. Run a migration to create the necessary tables in your database:
+7. Run a migration to create the necessary tables in your database:
 
 ```sh
 rails db:migrate
 ```
 
-6. Run the app:
-
-```sh
-rails server
+8. Start the dev server and install the app
 ```
+shopify app dev
+```
+Clink on the Preview URL to install the app and view it in the Shopify Admin
 
-7. Within [Shopify Partners](https://www.shopify.com/partners), navigate to your App, then App Setup, and configure the URLs, e.g.:
-
-  * App URL: http://localhost:3000/
-  * Allowed redirection URL(s): http://localhost:3000/auth/shopify/callback
-
-8. Install the app by visiting the server's URL (e.g. http://localhost:3000) and specifying the subdomain of the shop where you want it to be installed to.
-
-9. After the app is installed, you're redirected to the embedded app.
-
-This app implements [OAuth 2.0](https://shopify.dev/tutorials/authenticate-with-oauth) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
+This app implements [OAuth 2.0 Token Exchange](https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/token-exchange) with Shopify to authenticate requests made to Shopify APIs. By default, this app is configured to use [session tokens](https://shopify.dev/concepts/apps/building-embedded-apps-using-session-tokens) to authenticate merchants when embedded in the Shopify Admin.
 
 See [*Generators*](/docs/shopify_app/generators.md) for a complete list of generators available to Shopify App.
 
