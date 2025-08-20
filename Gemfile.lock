@@ -81,7 +81,7 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
-    date (3.3.4)
+    date (3.4.1)
     debug_inspector (1.1.0)
     erubi (1.13.0)
     globalid (1.2.1)
@@ -111,7 +111,7 @@ GEM
     mocha (2.0.2)
       ruby2_keywords (>= 0.0.5)
     multi_xml (0.6.0)
-    net-imap (0.4.19)
+    net-imap (0.4.20)
       date
       net-protocol
     net-pop (0.1.2)
@@ -233,7 +233,7 @@ GEM
     syntax_tree (6.1.1)
       prettier_print (>= 1.2.0)
     thor (1.2.2)
-    timeout (0.4.1)
+    timeout (0.4.3)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
