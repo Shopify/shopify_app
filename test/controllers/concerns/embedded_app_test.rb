@@ -34,10 +34,19 @@ class EmbeddedAppTest < ActionDispatch::IntegrationTest
     end
   end
 
+  class CspTestController < ApplicationTestController
+    include ShopifyApp::CspConfiguration
+
+    def index
+      render plain: "OK"
+    end
+  end
+
   setup do
     Rails.application.routes.draw do
       get "/embedded_app", to: "embedded_app_test/embedded_app_test#index"
       get "/redirect_to_embed", to: "embedded_app_test/embedded_app_test#redirect_to_embed"
+      get "/csp_test", to: "embedded_app_test/csp_test#index"
     end
   end
 
@@ -147,5 +156,17 @@ class EmbeddedAppTest < ActionDispatch::IntegrationTest
 
     get redirect_to_embed_path
     assert_includes response.headers["Content-Security-Policy"], ShopifyApp.configuration.unified_admin_domain
+  end
+
+  test "CspConfiguration includes app-bridge CDN in CSP script-src directive" do
+    get csp_test_path
+
+    csp_header = response.headers["Content-Security-Policy"]
+
+    script_src_match = csp_header.match(/script-src ([^;]+)/)
+    assert_not_nil script_src_match, "script-src directive should be present"
+
+    script_src = script_src_match[1]
+    assert_includes script_src, "https://cdn.shopify.com/shopifycloud/app-bridge.js"
   end
 end

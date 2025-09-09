@@ -3,6 +3,7 @@
 module ShopifyApp
   # Performs login after OAuth completes
   class CallbackController < ActionController::Base
+    include ShopifyApp::CspConfiguration
     include ShopifyApp::LoginProtection
     include ShopifyApp::EnsureBilling
 

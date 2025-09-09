@@ -2,6 +2,7 @@
 
 module ShopifyApp
   class AuthenticatedController < ActionController::Base
+    include ShopifyApp::CspConfiguration
     include ShopifyApp::EnsureHasSession
 
     protect_from_forgery with: :exception

@@ -2,6 +2,7 @@
 
 module ShopifyApp
   class SessionsController < ActionController::Base
+    include ShopifyApp::CspConfiguration
     include ShopifyApp::LoginProtection
     include ShopifyApp::RedirectForEmbedded
 

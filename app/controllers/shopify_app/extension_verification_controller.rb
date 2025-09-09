@@ -2,7 +2,9 @@
 
 module ShopifyApp
   class ExtensionVerificationController < ActionController::Base
+    include ShopifyApp::CspConfiguration
     include ShopifyApp::PayloadVerification
+
     protect_from_forgery with: :null_session
     before_action :verify_request
 
