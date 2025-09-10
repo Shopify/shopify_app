@@ -64,6 +64,26 @@ Implements Rails' [protect_from_forgery](https://api.rubyonrails.org/classes/Act
 #### EmbeddedApp
 If your ShopifyApp configuration has the `embedded_app` config set to true, [P3P header](https://www.w3.org/P3P/) and [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) are handled for you.
 
+##### Content Security Policy (CSP) Directives:
+
+The EmbeddedApp concern automatically configures the following CSP directives to ensure your embedded app works correctly within Shopify Admin:
+
+1. **frame-ancestors**: Allows the app to be embedded in iframes from:
+   - The current shop domain (e.g., `https://example.myshopify.com`)
+   - Shopify's unified admin domain (e.g., `https://admin.shopify.com`)
+
+2. **script-src**: Allows JavaScript execution from:
+   - `'self'` - Scripts from your app's own domain
+   - `https://cdn.shopify.com/shopifycloud/app-bridge.js` - Required for App Bridge functionality
+   - Any other script sources you explicitly add in your controller
+
+These CSP settings ensure that:
+- Your app can be properly embedded within Shopify Admin
+- App Bridge can load and function correctly
+- Your app maintains security while allowing necessary Shopify integrations
+
+##### Layout
+
 By default, the `EmbeddedApp` concern also sets the layout file to be `app/views/layouts/embedded_app.html.erb`.
 
 Sometimes one wants to run an embedded app in non-embedded mode. For example:

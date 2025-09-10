@@ -148,4 +148,24 @@ class EmbeddedAppTest < ActionDispatch::IntegrationTest
     get redirect_to_embed_path
     assert_includes response.headers["Content-Security-Policy"], ShopifyApp.configuration.unified_admin_domain
   end
+
+  test "content security policy includes App Bridge script-src" do
+    ShopifyApp.configuration.embedded_app = true
+
+    get redirect_to_embed_path
+    assert_includes response.headers["Content-Security-Policy"], "script-src"
+    assert_includes response.headers["Content-Security-Policy"], "https://cdn.shopify.com/shopifycloud/app-bridge.js"
+  end
+
+  test "content security policy preserves existing script-src directives when adding App Bridge" do
+    ShopifyApp.configuration.embedded_app = true
+
+    get redirect_to_embed_path
+    csp_header = response.headers["Content-Security-Policy"]
+
+    # Should include both self (default) and App Bridge URL
+    assert_includes csp_header, "script-src"
+    assert_includes csp_header, "'self'"
+    assert_includes csp_header, "https://cdn.shopify.com/shopifycloud/app-bridge.js"
+  end
 end
