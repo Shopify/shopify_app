@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Enlarger Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #e6fffa;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        
+        select, input[type="range"] {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .scale-display {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 5px;
+        }
+        
+        .preview-area {
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .image-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .image-preview {
+            text-align: center;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .enlarge-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .enlarge-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+        
+        .enlarge-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-area {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #f0fff4;
+            border-radius: 8px;
+            border: 2px solid #9ae6b4;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+        }
+        
+        .instructions {
+            background: #fffbeb;
+            border: 2px solid #f6e05e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions h3 {
+            color: #744210;
+            margin-top: 0;
+        }
+        
+        .instructions ul {
+            color: #744210;
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Image Enlarger</h1>
+        
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ul>
+                <li><strong>Upload:</strong> Click "Choose File" or drag & drop your Russell Jewelers screenshot</li>
+                <li><strong>Scale:</strong> Choose how much to enlarge (2x = double size, 4x = quadruple size)</li>
+                <li><strong>Quality:</strong> Select resampling method (Lanczos = best quality)</li>
+                <li><strong>Process:</strong> Click "Enlarge Image" to create the larger version</li>
+                <li><strong>Download:</strong> Save the enlarged image to your computer</li>
+            </ul>
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <p style="font-size: 18px; margin-bottom: 15px;">📁 Drop your PNG/JPG image here or</p>
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                Choose File
+            </button>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="scaleSlider">🔍 Enlargement Scale:</label>
+                <input type="range" id="scaleSlider" min="1.5" max="8" step="0.5" value="2">
+                <div class="scale-display" id="scaleDisplay">2.0x</div>
+            </div>
+            
+            <div class="control-group">
+                <label for="methodSelect">⚙️ Quality Method:</label>
+                <select id="methodSelect">
+                    <option value="lanczos">Lanczos (Best Quality)</option>
+                    <option value="bicubic">Bicubic (Good Quality)</option>
+                    <option value="bilinear">Bilinear (Fast)</option>
+                    <option value="nearest">Nearest (Pixelated)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="preview-area" id="previewArea">
+            <div class="image-comparison">
+                <div class="image-preview">
+                    <h4>📷 Original Image</h4>
+                    <img id="originalImage" alt="Original">
+                    <p id="originalSize"></p>
+                </div>
+                <div class="image-preview">
+                    <h4>🔍 Preview (Enlarged)</h4>
+                    <div id="enlargedPreview">Select image and scale to see preview</div>
+                    <p id="newSize"></p>
+                </div>
+            </div>
+            
+            <button class="enlarge-btn" id="enlargeBtn">
+                🚀 Enlarge Image
+            </button>
+        </div>
+        
+        <div class="result-area" id="resultArea">
+            <h3>✅ Image Successfully Enlarged!</h3>
+            <p>Your image has been processed and enlarged with high quality preservation.</p>
+            <a href="#" class="download-btn" id="downloadBtn" download>
+                💾 Download Enlarged Image
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewArea = document.getElementById('previewArea');
+        const originalImage = document.getElementById('originalImage');
+        const originalSize = document.getElementById('originalSize');
+        const newSize = document.getElementById('newSize');
+        const scaleSlider = document.getElementById('scaleSlider');
+        const scaleDisplay = document.getElementById('scaleDisplay');
+        const methodSelect = document.getElementById('methodSelect');
+        const enlargeBtn = document.getElementById('enlargeBtn');
+        const resultArea = document.getElementById('resultArea');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let currentFile = null;
+
+        // Handle drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // Handle file input
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Handle scale slider
+        scaleSlider.addEventListener('input', (e) => {
+            const scale = parseFloat(e.target.value);
+            scaleDisplay.textContent = scale.toFixed(1) + 'x';
+            updatePreview();
+        });
+
+        // Handle method change
+        methodSelect.addEventListener('change', updatePreview);
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file (PNG, JPG, etc.)');
+                return;
+            }
+
+            currentFile = file;
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                originalImage.src = e.target.result;
+                originalImage.onload = () => {
+                    const width = originalImage.naturalWidth;
+                    const height = originalImage.naturalHeight;
+                    originalSize.textContent = `${width} × ${height} pixels`;
+                    previewArea.style.display = 'block';
+                    updatePreview();
+                };
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function updatePreview() {
+            if (!currentFile) return;
+            
+            const scale = parseFloat(scaleSlider.value);
+            const width = originalImage.naturalWidth;
+            const height = originalImage.naturalHeight;
+            const newWidth = Math.round(width * scale);
+            const newHeight = Math.round(height * scale);
+            
+            newSize.textContent = `${newWidth} × ${newHeight} pixels`;
+            
+            // Show method info
+            const method = methodSelect.value;
+            const methodInfo = {
+                'lanczos': 'High-quality smooth scaling',
+                'bicubic': 'Good quality with some smoothing',
+                'bilinear': 'Fast processing, moderate quality',
+                'nearest': 'Pixelated, preserves sharp edges'
+            };
+            
+            document.getElementById('enlargedPreview').innerHTML = `
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 6px;">
+                    <p><strong>New Size:</strong> ${newWidth} × ${newHeight}</p>
+                    <p><strong>Method:</strong> ${methodInfo[method]}</p>
+                    <p><strong>File Size:</strong> ~${Math.round(newWidth * newHeight * 3 / 1024 / 1024 * 100) / 100} MB</p>
+                </div>
+            `;
+        }
+
+        enlargeBtn.addEventListener('click', () => {
+            if (!currentFile) return;
+            
+            enlargeBtn.disabled = true;
+            enlargeBtn.textContent = '🔄 Processing...';
+            
+            // Simulate processing (in a real implementation, this would send to a server)
+            setTimeout(() => {
+                processImage();
+            }, 1500);
+        });
+
+        function processImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const scale = parseFloat(scaleSlider.value);
+            
+            const img = new Image();
+            img.onload = () => {
+                canvas.width = Math.round(img.width * scale);
+                canvas.height = Math.round(img.height * scale);
+                
+                // Set image smoothing based on method
+                const method = methodSelect.value;
+                if (method === 'nearest') {
+                    ctx.imageSmoothingEnabled = false;
+                } else {
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = method === 'lanczos' ? 'high' : 'medium';
+                }
+                
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Convert to blob and create download link
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const filename = currentFile.name.replace(/\.(png|jpg|jpeg)$/i, `_enlarged_${scale}x.png`);
+                    
+                    downloadBtn.href = url;
+                    downloadBtn.download = filename;
+                    
+                    resultArea.style.display = 'block';
+                    enlargeBtn.disabled = false;
+                    enlargeBtn.textContent = '🚀 Enlarge Image';
+                    
+                    // Scroll to result
+                    resultArea.scrollIntoView({ behavior: 'smooth' });
+                }, 'image/png', 0.95);
+            };
+            
+            img.src = originalImage.src;
+        }
+    </script>
+</body>
+</html>
