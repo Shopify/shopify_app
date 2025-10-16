@@ -45,12 +45,13 @@ module ShopifyApp
         ShopifyApp.configuration.webhooks.each do |attributes|
           webhook_path = path(attributes)
           delivery_method = attributes[:delivery_method] || :http
+          handler = attributes[:handler] || delivery_method == :http ? webhook_job_klass(webhook_path) : nil
 
           ShopifyAPI::Webhooks::Registry.add_registration(
             topic: attributes[:topic],
             delivery_method: delivery_method,
             path: webhook_path,
-            handler: delivery_method == :http ? webhook_job_klass(webhook_path) : nil,
+            handler:,
             fields: attributes[:fields],
             filter: attributes[:filter],
             metafield_namespaces: attributes[:metafield_namespaces],

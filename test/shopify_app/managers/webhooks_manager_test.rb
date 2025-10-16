@@ -84,6 +84,32 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
     ShopifyApp::WebhooksManager.add_registrations
   end
 
+  test "#add_registrations permits nil handler" do
+    expected_hash = {
+      topic: "orders/updated",
+      delivery_method: :http,
+      path: "/webhooks/orders_updated",
+      handler: nil,
+      fields: nil,
+      metafield_namespaces: nil,
+      filter: "id:*",
+    }
+
+    ShopifyAPI::Webhooks::Registry.expects(:add_registration).with(**expected_hash).once
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        {
+          topic: "orders/updated",
+          address: "https://some.domain.over.the.rainbow.com/webhooks/orders_updated",
+          handler: nil
+          filter: "id:*",
+        },
+      ]
+    end
+
+    ShopifyApp::WebhooksManager.add_registrations
+  end
+
   test "#add_registrations raises an error when missing path and address" do
     ShopifyApp.configure do |config|
       config.webhooks = [

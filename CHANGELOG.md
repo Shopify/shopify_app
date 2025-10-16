@@ -7,6 +7,7 @@ Unreleased
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 - Handle invalid record error for concurrent token exchange calls [#1966](https://github.com/Shopify/shopify_app/pull/1966)
 - Add App Bridge CDN URL to CSP script-src directive for embedded apps to ensure compatibility with strict CSP configurations
+- Closed bug in webhook registration which unnecessarily required Job class when using a custom WebhooksController. [2014](https://github.com/Shopify/shopify_app/pull/2014)
 
 22.5.2 (March 14, 2025)
 ----------
