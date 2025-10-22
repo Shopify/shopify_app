@@ -26,6 +26,17 @@ module ShopifyApp
       !configuration.disable_webpacker
   end
 
+  def self.add_csp_directives(policy)
+    # Get current script-src directives
+    current_script_src = policy.directives["script-src"] || []
+
+    # Add App Bridge script source if not already present
+    app_bridge_url = "https://cdn.shopify.com/shopifycloud/app-bridge.js"
+    unless current_script_src.include?(app_bridge_url)
+      policy.script_src(*current_script_src, app_bridge_url)
+    end
+  end
+
   # config
   require "shopify_app/configuration"
 
