@@ -62,10 +62,6 @@ module ShopifyApp
   require "shopify_app/auth/post_authenticate_tasks"
   require "shopify_app/auth/token_exchange"
 
-  # jobs
-  require "shopify_app/jobs/webhooks_manager_job"
-  require "shopify_app/jobs/script_tags_manager_job"
-
   # managers
   require "shopify_app/managers/webhooks_manager"
   require "shopify_app/managers/script_tags_manager"
