@@ -7,7 +7,7 @@ Unreleased
 - Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 - Handle invalid record error for concurrent token exchange calls [#1966](https://github.com/Shopify/shopify_app/pull/1966)
-- Add App Bridge CDN URL to CSP script-src directive for embedded apps to ensure compatibility with strict CSP configurations
+- Add opt-in `ShopifyApp.add_csp_directives(policy)` helper for apps with strict CSP that need to allow App Bridge script source [#2017](https://github.com/Shopify/shopify_app/pull/2017)
 
 22.5.2 (March 14, 2025)
 ----------
