@@ -1,5 +1,8 @@
 Unreleased
 ----------
+
+22.6.0 (October 31, 2025)
+----------
 - Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 - Handle invalid record error for concurrent token exchange calls [#1966](https://github.com/Shopify/shopify_app/pull/1966)
