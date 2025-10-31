@@ -3,7 +3,6 @@ PATH
   specs:
     shopify_app (22.6.0)
       addressable (~> 2.7)
-      jwt (>= 2.2.3)
       rails (> 5.2.1)
       redirect_safely (~> 1.0)
       shopify_api (>= 14.7.0, < 15.0)
@@ -258,6 +257,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  jwt (>= 2.2.3)
   minitest
   mocha
   pry
