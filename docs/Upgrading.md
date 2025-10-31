@@ -44,9 +44,6 @@ If you do run into issues, we recommend looking at our [debugging tips.](https:/
 
 ## Unreleased
 
-#### (v23.0.0) Drops support for Ruby 3.0
-The minimum ruby version is now 3.1
-
 #### (v23.0.0) - Deprecated methods in CallbackController
 The following methods from `ShopifyApp::CallbackController` have been deprecated in `v23.0.0`
 - `perform_after_authenticate_job`

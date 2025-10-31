@@ -1,6 +1,5 @@
 Unreleased
 ----------
-- ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)
 - Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 - Handle invalid record error for concurrent token exchange calls [#1966](https://github.com/Shopify/shopify_app/pull/1966)
