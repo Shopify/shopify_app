@@ -3,6 +3,7 @@ PATH
   specs:
     shopify_app (22.6.0)
       addressable (~> 2.7)
+      multi_xml (>= 0.5.2, < 0.7.2)
       rails (> 5.2.1)
       redirect_safely (~> 1.0)
       shopify_api (>= 15.0, < 16.0)
@@ -116,7 +117,7 @@ GEM
     minitest (5.26.0)
     mocha (2.0.2)
       ruby2_keywords (>= 0.0.5)
-    multi_xml (0.7.2)
+    multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     net-imap (0.4.20)
       date

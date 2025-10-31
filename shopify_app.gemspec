@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("shopify_api", ">= 15.0", "< 16.0")
   # Constrain zeitwerk to < 2.7 as 2.7+ requires Ruby 3.2+, but we support Ruby 3.1+
   s.add_runtime_dependency("zeitwerk", "~> 2.6", "< 2.7")
+  # Constrain multi_xml to < 0.7.2 as 0.7.2+ requires Ruby 3.2+, but we support Ruby 3.1+
+  s.add_runtime_dependency("multi_xml", ">= 0.5.2", "< 0.7.2")
   s.add_development_dependency("byebug")
   s.add_development_dependency("jwt", ">= 2.2.3")
   s.add_development_dependency("minitest")
