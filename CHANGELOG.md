@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- ⚠️ [Breaking] Bumps minimum supported Rails version to 7.1 & Ruby version to 3.2; moves jobs from `lib` to `app` to fix loading issues with modern rails versions. [#2020](https://github.com/Shopify/shopify_app/pull/2020)
 - ⚠️ [Breaking] Removes `ShopifyApp::JWTMiddleware` and `ShopifyApp::JWT` See [Upgrading](/docs/Upgrading.md) for more migration. [1960](https://github.com/Shopify/shopify_app/pull/1960)
 - ⚠️ [Breaking] Removed deprecated `CallbackController` methods. `perform_after_authenticate_job`, `install_webhooks`, and `perform_post_authenticate_jobs` have been removed. [#1961](https://github.com/Shopify/shopify_app/pull/1961)
 - ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)
