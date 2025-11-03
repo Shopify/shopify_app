@@ -77,6 +77,22 @@ module ShopifyApp
       ShopifyApp::Logger.debug("Saving Shopify user ID to cookie")
     end
 
+
+    def delete(api_session, cookie)
+      if cookie.value.present?
+        cookies.encrypted[cookie.name] = {
+          expires: cookie.expires,
+          secure: true,
+          http_only: true,
+          value: cookie.value,
+        }
+    end
+
+      session[:shopify_user_id] = api_session.associated_user.id if api_session.online?
+      ShopifyApp::Logger.debug("Saving Shopify user ID to cookie")
+    end
+    
+
     def redirect_to_app
       if ShopifyAPI::Context.embedded?
         return_to = session.delete(:return_to)
