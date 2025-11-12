@@ -256,7 +256,14 @@ module ShopifyApp
         expires_at: expiry_time,
         refresh_token: "refresh-token-value",
         refresh_token_expires_at: refresh_expiry_time,
-        available_attributes: [:shopify_domain, :shopify_token, :access_scopes, :expires_at, :refresh_token, :refresh_token_expires_at],
+        available_attributes: [
+          :shopify_domain,
+          :shopify_token,
+          :access_scopes,
+          :expires_at,
+          :refresh_token,
+          :refresh_token_expires_at,
+        ],
       )
 
       ShopMockSessionStore.stubs(:find_by).with(id: 1).returns(mock_shop_instance)

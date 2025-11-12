@@ -14,6 +14,15 @@ module ShopifyApp
         user = find_or_initialize_by(shopify_user_id: user.id)
         user.shopify_token = auth_session.access_token
         user.shopify_domain = auth_session.shop
+
+        if user.has_attribute?(:access_scopes)
+          user.access_scopes = auth_session.scope.to_s
+        end
+
+        if user.has_attribute?(:expires_at)
+          user.expires_at = auth_session.expires
+        end
+
         user.save!
         user.id
       end
@@ -48,11 +57,21 @@ module ShopifyApp
           collaborator: false,
         )
 
-        ShopifyAPI::Auth::Session.new(
+        session_attrs = {
           shop: user.shopify_domain,
           access_token: user.shopify_token,
           associated_user: associated_user,
-        )
+        }
+
+        if user.has_attribute?(:access_scopes)
+          session_attrs[:scope] = user.access_scopes
+        end
+
+        if user.has_attribute?(:expires_at)
+          session_attrs[:expires] = user.expires_at
+        end
+
+        ShopifyAPI::Auth::Session.new(**session_attrs)
       end
     end
   end
