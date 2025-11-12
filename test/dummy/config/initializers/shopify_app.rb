@@ -11,7 +11,7 @@ class ShopifyAppConfigurer
       config.user_access_scopes = nil
       config.embedded_app = true
       config.myshopify_domain = "myshopify.com"
-      config.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
+      config.api_version = ShopifyAPI::SUPPORTED_ADMIN_VERSIONS[2]
       config.billing = nil
       config.script_tags = nil
       config.embedded_redirect_url = nil
