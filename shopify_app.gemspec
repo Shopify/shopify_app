@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.metadata["allowed_push_host"] = "https://rubygems.org"
 
   s.add_runtime_dependency("addressable", "~> 2.7")
-  s.add_runtime_dependency("rails", "> 7")
+  s.add_runtime_dependency("rails", ">= 7.1", "< 9")
   s.add_runtime_dependency("redirect_safely", "~> 1.0")
   s.add_runtime_dependency("shopify_api", ">= 14.7.0", "< 15.0")
   s.add_development_dependency("byebug")
