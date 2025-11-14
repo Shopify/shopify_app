@@ -6,6 +6,7 @@ PATH
       rails (>= 7.1, < 9)
       redirect_safely (~> 1.0)
       shopify_api (>= 14.7.0, < 15.0)
+      sprockets-rails
 
 GEM
   remote: https://rubygems.org/
@@ -276,6 +277,14 @@ GEM
       sorbet-runtime
       zeitwerk (~> 2.5)
     sorbet-runtime (0.5.10835)
+    sprockets (4.2.2)
+      concurrent-ruby (~> 1.0)
+      logger
+      rack (>= 2.2.4, < 4)
+    sprockets-rails (3.5.2)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      sprockets (>= 3.0.0)
     sqlite3 (2.7.4-arm64-darwin)
     sqlite3 (2.7.4-x86_64-darwin)
     sqlite3 (2.7.4-x86_64-linux-gnu)
