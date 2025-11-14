@@ -55,6 +55,8 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
         runtime.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       end
 
+      # Stub the generate method to avoid calling bin/rails
+      ShopifyApp::Generators::HomeControllerGenerator.any_instance.stubs(:generate)
       runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator, home_controller_generator_options)
 
       assert(defined?(HomeController))
