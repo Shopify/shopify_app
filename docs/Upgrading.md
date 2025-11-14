@@ -44,8 +44,40 @@ If you do run into issues, we recommend looking at our [debugging tips.](https:/
 
 ## Unreleased
 
-#### (v23.0.0) Drops support for Ruby 3.0
-The minimum ruby version is now 3.1
+#### (v23.0.0) Minimum Ruby 3.2 and Rails 7.1 required, Jobs moved to app/jobs/
+
+The minimum supported versions have been updated:
+- **Ruby**: 3.1 → 3.2
+- **Rails**: 5.2.1 → 7.1
+
+Additionally, ActiveJob classes have been moved from `lib/shopify_app/jobs/` to `app/jobs/shopify_app/` to fix loading issues with modern Rails versions and follow Rails conventions.
+
+##### Why this change was made
+
+Rails 7.1+ improved autoloading behavior (via Zeitwerk) now properly handles jobs in the `app/jobs/` directory, loading them lazily when needed rather than eagerly during initialization.
+
+##### Migration steps
+
+**For most apps**: No changes needed. The jobs are internal to the gem and will be autoloaded correctly by Rails.
+
+**If your app has custom ActiveJob serializers that reference these jobs**:
+1. Ensure you're on Rails 7.1+ before upgrading. [Rails 7.1 Upgrade Guide](https://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-7-0-to-rails-7-1))
+2. Coordinate deployment timing with apps that have custom serializers
+3. Custom serializers will now register before jobs are loaded (correct timing)
+
+**If your app directly requires or references job file paths** (rare):
+```ruby
+# ❌ Old path (will break)
+require 'shopify_app/jobs/webhooks_manager_job'
+
+# ✅ No require needed - Rails autoloads from app/jobs/
+# Jobs are available as ShopifyApp::WebhooksManagerJob
+```
+
+##### Additional dependency changes
+
+- **SQLite**: Development dependency updated from `~> 1.4` to `2.x`
+- **Ruby 3.4+**: New development dependencies added: `csv`, `mutex_m` (removed from Ruby 3.4 stdlib)
 
 #### (v23.0.0) - Deprecated methods in CallbackController
 The following methods from `ShopifyApp::CallbackController` have been deprecated in `v23.0.0`
