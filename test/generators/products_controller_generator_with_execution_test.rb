@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "utils/rails_generator_runtime"
-require "generators/shopify_app/products_controller/products_controller_generator"
-require "generators/shopify_app/authenticated_controller/authenticated_controller_generator"
-require "dummy/app/controllers/application_controller"
+require_relative "../test_helper"
+require_relative "../utils/rails_generator_runtime"
+require_relative "../../lib/generators/shopify_app/products_controller/products_controller_generator"
+require_relative "../../lib/generators/shopify_app/authenticated_controller/authenticated_controller_generator"
+require_relative "../dummy/app/controllers/application_controller"
 
 class ProductsControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   test "generates valid ProductController class" do

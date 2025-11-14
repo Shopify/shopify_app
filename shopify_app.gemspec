@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("csv")
   s.add_development_dependency("jwt", ">= 2.2.3")
   s.add_development_dependency("minitest")
-  s.add_development_dependency("mocha")
+  s.add_development_dependency("mocha", ">= 2.1.0")
   s.add_development_dependency("mutex_m")
   s.add_development_dependency("pry")
   s.add_development_dependency("pry-nav")

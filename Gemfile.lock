@@ -144,7 +144,7 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.5)
     minitest (5.26.1)
-    mocha (2.0.2)
+    mocha (2.8.0)
       ruby2_keywords (>= 0.0.5)
     multi_xml (0.6.0)
     mutex_m (0.3.0)
@@ -321,7 +321,7 @@ DEPENDENCIES
   csv
   jwt (>= 2.2.3)
   minitest
-  mocha
+  mocha (>= 2.1.0)
   mutex_m
   pry
   pry-nav
