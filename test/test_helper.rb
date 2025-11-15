@@ -7,15 +7,6 @@ require File.expand_path("../../test/dummy/config/environment.rb", __FILE__)
 require "rails/test_help"
 require "mocha/minitest"
 
-# Stub Rails generator 'generate' method to avoid bin/rails dependency
-# Rails 7.1 tries to execute bin/rails which doesn't exist in gem context
-if defined?(Rails::Generators::Base)
-  class Rails::Generators::Base
-    def generate(*)
-      # No-op for tests
-    end
-  end
-end
 require "webmock/minitest"
 require "byebug"
 require "pry-nav"
