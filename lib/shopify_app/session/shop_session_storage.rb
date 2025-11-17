@@ -9,6 +9,25 @@ module ShopifyApp
       validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }
     end
 
+    def with_shopify_session(auto_refresh: true, &block)
+      refresh_token_if_expired! if auto_refresh
+      super(&block)
+    end
+
+    def refresh_token_if_expired!
+      return unless should_refresh?
+      raise RefreshTokenExpiredError if refresh_token_expired?
+
+      # Acquire row lock to prevent concurrent refreshes
+      with_lock do
+        reload
+        # Check again after lock - token might have been refreshed by another process
+        return unless should_refresh?
+
+        perform_token_refresh!
+      end
+    end
+
     class_methods do
       def store(auth_session, *_args)
         shop = find_or_initialize_by(shopify_domain: auth_session.shop)
@@ -76,6 +95,34 @@ module ShopifyApp
 
         ShopifyAPI::Auth::Session.new(**session_attrs)
       end
+    end
+
+    def perform_token_refresh!
+      new_session = ShopifyAPI::Auth::RefreshToken.refresh_access_token(
+        shop: shopify_domain,
+        refresh_token: refresh_token,
+      )
+
+      update!(
+        shopify_token: new_session.access_token,
+        expires_at: new_session.expires,
+        refresh_token: new_session.refresh_token,
+        refresh_token_expires_at: new_session.refresh_token_expires,
+      )
+    end
+
+    def should_refresh?
+      return false unless has_attribute?(:expires_at) && expires_at.present?
+      return false unless has_attribute?(:refresh_token) && refresh_token.present?
+      return false unless has_attribute?(:refresh_token_expires_at) && refresh_token_expires_at.present?
+
+      expires_at <= Time.now
+    end
+
+    def refresh_token_expired?
+      return false unless has_attribute?(:refresh_token_expires_at) && refresh_token_expires_at.present?
+
+      refresh_token_expires_at <= Time.now
     end
   end
 end

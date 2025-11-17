@@ -301,5 +301,247 @@ module ShopifyApp
       assert_nil session.refresh_token
       assert_nil session.refresh_token_expires
     end
+
+    test "#refresh_token_if_expired! does nothing when token is not expired" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        expires_at: 1.day.from_now,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      # Token should remain unchanged
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! refreshes when token is expired" do
+      expired_time = 1.hour.ago
+      new_expiry = 1.day.from_now
+      new_refresh_token_expiry = 30.days.from_now
+
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: "old-token",
+        expires_at: expired_time,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      # Mock the refresh response
+      new_session = mock
+      new_session.stubs(:access_token).returns("new-token")
+      new_session.stubs(:expires).returns(new_expiry)
+      new_session.stubs(:refresh_token).returns("new-refresh-token")
+      new_session.stubs(:refresh_token_expires).returns(new_refresh_token_expiry)
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token)
+        .with(shop: TEST_SHOPIFY_DOMAIN, refresh_token: "refresh-token")
+        .returns(new_session)
+
+      shop.refresh_token_if_expired!
+
+      # Verify the token was updated
+      assert_equal "new-token", shop.shopify_token
+      assert_equal new_expiry, shop.expires_at
+      assert_equal "new-refresh-token", shop.refresh_token
+      assert_equal new_refresh_token_expiry, shop.refresh_token_expires_at
+    end
+
+    test "#refresh_token_if_expired! raises error when refresh token is expired" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: "old-token",
+        expires_at: 1.hour.ago,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 1.hour.ago,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+
+      assert_raises(ShopifyApp::RefreshTokenExpiredError) do
+        shop.refresh_token_if_expired!
+      end
+    end
+
+    test "#refresh_token_if_expired! does nothing when refresh_token column doesn't exist" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        expires_at: 1.hour.ago,
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! does nothing when refresh_token is empty" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        expires_at: 1.hour.ago,
+        refresh_token: "",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! does nothing when expires_at column doesn't exist" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :refresh_token, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! does nothing when expires_at is nil" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        expires_at: nil,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! does nothing when refresh_token_expires_at column doesn't exist" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        expires_at: 1.hour.ago,
+        refresh_token: "refresh-token",
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! does nothing when refresh_token_expires_at is nil" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        expires_at: 1.hour.ago,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: nil,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+      shop.expects(:update!).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal TEST_SHOPIFY_TOKEN, shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! handles race condition with double-check" do
+      expired_time = 1.hour.ago
+      refreshed_time = 1.day.from_now
+
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: "old-token",
+        expires_at: expired_time,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      # Simulate another process already refreshed the token
+      shop.expects(:reload).once.with do
+        shop.expires_at = refreshed_time
+        shop.shopify_token = "already-refreshed-token"
+        true
+      end.returns(shop)
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+
+      shop.refresh_token_if_expired!
+
+      assert_equal "already-refreshed-token", shop.shopify_token
+    end
+
+    test "#with_shopify_session calls refresh_token_if_expired! by default" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: TEST_SHOPIFY_TOKEN,
+        available_attributes: [:shopify_domain, :shopify_token],
+      )
+
+      shop.expects(:refresh_token_if_expired!).once
+
+      block_executed = false
+      shop.with_shopify_session do
+        block_executed = true
+      end
+
+      assert block_executed, "Block should have been executed"
+    end
+
+    test "#with_shopify_session skips refresh when auto_refresh is false" do
+      expired_time = 1.hour.ago
+
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: "old-token",
+        expires_at: expired_time,
+        refresh_token: "refresh-token",
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token],
+      )
+
+      # Should NOT refresh even though token is expired
+      shop.expects(:refresh_token_if_expired!).never
+      ShopifyAPI::Auth::RefreshToken.expects(:refresh_access_token).never
+
+      block_executed = false
+
+      shop.with_shopify_session(auto_refresh: false) do
+        block_executed = true
+      end
+
+      assert block_executed, "Block should have been executed"
+    end
   end
 end

@@ -2,6 +2,11 @@
 
 module SessionStoreStrategyTestHelpers
   class MockShopInstance
+    # Stub ActiveRecord validation method before including concern
+    def self.validates(*args); end
+
+    include ShopifyApp::ShopSessionStorage
+
     attr_reader :id,
       :shopify_domain,
       :shopify_token,
@@ -36,6 +41,21 @@ module SessionStoreStrategyTestHelpers
 
     def has_attribute?(attribute)
       @available_attributes.include?(attribute.to_sym)
+    end
+
+    # Stub ActiveRecord methods that the concern uses
+    def with_lock
+      yield
+    end
+
+    def reload
+      self
+    end
+
+    def update!(attrs)
+      attrs.each do |key, value|
+        send("#{key}=", value)
+      end
     end
   end
 
