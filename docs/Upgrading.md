@@ -47,6 +47,53 @@ If you do run into issues, we recommend looking at our [debugging tips.](https:/
 #### (v23.0.0) Drops support for Ruby 3.0
 The minimum ruby version is now 3.1
 
+#### (v23.0.0) - ShopSessionStorageWithScopes and UserSessionStorageWithScopes are deprecated
+
+`ShopSessionStorageWithScopes` and `UserSessionStorageWithScopes` are now deprecated in favor of `ShopSessionStorage` and `UserSessionStorage`, which handle all session attributes automatically (including `access_scopes`, `expires_at`, `refresh_token`, and `refresh_token_expires_at` for shops).
+
+**Migration:**
+
+1. Update your Shop model to use `ShopSessionStorage`:
+```ruby
+# Before
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorageWithScopes
+end
+
+# After
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorage
+end
+```
+
+2. Update your User model to use `UserSessionStorage`:
+```ruby
+# Before
+class User < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorageWithScopes
+end
+
+# After
+class User < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorage
+end
+```
+
+3. **Optional but recommended:** Add columns to enable automatic token refresh for shops:
+```ruby
+class AddTokenRefreshFieldsToShops < ActiveRecord::Migration[7.0]
+  def change
+    add_column :shops, :expires_at, :datetime
+    add_column :shops, :refresh_token, :string
+    add_column :shops, :refresh_token_expires_at, :datetime
+  end
+end
+```
+
+With these columns, `ShopSessionStorage#with_shopify_session` will automatically refresh expired offline access tokens. See the [Sessions documentation](/docs/shopify_app/sessions.md#automatic-access-token-refresh) for more details.
+
+**Note:** If you had custom `access_scopes=` or `access_scopes` methods in your models, these are no longer needed. The base concerns now handle these attributes automatically.
+
 #### (v23.0.0) - Deprecated methods in CallbackController
 The following methods from `ShopifyApp::CallbackController` have been deprecated in `v23.0.0`
 - `perform_after_authenticate_job`
