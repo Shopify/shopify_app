@@ -8,8 +8,8 @@ module ShopifyApp
     included do
       ShopifyApp::Logger.deprecated(
         "ShopSessionStorageWithScopes is deprecated and will be removed in v23.0.0. " \
-        "Use ShopSessionStorage instead, which now handles access_scopes, expires_at, " \
-        "refresh_token, and refresh_token_expires_at automatically.",
+          "Use ShopSessionStorage instead, which now handles access_scopes, expires_at, " \
+          "refresh_token, and refresh_token_expires_at automatically.",
         "23.0.0",
       )
       validates :shopify_domain, presence: true, uniqueness: { case_sensitive: false }

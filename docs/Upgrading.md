@@ -79,18 +79,7 @@ class User < ActiveRecord::Base
 end
 ```
 
-3. **Optional but recommended:** Add columns to enable automatic token refresh for shops:
-```ruby
-class AddTokenRefreshFieldsToShops < ActiveRecord::Migration[7.0]
-  def change
-    add_column :shops, :expires_at, :datetime
-    add_column :shops, :refresh_token, :string
-    add_column :shops, :refresh_token_expires_at, :datetime
-  end
-end
-```
-
-With these columns, `ShopSessionStorage#with_shopify_session` will automatically refresh expired offline access tokens. See the [Sessions documentation](/docs/shopify_app/sessions.md#automatic-access-token-refresh) for more details.
+3. **Optional:** You can now opt-in to using expiring offline access tokens with automatic refresh. See the [Sessions documentation](/docs/shopify_app/sessions.md#offline-access-tokens) for setup instructions.
 
 **Note:** If you had custom `access_scopes=` or `access_scopes` methods in your models, these are no longer needed. The base concerns now handle these attributes automatically.
 

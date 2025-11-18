@@ -8,7 +8,7 @@ module ShopifyApp
     included do
       ShopifyApp::Logger.deprecated(
         "UserSessionStorageWithScopes is deprecated and will be removed in v23.0.0. " \
-        "Use UserSessionStorage instead, which now handles access_scopes and expires_at automatically.",
+          "Use UserSessionStorage instead, which now handles access_scopes and expires_at automatically.",
         "23.0.0",
       )
 
