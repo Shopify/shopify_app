@@ -416,6 +416,49 @@ end
 - When this happens, the user must interact with the app to go through the OAuth flow again to get new tokens
 - The refresh process uses database row-level locking to prevent race conditions from concurrent requests
 
+**5. Migrating Existing Shop Installations:**
+
+⚠️ **Important:** When you enable `offline_access_token_expires: true`, only **new shop installations** will automatically receive expiring tokens during the OAuth flow. Existing shop installations with non-expiring tokens will continue using their current tokens until manually migrated.
+
+To migrate existing shops to expiring tokens, use the `ShopifyAPI::Auth::TokenExchange.migrate_to_expiring_token` method. Here's an example background job to migrate all existing shops:
+
+```ruby
+# app/jobs/migrate_shops_to_expiring_tokens_job.rb
+class MigrateShopsToExpiringTokensJob < ActiveJob::Base
+  queue_as :default
+
+  def perform
+    # Find shops that haven't been migrated yet (no refresh_token or expires_at)
+    shops_to_migrate = Shop.where(expires_at: nil, refresh_token: nil, refresh_token_expires_at: nil)
+
+    shops_to_migrate.find_each do |shop|
+      begin
+        # Migrate to expiring token
+        new_session = ShopifyAPI::Auth::TokenExchange.migrate_to_expiring_token(
+          shop: shop.shopify_domain,
+          non_expiring_offline_token: shop.shopify_token
+        )
+
+        # Store the new session with expiring token and refresh token
+        Shop.store(new_session)
+
+        Rails.logger.info("Successfully migrated #{shop.shopify_domain} to expiring token")
+      rescue ShopifyAPI::Errors::HttpResponseError => e
+        # Handle migration errors (e.g., shop uninstalled, network issues)
+        Rails.logger.error("Failed to migrate #{shop.shopify_domain}: #{e.message}")
+      rescue => e
+        Rails.logger.error("Unexpected error migrating #{shop.shopify_domain}: #{e.message}")
+      end
+    end
+  end
+end
+```
+
+**Migration notes:**
+- This is a **one-time, irreversible operation** per shop
+- The shop must have the app installed and have a valid access token
+- After migration, the shop's offline token will have an expiration date and a refresh token
+
 **Note:** If you choose not to enable expiring offline tokens, the `expires_at`, `refresh_token`, and `refresh_token_expires_at` columns will remain `NULL` and no automatic refresh will occur. Refresh tokens are only available for offline (shop) access tokens. Online (user) access tokens do not support refresh and must be re-authorized through OAuth when expired.
 
 ## Migrating from shop-based to user-based token strategy
