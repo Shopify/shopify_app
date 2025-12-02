@@ -49,7 +49,7 @@ The minimum ruby version is now 3.1
 
 #### (v23.0.0) - ShopSessionStorageWithScopes and UserSessionStorageWithScopes are deprecated
 
-`ShopSessionStorageWithScopes` and `UserSessionStorageWithScopes` are now deprecated in favor of `ShopSessionStorage` and `UserSessionStorage`, which handle all session attributes automatically (including `access_scopes`, `expires_at`, `refresh_token`, and `refresh_token_expires_at` for shops).
+`ShopSessionStorageWithScopes` and `UserSessionStorageWithScopes` are now marked as deprecated and will be removed in v24.0.0 in favor of `ShopSessionStorage` and `UserSessionStorage`, which handle all session attributes automatically (including `access_scopes`, `expires_at`, `refresh_token`, and `refresh_token_expires_at` for shops).
 
 **Migration:**
 
