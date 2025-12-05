@@ -24,6 +24,7 @@ class ShopifyAppConfigurer
       config.new_embedded_auth_strategy = false
       config.check_session_expiry_date = false
       config.custom_post_authenticate_tasks = nil
+      config.webhook_jobs_namespace = nil
     end
 
     setup_context

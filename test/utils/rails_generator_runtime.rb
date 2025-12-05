@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "test_helpers/fake_session_storage"
+require_relative "../test_helper"
+require_relative "../test_helpers/fake_session_storage"
 
 module Utils
   class RailsGeneratorRuntime

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "generators/shopify_app/home_controller/home_controller_generator"
+require_relative "../test_helper"
+require_relative "../../lib/generators/shopify_app/home_controller/home_controller_generator"
 
 class HomeControllerGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::HomeControllerGenerator
@@ -16,6 +16,9 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
     provide_existing_application_file
     provide_existing_routes_file
     provide_existing_application_controller
+
+    # Stub the generate method to avoid calling bin/rails
+    ShopifyApp::Generators::HomeControllerGenerator.any_instance.stubs(:generate)
   end
 
   test "creates the default unauthenticated home controller with home index view" do

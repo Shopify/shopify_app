@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require_relative "../../test_helper"
 require_relative "../../../lib/generators/shopify_app/shop_model/templates/shop.rb"
 require_relative "../../../lib/generators/shopify_app/user_model/templates/user.rb"
 

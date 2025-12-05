@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "utils/rails_generator_runtime"
-require "generators/shopify_app/home_controller/home_controller_generator"
-require "generators/shopify_app/authenticated_controller/authenticated_controller_generator"
-require "dummy/app/controllers/application_controller"
+require_relative "../test_helper"
+require_relative "../utils/rails_generator_runtime"
+require_relative "../../lib/generators/shopify_app/home_controller/home_controller_generator"
+require_relative "../../lib/generators/shopify_app/authenticated_controller/authenticated_controller_generator"
+require_relative "../dummy/app/controllers/application_controller"
 
 class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
   test "generates authenticated HomeController class if not embedded" do
@@ -55,6 +55,8 @@ class HomeControllerGeneratorWithExecutionTest < ActiveSupport::TestCase
         runtime.run_generator(ShopifyApp::Generators::AuthenticatedControllerGenerator)
       end
 
+      # Stub the generate method to avoid calling bin/rails
+      ShopifyApp::Generators::HomeControllerGenerator.any_instance.stubs(:generate)
       runtime.run_generator(ShopifyApp::Generators::HomeControllerGenerator, home_controller_generator_options)
 
       assert(defined?(HomeController))
