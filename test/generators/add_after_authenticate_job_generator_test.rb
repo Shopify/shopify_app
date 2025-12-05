@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "generators/shopify_app/add_after_authenticate_job/add_after_authenticate_job_generator"
+require_relative "../test_helper"
+require_relative "../../lib/generators/shopify_app/add_after_authenticate_job/add_after_authenticate_job_generator"
 
 class AddAfterAuthenticateJobGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AddAfterAuthenticateJobGenerator

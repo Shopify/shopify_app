@@ -1,5 +1,11 @@
 Unreleased
 ----------
+- ⚠️ [Breaking] Bumps minimum supported Rails version to 7.1 & Ruby version to 3.2; moves jobs from `lib` to `app` to fix loading issues with modern rails versions. [#2020](https://github.com/Shopify/shopify_app/pull/2020)
+  - ActiveJob classes moved from `lib/shopify_app/jobs/` to `app/jobs/shopify_app/` to follow Rails conventions and fix timing issues with ActiveJob initialization
+  - Jobs are now autoloaded by Rails instead of explicitly required during gem initialization
+  - **For most apps**: No changes needed. Jobs are internal to the gem and will be autoloaded correctly
+  - **If your app has custom ActiveJob serializers**: See [Upgrading guide](/docs/Upgrading.md#v2300-minimum-ruby-32-and-rails-71-required-jobs-moved-to-appjobs) for migration steps
+  - Additional dependency updates: sqlite3 (1.x → 2.x), added `csv` and `mutex_m` development dependencies for Ruby 3.4+ compatibility
 - ⚠️ [Breaking] Removes `ShopifyApp::JWTMiddleware` and `ShopifyApp::JWT` See [Upgrading](/docs/Upgrading.md) for more migration. [1960](https://github.com/Shopify/shopify_app/pull/1960)
 - ⚠️ [Breaking] Removed deprecated `CallbackController` methods. `perform_after_authenticate_job`, `install_webhooks`, and `perform_post_authenticate_jobs` have been removed. [#1961](https://github.com/Shopify/shopify_app/pull/1961)
 - ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require_relative "../../test_helper"
 require "action_controller"
 require "action_controller/base"
 
@@ -248,8 +248,9 @@ class EnsureBillingTest < ActionController::TestCase
     )
     @controller.stubs(:run_query).raises(ShopifyApp::BillingError.new("Billing error", { errors: "not good" }))
 
-    ShopifyApp::Logger.expects(:warn).with("Encountered billing error - Billing error: {:errors=>\"not good\"}"\
-      "\nRedirecting to login page")
+    error_pattern = /Encountered billing error - Billing error: \{(:)?errors(:|=>)\s?"not good"\}\n/
+    error_pattern = Regexp.new(error_pattern.source + "Redirecting to login page")
+    ShopifyApp::Logger.expects(:warn).with(regexp_matches(error_pattern))
 
     get :index, xhr: true
 
@@ -268,8 +269,9 @@ class EnsureBillingTest < ActionController::TestCase
     @controller.stubs(:run_query).raises(ShopifyApp::BillingError.new("Billing error", { errors: "not good" }))
 
     @controller.expects(:fullpage_redirect_to).with(ShopifyApp.configuration.login_url)
-    ShopifyApp::Logger.expects(:warn).with("Encountered billing error - Billing error: {:errors=>\"not good\"}"\
-      "\nRedirecting to login page")
+    error_pattern = /Encountered billing error - Billing error: \{(:)?errors(:|=>)\s?"not good"\}\n/
+    error_pattern = Regexp.new(error_pattern.source + "Redirecting to login page")
+    ShopifyApp::Logger.expects(:warn).with(regexp_matches(error_pattern))
 
     get :index
   end

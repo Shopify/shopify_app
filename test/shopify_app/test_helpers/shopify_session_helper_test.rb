@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require_relative "../../test_helper"
 require "shopify_app/test_helpers/shopify_session_helper"
 
 class ShopifySessionHelpersController < ActionController::Base

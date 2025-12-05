@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "generators/shopify_app/routes/routes_generator"
+require_relative "../test_helper"
+require_relative "../../lib/generators/shopify_app/routes/routes_generator"
 
 class ControllerGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::RoutesGenerator

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "generators/shopify_app/add_privacy_jobs/add_privacy_jobs_generator"
+require_relative "../test_helper"
+require_relative "../../lib/generators/shopify_app/add_privacy_jobs/add_privacy_jobs_generator"
 
 class AddPrivacyJobsGeneratorJobTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AddPrivacyJobsGenerator

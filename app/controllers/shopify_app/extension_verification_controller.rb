@@ -9,7 +9,7 @@ module ShopifyApp
     private
 
     def verify_request
-      unless hmac_valid?(request.body.read)
+      unless hmac_valid?(request.raw_post)
         head(:unauthorized)
         ShopifyApp::Logger.debug("Extension verification failed due to invalid HMAC")
       end

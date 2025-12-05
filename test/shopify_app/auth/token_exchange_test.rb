@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require_relative "../../test_helper"
 
 class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
   OFFLINE_ACCESS_TOKEN_TYPE = ShopifyAPI::Auth::TokenExchange::RequestedTokenType::OFFLINE_ACCESS_TOKEN

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "generators/shopify_app/add_declarative_webhook/add_declarative_webhook_generator"
+require_relative "../test_helper"
+require_relative "../../lib/generators/shopify_app/add_declarative_webhook/add_declarative_webhook_generator"
 
 class AddDeclarativeWebhookGeneratorTest < Rails::Generators::TestCase
   tests ShopifyApp::Generators::AddDeclarativeWebhookGenerator

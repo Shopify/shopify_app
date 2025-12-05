@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HomeController < ApplicationController
+class DummyHomeController < ApplicationController
   include ShopifyApp::EmbeddedApp
   include ShopifyApp::EnsureInstalled
 
