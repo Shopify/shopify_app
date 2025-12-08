@@ -375,7 +375,7 @@ end
 # For ShopifyAPI Context - enable requesting expiring offline tokens
 ShopifyAPI::Context.setup(
   # ... other configuration
-  offline_access_token_expires: true, # Opt-in to start requesting expiring offline tokens
+  expiring_offline_access_tokens: true, # Opt-in to start requesting expiring offline tokens
 )
 ```
 
