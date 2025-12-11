@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User < ActiveRecord::Base
-  include ShopifyApp::UserSessionStorageWithScopes
+  include ShopifyApp::UserSessionStorage
 
   def api_version
     ShopifyApp.configuration.api_version

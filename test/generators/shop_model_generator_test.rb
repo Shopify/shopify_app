@@ -16,7 +16,7 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
     run_generator
     assert_file "app/models/shop.rb" do |shop|
       assert_match "class Shop < ActiveRecord::Base", shop
-      assert_match "include ShopifyApp::ShopSessionStorageWithScopes", shop
+      assert_match "include ShopifyApp::ShopSessionStorage", shop
       assert_match(/def api_version\n\s*ShopifyApp\.configuration\.api_version\n\s*end/, shop)
     end
   end
@@ -43,6 +43,28 @@ class ShopModelGeneratorTest < Rails::Generators::TestCase
 
     assert_migration "db/migrate/add_shop_access_scopes_column.rb" do |migration|
       assert_match "add_column :shops, :access_scopes, :string", migration
+    end
+  end
+
+  test "create shop with access token expiry columns migration in a test environment" do
+    run_generator
+    assert_migration "db/migrate/add_shop_access_token_expiry_columns.rb" do |migration|
+      assert_match "add_column :shops, :expires_at, :datetime", migration
+      assert_match "add_column :shops, :refresh_token, :string", migration
+      assert_match "add_column :shops, :refresh_token_expires_at, :datetime", migration
+    end
+  end
+
+  test "create shop with access token expiry columns migration with --new-shopify-cli-app flag provided" do
+    Rails.env = "mock_environment"
+
+    run_generator ["--new-shopify-cli-app"]
+    Rails.env = "test" # Change this back for subsequent tests
+
+    assert_migration "db/migrate/add_shop_access_token_expiry_columns.rb" do |migration|
+      assert_match "add_column :shops, :expires_at, :datetime", migration
+      assert_match "add_column :shops, :refresh_token, :string", migration
+      assert_match "add_column :shops, :refresh_token_expires_at, :datetime", migration
     end
   end
 
