@@ -1,0 +1,7 @@
+class AddShopAccessTokenExpiryColumns < ActiveRecord::Migration[<%= rails_migration_version %>]
+  def change
+    add_column :shops, :expires_at, :datetime
+    add_column :shops, :refresh_token, :string
+    add_column :shops, :refresh_token_expires_at, :datetime
+  end
+end

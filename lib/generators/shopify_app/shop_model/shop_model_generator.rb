@@ -40,6 +40,24 @@ module ShopifyApp
         end
       end
 
+      def create_shop_with_token_refresh_migration
+        token_refresh_prompt = <<~PROMPT
+          To support expiring offline access token with refresh, your Shop model needs to store \
+          token expiration dates and refresh tokens.
+
+          The following migration will add `expires_at`, `refresh_token`, and \
+          `refresh_token_expires_at` columns to the Shop model. \
+          Do you want to include this migration? [y/n]
+        PROMPT
+
+        if new_shopify_cli_app? || Rails.env.test? || yes?(token_refresh_prompt)
+          migration_template(
+            "db/migrate/add_shop_access_token_expiry_columns.erb",
+            "db/migrate/add_shop_access_token_expiry_columns.rb",
+          )
+        end
+      end
+
       def update_shopify_app_initializer
         gsub_file("config/initializers/shopify_app.rb", "ShopifyApp::InMemoryShopSessionStore", "Shop")
       end

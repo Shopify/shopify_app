@@ -19,7 +19,7 @@ module ShopifyApp
       def create_shopify_app_initializer
         @application_name = format_array_argument(options["application_name"])
         @scope = format_array_argument(options["scope"])
-        @api_version = options["api_version"] || ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
+        @api_version = options["api_version"] || "2025-10"
 
         template("shopify_app.rb", "config/initializers/shopify_app.rb")
       end

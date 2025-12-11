@@ -23,6 +23,7 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
   - [Access scopes](#access-scopes)
     - [`ShopifyApp::ShopSessionStorageWithScopes`](#shopifyappshopsessionstoragewithscopes)
     - [`ShopifyApp::UserSessionStorageWithScopes`](#shopifyappusersessionstoragewithscopes)
+  - [Migrating to Expiring Offline Access Tokens](#migrating-to-expiring-offline-access-tokens)
   - [Migrating from shop-based to user-based token strategy](#migrating-from-shop-based-to-user-based-token-strategy)
   - [Migrating from `ShopifyApi::Auth::SessionStorage` to `ShopifyApp::SessionStorage`](#migrating-from-shopifyapiauthsessionstorage-to-shopifyappsessionstorage)
 
@@ -129,11 +130,11 @@ These methods are already implemented as a part of the `User` and `Shop` models 
 Simply include these concerns if you want to use the implementation, and overwrite methods for custom implementation
 
 - `Shop` storage
-  - [ShopSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/shop_session_storage_with_scopes.rb)
+  - [ShopSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/shop_session_storage_with_scopes.rb) (Deprecated in 23.0.0)
   - [ShopSessionStorage](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/shop_session_storage.rb)
 
 - `User` storage
-  - [UserSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/user_session_storage_with_scopes.rb)
+  - [UserSessionStorageWithScopes](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/user_session_storage_with_scopes.rb) (Deprecated in 23.0.0)
   - [UserSessionStorage](https://github.com/Shopify/shopify_app/blob/main/lib/shopify_app/session/user_session_storage.rb)
 
 ### Loading Sessions
@@ -203,6 +204,18 @@ user = User.find_by(shopify_user_id: "my_user_id")
 user.with_shopify_session do
   ShopifyAPI::Product.find(id: product_id)
   # This will call the Shopify API with my_user_id's access token
+end
+```
+
+**Automatic Token Refresh for Shop Sessions:**
+
+When using `Shop` models with [expiring offline access tokens](#migrating-to-expiring-offline-access-tokens) configured, `with_shopify_session` will automatically refresh expired tokens before executing the block. This ensures your API calls always use valid credentials without manual intervention.
+
+To disable automatic refresh, pass `auto_refresh: false`:
+
+```ruby
+shop.with_shopify_session(auto_refresh: false) do
+  # Token will NOT be refreshed even if expired
 end
 ```
 
@@ -300,39 +313,153 @@ class MyController < ApplicationController
 end
 ```
 
-## Access scopes
-If you want to customize how access scopes are stored for shops and users, you can implement the `access_scopes` getters and setters in the models that include `ShopifyApp::ShopSessionStorageWithScopes` and `ShopifyApp::UserSessionStorageWithScopes` as shown:
-
-### `ShopifyApp::ShopSessionStorageWithScopes`
-```ruby
-class Shop < ActiveRecord::Base
-  include ShopifyApp::ShopSessionStorageWithScopes
-
-  def access_scopes=(scopes)
-    # Store access scopes
-  end
-  def access_scopes
-    # Find access scopes
-  end
-end
-```
-
-### `ShopifyApp::UserSessionStorageWithScopes`
-```ruby
-class User < ActiveRecord::Base
-  include ShopifyApp::UserSessionStorageWithScopes
-
-  def access_scopes=(scopes)
-    # Store access scopes
-  end
-  def access_scopes
-    # Find access scopes
-  end
-end
-```
-
 ## Expiry date
-When the configuration flag `check_session_expiry_date` is set to true, the user session expiry date will be checked to trigger a re-auth and get a fresh user token when it is expired. This requires the `ShopifyAPI::Auth::Session` `expires` attribute to be stored. When the `User` model includes the `UserSessionStorageWithScopes` concern, a DB migration can be generated with `rails generate shopify_app:user_model --skip` to add the `expires_at` attribute to the model.
+When the configuration flag `check_session_expiry_date` is set to true, the session expiry date will be checked to trigger a re-auth and get a fresh token when it is expired.
+This requires the `ShopifyAPI::Auth::Session` `expires` attribute to be stored.
+
+**Online access tokens (User sessions):**
+- When the `User` model includes the `UserSessionStorage` concern, a DB migration can be generated with `rails generate shopify_app:user_model --skip` to add the `expires_at` attribute to the model
+- Online access tokens cannot be refreshed, so when the token is expired, the user must go through the OAuth flow again to get a new token
+
+**Offline access tokens (Shop sessions):**
+- Offline access tokens can optionally be configured to expire and support automatic refresh. See [Migrating to Expiring Offline Access Tokens](#migrating-to-expiring-offline-access-tokens) for detailed setup instructions
+
+## Migrating to Expiring Offline Access Tokens
+
+You can opt-in to expiring offline access tokens for enhanced security. When enabled, Shopify will issue offline access tokens with an expiration date and a refresh token. `ShopSessionStorage` will then automatically refresh expired tokens when using `with_shopify_session`.
+
+**1. Database Migration:**
+
+Run the shop model generator (use `--skip` to avoid regenerating the Shop model if it already exists):
+
+```bash
+rails generate shopify_app:shop_model --skip
+```
+
+The generator will prompt you to create a migration that adds the `expires_at`, `refresh_token`, and `refresh_token_expires_at` columns. Alternatively, you can create the migration manually:
+
+```ruby
+class AddShopAccessTokenExpiryColumns < ActiveRecord::Migration[7.0]
+  def change
+    add_column :shops, :expires_at, :datetime
+    add_column :shops, :refresh_token, :string
+    add_column :shops, :refresh_token_expires_at, :datetime
+  end
+end
+```
+
+**2. Update Model Concern:**
+
+If your Shop model is using the deprecated `ShopSessionStorageWithScopes` concern, update it to use `ShopSessionStorage`:
+
+```ruby
+# app/models/shop.rb
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorage  # Change from ShopSessionStorageWithScopes
+end
+```
+
+`ShopSessionStorage` now automatically handles `access_scopes`, `expires_at`, `refresh_token`, and `refresh_token_expires_at` - no additional concerns needed.
+
+**3. Configuration:**
+
+```ruby
+# config/initializers/shopify_app.rb
+ShopifyApp.configure do |config|
+  # ... other configuration
+
+  # Enable automatic reauthentication when session is expired
+  config.check_session_expiry_date = true
+end
+
+# For ShopifyAPI Context - enable requesting expiring offline tokens
+ShopifyAPI::Context.setup(
+  # ... other configuration
+  expiring_offline_access_tokens: true, # Opt-in to start requesting expiring offline tokens
+)
+```
+
+**4. Refreshing Expired Tokens:**
+
+With the configuration enabled, expired tokens are automatically handled differently based on the flow:
+
+**For user-facing requests (OAuth/Token Exchange flow):**
+When `check_session_expiry_date` is enabled, expired sessions trigger automatic re-authentication through the OAuth flow. This happens transparently when using controller concerns like `EnsureHasSession`.
+
+**For background jobs and non-user interactions:**
+Tokens are automatically refreshed when using `with_shopify_session` from `ShopSessionStorage`:
+
+```ruby
+shop = Shop.find_by(shopify_domain: "example.myshopify.com")
+
+# Automatic refresh (default behavior)
+shop.with_shopify_session do
+  # If the token is expired, it will be automatically refreshed before making API calls
+end
+
+# Disable automatic refresh if needed
+shop.with_shopify_session(auto_refresh: false) do
+  # Token will NOT be refreshed even if expired
+end
+
+# Manual refresh
+begin
+  shop.refresh_token_if_expired!
+rescue ShopifyApp::RefreshTokenExpiredError
+  # Handle case where refresh token itself has expired
+  # App needs to go through OAuth flow again
+end
+```
+
+**Error Handling:**
+- `ShopifyApp::RefreshTokenExpiredError` is raised when the refresh token itself is expired
+- When this happens, the user must interact with the app to go through the OAuth flow again to get new tokens
+- The refresh process uses database row-level locking to prevent race conditions from concurrent requests
+
+**5. Migrating Existing Shop Installations:**
+
+⚠️ **Important:** When you enable `offline_access_token_expires: true`, only **new shop installations** will automatically receive expiring tokens during the OAuth flow. Existing shop installations with non-expiring tokens will continue using their current tokens until manually migrated.
+
+To migrate existing shops to expiring tokens, use the `ShopifyAPI::Auth::TokenExchange.migrate_to_expiring_token` method. Here's an example background job to migrate all existing shops:
+
+```ruby
+# app/jobs/migrate_shops_to_expiring_tokens_job.rb
+class MigrateShopsToExpiringTokensJob < ActiveJob::Base
+  queue_as :default
+
+  def perform
+    # Find shops that haven't been migrated yet (no refresh_token or expires_at)
+    shops_to_migrate = Shop.where(expires_at: nil, refresh_token: nil, refresh_token_expires_at: nil)
+
+    shops_to_migrate.find_each do |shop|
+      begin
+        # Migrate to expiring token
+        new_session = ShopifyAPI::Auth::TokenExchange.migrate_to_expiring_token(
+          shop: shop.shopify_domain,
+          non_expiring_offline_token: shop.shopify_token
+        )
+
+        # Store the new session with expiring token and refresh token
+        Shop.store(new_session)
+
+        Rails.logger.info("Successfully migrated #{shop.shopify_domain} to expiring token")
+      rescue ShopifyAPI::Errors::HttpResponseError => e
+        # Handle migration errors (e.g., shop uninstalled, network issues)
+        Rails.logger.error("Failed to migrate #{shop.shopify_domain}: #{e.message}")
+      rescue => e
+        Rails.logger.error("Unexpected error migrating #{shop.shopify_domain}: #{e.message}")
+      end
+    end
+  end
+end
+```
+
+**Migration notes:**
+- This is a **one-time, irreversible operation** per shop
+- The shop must have the app installed and have a valid access token
+- After migration, the shop's offline token will have an expiration date and a refresh token
+
+**Note:** If you choose not to enable expiring offline tokens, the `expires_at`, `refresh_token`, and `refresh_token_expires_at` columns will remain `NULL` and no automatic refresh will occur. Refresh tokens are only available for offline (shop) access tokens. Online (user) access tokens do not support refresh and must be re-authorized through OAuth when expired.
 
 ## Migrating from shop-based to user-based token strategy
 

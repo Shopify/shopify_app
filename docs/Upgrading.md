@@ -80,6 +80,42 @@ require 'shopify_app/jobs/webhooks_manager_job'
 
 - **sprockets-rails**: Now a required runtime dependency. Most Rails apps already include this, but if your app uses an alternative asset pipeline (e.g., Propshaft), you may need to add `sprockets-rails` to your Gemfile.
 
+#### (v23.0.0) - ShopSessionStorageWithScopes and UserSessionStorageWithScopes are deprecated
+
+`ShopSessionStorageWithScopes` and `UserSessionStorageWithScopes` are now marked as deprecated and will be removed in v24.0.0 in favor of `ShopSessionStorage` and `UserSessionStorage`, which handle all session attributes automatically (including `access_scopes`, `expires_at`, `refresh_token`, and `refresh_token_expires_at` for shops).
+
+**Migration:**
+
+1. Update your Shop model to use `ShopSessionStorage`:
+```ruby
+# Before
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorageWithScopes
+end
+
+# After
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorage
+end
+```
+
+2. Update your User model to use `UserSessionStorage`:
+```ruby
+# Before
+class User < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorageWithScopes
+end
+
+# After
+class User < ActiveRecord::Base
+  include ShopifyApp::UserSessionStorage
+end
+```
+
+3. **Optional:** You can now opt-in to using expiring offline access tokens with automatic refresh. See the [Sessions documentation](/docs/shopify_app/sessions.md#offline-access-tokens) for setup instructions.
+
+**Note:** If you had custom `access_scopes=` or `access_scopes` methods in your models, these are no longer needed. The base concerns now handle these attributes automatically.
+
 #### (v23.0.0) - Deprecated methods in CallbackController
 The following methods from `ShopifyApp::CallbackController` have been deprecated in `v23.0.0`
 - `perform_after_authenticate_job`

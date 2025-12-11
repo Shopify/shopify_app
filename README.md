@@ -189,7 +189,6 @@ You can find documentation on gem usage, concepts, mixins, installation, and mor
   * [Controller Concerns](/docs/shopify_app/controller-concerns.md)
   * [Generators](/docs/shopify_app/generators.md)
   * [Sessions](/docs/shopify_app/sessions.md)
-  * [Handling changes in access scopes](/docs/shopify_app/handling-access-scopes-changes.md)
   * [Testing](/docs/shopify_app/testing.md)
   * [Webhooks](/docs/shopify_app/webhooks.md)
   * [Content Security Policy](/docs/shopify_app/content-security-policy.md)
@@ -243,8 +242,7 @@ ShopifyApp.configure do |config|
   config.embedded_app = true
   config.new_embedded_auth_strategy = true
 
-  # If your app is configured to use online sessions, you can enable session expiry date check so a new access token
-  # is fetched automatically when the session expires.
+  # You can enable session expiry date check so a new access token is fetched automatically when the session expires.
   # See expiry date check docs: https://github.com/Shopify/shopify_app/blob/main/docs/shopify_app/sessions.md#expiry-date
   config.check_session_expiry_date = true
   ...

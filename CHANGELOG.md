@@ -11,10 +11,17 @@ Unreleased
 - ⚠️ [Breaking] Removes `ShopifyApp::JWTMiddleware` and `ShopifyApp::JWT` See [Upgrading](/docs/Upgrading.md) for more migration. [1960](https://github.com/Shopify/shopify_app/pull/1960)
 - ⚠️ [Breaking] Removed deprecated `CallbackController` methods. `perform_after_authenticate_job`, `install_webhooks`, and `perform_post_authenticate_jobs` have been removed. [#1961](https://github.com/Shopify/shopify_app/pull/1961)
 - ⚠️ [Breaking] Bumps minimum supported Ruby version to 3.1 [#1959](https://github.com/Shopify/shopify_app/pull/1959)
+- Adds support for expiring offline access tokens with automatic refresh for `ShopSessionStorage`. Apps can now opt-in to expiring offline tokens via `ShopifyAPI::Context.setup(offline_access_token_expires: true)`, and `ShopSessionStorage` will automatically refresh expired tokens when using `with_shopify_session`. **See [migration guide](/docs/shopify_app/sessions.md#migrating-to-expiring-offline-access-tokens) for setup instructions.** [#2027](https://github.com/Shopify/shopify_app/pull/2027)
+  - `ShopSessionStorage` now automatically stores `access_scopes`, `expires_at`, `refresh_token`, and `refresh_token_expires_at` from auth sessions
+  - `UserSessionStorage` now automatically stores `access_scopes` and `expires_at` from auth sessions (refresh tokens not applicable for online/user tokens)
+  - Adds `refresh_token_if_expired!` public method to `ShopSessionStorage` for manual token refresh
+  - Adds `RefreshTokenExpiredError` exception raised when refresh token itself is expired
+  - Mark deprecation for `ShopSessionStorageWithScopes` and `UserSessionStorageWithScopes` in favor of `ShopSessionStorage` and `UserSessionStorage`.
 - Adds a `script_tag_manager` that will automatically create script tags when the app is installed. [1948](https://github.com/Shopify/shopify_app/pull/1948)
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 - Handle invalid record error for concurrent token exchange calls [#1966](https://github.com/Shopify/shopify_app/pull/1966)
 - Add opt-in `ShopifyApp.add_csp_directives(policy)` helper for apps with strict CSP that need to allow App Bridge script source [#2017](https://github.com/Shopify/shopify_app/pull/2017)
+- Bumps shopify_api dependency to ~> 16.0
 
 22.5.2 (March 14, 2025)
 ----------
