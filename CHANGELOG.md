@@ -1,5 +1,7 @@
 Unreleased
 ----------
+
+23.0.0 (December 11, 2025)
 - ⚠️ [Breaking] Bumps minimum supported Rails version to 7.1 & Ruby version to 3.2; moves jobs from `lib` to `app` to fix loading issues with modern rails versions. [#2020](https://github.com/Shopify/shopify_app/pull/2020)
   - ActiveJob classes moved from `lib/shopify_app/jobs/` to `app/jobs/shopify_app/` to follow Rails conventions and fix timing issues with ActiveJob initialization
   - Jobs are now autoloaded by Rails instead of explicitly required during gem initialization
