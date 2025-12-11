@@ -15,6 +15,9 @@ require "pry-nav"
 # to be shown.
 Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 
+# Test API version constant - update this when testing against a new API version
+TEST_API_VERSION = "2025-10"
+
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 class ActiveSupport::TestCase

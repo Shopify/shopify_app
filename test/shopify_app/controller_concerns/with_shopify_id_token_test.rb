@@ -17,7 +17,7 @@ class WithShopifyIdTokenTest < ActionController::TestCase
     @id_token = "this-is-the-shopify-id-token"
     @auth_header = "Bearer #{@id_token}"
     @jwt_payload = {
-      iss: "iss",
+      iss: "https://test-shop.myshopify.com/admin",
       dest: "https://test-shop.myshopify.com",
       aud: ShopifyAPI::Context.api_key,
       sub: "1",

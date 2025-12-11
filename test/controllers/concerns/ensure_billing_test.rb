@@ -32,7 +32,7 @@ class EnsureBillingTest < ActionController::TestCase
     )
     @controller.stubs(:current_shopify_session).returns(@session)
 
-    @api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
+    @api_version = TEST_API_VERSION
     ShopifyApp.configuration.api_version = @api_version
     ShopifyAppConfigurer.setup_context
   end

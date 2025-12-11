@@ -19,6 +19,7 @@ Unreleased
 - Handle invalid token when adding redirection headers [#1945](https://github.com/Shopify/shopify_app/pull/1945)
 - Handle invalid record error for concurrent token exchange calls [#1966](https://github.com/Shopify/shopify_app/pull/1966)
 - Add opt-in `ShopifyApp.add_csp_directives(policy)` helper for apps with strict CSP that need to allow App Bridge script source [#2017](https://github.com/Shopify/shopify_app/pull/2017)
+- Bumps shopify_api dependency to ~> 16.0
 
 22.5.2 (March 14, 2025)
 ----------
