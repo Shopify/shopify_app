@@ -16,10 +16,10 @@ module Shopify
 end
 
 class CartsUpdateJob < ActiveJob::Base
-  extend ShopifyAPI::Webhooks::Handler
+  include ShopifyAPI::Webhooks::WebhookHandler
 
   class << self
-    def handle(topic:, shop:, body:)
+    def handle(topic:, shop:, body:, webhook_id:, api_version:)
       perform_later(topic: topic, shop_domain: shop, webhook: body)
     end
   end

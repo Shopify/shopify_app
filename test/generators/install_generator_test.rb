@@ -25,7 +25,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match 'config.scope = "read_products"', shopify_app
       assert_match "config.embedded_app = true", shopify_app
       assert_match "config.new_embedded_auth_strategy = true", shopify_app
-      assert_match "config.api_version = \"#{ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION}\"", shopify_app
+      assert_match "config.api_version = \"#{TEST_API_VERSION}\"", shopify_app
       assert_match "config.after_authenticate_job = false", shopify_app
 
       context_setup = <<~CONTEXT_SETUP

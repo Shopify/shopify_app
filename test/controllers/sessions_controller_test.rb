@@ -13,7 +13,7 @@ module ShopifyApp
   class SessionsControllerTest < ActionController::TestCase
     setup do
       @routes = ShopifyApp::Engine.routes
-      ShopifyApp.configuration.api_version = ShopifyAPI::LATEST_SUPPORTED_ADMIN_VERSION
+      ShopifyApp.configuration.api_version = TEST_API_VERSION
       ShopifyApp::SessionRepository.shop_storage = ShopifyApp::InMemoryShopSessionStore
       ShopifyApp::SessionRepository.user_storage = nil
       ShopifyApp.configuration.new_embedded_auth_strategy = false
