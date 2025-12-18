@@ -8,7 +8,11 @@ module ShopifyApp
 
         raise ShopifyAPI::Errors::FeatureDeprecatedError unless valid_version(version)
 
-        ActiveSupport::Deprecation.warn("[#{version}] #{context(:warn)} #{message}")
+        deprecator.warn("[#{version}] #{context(:warn)} #{message}")
+      end
+
+      def deprecator
+        @deprecator ||= ActiveSupport::Deprecation.new(ShopifyApp::VERSION, "ShopifyApp")
       end
 
       private
