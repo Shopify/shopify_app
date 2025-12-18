@@ -22,8 +22,8 @@ module ShopifyApp
       ]
     end
 
-    initializer "shopify_app.redact_job_params" do
-      ActiveSupport.on_load(:active_job) do
+    initializer "shopify_app.redact_job_params" do |app|
+      app.config.after_initialize do
         if ActiveJob::Base.respond_to?(:log_arguments?)
           WebhooksManagerJob.log_arguments = false
           ScriptTagsManagerJob.log_arguments = false
