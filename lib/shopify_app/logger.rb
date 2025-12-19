@@ -11,11 +11,11 @@ module ShopifyApp
         deprecator.warn("[#{version}] #{context(:warn)} #{message}")
       end
 
+      private
+
       def deprecator
         @deprecator ||= ActiveSupport::Deprecation.new(ShopifyApp::VERSION, "ShopifyApp")
       end
-
-      private
 
       def context(log_level)
         current_shop = ShopifyAPI::Context.active_session&.shop || "Shop Not Found"
