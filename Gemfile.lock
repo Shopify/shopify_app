@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shopify_app (23.0.0)
+    shopify_app (23.0.1)
       addressable (~> 2.7)
       rails (>= 7.1, < 9)
       redirect_safely (~> 1.0)
