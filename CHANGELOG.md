@@ -2,7 +2,7 @@ Unreleased
 ----------
 
 - Fix engine initialization [#2040](https://github.com/Shopify/shopify_app/pull/2040)
-
+- Fix deprecation warnings for Rails 7.1+ [#2041](https://github.com/Shopify/shopify_app/pull/2041)
 
 23.0.0 (December 11, 2025)
 ----------
