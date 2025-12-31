@@ -19,6 +19,7 @@ module ShopifyApp
     initializer "shopify_app.assets.precompile" do |app|
       app.config.assets.precompile += [
         "shopify_app/redirect.js",
+        "shopify_app/bottle-deposit-sync.js",
       ]
     end
 
