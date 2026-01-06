@@ -1,10 +1,8 @@
 class CustomersRedactJob < ActiveJob::Base
-  include ShopifyAPI::Webhooks::WebhookHandler
+  extend ShopifyAPI::Webhooks::WebhookHandler
 
-  class << self
-    def handle(topic:, shop:, body:, webhook_id:, api_version:)
-      perform_later(topic: topic, shop_domain: shop, webhook: body)
-    end
+  def self.handle(topic:, shop:, body:, webhook_id:, api_version:)
+    perform_later(topic: topic, shop_domain: shop, webhook: body)
   end
 
   def perform(topic:, shop_domain:, webhook:)
