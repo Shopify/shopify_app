@@ -73,6 +73,26 @@ This issue can occur when the session (the model you set as `ShopifyApp::Session
 
 If your local dev env uses the `cookie_store` session storage strategy, you may encounter 401 errors during oauth due to a race condition between asset requests and `/auth/shopify`. You should be able to work around for local testing by using a different browser or session storage strategy.  [Read more about the status of this issue](https://github.com/Shopify/shopify_app/issues/1269).
 
+### My app keeps redirecting to login
+
+#### Missing `shop` and `host` query parameters
+
+If your app uses `ShopifyApp::ShopAccessScopesVerification` in your controllers, the app requires `shop` and `host` query parameters to be present in the request to properly verify access scopes and maintain the shop context.
+
+When these parameters are missing, the `login_on_scope_changes` filter cannot determine the current shop context and will redirect to login. This is expected behavior to ensure proper authentication.
+
+**Common scenarios:**
+* Accessing the app directly via URL without query parameters (e.g., `https://your-app.com/` instead of `https://your-app.com/?shop=example.myshopify.com&host=...`)
+* Navigating to pages where query parameters are not preserved
+* Bookmarked URLs without the required parameters
+
+**Solution:**
+* Ensure your app is accessed through Shopify's admin with the proper query parameters
+* For embedded apps, navigate through the Shopify admin interface
+* For non-embedded apps, ensure the authentication flow properly includes and preserves the `shop` and `host` parameters throughout the session
+
+**Note:** Even with `reauth_on_access_scope_changes` enabled and no actual scope changes, the redirect will still occur if the required query parameters are missing, as the concern cannot verify the shop context without them.
+
 ## JWT session tokens
 
 ### My app is still using cookies to authenticate
