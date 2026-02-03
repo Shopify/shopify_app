@@ -145,6 +145,7 @@ GEM
     marcel (1.1.0)
     method_source (1.0.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (5.26.2)
     mocha (2.8.0)
       ruby2_keywords (>= 0.0.5)
@@ -161,11 +162,8 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.18.10-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.18.10-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.18.10-x86_64-linux-gnu)
+    nokogiri (1.18.10)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     oj (3.16.13)
       bigdecimal (>= 3.0)
@@ -291,9 +289,8 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
-    sqlite3 (2.7.4-arm64-darwin)
-    sqlite3 (2.7.4-x86_64-darwin)
-    sqlite3 (2.7.4-x86_64-linux-gnu)
+    sqlite3 (2.7.4)
+      mini_portile2 (~> 2.8.0)
     stringio (3.1.8)
     syntax_tree (6.1.1)
       prettier_print (>= 1.2.0)
@@ -317,6 +314,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x86_64-darwin-19
   x86_64-darwin-20
   x86_64-darwin-21
