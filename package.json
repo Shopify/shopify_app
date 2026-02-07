@@ -18,7 +18,7 @@
     "mocha": "^10.6.0",
     "sinon": "^9.0.3",
     "sinon-chai": "^3.2.0",
-    "webpack": "^5.94.0"
+    "webpack": "^5.104.1"
   },
   "resolutions": {
     "karma": "^6.4.4",
