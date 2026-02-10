@@ -21,7 +21,7 @@ module ShopifyApp
     end
 
     def shop_domain
-      request.headers["HTTP_X_SHOPIFY_SHOP_DOMAIN"]
+      shopify_header("shop-domain")
     end
   end
 end
