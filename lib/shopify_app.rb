@@ -27,6 +27,11 @@ module ShopifyApp
   end
 
   def self.add_csp_directives(policy)
+    ShopifyApp::Logger.deprecated(
+      "ShopifyApp.add_csp_directives is deprecated and will be removed in v24.0.0.",
+      "24.0.0",
+    )
+
     # Get current script-src directives
     current_script_src = policy.directives["script-src"] || []
 

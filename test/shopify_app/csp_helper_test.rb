@@ -7,6 +7,15 @@ class CspHelperTest < ActiveSupport::TestCase
     @policy = ActionDispatch::ContentSecurityPolicy.new
   end
 
+  test "emits a deprecation warning" do
+    ShopifyApp::Logger.expects(:deprecated).with(
+      "ShopifyApp.add_csp_directives is deprecated and will be removed in v24.0.0.",
+      "24.0.0",
+    )
+
+    ShopifyApp.add_csp_directives(@policy)
+  end
+
   test "adds App Bridge script source to empty policy" do
     ShopifyApp.add_csp_directives(@policy)
 
