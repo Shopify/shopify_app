@@ -1,6 +1,7 @@
 Unreleased
 ----------
 - [Patch] Fix sorbet errors in generated webhook handlers
+- Deprecate `ShopifyApp.add_csp_directives(policy)` - will be removed in v24.0.0
 
 23.0.1 (December 22, 2025)
 - Fix engine initialization [#2040](https://github.com/Shopify/shopify_app/pull/2040)
