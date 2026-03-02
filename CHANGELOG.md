@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- [Patch] Validate host param in generated HomeController template to prevent open redirect
 - [Patch] Fix sorbet errors in generated webhook handlers
 
 23.0.1 (December 22, 2025)
