@@ -2,6 +2,7 @@ Unreleased
 ----------
 - [Patch] Validate host param in generated HomeController template to prevent open redirect
 - [Patch] Fix sorbet errors in generated webhook handlers
+- [Patch] Include license information in the gemspec
 
 23.0.1 (December 22, 2025)
 - Fix engine initialization [#2040](https://github.com/Shopify/shopify_app/pull/2040)
