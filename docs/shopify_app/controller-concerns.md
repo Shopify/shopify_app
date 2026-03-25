@@ -2,8 +2,7 @@
 
 The following controller concerns are designed to be public and can be included in your controllers.
 
-If you are looking to make requests within the context of a logged in **User**, you will include `EnsureHasSession` into your controller to ensure users have a valid session to make requests.
-
+For any controller that makes Shopify API calls, accesses shop data, or performs authenticated actions, use `EnsureHasSession`. This concern verifies the identity of the requester before allowing the action to proceed.
 
 ```ruby
 class YourController < ApplicationController
@@ -11,7 +10,7 @@ class YourController < ApplicationController
 end
 ```
 
-If you don't require a user to be present but make requests scoped by a **Shop**, you can include `EnsureInstalled` in your controller to ensure your app has been installed by the Shop and they have a shop session.
+If you only need to check whether the app is installed on a shop — for example, to serve your app's frontend shell — use `EnsureInstalled`. This concern does not authenticate the request.
 
 ```ruby
 class YourController < ApplicationController
@@ -19,17 +18,17 @@ class YourController < ApplicationController
 end
 ```
 
-## EnsureHasSession - Online User Sessions
-Designed for controllers that are designed to handle authenticated actions by ensuring there is a valid session for the request.
+## EnsureHasSession — Authenticated Requests
+Use this concern for any controller action that needs to make authenticated Shopify API calls or access shop/user data. It verifies the requester's identity using either session tokens (embedded apps) or encrypted cookies (non-embedded apps), and works with both online (user) and offline (shop) access tokens.
 
-In addition to session management, this concern will also handle localization, CSRF protection, embedded app settings, and billing enforcement.
+In addition to session management, this concern handles localization, CSRF protection, embedded app settings, and billing enforcement.
 
-## EnsureInstalled - Offline Shop Sessions
-Designed to handle request scoped by a shop for *embedded apps*. If you are non-embedded app, we recommend using `EnsureHasSession` concern instead of this one.
+## EnsureInstalled — Installation Check Only
+Use this concern to verify that the app has been installed on a given shop. It is designed for unauthenticated entry points in embedded apps, such as serving the app shell or redirecting to OAuth.
 
-Rather than using the JWT to determine the requested shop of the request, the `shop` name param is taken from the query string that Shopify Admin provides.
+> ⚠️ **This concern does not authenticate the request.** The shop is resolved from the `shop` query string parameter, which is user-controllable. Do not use this concern to gate access to shop data, access tokens, or Shopify API calls. For authenticated actions, use `EnsureHasSession`.
 
-If the shop session cannot be found for the provided `shop` in the query string, the request will be redirected to login or the `embedded_redirect_url`.
+If the app is not installed for the provided `shop` parameter, the request will be redirected to login or the `embedded_redirect_url`.
 
 ## EnsureAuthenticatedLinks
 Designed to be more of a lightweight session concern specifically for XHR requests. Where `EnsureHasSession` does far more than just session management, this concern will redirect to the splash page of the app if no active session was found.
