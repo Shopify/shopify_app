@@ -16,8 +16,8 @@ Sessions are used to make contextual API calls for either a shop (offline sessio
         - [Available `ActiveSupport::Concerns` that contains implementation of the above methods](#available-activesupportconcerns-that-contains-implementation-of-the-above-methods)
     - [Loading Sessions](#loading-sessions)
       - [Getting Sessions with Controller Concerns](#getting-sessions-with-controller-concerns)
-        - [**Shop Sessions - `EnsureInstalled`**](#shop-sessions---ensureinstalled)
-        - [User Sessions - `EnsureHasSession`](#user-sessions---ensurehassession)
+        - [`EnsureHasSession` — Authenticated Sessions](#ensurehassession--authenticated-sessions)
+        - [`EnsureInstalled` — Installation Check Only](#ensureinstalled--installation-check-only)
       - [Getting sessions from a Shop or User model record - 'with\_shopify\_session'](#getting-sessions-from-a-shop-or-user-model-record---with_shopify_session)
       - [Re-fetching an access token when API returns Unauthorized](#re-fetching-an-access-token-when-api-returns-unauthorized)
   - [Access scopes](#access-scopes)
@@ -143,16 +143,19 @@ By using the appropriate controller concern, sessions are loaded for you.
 #### Getting Sessions with Controller Concerns
 
 ⚠️  **Note: These controller concerns cannot both be included in the same controller.**
-##### **Shop Sessions - `EnsureInstalled`**
-- [EnsureInstalled](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_installed.rb) controller concern will load a shop session with the `installed_shop_session` helper. If a shop session is not found, meaning the app wasn't installed for this shop, the request will be redirected to be installed.
-- This controller concern should NOT be used if you don't need your app to make calls on behalf of a user.
+
+##### `EnsureHasSession` — Authenticated Sessions
+Use [EnsureHasSession](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_has_session.rb) for any controller that makes Shopify API calls or accesses shop data. This concern authenticates the request and loads a verified session via the `current_shopify_session` helper. It works with both online (user) and offline (shop) access tokens.
+
+As part of loading the session, this concern ensures that the session has the appropriate scopes needed for the application and that it is not expired (when `check_session_expiry_date` is enabled). If the session is invalid or missing, the user will be prompted to authorize the application.
+
 - Example
 ```ruby
 class MyController < ApplicationController
-  include ShopifyApp::EnsureInstalled
+  include ShopifyApp::EnsureHasSession
 
   def method
-    current_session = installed_shop_session # `installed_shop_session` is a helper from `EnsureInstalled`
+    current_session = current_shopify_session
 
     client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_session)
     client.query(
@@ -162,21 +165,19 @@ class MyController < ApplicationController
 end
 ```
 
-##### User Sessions - `EnsureHasSession`
-- [EnsureHasSession](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_has_session.rb) controller concern will load a user session via `current_shopify_session`. As part of loading this session, this concern will also ensure that the user session has the appropriate scopes needed for the application and that it is not expired (when `check_session_expiry_date` is enabled). If the user isn't found or has fewer permitted scopes than are required, they will be prompted to authorize the application.
-- This controller concern should be used if you don't need your app to make calls on behalf of a user. With that in mind, there are a few other embedded concerns that are mixed in to ensure that embedding, CSRF, localization, and billing allow the action for the user.
-- Example
+##### `EnsureInstalled` — Installation Check Only
+Use [EnsureInstalled](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_installed.rb) only for unauthenticated entry points, such as serving your embedded app's frontend shell. This concern checks whether the app is installed on the shop provided in the `shop` query string parameter. If the app is not installed, the request is redirected to login or the `embedded_redirect_url`.
+
+> ⚠️ **This concern does not authenticate the request.** The `installed_shop_session` helper resolves the session from the user-controllable `shop` query parameter — it does not verify who is making the request. Do not use `EnsureInstalled` or `installed_shop_session` for any action that accesses shop data or makes Shopify API calls. Use `EnsureHasSession` instead.
+
+- Example: serving the app frontend (no API calls)
 ```ruby
-class MyController < ApplicationController
-  include ShopifyApp::EnsureHasSession
+class HomeController < ApplicationController
+  include ShopifyApp::EnsureInstalled
 
-  def method
-    current_session = current_shopify_session # `current_shopify_session` is a helper from `EnsureHasSession`
-
-    client = ShopifyAPI::Clients::Graphql::Admin.new(session: current_session)
-    client.query(
-      # ...
-    )
+  def index
+    # Serve the app shell — no API calls here
+    render :index
   end
 end
 ```
