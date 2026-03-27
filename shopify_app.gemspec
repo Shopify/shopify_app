@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.author      = "Shopify"
   s.summary     = "This gem is used to get quickly started with the Shopify API"
+  s.license     = "MIT"
 
   s.required_ruby_version = ">= 3.2"
 
