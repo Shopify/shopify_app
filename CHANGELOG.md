@@ -2,6 +2,7 @@ Unreleased
 ----------
 - [Patch] Validate host param in generated HomeController template to prevent open redirect
 - [Patch] Fix sorbet errors in generated webhook handlers
+- Remove unnecessary nil check in generated HomeController template
 
 23.0.1 (December 22, 2025)
 - Fix engine initialization [#2040](https://github.com/Shopify/shopify_app/pull/2040)
