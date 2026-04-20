@@ -1,0 +1,116 @@
+name: Gardener - Notify Slack
+# Runs after `Gardener - Notify Event` completes and does the real work:
+# applies the devtools-gardener label and posts a summary to Slack.
+#
+# The workflow_run trigger runs this job in the default-branch context with
+# full GITHUB_TOKEN permissions and Actions secret access — this is what
+# lets it succeed for Dependabot-opened PRs, where the upstream event
+# workflow can't label or reach secrets directly.
+on:
+  workflow_run:
+    workflows: ['Gardener - Notify Event']
+    types: [completed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  notify:
+    # `conclusion == success` also covers runs where the capture job was
+    # skipped by its `if` gate (no matching label, etc.) — in that case
+    # no artifact was uploaded, so the download step below no-ops.
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download event payload
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: gardener-event
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add devtools-gardener label
+        if: steps.download.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ACTION=$(jq -r '.action' event.json)
+          # On `labeled` events the label is already there — skip.
+          if [ "$ACTION" != "opened" ]; then
+            exit 0
+          fi
+          NUMBER=$(jq -r '(.issue // .pull_request).number' event.json)
+          if jq -e 'has("pull_request")' event.json > /dev/null; then
+            gh pr edit "$NUMBER" --add-label devtools-gardener
+          else
+            gh issue edit "$NUMBER" --add-label devtools-gardener
+          fi
+
+      - name: Post to Slack
+        if: steps.download.outcome == 'success'
+        continue-on-error: true
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_GARDENER_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ vars.GARDENER_SLACK_CHANNEL_ID }}
+        run: |
+          KIND=$(jq -r 'if has("pull_request") then "PR" else "Issue" end' event.json)
+          # Pull the body out, truncate, then convert GitHub Markdown to
+          # Slack mrkdwn. Links and fenced code blocks are stashed before
+          # the HTML-escape pass so their contents survive verbatim (a `&`
+          # inside a URL must stay raw, and code content shouldn't be
+          # mangled). Blockquote `> ` markers are also stashed so the
+          # `>` → `&gt;` escape doesn't break them. Everything else is
+          # HTML-escaped so user-supplied `<`, `>`, `&` can't collide
+          # with Slack link syntax or injected mentions like <!channel>.
+          BODY=$(jq -r '(.issue // .pull_request).body // ""' event.json)
+          if [ ${#BODY} -gt 1000 ]; then
+            BODY="${BODY:0:1000}…"
+          fi
+          BODY=$(printf '%s' "$BODY" | perl -0777 -pe '
+            my @u;
+            s{\[([^\]]+)\]\(([^)]+)\)}{push @u, $2; "\x01$#u\x02$1\x03"}ge;
+            my @c;
+            s{^```[^\n]*\n(.*?)\n```$}{push @c, $1; "\x04$#c\x05"}gems;
+            s/^> /\x06/gm;
+            s/^#{1,6}\s+(.+)$/*$1*/gm;
+            s/\*\*(.+?)\*\*/*$1*/g;
+            s/^(\s*)- \[x\]\s+/$1✓ /gm;
+            s/^(\s*)[-*]\s+/$1• /gm;
+            s/&/&amp;/g;
+            s/</&lt;/g;
+            s/>/&gt;/g;
+            s/\x06/> /g;
+            s{\x01(\d+)\x02(.*?)\x03}{"<$u[$1]|$2>"}ge;
+            s{\x04(\d+)\x05}{"```\n$c[$1]\n```"}ge;
+          ')
+          jq \
+            --arg channel "$SLACK_CHANNEL_ID" \
+            --arg kind "$KIND" \
+            --arg body "$BODY" \
+            '
+              def escape: gsub("&";"&amp;") | gsub("<";"&lt;") | gsub(">";"&gt;");
+
+              (.issue // .pull_request) as $i
+              | ([$i.labels[]?.name | select(. != "devtools-gardener")]
+                  | map("`\(.)`") | join(" ")) as $labels
+              | (if $kind == "PR"
+                  then " · \($i.changed_files) files, +\($i.additions)/-\($i.deletions)"
+                       + (if $i.draft then " · draft" else "" end)
+                  else "" end) as $meta
+              | [ "*<\($i.html_url)|\($kind) #\($i.number)>* — \(($i.title | escape))",
+                  "_opened by \($i.user.login)\($meta)_" ]
+                + (if $body != "" then [$body] else [] end)
+                + (if $labels != "" then [$labels] else [] end)
+              | join("\n") as $msg
+              | { channel: $channel, text: "\($kind) #\($i.number): \($i.title)",
+                  blocks: [{ type: "section", text: { type: "mrkdwn", text: $msg } }] }
+            ' event.json | curl -sf -X POST \
+              -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+              -H 'Content-type: application/json; charset=utf-8' \
+              -d @- https://slack.com/api/chat.postMessage
