@@ -11,6 +11,8 @@ For actions that include the `ShopifyApp::FrameAncestors` controller concern, th
 
 ## Strict Content Security Policy
 
+> **Deprecated:** The `ShopifyApp.add_csp_directives` helper is deprecated and will be removed in v24.0.0.
+
 If you enable a strict Content Security Policy in your application, you'll need to explicitly allow Shopify's App Bridge script. The gem provides a helper method to make this easy.
 
 ### Without Strict CSP (Default)
