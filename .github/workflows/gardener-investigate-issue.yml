@@ -1,0 +1,225 @@
+name: Gardener - Investigate Issue
+# Automatically investigates GitHub issues using Claude Code when the
+# 'devtools-investigate-for-gardener' label is applied. Can also be triggered manually
+# via workflow_dispatch for a specific issue number.
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to investigate'
+        required: true
+        type: number
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: write
+
+jobs:
+  investigate:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'devtools-investigate-for-gardener'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          # GITHUB_TOKEN won't trigger CI on PRs it creates (GitHub's loop-prevention).
+          # A human must manually trigger CI (e.g. close/reopen the PR) before merging.
+          # To avoid this, replace with a PAT or GitHub App token.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve issue number
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            NUMBER="${{ github.event.inputs.issue_number }}"
+          else
+            NUMBER="${{ github.event.issue.number }}"
+          fi
+          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+          echo "url=https://github.com/${{ github.repository }}/issues/$NUMBER" >> "$GITHUB_OUTPUT"
+
+      # Post a starter message so reviewers can follow along while Claude works.
+      # `continue-on-error: true` keeps a Slack outage from blocking the run.
+      # The response `ts` is stashed for the completion step to thread onto.
+      - name: Post investigation start to Slack
+        id: start_slack
+        continue-on-error: true
+        uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52 # v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_GARDENER_BOT_TOKEN }}
+          payload: |-
+            {
+              "channel": "${{ vars.GARDENER_SLACK_CHANNEL_ID }}",
+              "text": "Investigation started for issue #${{ steps.issue.outputs.number }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":mag: *<${{ steps.issue.outputs.url }}|Issue #${{ steps.issue.outputs.number }}>* — investigation starting…\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
+                  }
+                }
+              ]
+            }
+
+      - name: Investigate issue
+        id: investigate
+        timeout-minutes: 30
+        uses: anthropics/claude-code-action@b47fd721da662d48c5680e154ad16a73ed74d2e0 # v1
+        env:
+          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allowed_tools: "Bash(gh issue view *),Bash(gh issue list *),Bash(gh pr list *),Bash(gh pr view *),Bash(gh pr create *),Bash(gh pr checks *),Bash(gh pr diff *),Bash(gh release list *),Bash(git log *),Bash(git tag *),Bash(git diff *),Bash(git show *),Bash(git branch *),Bash(git checkout -b *),Bash(git push -u origin *),Bash(git commit *),Bash(git add *),Read,Glob,Grep,Edit,Write"
+          prompt: |
+            /investigating-github-issues ${{ steps.issue.outputs.url }}
+
+            If the skill above did not load, read and follow `.claude/skills/investigating-github-issues/SKILL.md`.
+
+            Return the investigation report as the `report` field in your structured output.
+            If you opened a fix PR instead, return the PR URL as `report`.
+          claude_args: |
+            --json-schema '{"type":"object","properties":{"report":{"type":"string","description":"The full investigation report markdown, or the PR URL if a fix was opened"}},"required":["report"]}'
+
+      - name: Write report to job summary
+        if: always() && steps.investigate.outputs.structured_output
+        env:
+          STRUCTURED_OUTPUT: ${{ steps.investigate.outputs.structured_output }}
+        run: |
+          echo "$STRUCTURED_OUTPUT" | jq -r '.report' >> "$GITHUB_STEP_SUMMARY"
+
+      # Build a single Slack payload — success shape when Claude returned
+      # structured output, failure shape otherwise (crash, timeout, cancel,
+      # or no structured_output). Running in github-script so we can parse
+      # the starter response to thread onto it, and use JSON.stringify to
+      # dodge shell-escaping hazards. The report is Claude's trusted
+      # structured output, so no HTML-escape pass.
+      - name: Prepare Slack payload
+        id: slack_payload
+        if: always()
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          STRUCTURED_OUTPUT: ${{ steps.investigate.outputs.structured_output }}
+          START_RESPONSE: ${{ steps.start_slack.outputs.response }}
+          CHANNEL_ID: ${{ vars.GARDENER_SLACK_CHANNEL_ID }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          ISSUE_URL: ${{ steps.issue.outputs.url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          INVESTIGATE_OUTCOME: ${{ steps.investigate.outcome }}
+        with:
+          result-encoding: string
+          script: |
+            const num = process.env.ISSUE_NUMBER;
+            const url = process.env.ISSUE_URL;
+            const runUrl = process.env.RUN_URL;
+
+            // Thread onto the starter post when it succeeded; otherwise
+            // the result still posts standalone to the channel.
+            let threadTs = null;
+            try {
+              const r = JSON.parse(process.env.START_RESPONSE || '{}');
+              if (r.ok && r.ts) threadTs = r.ts;
+            } catch (_) {}
+
+            let text, blocks;
+
+            // Gate on STRUCTURED_OUTPUT (not report content) so the
+            // empty-report edge case still goes through the success path,
+            // matching the previous two-step behavior. Wrapped in try/catch
+            // so a malformed payload falls through to the failure notice
+            // instead of leaving the starter message orphaned.
+            let builtSuccess = false;
+            if (process.env.STRUCTURED_OUTPUT) {
+              try {
+                const structured = JSON.parse(process.env.STRUCTURED_OUTPUT);
+                const report = structured.report || '';
+
+                // Top-sections slice: keep everything up to and including
+                // the Summary section, drop sections that follow it. Falls
+                // back to the full report if the template no longer contains
+                // "## Summary".
+                const lines = report.split('\n');
+                const slice = [];
+                let sawSummary = false;
+                for (const line of lines) {
+                  if (sawSummary && /^## /.test(line)) break;
+                  slice.push(line);
+                  if (/^## Summary/.test(line)) sawSummary = true;
+                }
+                // Stash fenced code blocks so their contents don't get
+                // rewritten by the header/bullet passes below.
+                const codeBlocks = [];
+                let slackReport = (slice.join('\n').trim() || report)
+                  .replace(/^```[^\n]*\n([\s\S]*?)\n```$/gm, (_m, c) => {
+                    codeBlocks.push(c);
+                    return `\x04${codeBlocks.length - 1}\x05`;
+                  })
+                  .replace(/^#{1,6}\s+(.+)$/gm, '*$1*')
+                  .replace(/\*\*(.+?)\*\*/g, '*$1*')
+                  .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<$2|$1>')
+                  .replace(/^(\s*)- \[x\]\s+/gm, '$1✓ ')
+                  .replace(/^(\s*)[-*]\s+/gm, '$1• ')
+                  .replace(/\x04(\d+)\x05/g, (_m, i) => '```\n' + codeBlocks[+i] + '\n```');
+
+                // Slack section blocks cap at 3000 chars; leave headroom for the footer.
+                const footer = `\n\n<${runUrl}|View full report>`;
+                const MAX = 2900;
+                if (slackReport.length + footer.length > MAX) {
+                  slackReport = slackReport.slice(0, MAX - footer.length - 1) + '…';
+                }
+                slackReport += footer;
+
+                text = `Investigation report for issue #${num}`;
+                blocks = [
+                  { type: 'section',
+                    text: { type: 'mrkdwn',
+                            text: `*<${url}|Issue #${num}>* — Investigation Report` } },
+                  { type: 'divider' },
+                  { type: 'section',
+                    text: { type: 'mrkdwn', text: slackReport } }
+                ];
+                builtSuccess = true;
+              } catch (e) {
+                core.warning(`Failed to build success payload: ${e}; posting failure notice`);
+              }
+            }
+
+            if (!builtSuccess) {
+              const outcome = process.env.INVESTIGATE_OUTCOME;
+              // Outcome = 'success' + no structured output means Claude
+              // returned without a structured report — distinct from an
+              // outright failure.
+              const reason = outcome === 'success'
+                ? 'completed without a report'
+                : `${outcome || 'did not complete'}`;
+              text = `Investigation failed for issue #${num}`;
+              blocks = [
+                { type: 'section',
+                  text: { type: 'mrkdwn',
+                          text: `:x: *<${url}|Issue #${num}>* — investigation ${reason}. <${runUrl}|View run>` } }
+              ];
+            }
+
+            const payload = { channel: process.env.CHANNEL_ID, text, blocks };
+            if (threadTs) {
+              payload.thread_ts = threadTs;
+              // Broadcasts the threaded reply back to the channel so the
+              // summary shows up inline, not only for thread subscribers.
+              payload.reply_broadcast = true;
+            }
+            return JSON.stringify(payload);
+
+      - name: Post to Slack
+        if: always() && steps.slack_payload.outputs.result
+        uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52 # v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_GARDENER_BOT_TOKEN }}
+          payload: '${{ steps.slack_payload.outputs.result }}'
