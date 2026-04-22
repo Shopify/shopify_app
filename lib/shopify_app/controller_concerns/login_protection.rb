@@ -225,9 +225,8 @@ module ShopifyApp
 
     def return_address_with_params(params)
       uri = URI(base_return_address)
-      uri.query = CGI.parse(uri.query.to_s)
+      uri.query = Rack::Utils.parse_query(uri.query.to_s)
         .symbolize_keys
-        .transform_values { |v| v.one? ? v.first : v }
         .merge(params)
         .to_query
       uri.to_s
