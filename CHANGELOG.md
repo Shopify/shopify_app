@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- [Patch] Fix declarative webhook generator routes to match the configured webhook path
 - [Patch] Validate host param in generated HomeController template to prevent open redirect
 - [Patch] Fix sorbet errors in generated webhook handlers
 
