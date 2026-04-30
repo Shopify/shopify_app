@@ -31,14 +31,27 @@ module ShopifyApp
       end
 
       def add_webhook_route
-        route = "\t\t\tpost '#{file_name}', to: '#{file_name}#receive'\n"
-        inject_into_file("config/routes.rb", route, after: /namespace :webhooks do\n/)
+        webhook_route = "post \"#{route_path}\", to: \"webhooks/#{file_name}#receive\""
+        routes = File.read("config/routes.rb")
+        return if routes.include?(webhook_route)
+
+        mount_engine_route = /^\s*mount\s+ShopifyApp::Engine,\s+at:\s+["']\/["'].*\n/
+
+        if routes.match?(mount_engine_route)
+          inject_into_file("config/routes.rb", "  #{webhook_route}\n", before: mount_engine_route)
+        else
+          route(webhook_route)
+        end
       end
 
       private
 
       def file_name
         path.split("/").last
+      end
+
+      def route_path
+        "/#{path.delete_prefix("/")}"
       end
 
       def topic

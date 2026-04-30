@@ -40,9 +40,9 @@ class AddDeclarativeWebhookGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/routes.rb" do |routes|
-      assert_match "namespace :webhooks do", routes
       assert_match exisiting_webhook, routes
       assert_match new_webhook, routes
+      assert_operator routes.index(new_webhook), :<, routes.index("mount ShopifyApp::Engine")
     end
   end
 
@@ -51,6 +51,6 @@ class AddDeclarativeWebhookGeneratorTest < Rails::Generators::TestCase
   end
 
   def new_webhook
-    "post 'product_update', to: 'product_update#receive'"
+    'post "/webhooks/product_update", to: "webhooks/product_update#receive"'
   end
 end
