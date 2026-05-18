@@ -20,7 +20,7 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
       assert_match "post \"login\" => :create, :as => :authenticate", routes
       assert_match "get \"auth/shopify/callback\" => :callback", routes
       assert_match "get \"logout\" => :destroy, :as => :logout", routes
-      refute_match "mount ShopifyApp::Engine, at: '/'", routes
+      refute_match "mount ShopifyApp::Engine", routes
     end
   end
 end
