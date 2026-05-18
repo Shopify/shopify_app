@@ -31,8 +31,7 @@ module ShopifyApp
       end
 
       def add_webhook_route
-        route = "\t\t\tpost '#{file_name}', to: '#{file_name}#receive'\n"
-        inject_into_file("config/routes.rb", route, after: /namespace :webhooks do\n/)
+        route "post '#{file_name}', to: '#{file_name}#receive'", namespace: :webhooks
       end
 
       private
