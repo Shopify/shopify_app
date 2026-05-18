@@ -53,6 +53,10 @@ module ShopifyApp
         route("mount ShopifyApp::Engine, at: '/'")
       end
 
+      def setup_routes
+        route "# Add your webhook routes here\n", namespace: [:webhooks]
+      end
+
       def insert_hosts_into_development_config
         "Rails.application.configure do\n"
           .then { insert_tunnel_host_rules("ngrok", _1, NGROK_HOST + "\n") }
