@@ -29,7 +29,7 @@ class HomeControllerGeneratorTest < Rails::Generators::TestCase
       assert_match "include ShopifyApp::ShopAccessScopesVerification", file
       assert_match "include ShopifyApp::EmbeddedApp", file
       assert_match "include ShopifyApp::EnsureInstalled", file
-      assert_match "deduced_phishing_attack?", file
+      assert_match "safe_embedded_app_url", file
     end
     assert_file "app/views/home/index.html.erb"
   end
