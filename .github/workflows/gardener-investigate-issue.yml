@@ -13,9 +13,9 @@ on:
         type: number
 
 permissions:
-  contents: write
+  contents: read
   issues: read
-  pull-requests: write
+  pull-requests: read
 
 jobs:
   investigate:
@@ -27,9 +27,6 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
-          # GITHUB_TOKEN won't trigger CI on PRs it creates (GitHub's loop-prevention).
-          # A human must manually trigger CI (e.g. close/reopen the PR) before merging.
-          # To avoid this, replace with a PAT or GitHub App token.
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Resolve issue number
@@ -77,16 +74,19 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          allowed_tools: "Bash(gh issue view *),Bash(gh issue list *),Bash(gh pr list *),Bash(gh pr view *),Bash(gh pr create *),Bash(gh pr checks *),Bash(gh pr diff *),Bash(gh release list *),Bash(git log *),Bash(git tag *),Bash(git diff *),Bash(git show *),Bash(git branch *),Bash(git checkout -b *),Bash(git push -u origin *),Bash(git commit *),Bash(git add *),Read,Glob,Grep,Edit,Write"
+          allowed_tools: "Bash(gh issue view *),Bash(gh issue list *),Bash(gh pr list *),Bash(gh pr view *),Bash(gh pr checks *),Bash(gh pr diff *),Bash(gh release list *),Bash(git log *),Bash(git tag -l*),Bash(git show *),Read,Glob,Grep"
           prompt: |
+            This is a GitHub Actions report-only investigation run.
+
             /investigating-github-issues ${{ steps.issue.outputs.url }}
 
             If the skill above did not load, read and follow `.claude/skills/investigating-github-issues/SKILL.md`.
 
-            Return the investigation report as the `report` field in your structured output.
-            If you opened a fix PR instead, return the PR URL as `report`.
+            Do not modify files, create branches, commit, push, or open pull requests.
+            Always return an investigation report as the `report` field in your structured output.
+            If you identify a straightforward fix, describe the proposed fix in the report instead of implementing it.
           claude_args: |
-            --json-schema '{"type":"object","properties":{"report":{"type":"string","description":"The full investigation report markdown, or the PR URL if a fix was opened"}},"required":["report"]}'
+            --json-schema '{"type":"object","properties":{"report":{"type":"string","description":"The full investigation report markdown"}},"required":["report"]}'
 
       - name: Write report to job summary
         if: always() && steps.investigate.outputs.structured_output
