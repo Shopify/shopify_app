@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Harden embedded app host validation to prevent parser-differential open redirects
 
 23.0.2 (May 22, 2026)
 ----------
