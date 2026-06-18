@@ -19,7 +19,9 @@ end
 ```
 
 ## EnsureHasSession — Authenticated Requests
-Use this concern for any controller action that needs to make authenticated Shopify API calls or access shop/user data. It verifies the requester's identity using either session tokens (embedded apps) or encrypted cookies (non-embedded apps), and works with both online (user) and offline (shop) access tokens.
+Use this concern for any controller action that needs to make authenticated Shopify API calls or access shop/user data. It verifies the requester's identity using either session tokens (embedded apps) or encrypted cookies (non-embedded apps), and works with both online (user) and offline (shop) access tokens. Prefer this concern over composing lower-level session concerns directly.
+
+When using the token exchange auth strategy, `current_shopify_domain` resolves to the authenticated shop from the verified ID token/session. Missing or invalid ID tokens use the configured invalid-token response path to get a fresh token. Request shop context is validated against the authenticated context before the action runs. If your app needs the `shop` query string for pre-auth bootstrap or routing, use `requested_shopify_domain` or an installation-only concern; do not use requested shop context for authorization or tenant scoping.
 
 In addition to session management, this concern handles localization, CSRF protection, embedded app settings, and billing enforcement.
 

@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Token-exchange requests whose `shop` query parameter does not match the authenticated shop are now rejected with 401. `current_shopify_domain` no longer reflects the `shop` parameter; use `requested_shopify_domain` when you need the requested/bootstrap shop value.
 - Harden embedded app host validation to prevent parser-differential open redirects
 
 23.0.2 (May 22, 2026)
