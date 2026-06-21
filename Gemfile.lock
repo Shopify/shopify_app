@@ -131,7 +131,7 @@ GEM
     json (2.7.2)
     jwt (3.1.2)
       base64
-    language_server-protocol (3.17.0.3)
+    language_server-protocol (3.17.0.5)
     logger (1.7.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
@@ -178,8 +178,8 @@ GEM
       racc
     pp (0.6.3)
       prettyprint
-    prettier_print (1.2.1)
     prettyprint (0.2.0)
+    prism (1.9.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -239,6 +239,10 @@ GEM
     rainbow (3.1.1)
     rake (13.3.1)
     rb-readline (0.5.5)
+    rbs (4.0.2)
+      logger
+      prism (>= 1.6.0)
+      tsort
     rdoc (6.15.1)
       erb
       psych (>= 4.0.0)
@@ -264,10 +268,10 @@ GEM
       parser (>= 3.3.0.4)
     rubocop-shopify (2.13.0)
       rubocop (~> 1.50)
-    ruby-lsp (0.5.1)
+    ruby-lsp (0.26.9)
       language_server-protocol (~> 3.17.0)
-      sorbet-runtime
-      syntax_tree (>= 6.1.1, < 7)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 5)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.4.1)
@@ -282,7 +286,7 @@ GEM
       securerandom
       sorbet-runtime
       zeitwerk (~> 2.5)
-    sorbet-runtime (0.6.12838)
+    sorbet-runtime (0.6.13066)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -295,8 +299,6 @@ GEM
     sqlite3 (2.7.4-x86_64-darwin)
     sqlite3 (2.7.4-x86_64-linux-gnu)
     stringio (3.1.8)
-    syntax_tree (6.1.1)
-      prettier_print (>= 1.2.0)
     thor (1.4.0)
     timeout (0.4.4)
     tsort (0.2.0)
