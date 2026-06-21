@@ -29,10 +29,28 @@ class ExtensionVerificationControllerTest < ActionController::TestCase
   test "responds ok when hmac is correct" do
     with_application_test_routes do
       params = { foo: "anything" }
-      valid_hmac = "yCGX/RrK4fcuNtr3ztk5tQGsOBjcAzHpGLdMUrbV8yI=" # Valid hmac using the new secret
+      valid_hmac = "yCGX/RrK4fcuNtr3ztk5tQGsOBjcAzHpGLdMUrbV8yI="
       @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = valid_hmac
       post "extension_action", params: params
       assert_response :ok
+    end
+  end
+
+  test "responds ok when hmac is correct with new header format" do
+    with_application_test_routes do
+      params = { foo: "anything" }
+      valid_hmac = "yCGX/RrK4fcuNtr3ztk5tQGsOBjcAzHpGLdMUrbV8yI="
+      @request.headers["HTTP_SHOPIFY_HMAC_SHA256"] = valid_hmac
+      post "extension_action", params: params
+      assert_response :ok
+    end
+  end
+
+  test "return unauthorized when hmac is incorrect with new header format" do
+    with_application_test_routes do
+      @request.headers["HTTP_SHOPIFY_HMAC_SHA256"] = "invalid_hmac"
+      post :extension_action, params: { foo: "anything" }
+      assert_response :unauthorized
     end
   end
 
