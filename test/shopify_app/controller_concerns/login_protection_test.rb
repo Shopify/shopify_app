@@ -4,6 +4,7 @@ require_relative "../../test_helper"
 require "action_controller"
 require "action_controller/base"
 require "action_view/testing/resolvers"
+require "json"
 
 class LoginProtectionController < ActionController::Base
   include ShopifyApp::EmbeddedApp
@@ -29,6 +30,13 @@ class LoginProtectionController < ActionController::Base
 
   def redirect
     fullpage_redirect_to("https://example.com")
+  end
+
+  def shop_context
+    render(json: {
+      requested_shopify_domain: requested_shopify_domain,
+      authenticated_shopify_domain: authenticated_shopify_domain,
+    })
   end
 
   def raise_unauthorized
@@ -515,6 +523,22 @@ class LoginProtectionControllerTest < ActionController::TestCase
     end
   end
 
+  test "shop domain helpers expose requested and authenticated domains separately" do
+    requested_shop = "other-shop.myshopify.com"
+
+    with_application_test_routes do
+      assert @controller.respond_to?(:requested_shopify_domain, true)
+      assert @controller.respond_to?(:authenticated_shopify_domain, true)
+
+      get :shop_context, params: { shop: requested_shop }
+
+      assert_response :ok
+      context = JSON.parse(response.body)
+      assert_equal requested_shop, context["requested_shopify_domain"]
+      assert_equal @shop, context["authenticated_shopify_domain"]
+    end
+  end
+
   test "#fullpage_redirect_to sends a post message to that shop in the shop param" do
     with_application_test_routes do
       example_shop = "shop.myshopify.com"
@@ -650,6 +674,7 @@ class LoginProtectionControllerTest < ActionController::TestCase
         get "/" => "login_protection#index"
         get "/second_login" => "login_protection#second_login"
         get "/redirect" => "login_protection#redirect"
+        get "/shop_context" => "login_protection#shop_context"
         get "/raise_unauthorized" => "login_protection#raise_unauthorized"
         get "/raise_not_found" => "login_protection#raise_not_found"
         get "/index_with_headers" => "login_protection#index_with_headers"

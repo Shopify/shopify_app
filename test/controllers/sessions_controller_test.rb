@@ -18,6 +18,8 @@ module ShopifyApp
       ShopifyApp::SessionRepository.user_storage = nil
       ShopifyApp.configuration.new_embedded_auth_strategy = false
       ShopifyApp.configuration.api_key = APP_API_KEY
+      ShopifyApp.configuration.myshopify_domain = "myshopify.com"
+      ShopifyApp.configuration.unified_admin_domain = "shopify.com"
       ShopifyAppConfigurer.setup_context # need to reset context after config changes
 
       I18n.locale = :en

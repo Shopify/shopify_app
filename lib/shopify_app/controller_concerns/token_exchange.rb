@@ -19,6 +19,8 @@ module ShopifyApp
     def activate_shopify_session(&block)
       retrieve_session_from_token_exchange if current_shopify_session.blank? || should_exchange_expired_token?
 
+      return if reject_mismatched_requested_shopify_domain
+
       ShopifyApp::Logger.debug("Activating Shopify session")
       ShopifyAPI::Context.activate_session(current_shopify_session)
       with_token_refetch(current_shopify_session, shopify_id_token, &block)
@@ -46,13 +48,39 @@ module ShopifyApp
       )
     end
 
+    def requested_shopify_domain
+      sanitized_shop_name
+    end
+
+    def authenticated_shopify_domain
+      authenticated_shopify_domain_from_token
+    rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
+      respond_to_invalid_shopify_id_token(e)
+    end
+
     def current_shopify_domain
-      sanitized_shop_name || current_shopify_session&.shop
+      authenticated_shopify_domain_from_token
     rescue *INVALID_SHOPIFY_ID_TOKEN_ERRORS => e
       respond_to_invalid_shopify_id_token(e)
     end
 
     private
+
+    def authenticated_shopify_domain_from_token
+      current_shopify_session&.shop || jwt_shopify_domain
+    end
+
+    def reject_mismatched_requested_shopify_domain
+      requested_domain = requested_shopify_domain
+      return false if requested_domain.blank?
+
+      authenticated_domain = authenticated_shopify_domain_from_token
+      return false if authenticated_domain.blank? || authenticated_domain == requested_domain
+
+      ShopifyApp::Logger.debug("Shop context validation failed")
+      head(:unauthorized)
+      true
+    end
 
     def retrieve_session_from_token_exchange
       @current_shopify_session = nil

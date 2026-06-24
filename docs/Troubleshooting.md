@@ -138,20 +138,18 @@ For more details on how to handle embeded sessions, refer to [the session token 
 This can be caused by an infinite redirect due to a coding error
 To investigate the cause, you can add a breakpoint or logging to the `rescue` clause of `ShopifyApp::CallbackController`.
 
-One possible cause is that for XHR requests, the `Authenticated` concern should be used, rather than `RequireKnownShop`.
+One possible cause is that for XHR requests, the `EnsureHasSession` concern should be used, rather than installation-only concerns such as `EnsureInstalled`.
 See below for further details.
 
 ## Controller Concerns
-### Authenticated vs RequireKnownShop
-The gem heavily relies on the `current_shopify_domain` helper to contextualize a request to a given Shopify shop. This helper is set in different and conflicting ways if the request is authenticated or not.
-
-Because of these conflicting approaches the `Authenticated` (for use in authenticated requests) and `RequireKnownShop` (for use in unauthenticated requests) controller concerns must *never* be included within the same controller.
+### Authenticated vs Installation-Only Concerns
+The gem relies on shop domain helpers to contextualize a request to a given Shopify shop. Authenticated and unauthenticated requests use different trust sources, so keep those concerns separate.
 
 #### Authenticated Requests
-For authenticated requests, use the [`Authenticated` controller concern](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/authenticated.rb). The `current_shopify_domain` is set from the JWT for these requests.
+For authenticated requests, use the [`EnsureHasSession` controller concern](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_has_session.rb). With token exchange, `current_shopify_domain` is set from the verified ID token/session, and request shop context is validated before the action runs. Use `authenticated_shopify_domain` when you specifically need that trusted domain value.
 
 #### Unauthenticated Requests
-For unauthenticated requests, use the [`RequireKnownShop` controller concern](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/require_known_shop.rb). The `current_shopify_domain` is set from the query string parameters that are passed.
+For unauthenticated installation or app-shell requests, use the [`EnsureInstalled` controller concern](https://github.com/Shopify/shopify_app/blob/main/app/controllers/concerns/shopify_app/ensure_installed.rb). The requested shop is set from the query string parameters that are passed. In token exchange controllers, use `requested_shopify_domain` only for bootstrap or routing use cases, not tenant authorization.
 
 ## Debugging Tips
 
