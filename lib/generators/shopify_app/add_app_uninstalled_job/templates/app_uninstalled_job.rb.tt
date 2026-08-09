@@ -1,8 +1,8 @@
 class AppUninstalledJob < ActiveJob::Base
   extend ShopifyAPI::Webhooks::WebhookHandler
 
-  def self.handle(topic:, shop:, body:, webhook_id:, api_version:)
-    perform_later(topic: topic, shop_domain: shop, webhook: body)
+  def self.handle(data:)
+    perform_later(topic: data.topic, shop_domain: data.shop, webhook: data.body)
   end
 
   def perform(topic:, shop_domain:, webhook:)
