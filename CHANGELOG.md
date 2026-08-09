@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Fix webhook delivery with `shopify_api >= 16.0.0`: generated webhook jobs now implement the v16 `handle(data:)` contract, allowing the library to dispatch webhooks to the registered job. [#2045](https://github.com/Shopify/shopify_app/issues/2045)
 
 23.0.3 (June 24, 2026)
 ----------

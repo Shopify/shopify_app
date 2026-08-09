@@ -43,6 +43,9 @@ class AddWebhookGeneratorTest < Rails::Generators::TestCase
     assert_directory "app/jobs"
     assert_file "app/jobs/product_update_job.rb" do |job|
       assert_match "class ProductUpdateJob < ActiveJob::Base", job
+      assert_match "extend ShopifyAPI::Webhooks::WebhookHandler", job
+      assert_match "def self.handle(data:)", job
+      assert_match "perform_later(topic: data.topic, shop_domain: data.shop, webhook: data.body)", job
     end
   end
 

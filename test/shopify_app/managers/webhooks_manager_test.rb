@@ -3,18 +3,18 @@
 require_relative "../../test_helper"
 
 class OrdersUpdatedJob < ActiveJob::Base
-  include ShopifyAPI::Webhooks::WebhookHandler
+  extend ShopifyAPI::Webhooks::WebhookHandler
 
-  class << self
-    def handle(topic:, shop:, body:, webhook_id:, api_version:)
-      perform_later(topic: topic, shop_domain: shop, webhook: body)
-    end
+  def self.handle(data:)
+    perform_later(topic: data.topic, shop_domain: data.shop, webhook: data.body)
   end
 
   def perform; end
 end
 
 class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   test "#add_registrations makes calls to library's add_registration" do
     expected_hash = {
       topic: "orders/updated",
@@ -136,5 +136,42 @@ class ShopifyApp::WebhooksManagerTest < ActiveSupport::TestCase
       config.webhooks = []
     end
     ShopifyApp::WebhooksManager.destroy_webhooks(session: ShopifyAPI::Auth::Session.new(shop: "shop.myshopify.com"))
+  end
+
+  test "#add_registrations registers a job that the shopify_api library can dispatch to" do
+    ShopifyAPI::Webhooks::Registry.clear
+
+    ShopifyApp.configure do |config|
+      config.webhooks = [
+        { topic: "orders/updated", path: "webhooks/orders_updated" },
+      ]
+    end
+
+    ShopifyApp::WebhooksManager.add_registrations
+
+    body = { "foo" => "bar" }.to_json
+
+    assert_enqueued_with(
+      job: OrdersUpdatedJob,
+      args: [{ topic: "orders/updated", shop_domain: "test.myshopify.com", webhook: { "foo" => "bar" } }],
+    ) do
+      ShopifyAPI::Webhooks::Registry.process(webhook_request(body))
+    end
+  end
+
+  private
+
+  def webhook_request(body)
+    hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new("sha256"), ShopifyApp.configuration.secret, body)
+    ShopifyAPI::Webhooks::Request.new(
+      raw_body: body,
+      headers: {
+        "x-shopify-topic" => "orders/updated",
+        "x-shopify-hmac-sha256" => Base64.encode64(hmac),
+        "x-shopify-shop-domain" => "test.myshopify.com",
+        "x-shopify-api-version" => TEST_API_VERSION,
+        "x-shopify-webhook-id" => "12345",
+      },
+    )
   end
 end

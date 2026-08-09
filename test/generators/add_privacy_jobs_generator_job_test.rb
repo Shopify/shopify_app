@@ -18,11 +18,15 @@ class AddPrivacyJobsGeneratorJobTest < Rails::Generators::TestCase
     provide_existing_application_controller
   end
 
-  test "creates app uninstalled job file" do
+  test "creates privacy job files" do
     run_generator
 
-    assert_file "app/jobs/customers_data_request_job.rb"
-    assert_file "app/jobs/shop_redact_job.rb"
-    assert_file "app/jobs/customers_redact_job.rb"
+    ["customers_data_request_job", "shop_redact_job", "customers_redact_job"].each do |job_name|
+      assert_file "app/jobs/#{job_name}.rb" do |job|
+        assert_match "extend ShopifyAPI::Webhooks::WebhookHandler", job
+        assert_match "def self.handle(data:)", job
+        assert_match "perform_later(topic: data.topic, shop_domain: data.shop, webhook: data.body)", job
+      end
+    end
   end
 end

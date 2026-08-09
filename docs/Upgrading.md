@@ -232,14 +232,12 @@ Add a new `handle` method to existing webhook jobs to go through the updated `sh
 
 ```ruby
 class MyWebhookJob < ActiveJob::Base
-  extend ShopifyAPI::Webhooks::Handler
+  extend ShopifyAPI::Webhooks::WebhookHandler
 
-  class << self
-    # new handle function
-    def handle(topic:, shop:, body:)
-      # delegate to pre-existing perform_later function
-      perform_later(topic: topic, shop_domain: shop, webhook: body)
-    end
+  # new handle function
+  def self.handle(data:)
+    # delegate to pre-existing perform_later function
+    perform_later(topic: data.topic, shop_domain: data.shop, webhook: data.body)
   end
 
   # original perform function
