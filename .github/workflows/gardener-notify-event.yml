@@ -1,0 +1,35 @@
+name: Gardener - Notify Event
+# Tiny event capturer: stashes the triggering issue/PR payload as an artifact
+# for `gardener-notify-slack.yml` to pick up via workflow_run.
+#
+# Why two workflows? When Dependabot triggers a workflow, GitHub forces
+# GITHUB_TOKEN to read-only and hides Actions secrets — so labeling and
+# Slack posting from this workflow would fail on every Dependabot PR. A
+# workflow_run-triggered follow-up runs in the default-branch context with
+# full permissions and secret access, regardless of the upstream actor.
+#
+# Uses pull_request_target so fork-opened PRs still produce an artifact.
+# No code is checked out here; this workflow only reads the pre-parsed
+# event payload, so there is no pwn-request surface.
+on:
+  issues:
+    types: [opened, labeled]
+  pull_request_target:
+    types: [opened, labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    if: github.event.action == 'opened' || github.event.label.name == 'devtools-gardener'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stash event payload
+        run: cp "$GITHUB_EVENT_PATH" event.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gardener-event
+          path: event.json
+          retention-days: 1

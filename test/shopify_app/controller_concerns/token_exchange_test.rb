@@ -13,9 +13,26 @@ class TokenExchangeController < ActionController::Base
   include ShopifyApp::TokenExchange
 
   around_action :activate_shopify_session
+  skip_around_action :activate_shopify_session,
+    only: [:shop_context_without_session, :authenticated_shop_context_without_session]
 
   def index
     render(plain: "OK")
+  end
+
+  def shop_context
+    render_shop_context
+  end
+
+  def shop_context_without_session
+    render_shop_context
+  end
+
+  def authenticated_shop_context_without_session
+    domain = authenticated_shopify_domain
+    return if performed?
+
+    render(json: { authenticated_shopify_domain: domain })
   end
 
   def reloaded_path
@@ -30,6 +47,22 @@ class TokenExchangeController < ActionController::Base
   def ensure_render
   ensure
     render(plain: "OK")
+  end
+
+  private
+
+  def render_shop_context
+    current_domain = current_shopify_domain
+    return if performed?
+
+    authenticated_domain = authenticated_shopify_domain
+    return if performed?
+
+    render(json: {
+      current_shopify_domain: current_domain,
+      requested_shopify_domain: requested_shopify_domain,
+      authenticated_shopify_domain: authenticated_domain,
+    })
   end
 end
 
@@ -124,6 +157,178 @@ class TokenExchangeControllerTest < ActionController::TestCase
       ShopifyAPI::Context.expects(:activate_session).with(@offline_session)
 
       get :index, params: { shop: @shop }
+    end
+  end
+
+  test "activate_shopify_session rejects mismatched requested shop domain" do
+    requested_shop = "other-shop.myshopify.com"
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(@offline_session_id)
+
+      ShopifyApp::Auth::TokenExchange.expects(:perform).never
+      ShopifyAPI::Context.expects(:activate_session).never
+
+      get :index, params: { shop: requested_shop }
+
+      assert_response :unauthorized
+    end
+  end
+
+  test "activate_shopify_session rejects mismatched requested shop domain after token exchange" do
+    requested_shop = "other-shop.myshopify.com"
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(nil, @offline_session_id)
+      ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token) do
+        ShopifyApp::SessionRepository.store_session(@offline_session)
+      end
+      ShopifyAPI::Context.expects(:activate_session).never
+
+      get :index, params: { shop: requested_shop }
+
+      assert_response :unauthorized
+    end
+  end
+
+  test "activate_shopify_session rejects mismatched requested shop domain from verified token when session id exists but session is not loaded" do
+    requested_shop = "other-shop.myshopify.com"
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(@offline_session_id)
+      ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token).returns(@offline_session)
+      @controller.stubs(:jwt_shopify_domain).returns(@shop)
+      ShopifyAPI::Context.expects(:activate_session).never
+
+      get :index, params: { shop: requested_shop }
+
+      assert_response :unauthorized
+    end
+  end
+
+  test "activate_shopify_session rejects mismatched requested shop domain from verified token when session is not loaded" do
+    requested_shop = "other-shop.myshopify.com"
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(nil)
+      ShopifyApp::Auth::TokenExchange.expects(:perform).with(@id_token).returns(@offline_session)
+      @controller.stubs(:jwt_shopify_domain).returns(@shop)
+      ShopifyAPI::Context.expects(:activate_session).never
+
+      get :index, params: { shop: requested_shop }
+
+      assert_response :unauthorized
+    end
+  end
+
+  test "shop domain helpers expose requested and authenticated domains separately" do
+    requested_shop = "other-shop.myshopify.com"
+    ShopifyApp::SessionRepository.store_shop_session(@offline_session)
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: @id_token,
+        online: false,
+      ).returns(@offline_session_id)
+
+      ShopifyApp::Auth::TokenExchange.expects(:perform).never
+
+      get :shop_context_without_session, params: { shop: requested_shop }
+
+      assert_response :ok
+      context = JSON.parse(response.body)
+      assert_equal requested_shop, context["requested_shopify_domain"]
+      assert_equal @shop, context["authenticated_shopify_domain"]
+      assert_equal @shop, context["current_shopify_domain"]
+    end
+  end
+
+  test "authenticated shop domain falls back to verified id token when session has not loaded" do
+    requested_shop = "other-shop.myshopify.com"
+    id_token = "valid-id-token"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer #{id_token}"
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: id_token,
+        online: false,
+      ).returns(nil)
+      @controller.stubs(:jwt_shopify_domain).returns(@shop)
+
+      get :shop_context_without_session, params: { shop: requested_shop }
+
+      assert_response :ok
+      context = JSON.parse(response.body)
+      assert_equal requested_shop, context["requested_shopify_domain"]
+      assert_equal @shop, context["authenticated_shopify_domain"]
+      assert_equal @shop, context["current_shopify_domain"]
+    end
+  end
+
+  test "current_shopify_domain redirects to bounce page when no id token exists" do
+    requested_shop = "other-shop.myshopify.com"
+    request.headers["HTTP_AUTHORIZATION"] = nil
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: nil,
+        online: false,
+      ).raises(ShopifyAPI::Errors::MissingJwtTokenError)
+
+      get :shop_context_without_session, params: { shop: requested_shop, embedded: "1" }
+
+      assert_redirected_to(%r{/patch_shopify_id_token})
+      assert_includes response.location, "shop=#{requested_shop}"
+      assert_includes response.location, "shopify-reload="
+    end
+  end
+
+  test "authenticated shop domain responds to invalid id token when called directly" do
+    id_token = "invalid-id-token"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer #{id_token}"
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: id_token,
+        online: false,
+      ).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+
+      get :authenticated_shop_context_without_session
+
+      assert_response :unauthorized
+      assert_equal({ errors: [{ message: "unauthorized" }] }, JSON.parse(response.body, symbolize_names: true))
+      assert_equal 1, response.headers["X-Shopify-Retry-Invalid-Session-Request"]
+    end
+  end
+
+  test "shop context response stops after current shop domain handles invalid id token" do
+    id_token = "invalid-id-token"
+    request.headers["HTTP_AUTHORIZATION"] = "Bearer #{id_token}"
+
+    with_application_test_routes do
+      ShopifyAPI::Utils::SessionUtils.stubs(:session_id_from_shopify_id_token).with(
+        id_token: id_token,
+        online: false,
+      ).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+
+      get :shop_context_without_session
+
+      assert_response :unauthorized
+      assert_equal({ errors: [{ message: "unauthorized" }] }, JSON.parse(response.body, symbolize_names: true))
+      assert_equal 1, response.headers["X-Shopify-Retry-Invalid-Session-Request"]
     end
   end
 
@@ -314,10 +519,10 @@ class TokenExchangeControllerTest < ActionController::TestCase
 
       @controller.expects(:with_token_refetch).raises(invalid_shopify_id_token_error)
 
-      params = { shop: @shop, my_param: "for-keeps", id_token: "dont-include-this-id-token", embedded: "1" }
-      reload_url = CGI.escape("/reloaded_path?embedded=1&my_param=for-keeps&shop=#{@shop}")
+      params = { my_param: "for-keeps", id_token: "dont-include-this-id-token", embedded: "1" }
+      reload_url = CGI.escape("/reloaded_path?embedded=1&my_param=for-keeps")
       expected_redirect_url = "https://test.host/my-root/patch_shopify_id_token"\
-        "?embedded=1&my_param=for-keeps&shop=#{@shop}"\
+        "?embedded=1&my_param=for-keeps"\
         "&shopify-reload=#{reload_url}"
 
       with_application_test_routes do
@@ -334,7 +539,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       @controller.expects(:with_token_refetch).raises(invalid_shopify_id_token_error)
 
       with_application_test_routes do
-        get :make_api_call, params: { shop: @shop }
+        get :make_api_call
 
         assert_response :unauthorized
         assert_equal expected_response.to_json, response.body
@@ -351,7 +556,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       @controller.stubs(:performed?).returns(false, true)
 
       with_application_test_routes do
-        get :ensure_render, params: { shop: @shop }
+        get :ensure_render
         assert_response :ok
       end
     end
@@ -364,7 +569,7 @@ class TokenExchangeControllerTest < ActionController::TestCase
       @controller.stubs(:performed?).returns(false, true)
 
       with_application_test_routes do
-        get :ensure_render, params: { shop: @shop }
+        get :ensure_render
         assert_response :ok
       end
     end
@@ -376,6 +581,9 @@ class TokenExchangeControllerTest < ActionController::TestCase
     with_routing do |set|
       set.draw do
         get "/" => "token_exchange#index"
+        get "/shop_context" => "token_exchange#shop_context"
+        get "/shop_context_without_session" => "token_exchange#shop_context_without_session"
+        get "/authenticated_shop_context_without_session" => "token_exchange#authenticated_shop_context_without_session"
         get "/make_api_call" => "token_exchange#make_api_call"
         get "/reloaded_path" => "token_exchange#reloaded_path"
         get "/ensure_render" => "token_exchange#ensure_render"

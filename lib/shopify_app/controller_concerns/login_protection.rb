@@ -205,8 +205,16 @@ module ShopifyApp
       end
     end
 
+    def requested_shopify_domain
+      sanitized_shop_name
+    end
+
+    def authenticated_shopify_domain
+      current_shopify_session&.shop
+    end
+
     def current_shopify_domain
-      shopify_domain = sanitized_shop_name || current_shopify_session&.shop
+      shopify_domain = requested_shopify_domain || authenticated_shopify_domain
       ShopifyApp::Logger.info("Installed store  - #{shopify_domain} deduced from user session")
       shopify_domain
     end

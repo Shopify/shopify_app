@@ -1,8 +1,17 @@
 Unreleased
 ----------
-- [Patch] Validate host param in generated HomeController template to prevent open redirect
-- [Patch] Fix sorbet errors in generated webhook handlers
+- Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
 - Remove unnecessary nil check in generated HomeController template
+
+23.0.3 (June 24, 2026)
+----------
+- Token-exchange requests whose `shop` query parameter does not match the authenticated shop are now rejected with 401. `current_shopify_domain` no longer reflects the `shop` parameter; use `requested_shopify_domain` when you need the requested/bootstrap shop value. [#2081](https://github.com/Shopify/shopify_app/pull/2081)
+- Harden embedded app host validation to prevent parser-differential open redirects. [#2078](https://github.com/Shopify/shopify_app/pull/2078)
+
+23.0.2 (May 22, 2026)
+----------
+- Validate host param in generated HomeController template to prevent open redirect [#2059](https://github.com/Shopify/shopify_app/pull/2059)
+- Fix sorbet errors in generated webhook handlers [#2047](https://github.com/Shopify/shopify_app/pull/2047)
 
 23.0.1 (December 22, 2025)
 - Fix engine initialization [#2040](https://github.com/Shopify/shopify_app/pull/2040)

@@ -239,6 +239,8 @@ class MyController < ApplicationController
 end
 ```
 
+In token exchange authenticated controllers using `EnsureHasSession`, `current_shopify_domain` and `authenticated_shopify_domain` resolve to the shop from the verified ID token/session. Embedded document requests can arrive without a usable token, for example after server-side redirects; the concern uses the configured invalid-token response path to get a fresh token before authenticated action code continues. Request shop context is validated against the authenticated context before the action runs. `requested_shopify_domain` resolves the sanitized `shop` query parameter for bootstrap or routing use cases only; do not use it for authorization, tenant lookup, or choosing a stored access token.
+
 If the error is being rescued in the action, it's still possible to make use of `with_token_refetch` provided by `EnsureHasSession` so that a new access token is fetched and the code is executed again with it. This will also update the session parameter with the new attributes.
 This block should be used to wrap the code that makes API queries, so your business logic won't be retried.
 
