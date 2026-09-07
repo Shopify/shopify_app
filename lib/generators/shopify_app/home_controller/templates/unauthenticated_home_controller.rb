@@ -6,7 +6,7 @@ class HomeController < ApplicationController
   include ShopifyApp::ShopAccessScopesVerification
 
   def index
-    if ShopifyAPI::Context.embedded? && (!params[:embedded].present? || params[:embedded] != "1")
+    if ShopifyAPI::Context.embedded? && params[:embedded] != "1"
       embedded_app_url = safe_embedded_app_url(params[:host])
       redirect_url = embedded_app_url ? embedded_app_url + request.path : ShopifyApp.configuration.root_url
       redirect_to(redirect_url, allow_other_host: true)
