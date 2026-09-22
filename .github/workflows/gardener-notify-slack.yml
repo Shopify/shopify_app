@@ -1,6 +1,6 @@
 name: Gardener - Notify Slack
 # Runs after `Gardener - Notify Event` completes and does the real work:
-# applies the devtools-gardener label and posts a linked title to Slack.
+# applies the devtools-gardener label and posts a repo-prefixed linked title to Slack.
 #
 # The workflow_run trigger runs this job in the default-branch context with
 # full GITHUB_TOKEN permissions and Actions secret access — this is what
@@ -66,7 +66,7 @@ jobs:
 
               (.issue // .pull_request) as $i
               | { channel: $channel,
-                  text: "<\($i.html_url)|\($i.title | escape)>",
+                  text: "\(.repository.name) · <\($i.html_url)|\($i.title | escape)>",
                   unfurl_links: false,
                   unfurl_media: false }
             ' event.json | curl -sf -X POST \
