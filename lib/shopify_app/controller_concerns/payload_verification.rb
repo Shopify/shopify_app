@@ -7,7 +7,7 @@ module ShopifyApp
     private
 
     def shopify_hmac
-      request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"]
+      shopify_header("hmac-sha256")
     end
 
     def hmac_valid?(data)
@@ -20,6 +20,13 @@ module ShopifyApp
           Base64.strict_encode64(OpenSSL::HMAC.digest(digest, secret, data)),
         )
       end
+    end
+
+    # Retrieves Shopify headers with fallback to legacy format.
+    # New headers (shopify-*) take precedence over legacy (X-Shopify-*).
+    def shopify_header(name)
+      formatted_name = name.upcase.tr("-", "_")
+      request.headers["HTTP_SHOPIFY_#{formatted_name}"] || request.headers["HTTP_X_SHOPIFY_#{formatted_name}"]
     end
   end
 end
