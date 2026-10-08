@@ -70,7 +70,8 @@ module ShopifyApp
       return true if decoded_host.empty? || !decoded_host.valid_encoding?
       return true if unsafe_embedded_host_characters?(decoded_host)
 
-      embedded_host_authority(decoded_host).include?("@")
+      authority = embedded_host_authority(decoded_host)
+      authority.include?("@") || !authority.include?(".")
     end
 
     def unsafe_embedded_host_characters?(decoded_host)

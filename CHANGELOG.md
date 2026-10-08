@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Reject dotless embedded app hosts, which browsers can read as IPv4 addresses (e.g. `134744072` is `8.8.8.8`), to prevent open redirects. [#2089](https://github.com/Shopify/shopify_app/pull/2089)
 - Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
 
 23.0.3 (June 24, 2026)
