@@ -119,6 +119,15 @@ class UtilsTest < ActiveSupport::TestCase
     end
   end
 
+  test "sanitize_shop_domain supports DevServer without a core accessor" do
+    with_dev_server(nil, core_method: false) do
+      ["shop1.my.shop.dev", "shop1.my.shop.devns.shop", "shop1.myshopify.com"].each do |host|
+        assert_equal(host, ShopifyApp::Utils.sanitize_shop_domain(host))
+      end
+      assert_nil(ShopifyApp::Utils.sanitize_shop_domain("shop1.my.shop.devns.shop.example.com"))
+    end
+  end
+
   test "sanitize_shop_domain does not trust devns shops outside dev" do
     with_dev_server(mock("Core"), enabled: false) do
       assert_nil(ShopifyApp::Utils.sanitize_shop_domain("shop1.my.shop.devns.shop"))
@@ -131,11 +140,13 @@ class UtilsTest < ActiveSupport::TestCase
 
   private
 
-  def with_dev_server(core, enabled: true)
+  def with_dev_server(core, enabled: true, core_method: true)
     previous_dev_server = Object.const_get(:DevServer) if Object.const_defined?(:DevServer)
     previous_using_dev = ENV["USING_DEV"]
     Object.send(:remove_const, :DevServer) if previous_dev_server
-    Object.const_set(:DevServer, stub(core: core))
+    dev_server = mock("DevServer")
+    dev_server.stubs(:core).returns(core) if core_method
+    Object.const_set(:DevServer, dev_server)
     enabled ? ENV["USING_DEV"] = "1" : ENV.delete("USING_DEV")
     yield
   ensure

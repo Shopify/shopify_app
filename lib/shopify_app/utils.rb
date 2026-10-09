@@ -55,7 +55,7 @@ module ShopifyApp
       def local_development_shop?(host)
         return false unless ENV.key?("USING_DEV") && defined?(DevServer)
 
-        core = DevServer.core
+        core = DevServer.core if DevServer.respond_to?(:core)
         return core.shop_domain?(host) if core.respond_to?(:shop_domain?)
 
         /\A[a-z0-9-]+\.my\.shop\.dev(?:ns\.shop)?\z/i.match?(host)
