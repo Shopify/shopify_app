@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Accept local shops on `shop.devns.shop` through optional DevServer helpers, while retaining support for older DevServer versions and limiting the new domain to development.
 - Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
 
 23.0.3 (June 24, 2026)

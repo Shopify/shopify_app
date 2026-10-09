@@ -14,6 +14,7 @@ module ShopifyApp
       def sanitize_shop_domain(shop_domain)
         uri = uri_from_shop_domain(shop_domain)
         return if uri.nil? || uri.host.nil?
+        return uri.host if local_development_shop?(uri.host)
 
         trusted_domains.each do |trusted_domain|
           no_shop_name_in_subdomain = uri.host == trusted_domain
@@ -50,6 +51,15 @@ module ShopifyApp
       end
 
       private
+
+      def local_development_shop?(host)
+        return false unless ENV.key?("USING_DEV") && defined?(DevServer)
+
+        core = DevServer.core
+        return core.shop_domain?(host) if core.respond_to?(:shop_domain?)
+
+        /\A[a-z0-9-]+\.my\.shop\.dev(?:ns\.shop)?\z/i.match?(host)
+      end
 
       def myshopify_domain
         ShopifyApp.configuration.myshopify_domain

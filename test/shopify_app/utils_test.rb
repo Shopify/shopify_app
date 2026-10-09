@@ -89,4 +89,58 @@ class UtilsTest < ActiveSupport::TestCase
     assert_equal expected, ShopifyApp::Utils.unified_admin_path("my-shop")
     ENV["SPIN_FQDN"] = nil
   end
+
+  test "sanitize_shop_domain accepts both local conventions through DevServer" do
+    core = mock("Core")
+    with_dev_server(core) do
+      ["shop1.my.shop.dev", "shop1.my.shop.devns.shop"].each do |host|
+        core.expects(:shop_domain?).with(host).returns(true)
+        assert_equal(host, ShopifyApp::Utils.sanitize_shop_domain("https://#{host}/"))
+      end
+    end
+  end
+
+  test "sanitize_shop_domain supports older DevServer without shop helpers" do
+    with_dev_server(mock("Older Core")) do
+      ["shop1.my.shop.dev", "shop1.my.shop.devns.shop"].each do |host|
+        assert_equal(host, ShopifyApp::Utils.sanitize_shop_domain(host))
+      end
+      ["devns.shop", "my.shop.devns.shop", "app.shop.devns.shop", "shop1.my.shop.devns.shop.example.com"].each do |host|
+        assert_nil(ShopifyApp::Utils.sanitize_shop_domain(host))
+      end
+    end
+  end
+
+  test "sanitize_shop_domain respects the shared helper rejecting a host" do
+    core = mock("Core")
+    core.expects(:shop_domain?).with("shop1.my.shop.devns.shop").returns(false)
+    with_dev_server(core) do
+      assert_nil(ShopifyApp::Utils.sanitize_shop_domain("shop1.my.shop.devns.shop"))
+    end
+  end
+
+  test "sanitize_shop_domain does not trust devns shops outside dev" do
+    with_dev_server(mock("Core"), enabled: false) do
+      assert_nil(ShopifyApp::Utils.sanitize_shop_domain("shop1.my.shop.devns.shop"))
+    end
+  end
+
+  test "sanitize_shop_domain does not trust devns shops without DevServer" do
+    assert_nil(ShopifyApp::Utils.sanitize_shop_domain("shop1.my.shop.devns.shop"))
+  end
+
+  private
+
+  def with_dev_server(core, enabled: true)
+    previous_dev_server = Object.const_get(:DevServer) if Object.const_defined?(:DevServer)
+    previous_using_dev = ENV["USING_DEV"]
+    Object.send(:remove_const, :DevServer) if previous_dev_server
+    Object.const_set(:DevServer, stub(core: core))
+    enabled ? ENV["USING_DEV"] = "1" : ENV.delete("USING_DEV")
+    yield
+  ensure
+    Object.send(:remove_const, :DevServer)
+    Object.const_set(:DevServer, previous_dev_server) if previous_dev_server
+    previous_using_dev ? ENV["USING_DEV"] = previous_using_dev : ENV.delete("USING_DEV")
+  end
 end
