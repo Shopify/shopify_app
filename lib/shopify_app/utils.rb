@@ -11,9 +11,13 @@ module ShopifyApp
         "shop.dev",
       ].freeze
 
+      HOSTNAME_REGEX = /\A[a-z0-9_-]+(\.[a-z0-9_-]+)*\.?\z/
+      STORE_HANDLE_REGEX = /\A[a-z0-9][a-z0-9-]*\z/
+
       def sanitize_shop_domain(shop_domain)
         uri = uri_from_shop_domain(shop_domain)
         return if uri.nil? || uri.host.nil?
+        return unless uri.host.match?(HOSTNAME_REGEX)
 
         trusted_domains.each do |trusted_domain|
           no_shop_name_in_subdomain = uri.host == trusted_domain
@@ -85,7 +89,10 @@ module ShopifyApp
       end
 
       def myshopify_domain_from_unified_admin(uri)
-        shop = uri.path.split("/").last
+        segments = uri.path.split("/")
+        store_index = segments.index("store")
+        shop = store_index && segments[store_index + 1]
+        return unless shop&.match?(STORE_HANDLE_REGEX)
 
         "#{shop}.myshopify.com"
       end

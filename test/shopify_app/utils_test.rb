@@ -48,7 +48,7 @@ class UtilsTest < ActiveSupport::TestCase
 
   test "unified admin is still trusted as a sanitzed domain" do
     ShopifyApp.configuration.stubs(:myshpoify_domain).returns("totally.cool.domain.com")
-    assert ShopifyApp::Utils.sanitize_shop_domain("admin.shopify.com/some_shoppe_over_the_rainbow")
+    assert ShopifyApp::Utils.sanitize_shop_domain("admin.shopify.com/store/some-shoppe-over-the-rainbow")
     assert ShopifyApp::Utils.sanitize_shop_domain("some-shoppe-over-the-rainbow.myshopify.com")
     assert ShopifyApp::Utils.sanitize_shop_domain("some-shoppe-over-the-rainbow.myshopify.io")
   end
@@ -61,6 +61,47 @@ class UtilsTest < ActiveSupport::TestCase
 
     assert_equal expected, ShopifyApp::Utils.sanitize_shop_domain(trailing_forward_slash_url)
     assert_equal expected, ShopifyApp::Utils.sanitize_shop_domain(unified_admin_url)
+  end
+
+  {
+    "https://admin.shopify.com/store/shop1" => "shop1.myshopify.com",
+    "https://Admin.Shopify.com/store/Cool-Shop" => "cool-shop.myshopify.com",
+    "https://admin.shopify.com/store/shop1/apps/cool_app_hansel" => "shop1.myshopify.com",
+    "https://admin.web.my-spin.user.us.spin.dev/store/shop1" => "shop1.myshopify.com",
+  }.each do |url, expected|
+    test "sanitize_shop_domain reads the store handle from a unified admin URL (#{url})" do
+      assert_equal expected, ShopifyApp::Utils.sanitize_shop_domain(url)
+    end
+  end
+
+  [
+    "https://admin.shopify.com/store/bad.handle",
+    "https://admin.shopify.com/store/bad_handle",
+    "https://admin.shopify.com/store/-bad-handle",
+    "https://admin.shopify.com/store/bad%2Ehandle",
+    "https://admin.shopify.com/store/bad\\handle",
+    "https://admin.shopify.com/store/bad:handle",
+    "https://admin.shopify.com/store/",
+    "https://admin.shopify.com/some_shoppe_over_the_rainbow",
+  ].each do |bad_url|
+    test "sanitize_shop_domain rejects a unified admin URL without a valid store handle (#{bad_url})" do
+      assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
+    end
+  end
+
+  [
+    "bad%5Chost.myshopify.com",
+    "bad%2Fhost.myshopify.com",
+    "bad%40host.myshopify.com",
+    "bad;host.myshopify.com",
+    "bad,host.myshopify.com",
+    "bad!host.myshopify.com",
+    "bad+host.myshopify.com",
+    "bad=host.myshopify.com",
+  ].each do |bad_url|
+    test "sanitize_shop_domain rejects a host with non-hostname characters (#{bad_url})" do
+      assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
+    end
   end
 
   [

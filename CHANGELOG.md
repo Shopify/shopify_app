@@ -1,6 +1,7 @@
 Unreleased
 ----------
 - Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
+- `ShopifyApp::Utils.sanitize_shop_domain` now rejects hosts with non-hostname characters and reads the store handle from the segment after `/store/` in unified admin URLs, rejecting a missing or invalid handle.
 
 23.0.3 (June 24, 2026)
 ----------
