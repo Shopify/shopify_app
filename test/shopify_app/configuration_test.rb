@@ -81,6 +81,18 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal "myshopify.io", ShopifyApp.configuration.unified_admin_domain
   end
 
+  test "defaults app_proxy_timestamp_tolerance to 90 seconds" do
+    assert_equal 90, ShopifyApp.configuration.app_proxy_timestamp_tolerance
+  end
+
+  test "can set app_proxy_timestamp_tolerance" do
+    ShopifyApp.configure do |config|
+      config.app_proxy_timestamp_tolerance = 300
+    end
+
+    assert_equal 300, ShopifyApp.configuration.app_proxy_timestamp_tolerance
+  end
+
   test "can configure webhooks for creation" do
     webhook = { topic: "carts/update", address: "example-app.com/webhooks", format: "json" }
 

@@ -54,6 +54,9 @@ module ShopifyApp
     # Enables new authorization flow using token exchange
     attr_accessor :new_embedded_auth_strategy
 
+    # seconds an app proxy request's timestamp may differ from now, nil disables the check
+    attr_accessor :app_proxy_timestamp_tolerance
+
     def initialize
       @root_url = "/"
       @myshopify_domain = "myshopify.com"
@@ -62,6 +65,7 @@ module ShopifyApp
       @webhooks_manager_queue_name = Rails.application.config.active_job.queue_name
       @disable_webpacker = ENV["SHOPIFY_APP_DISABLE_WEBPACKER"].present?
       @scope = []
+      @app_proxy_timestamp_tolerance = 90
     end
 
     def login_url
