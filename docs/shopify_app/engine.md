@@ -55,6 +55,8 @@ See [`ShopifyApp::AppProxyVerification`](/lib/shopify_app/controller_concerns/ap
 
 The engine provides a mixin for verifying incoming HTTP requests sent via an App Proxy. Any controller that `include`s `ShopifyApp::AppProxyVerification` will verify that each request has a valid `signature` query parameter that is calculated using the other query parameters and the app's shared secret.
 
+It also rejects requests whose `timestamp` query parameter is missing or more than 90 seconds from the current time, so a signed proxy URL cannot be replayed later. Set `config.app_proxy_timestamp_tolerance` to change the number of seconds, or to `nil` to disable this check.
+
 ### Recommended usage of `ShopifyApp::AppProxyVerification`
 
 The App Proxy Controller Generator automatically adds the mixin to the generated app_proxy_controller.rb

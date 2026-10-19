@@ -46,6 +46,30 @@ If you do run into issues, we recommend looking at our [debugging tips.](https:/
 
 ## Unreleased
 
+#### App proxy requests with a stale or missing `timestamp` are rejected
+
+`ShopifyApp::AppProxyVerification` now rejects requests whose `timestamp` query parameter is missing or more than 90 seconds from the current time, even when the `signature` is valid. They get a 403, like a request with an invalid signature.
+
+##### Why this change was made
+
+Shopify signs every app proxy request with the current time, but the signature alone never expires. A signed proxy URL that leaked (for example through request logs) could be replayed against the app indefinitely, acting as the `logged_in_customer_id` it carries. The JavaScript library (`@shopify/shopify-api`) already applies the same 90 second tolerance.
+
+##### Migration steps
+
+**For most apps**: No changes needed. Requests forwarded by Shopify always carry a current `timestamp`.
+
+**If your tests sign app proxy requests themselves**: include a current `timestamp` in the signed parameters, or freeze time to the fixture's timestamp:
+```ruby
+params = { shop: "my-shop.myshopify.com", path_prefix: "/apps/my-app", timestamp: Time.now.to_i.to_s }
+```
+
+**If your server clock cannot be kept in sync**, widen the tolerance, or disable the check:
+```ruby
+ShopifyApp.configure do |config|
+  config.app_proxy_timestamp_tolerance = 300 # seconds; nil disables the check
+end
+```
+
 #### (v23.0.0) Minimum Ruby 3.2 and Rails 7.1 required, Jobs moved to app/jobs/
 
 The minimum supported versions have been updated:
