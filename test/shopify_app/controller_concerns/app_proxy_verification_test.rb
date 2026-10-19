@@ -16,10 +16,19 @@ end
 class AppProxyVerificationTest < ActionController::TestCase
   tests AppProxyVerificationController
 
+  # The signed fixtures below were made at this time (2016-06-16 19:41:23 UTC).
+  FIXTURE_TIME = Time.at(1466106083)
+
   setup do
     ShopifyApp.configure do |config|
       config.secret = "secret"
     end
+    @original_timestamp_tolerance = ShopifyApp.configuration.app_proxy_timestamp_tolerance
+    travel_to FIXTURE_TIME
+  end
+
+  teardown do
+    ShopifyApp.configuration.app_proxy_timestamp_tolerance = @original_timestamp_tolerance
   end
 
   test "no_signature" do
@@ -71,7 +80,77 @@ class AppProxyVerificationTest < ActionController::TestCase
     end
   end
 
+  test "timestamp within the tolerance of now is valid, in either direction" do
+    assert query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i - 90))
+    assert query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i + 90))
+  end
+
+  test "timestamp outside the tolerance is invalid even with a valid signature" do
+    assert_not query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i - 91))
+    assert_not query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i + 91))
+  end
+
+  test "missing, blank or non-integer timestamp is invalid" do
+    assert_not query_string_valid?(signed_query)
+    assert_not query_string_valid?(signed_query(timestamp: ""))
+    assert_not query_string_valid?(signed_query(timestamp: "#{FIXTURE_TIME.to_i}.5"))
+    assert_not query_string_valid?(signed_query(timestamp: "-#{FIXTURE_TIME.to_i}"))
+    assert_not query_string_valid?(signed_query(timestamp: "1e9"))
+  end
+
+  test "repeated timestamp is invalid" do
+    timestamp = FIXTURE_TIME.to_i
+    signature = signature_for(
+      "path_prefix" => "/apps/my-app",
+      "shop" => "some-random-store.myshopify.com",
+      "timestamp" => "#{timestamp},#{timestamp}",
+    )
+
+    assert_not query_string_valid?("shop=some-random-store.myshopify.com&path_prefix=%2Fapps%2Fmy-app&"\
+      "timestamp=#{timestamp}&timestamp=#{timestamp}&signature=#{signature}")
+  end
+
+  test "tolerance is configurable" do
+    ShopifyApp.configuration.app_proxy_timestamp_tolerance = 300
+
+    assert query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i - 300))
+    assert_not query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i - 301))
+  end
+
+  test "a nil tolerance disables the timestamp check" do
+    ShopifyApp.configuration.app_proxy_timestamp_tolerance = nil
+
+    assert query_string_valid?(signed_query(timestamp: FIXTURE_TIME.to_i - 86_400))
+    assert query_string_valid?(signed_query)
+  end
+
+  test "replaying a signed request after the tolerance fails with 403" do
+    with_test_routes do
+      query = signed_query(timestamp: FIXTURE_TIME.to_i)
+
+      travel 60.seconds
+      get :basic, params: Rack::Utils.parse_query(query)
+      assert_response :ok
+
+      travel 5.minutes
+      get :basic, params: Rack::Utils.parse_query(query)
+      assert_response :forbidden
+    end
+  end
+
   private
+
+  def signed_query(timestamp: nil)
+    params = { "shop" => "some-random-store.myshopify.com", "path_prefix" => "/apps/my-app" }
+    params["timestamp"] = timestamp.to_s unless timestamp.nil?
+
+    "#{params.to_query}&signature=#{signature_for(params)}"
+  end
+
+  def signature_for(params)
+    sorted_params = params.map { |k, v| "#{k}=#{v}" }.sort.join
+    OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"), "secret", sorted_params)
+  end
 
   def query_string_valid?(query_string)
     AppProxyVerificationController.new.send(:query_string_valid?, query_string)

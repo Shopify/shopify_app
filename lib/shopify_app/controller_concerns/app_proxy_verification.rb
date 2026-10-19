@@ -20,10 +20,20 @@ module ShopifyApp
       signature = query_hash.delete("signature")
       return false if signature.nil?
 
-      ActiveSupport::SecurityUtils.secure_compare(
+      signature_valid = ActiveSupport::SecurityUtils.secure_compare(
         calculated_signature(query_hash),
         signature,
       )
+
+      signature_valid && timestamp_valid?(query_hash["timestamp"])
+    end
+
+    def timestamp_valid?(timestamp)
+      tolerance = ShopifyApp.configuration.app_proxy_timestamp_tolerance
+      return true if tolerance.nil?
+      return false unless timestamp.is_a?(String) && timestamp.match?(/\A\d+\z/)
+
+      (Time.now.to_i - timestamp.to_i).abs <= tolerance
     end
 
     def calculated_signature(query_hash_without_signature)

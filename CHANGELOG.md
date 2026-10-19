@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- ⚠️ [Breaking] App proxy requests whose `timestamp` is missing or more than 90 seconds from the current time are now rejected with 403, so a signed proxy URL can no longer be replayed indefinitely. Configure with `app_proxy_timestamp_tolerance` (seconds); set it to `nil` to disable the check. See [Upgrading](/docs/Upgrading.md). [#2091](https://github.com/Shopify/shopify_app/pull/2091)
 - Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
 
 23.0.3 (June 24, 2026)
