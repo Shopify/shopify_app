@@ -16,10 +16,14 @@ end
 class AppProxyVerificationTest < ActionController::TestCase
   tests AppProxyVerificationController
 
+  # The signed fixtures below were made at this time (2016-06-16 19:41:23 UTC).
+  FIXTURE_TIME = Time.at(1466106083)
+
   setup do
     ShopifyApp.configure do |config|
       config.secret = "secret"
     end
+    travel_to FIXTURE_TIME
   end
 
   test "no_signature" do
