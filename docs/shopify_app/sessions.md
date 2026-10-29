@@ -419,6 +419,22 @@ end
 - When this happens, the user must interact with the app to go through the OAuth flow again to get new tokens
 - The refresh process uses database row-level locking to prevent race conditions from concurrent requests
 
+**Choosing the row lock mode:**
+
+The refresh wraps the call to Shopify in `with_lock`, which defaults to `SELECT ... FOR UPDATE`. On PostgreSQL that lock conflicts with the `FOR KEY SHARE` lock taken by every `INSERT` into a table with a foreign key to the shop row, so while one process waits on Shopify's token endpoint, every other write referencing that shop (orders, webhooks, etc.) queues behind it. If that is a problem for your app, override `refresh_token_if_expired!` and pass a weaker lock mode, which still serializes concurrent refreshes but lets foreign-key inserts through:
+
+```ruby
+class Shop < ActiveRecord::Base
+  include ShopifyApp::ShopSessionStorage
+
+  def refresh_token_if_expired!(lock: "FOR NO KEY UPDATE")
+    super
+  end
+end
+```
+
+The value is forwarded to ActiveRecord's `with_lock`, so any lock clause your database accepts works here.
+
 **5. Migrating Existing Shop Installations:**
 
 ⚠️ **Important:** When you enable `offline_access_token_expires: true`, only **new shop installations** will automatically receive expiring tokens during the OAuth flow. Existing shop installations with non-expiring tokens will continue using their current tokens until manually migrated.

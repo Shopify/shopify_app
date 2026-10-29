@@ -355,6 +355,51 @@ module ShopifyApp
       assert_equal new_refresh_token_expiry, shop.refresh_token_expires_at
     end
 
+    test "#refresh_token_if_expired! forwards the lock mode to with_lock" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: "old-token",
+        expires_at: 1.hour.ago,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      new_session = mock
+      new_session.stubs(:access_token).returns("new-token")
+      new_session.stubs(:expires).returns(1.day.from_now)
+      new_session.stubs(:refresh_token).returns("new-refresh-token")
+      new_session.stubs(:refresh_token_expires).returns(30.days.from_now)
+      ShopifyAPI::Auth::RefreshToken.stubs(:refresh_access_token).returns(new_session)
+
+      shop.refresh_token_if_expired!(lock: "FOR NO KEY UPDATE")
+
+      assert_equal "FOR NO KEY UPDATE", shop.last_lock_mode
+      assert_equal "new-token", shop.shopify_token
+    end
+
+    test "#refresh_token_if_expired! defaults to an exclusive row lock" do
+      shop = MockShopInstance.new(
+        shopify_domain: TEST_SHOPIFY_DOMAIN,
+        shopify_token: "old-token",
+        expires_at: 1.hour.ago,
+        refresh_token: "refresh-token",
+        refresh_token_expires_at: 30.days.from_now,
+        available_attributes: [:shopify_domain, :shopify_token, :expires_at, :refresh_token, :refresh_token_expires_at],
+      )
+
+      new_session = mock
+      new_session.stubs(:access_token).returns("new-token")
+      new_session.stubs(:expires).returns(1.day.from_now)
+      new_session.stubs(:refresh_token).returns("new-refresh-token")
+      new_session.stubs(:refresh_token_expires).returns(30.days.from_now)
+      ShopifyAPI::Auth::RefreshToken.stubs(:refresh_access_token).returns(new_session)
+
+      shop.refresh_token_if_expired!
+
+      assert_equal true, shop.last_lock_mode
+    end
+
     test "#refresh_token_if_expired! raises error when refresh token is expired" do
       shop = MockShopInstance.new(
         shopify_domain: TEST_SHOPIFY_DOMAIN,

@@ -14,12 +14,14 @@ module ShopifyApp
       super(&block)
     end
 
-    def refresh_token_if_expired!
+    def refresh_token_if_expired!(lock: true)
       return unless should_refresh?
       raise RefreshTokenExpiredError if refresh_token_expired?
 
-      # Acquire row lock to prevent concurrent refreshes
-      with_lock do
+      # Acquire row lock to prevent concurrent refreshes. `lock` is forwarded to
+      # ActiveRecord's `with_lock`, so callers can pick a weaker mode such as
+      # "FOR NO KEY UPDATE" that doesn't block FK-referencing inserts on other tables.
+      with_lock(lock) do
         reload
         # Check again after lock - token might have been refreshed by another process
         return unless should_refresh?
