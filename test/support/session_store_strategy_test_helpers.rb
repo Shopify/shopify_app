@@ -44,7 +44,10 @@ module SessionStoreStrategyTestHelpers
     end
 
     # Stub ActiveRecord methods that the concern uses
-    def with_lock
+    attr_reader :last_lock_mode
+
+    def with_lock(lock = true)
+      @last_lock_mode = lock
       yield
     end
 

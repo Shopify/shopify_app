@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- `ShopSessionStorage#refresh_token_if_expired!` accepts a `lock:` keyword forwarded to `with_lock`, so apps can refresh under a weaker row lock such as `FOR NO KEY UPDATE` and stop blocking foreign-key inserts for the shop while waiting on Shopify. [#2094](https://github.com/Shopify/shopify_app/pull/2094)
 - Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
 
 23.0.3 (June 24, 2026)
