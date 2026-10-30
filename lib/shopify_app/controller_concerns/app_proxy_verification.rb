@@ -20,18 +20,22 @@ module ShopifyApp
       signature = query_hash.delete("signature")
       return false if signature.nil?
 
-      ActiveSupport::SecurityUtils.secure_compare(
-        calculated_signature(query_hash),
-        signature,
-      )
+      secrets = [ShopifyApp.configuration.secret, ShopifyApp.configuration.old_secret].reject(&:blank?)
+
+      secrets.any? do |secret|
+        ActiveSupport::SecurityUtils.secure_compare(
+          calculated_signature(query_hash, secret),
+          signature,
+        )
+      end
     end
 
-    def calculated_signature(query_hash_without_signature)
+    def calculated_signature(query_hash_without_signature, secret)
       sorted_params = query_hash_without_signature.collect { |k, v| "#{k}=#{Array(v).join(",")}" }.sort.join
 
       OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest.new("sha256"),
-        ShopifyApp.configuration.secret,
+        secret,
         sorted_params,
       )
     end

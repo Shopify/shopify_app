@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- App proxy requests are now verified against `old_secret` as well as `secret`, matching webhook verification, so the proxy keeps working while a client secret is being rotated.
 - Render product titles as text in the generated embedded home page view instead of assigning them to `innerHTML`, preventing stored XSS from merchant-controlled product titles. [#2085](https://github.com/Shopify/shopify_app/pull/2085)
 
 23.0.3 (June 24, 2026)
