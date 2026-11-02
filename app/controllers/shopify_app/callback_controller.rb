@@ -6,6 +6,9 @@ module ShopifyApp
     include ShopifyApp::LoginProtection
     include ShopifyApp::EnsureBilling
 
+    AUTH_QUERY_PARAMS = [:code, :shop, :timestamp, :state, :host, :hmac].freeze
+    private_constant :AUTH_QUERY_PARAMS
+
     def callback
       begin
         api_session, cookie = validated_auth_objects
@@ -48,7 +51,12 @@ module ShopifyApp
     end
 
     def validated_auth_objects
-      filtered_params = request.parameters.symbolize_keys.slice(:code, :shop, :timestamp, :state, :host, :hmac)
+      filtered_params = request.parameters.symbolize_keys.slice(*AUTH_QUERY_PARAMS)
+      missing_params = AUTH_QUERY_PARAMS - filtered_params.compact_blank.keys
+      if missing_params.any?
+        raise ShopifyAPI::Errors::MissingRequiredArgumentError,
+          "Missing OAuth callback parameters: #{missing_params.join(", ")}"
+      end
 
       oauth_payload = ShopifyAPI::Auth::Oauth.validate_auth_callback(
         cookies: {

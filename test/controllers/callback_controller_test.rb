@@ -82,6 +82,24 @@ module ShopifyApp
       assert_equal flash[:error], "Could not log in to Shopify store"
     end
 
+    test "#callback redirects to login instead of raising when OAuth params are missing" do
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).never
+
+      get :callback
+
+      assert_redirected_to(ShopifyApp.configuration.login_url)
+      assert_equal("Could not log in to Shopify store", flash[:error])
+    end
+
+    test "#callback redirects to login instead of raising when some OAuth params are missing or blank" do
+      ShopifyAPI::Auth::Oauth.expects(:validate_auth_callback).never
+
+      get :callback, params: { shop: SHOP_DOMAIN, code: "code", hmac: "" }
+
+      assert_redirected_to("#{ShopifyApp.configuration.login_url}?shop=#{SHOP_DOMAIN}")
+      assert_equal("Could not log in to Shopify store", flash[:error])
+    end
+
     test "#callback rescued shopify errors will not be deprecated" do
       response = ShopifyAPI::Clients::HttpResponse.new(code: 500, headers: {}, body: "")
       error = ShopifyAPI::Errors::HttpResponseError.new(response: response)
