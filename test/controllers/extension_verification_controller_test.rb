@@ -36,6 +36,13 @@ class ExtensionVerificationControllerTest < ActionController::TestCase
     end
   end
 
+  test "return unauthorized when hmac header is missing" do
+    with_application_test_routes do
+      post :extension_action, params: { foo: "anything" }
+      assert_response(:unauthorized)
+    end
+  end
+
   private
 
   def with_application_test_routes

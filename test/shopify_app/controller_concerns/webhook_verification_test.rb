@@ -63,6 +63,21 @@ class WebhookVerificationTest < ActionController::TestCase
     end
   end
 
+  test "request without an hmac header returns unauthorized" do
+    with_application_test_routes do
+      post :webhook_action, params: { foo: "anything" }
+      assert_response(:unauthorized)
+    end
+  end
+
+  test "request with a blank hmac header returns unauthorized" do
+    with_application_test_routes do
+      @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = ""
+      post :webhook_action, params: { foo: "anything" }
+      assert_response(:unauthorized)
+    end
+  end
+
   private
 
   def with_application_test_routes
