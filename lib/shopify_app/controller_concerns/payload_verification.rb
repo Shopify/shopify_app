@@ -11,12 +11,15 @@ module ShopifyApp
     end
 
     def hmac_valid?(data)
+      hmac = shopify_hmac
+      return false if hmac.blank?
+
       secrets = [ShopifyApp.configuration.secret, ShopifyApp.configuration.old_secret].reject(&:blank?)
 
       secrets.any? do |secret|
         digest = OpenSSL::Digest.new("sha256")
         ActiveSupport::SecurityUtils.secure_compare(
-          shopify_hmac,
+          hmac,
           Base64.strict_encode64(OpenSSL::HMAC.digest(digest, secret, data)),
         )
       end
