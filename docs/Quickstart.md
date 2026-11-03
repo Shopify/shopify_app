@@ -2,6 +2,11 @@
 
 This guide assumes you have completed the steps to create a new Rails app using the Shopify App gem found in the [*Usage*](/README.md#usage) section of the project's [*README*](/README.md).
 
+> **Note:** The generated app reads configuration from environment variables. Make sure the following are set (e.g. in a `.env` file) before running your app:
+>
+> - `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` — your app's credentials from the [Shopify Partners dashboard](https://partners.shopify.com/organizations).
+> - `HOST` — the public URL of your app *including the scheme*, e.g. `http://localhost:3000` for local development or `https://some-random-words.trycloudflare.com` when using a tunnel. A missing `HOST`, or a value without `http://`/`https://`, will break OAuth redirects.
+
 #### Table of contents
 
 [Optionally Setup SSH tunnel for development](#setup-ssh-tunnel-for-development)
