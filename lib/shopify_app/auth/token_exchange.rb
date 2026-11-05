@@ -50,7 +50,7 @@ module ShopifyApp
 
         session
       rescue ShopifyAPI::Errors::InvalidJwtTokenError
-        Logger.error("Invalid id token '#{id_token}' during token exchange")
+        Logger.error("Invalid id token during token exchange")
         raise
       rescue ShopifyAPI::Errors::HttpResponseError => error
         Logger.error(

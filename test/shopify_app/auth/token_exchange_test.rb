@@ -76,14 +76,16 @@ class ShopifyApp::Auth::TokenExchangeTest < ActiveSupport::TestCase
     ShopifyApp::Auth::TokenExchange.perform(@id_token)
   end
 
-  test "#perform logs invalid JWT errors from the API and re-raises them" do
-    ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).raises(ShopifyAPI::Errors::InvalidJwtTokenError)
+  test "#perform logs invalid JWT errors without the ID token and re-raises them" do
+    error = ShopifyAPI::Errors::InvalidJwtTokenError.new("Session token was rejected by token exchange")
+    ShopifyAPI::Auth::TokenExchange.stubs(:exchange_token).raises(error)
 
-    ShopifyApp::Logger.expects(:error).with(regexp_matches(/Invalid id token/))
+    ShopifyApp::Logger.expects(:error).with("Invalid id token during token exchange")
 
-    assert_raises ShopifyAPI::Errors::InvalidJwtTokenError do
+    raised_error = assert_raises ShopifyAPI::Errors::InvalidJwtTokenError do
       ShopifyApp::Auth::TokenExchange.perform(@id_token)
     end
+    assert_same error, raised_error
   end
 
   test "#perform logs HTTP errors coming from Shopify API and re-raises them" do
