@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Reject a unified Admin `shop` param (`admin.shopify.com/store/<handle>`) whose store handle has characters other than `a-z`, `0-9`, `_` and `-`. Before, `SessionsController` built the OAuth redirect from that handle, and a control character in it raised `ActionController::Redirecting::UnsafeRedirectError` (a 500).
 - Omit the ID token from error logs when token exchange rejects it.
 - Redirect to login instead of raising `ArgumentError` when an OAuth callback request is missing required query parameters.
 - Return 401 instead of raising `NoMethodError` when a webhook or extension request has a missing or blank `X-Shopify-Hmac-Sha256` header.

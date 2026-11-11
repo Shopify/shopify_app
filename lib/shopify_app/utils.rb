@@ -11,6 +11,8 @@ module ShopifyApp
         "shop.dev",
       ].freeze
 
+      UNIFIED_ADMIN_STORE_HANDLE_REGEX = /\A[a-z0-9_-]+\z/
+
       def sanitize_shop_domain(shop_domain)
         uri = uri_from_shop_domain(shop_domain)
         return if uri.nil? || uri.host.nil?
@@ -86,6 +88,7 @@ module ShopifyApp
 
       def myshopify_domain_from_unified_admin(uri)
         shop = uri.path.split("/").last
+        return unless shop&.match?(UNIFIED_ADMIN_STORE_HANDLE_REGEX)
 
         "#{shop}.myshopify.com"
       end
