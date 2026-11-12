@@ -64,6 +64,18 @@ class UtilsTest < ActiveSupport::TestCase
   end
 
   [
+    "admin.shopify.com/store/e1h07\fff",
+    "admin.shopify.com/store/e1h06\vvt",
+    "https://admin.shopify.com/store/shop\r\nname",
+    "admin.shopify.com/store/evil.com",
+    "admin.shopify.com/store/shop name",
+  ].each do |bad_url|
+    test "sanitize_shop_domain rejects a unified admin URL with an invalid store handle (#{bad_url.inspect})" do
+      assert_nil ShopifyApp::Utils.sanitize_shop_domain(bad_url)
+    end
+  end
+
+  [
     "myshop.com",
     "myshopify.com",
     "shopify.com",
