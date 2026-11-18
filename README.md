@@ -136,7 +136,7 @@ Rails.application.configure do
   # ... rest of your configuration
 end
 ```
-With the Shopify CLI you can use [localhost development](https://shopify.dev/docs/apps/build/cli-for-apps/development) to run your app.
+With the Shopify CLI you can use [localhost development](https://shopify.dev/docs/apps/build/cli-for-apps/test-apps-locally) to run your app.
 
 5. Generate your API credentials
 ```
