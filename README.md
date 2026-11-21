@@ -29,6 +29,10 @@ This gem requires that you have the following credentials:
 - **Shopify API key:** The API key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations).
 - **Shopify API secret:** The API secret key app credential specified in your [Shopify Partners dashboard](https://partners.shopify.com/organizations).
 
+You'll also need to configure the following environment variables for your app to work:
+
+- **`HOST`:** The public URL of your app, including the scheme, e.g. `http://localhost:3000` or `https://my-app.example.com`. This is passed to `ShopifyAPI::Context.setup` and used to build OAuth redirect URLs, so a missing or malformed value (e.g. a bare hostname without `http://`/`https://`) causes authentication failures like `redirect_uri is not whitelisted`.
+
 ## Usage
 
 > [!NOTE]
